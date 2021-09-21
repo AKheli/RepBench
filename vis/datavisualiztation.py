@@ -1,11 +1,8 @@
-from main import screen
+from Screen.Local import screen
 import pandas
-import numpy as np
 import matplotlib.pyplot as plt
-from timeit import default_timer as timer
 
-
-datafile = "..\stock10k.data"
+datafile = "..\stock10k.datasets"
 
 
 Series = (pandas.read_csv(datafile, names=("timestamp", "mod", "true"))).to_numpy()

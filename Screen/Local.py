@@ -1,13 +1,9 @@
-#self comments , what data scturcure , abstraction , pd series for "univariat" but time poitns arenot fixed?
-# numpy the easiest?
-from dataclasses import dataclass
-import pandas
 import numpy as np
 
 import timeit
 i = 0
 
-RMS = lambda x, y: np.mean(np.square(x - y)) ** (1 / 2)
+#RMS = lambda x, y: np.mean(np.square(x - y)) ** (1 / 2)
 
 
 def local(sub_times, sub_values, pre_time , pre_val , kp_time , kp_val , SMIN = -6, SMAX = 6):
@@ -28,7 +24,7 @@ def local(sub_times, sub_values, pre_time , pre_val , kp_time , kp_val , SMIN = 
 
 
 # Press the green button in the gutter to run the script.
-datafile = "stock10k.data"
+datafile = "stock10k.datasets"
 
 if __name__ == '__main__':
     print("start")
@@ -54,8 +50,6 @@ def screen(  Series , datasize = None  ,T = 1  ):
 
     #RMS = lambda x,y: np.mean(np.square(x-y))**(1/2)
 
-    print("RMS non modified")
-    print(RMS(mod,truth))
     modcopy = mod + 0
 
 

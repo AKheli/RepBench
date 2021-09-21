@@ -1,6 +1,6 @@
 
 import numpy as np
-from main import local
+from Screen.Local import local
 
 ## testing the local method
 

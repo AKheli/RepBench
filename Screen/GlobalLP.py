@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.optimize as opt
 import scipy.sparse as sp
+from timeit import default_timer as timer
+
 
 
 # for time differences = 1 only
@@ -8,8 +10,6 @@ import scipy.sparse as sp
 def LPconstrainedAE(x, min=6, max=6, time=None, w=1, second=True):
     n = len(x)
     c = np.ones(2 * n)
-
-
 
     if time is None:
         time = np.arange(n)
@@ -21,15 +21,11 @@ def LPconstrainedAE(x, min=6, max=6, time=None, w=1, second=True):
     i = 0
     while True:
         i = i + 1
-        print(i)
         diff = time[i:] - time[:-i]
-        print(diff)
         if np.min(diff) > w:
-            print("end", diff)
             break
         else:
             mask = diff <= w
-            print(mask)
             # i difference  build the full matrix
             A = np.zeros((n - i, n), dtype=np.byte)
             A[np.arange(n - i), np.arange(n - i)] = 1
@@ -84,7 +80,7 @@ def LPconstrainedAE(x, min=6, max=6, time=None, w=1, second=True):
 #         B = np.concatenate((B, B2), axis=0, )
 #         b = np.concatenate((b,b2))
 
-
+    A_ub = sp.coo_matrix(A_ub)
     solution = opt.linprog(c, method='highs', A_ub=A_ub, b_ub=b_ub, bounds=(0, np.inf), options={"disp": False})
     uv = solution.x
     x_prime = x + uv[:int(len(uv) / 2)] - uv[int(len(uv) / 2):]
@@ -96,7 +92,15 @@ def LPconstrainedAE(x, min=6, max=6, time=None, w=1, second=True):
 # x = np.array([12, 12.5, 13, 10, 15, 15.5])
 # t = np.array([1, 2, 3, 5, 7, 8])
 #
-# sol = LPconstrainedAE(np.arange(10000), 0.5, 0.5, time=np.arange(10000), w=2)
+#
+
+
+
+
+# start = timer()
+# sol = LPconstrainedAE(np.arange(15000), 0.5, 0.5, time=np.arange(15000), w=1 )
+# end = timer()
+# print(end-start)
 # print(sol, "thiiiis")
 #
 # paper = np.array([12, 12.5, 13, 14, 15, 15.5])
