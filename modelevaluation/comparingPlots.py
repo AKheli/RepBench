@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 
 def visualize(data, repair, truth=None, time=None, section=None, repair_color="blue", data_color="black",
-              truth_color="green"):
+              truth_color="green" , title = "title"):
     if section is not None:
         if isinstance(section, tuple):
             l, u = section
@@ -22,7 +22,7 @@ def visualize(data, repair, truth=None, time=None, section=None, repair_color="b
         plt.plot(time,truth, color = truth_color)
 
 
-    plt.gca().set(title="title", xlabel="time", ylabel="Value")
+    plt.gca().set(title=title, xlabel="time", ylabel="Value")
 
     plt.show()
 

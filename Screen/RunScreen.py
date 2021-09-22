@@ -78,8 +78,11 @@ visualize(dirty,lp,truth, section=(a-10,a+10))
 visualize(dirty,sc,truth, section=(a-10,a+10))
 
 a = biggestdifference(sc,truth)
-visualize(dirty,lp,truth, section=(a-10,a+10))
-visualize(dirty,sc,truth, section=(a-10,a+10))
+visualize(dirty,lp,truth, section=(a-10,a+10) ,title="lp")
+visualize(dirty,sc,truth, section=(a-20,a+20), title="sc")
+
+
+
 
 
 
