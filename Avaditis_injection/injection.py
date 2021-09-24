@@ -1,7 +1,8 @@
 
-from injection import *
-from injector.myparameters import ANOMALY_TYPE_POINT, ANOMALY_TYPE_AMPLITUDE_SHIFT, ANOMALY_TYPE_DISTORTION, ANOMALY_TYPE_GROWTH_CHANGE, ANOMALY_TYPE_MISSING_VALUES
-from injector.base import get_datasets_from_json
+from Avaditis_injection import *
+from base import get_datasets_from_json
+from myparameters import ANOMALY_TYPE_POINT, ANOMALY_TYPE_AMPLITUDE_SHIFT, ANOMALY_TYPE_DISTORTION, \
+    ANOMALY_TYPE_GROWTH_CHANGE, ANOMALY_TYPE_MISSING_VALUES
 
 
 def anomaly_injection(validated_data):

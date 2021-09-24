@@ -1,10 +1,10 @@
-import logging
+import datetime
 
 import numpy as np
 import pandas as pd
-import datetime
 
 from myparameters import *
+
 
 def get_datasets_from_json(dataset_series):
     df_raw = pd.json_normalize(dataset_series['series'], record_path=['data'], meta=['id', 'type'])

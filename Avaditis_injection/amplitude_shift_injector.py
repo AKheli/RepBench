@@ -1,10 +1,11 @@
 import numpy as np
+import pandas as pd
 
 from myutils import next_earlier_dt, next_later_dt
-from .base import OutlierInjector
+from Avaditis_injection.base import OutlierInjector
 
 
-class ExtremeValueInjector(OutlierInjector):
+class AmplitudeShiftInjector(OutlierInjector):
 
     def __init__(self, validated_data):
         super().__init__(validated_data)
@@ -41,11 +42,25 @@ class ExtremeValueInjector(OutlierInjector):
         return np.random.choice([-1, 1]) * self.get_factor() * local_std
 
 
-    def inject(self, range):
+    def get_split_ranges(self):
+        """
+        For amplitude shift we consider only every second range in order to have some space between subsequent level shifts
+        :return: the ranges to insert the anomaly into
+        """
+        split_ranges = super().get_split_ranges()
+        return split_ranges[1:len(split_ranges):2] if len(split_ranges) > 1 else split_ranges # numpy [start:stop:step]
+
+
+    def inject(self, range_index):
         ts_id = self.get_time_series().id
-        inject_at_index = self.next_injection_index(range)
+        inject_at_index = self.next_injection_index(range_index)
         if inject_at_index is not None:
+
+            lower_boundary = max(next_earlier_dt(inject_at_index, self.df.index.inferred_freq, 4), self.df.index.min())
+            upper_boundary = min(next_later_dt(inject_at_index, self.df.index.inferred_freq, 5), self.df.index.max())
+
+            level_shift_indexes = pd.date_range(lower_boundary, upper_boundary, freq=self.df.index.inferred_freq)
             adjustment_value = self.get_value(inject_at_index, ts_id)
             if adjustment_value != 0:
-                self.df_inject.at[inject_at_index, ts_id] += adjustment_value
-                self.df_inject_class.at[inject_at_index, ts_id] = 1
+                self.df_inject.loc[level_shift_indexes, ts_id] += adjustment_value
+                self.df_inject_class.loc[level_shift_indexes, ts_id] = 1
