@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from Avaditis_injection.myutils import next_later_dt
-from Avaditis_injection.base import OutlierInjector
+from injection.Avaditis_injection.myutils import next_later_dt
+from injection.Avaditis_injection.base import OutlierInjector
 
 
 class GrowthInjector(OutlierInjector):

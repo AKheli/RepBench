@@ -1,7 +1,7 @@
 import numpy as np
 
-from Avaditis_injection.myutils import next_earlier_dt, next_later_dt
-from Avaditis_injection.base import OutlierInjector
+from injection.Avaditis_injection.myutils import next_earlier_dt, next_later_dt
+from injection.Avaditis_injection.base import OutlierInjector
 
 
 class ExtremeValueInjector(OutlierInjector):

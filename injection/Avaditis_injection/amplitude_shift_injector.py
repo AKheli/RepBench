@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from myutils import next_earlier_dt, next_later_dt
-from Avaditis_injection.base import OutlierInjector
+from injection.Avaditis_injection.base import OutlierInjector
 
 
 class AmplitudeShiftInjector(OutlierInjector):

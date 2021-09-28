@@ -7,4 +7,4 @@ datafile = "export.json"
 Series = pd.read_json(datafile)
 print(Series['dataset_series_json'])
 
-injector =  DistortionInjector(Series)
+injected =  DistortionInjector(Series)

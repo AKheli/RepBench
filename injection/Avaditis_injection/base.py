@@ -68,7 +68,7 @@ class OutlierInjector:
         return unix_time_millis_to_dt(self.validated_data['range_start'])
 
     def get_range_end_dt(self):
-        return unix_time_millis_to_dt(self.validated_data['range    _end'])
+        return unix_time_millis_to_dt(self.validated_data['range_end'])
 
     def get_time_series(self):
         return self.validated_data['time_series']

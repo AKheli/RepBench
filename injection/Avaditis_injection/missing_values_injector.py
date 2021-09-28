@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from Avaditis_injection.myparameters import ANOMALY_INJECTION_SCALE_SMALL, ANOMALY_INJECTION_SCALE_MEDIUM, ANOMALY_INJECTION_SCALE_HIGH, \
+from injection.Avaditis_injection.myparameters import ANOMALY_INJECTION_SCALE_SMALL, ANOMALY_INJECTION_SCALE_MEDIUM, ANOMALY_INJECTION_SCALE_HIGH, \
     ANOMALY_INJECTION_SCALE_RANDOM
-from Avaditis_injection.myutils import next_later_dt
-from Avaditis_injection.base import OutlierInjector
+from injection.Avaditis_injection.myutils import next_later_dt
+from injection.Avaditis_injection.base import OutlierInjector
 
 
 class MissingValuesInjector(OutlierInjector):
