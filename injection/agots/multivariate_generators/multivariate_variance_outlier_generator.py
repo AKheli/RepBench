@@ -11,11 +11,11 @@ class MultivariateVarianceOutlierGenerator(MultivariateOutlierGenerator):
     def add_outliers(self, timeseries):
         additional_values = np.zeros(timeseries.size)
         for start, end in self.timestamps:
-            print(start,end)
+            #print(start,end)
             difference = np.diff(timeseries[start-1:end]) if start > 0 \
                          else np.insert(np.diff(timeseries[start:end]), 0, 0)
 
 
-            print(difference , "eyyy")
+            #print(difference , "eyyy")
             additional_values[list(range(start, end))] += (self.factor - 1) * difference
         return additional_values

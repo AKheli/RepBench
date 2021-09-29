@@ -38,14 +38,14 @@ def screen(  Series , datasize = None  ,T = 1  ):
     if datasize == None:
         timestamps = Series[:, 0]
         mod = Series[:, 1]
-        truth =  Series[:, 2]
+        #truth =  Series[:, 2]
     else:
         timestamps = Series[:datasize ,0]
         mod = Series[:datasize,1]
-        truth =  Series[:datasize, 2]
+        #truth =  Series[:datasize, 2]
 
     mod = mod*1
-    truth = truth*1
+    #truth = truth*1
 
 
     #RMS = lambda x,y: np.mean(np.square(x-y))**(1/2)
