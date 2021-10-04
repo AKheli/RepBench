@@ -3,12 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from injection.my_injection.Injector import inject_amplitude_shift, inject_disortion
 
-df =pd.read_csv('SAG_disortion.csv', sep=';', header=0)
+df =pd.read_csv('Data/SAG_disortion.csv', sep=';', header=0)
 vaditis_injvected = df[df["ts_name"] == "SAG"]
 value_inje = vaditis_injvected["value"]
 injectedranges = vaditis_injvected[vaditis_injvected["class"] == 1].index
 
-df =pd.read_csv('SAG.csv', sep=';', header=0)
+df =pd.read_csv('Data/SAG.csv', sep=';', header=0)
 df =df[df["ts_name"] == "SAG"]
 original = df["value"]
 data = np.array(original)

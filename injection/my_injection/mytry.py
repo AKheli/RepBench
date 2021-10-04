@@ -26,7 +26,7 @@ iterations = 1000
 start = time.time()
 counter = 0
 for i in range(1):
-    df =pd.read_csv('SAG.csv', sep=';', header=0)
+    df =pd.read_csv('Data/SAG.csv', sep=';', header=0)
     start = time.time()
     injected_plcaes = vaditis_injvected[vaditis_injvected["class"]==1].index
     raw = df[df["ts_name"] == "SAG"].copy()
@@ -57,7 +57,7 @@ counter = 0
 # counter = 0
 counter = 0
 for i in range(1):
-    df =pd.read_csv('SAG.csv', sep=';', header=0)
+    df =pd.read_csv('Data/SAG.csv', sep=';', header=0)
     df = df[df["ts_name"] == "SAG"].copy()
 
     start = time.time()
@@ -89,7 +89,7 @@ print(counter)
 
 counter = 0
 for i in range(10000):
-    df =pd.read_csv('SAG.csv', sep=';', header=0)
+    df =pd.read_csv('Data/SAG.csv', sep=';', header=0)
     df = df[df["ts_name"] == "SAG"].copy()
 
     start = time.time()
@@ -101,7 +101,7 @@ for i in range(10000):
 print(counter)
 counter = 0
 for i in range(10000):
-    df = pd.read_csv('SAG.csv', sep=';', header=0)
+    df = pd.read_csv('Data/SAG.csv', sep=';', header=0)
     df = df[df["ts_name"] == "SAG"].copy()
 
     start = time.time()
