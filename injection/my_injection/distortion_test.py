@@ -1,38 +1,43 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from injection.my_injection.Injector import inject_amplitude_shift, inject_disortion
+from Injector import  Anomalygenerator, inject_distortion
 
-df =pd.read_csv('Data/SAG_disortion.csv', sep=';', header=0)
+##vadetis
+df =pd.read_csv('Data/SAG_distortion.csv', sep=';', header=0)
 vaditis_injvected = df[df["ts_name"] == "SAG"]
-value_inje = vaditis_injvected["value"]
 injectedranges = vaditis_injvected[vaditis_injvected["class"] == 1].index
+vaditis_injvected = vaditis_injvected["value"]
 
+##from direct injection
 df =pd.read_csv('Data/SAG.csv', sep=';', header=0)
 df =df[df["ts_name"] == "SAG"]
+
 original = df["value"]
 data = np.array(original)
 
+data1 , _ = inject_distortion(data,[893, 894, 895, 896, 897, 898, 899, 900, 901, 902] , factor=9)
 
-data= inject_disortion(data,[892,893, 894, 895, 896, 897, 898, 899, 900, 901, 902] , factor=9,stdrange=(-6,6))
+difference = data1 - np.array(vaditis_injvected) # 0
+assert sum(abs(difference)) < 0.000001
 
+## from direction class
 
+injector = Anomalygenerator(data.copy())
 
+injector.add_distortion(starting_index= injectedranges[0], length = len(injectedranges),factor=9)
 
+series = injector.get_injected_series()
 
-#6,6 is used in vaditis
-# find = [(i,j,(inject_amplitude_shift(data, second_injection, factor=10, stdrange=(-i, j)) -np.array(value_inje))[934]) for i in range(30) for j in range(30)  ]
-#plt.plot(np.arange(1000)[injectedranges-800],np.array(value_inje)[injectedranges] , color = "black" ,marker='o' )
+# plt.plot(series ,linewidth = 1)
+# plt.plot(np.array(vaditis_injvected),linestyle = "dashed")
+# plt.plot(data1,linestyle = "dotted",linewidth = 1)
+# plt.show()
 
-plt.plot(np.array(value_inje)[800:])
-plt.plot(data[800:],linestyle='dashed')
-plt.plot(np.array(original)[800:])
-#plt.plot(np.arange(1000)[injectedranges-800],np.array(value_inje)[injectedranges] , color = "black" ,marker='o' )
+assert sum(abs(series-data1)) < 0.000001
 
+injector = Anomalygenerator(np.array(original))
+injector.add_distortion(length=10 , number_of_ranges=10)
+#injector.add_amplitude_shift( starting_index=  200,length=1)
 
-
-
-
-#plt.plot(np.arange(1000)[800:][injectedranges-800],np.array(value_inje)[injectedranges] , color = "red")
-
-plt.show()
+injector.anomaly_infos

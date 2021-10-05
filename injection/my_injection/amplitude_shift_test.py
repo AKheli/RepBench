@@ -25,6 +25,7 @@ data1 , _ = inject_amplitude_shift(data,first_injection , factor=10,stdrange=(-6
 data2 , _ = inject_amplitude_shift(data1,second_injection , factor=10 ,stdrange=(-6,6),directions=[1])
 
 difference = data2 - np.array(vaditis_injvected) # 0
+assert(sum(abs(difference)) <0.00001)
 
 ## from direction class
 
