@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from injection.my_injection.Injector import inject_amplitude_shift, Anomalygenerator
+from Injector import inject_amplitude_shift, Anomalygenerator
 
 ##vadetis
 df =pd.read_csv('Data/SAG_Amlitude_schift.csv', sep=';', header=0)

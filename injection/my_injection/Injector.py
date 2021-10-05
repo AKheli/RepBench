@@ -85,6 +85,7 @@ class Anomalygenerator:
         self.anomaly_indexes = np.zeros(len(data))
         self.anomaly_infos = {}
         self.anomaly_count = 0
+        self.individual_anomalies
 
     def _set_anomaly_range(self,starting_index, length  ):
         if starting_index is None:
