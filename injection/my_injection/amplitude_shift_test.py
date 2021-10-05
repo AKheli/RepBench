@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from Injector import inject_amplitude_shift, Anomalygenerator
 
 ##vadetis
-df =pd.read_csv('Data/SAG_Amlitude_schift.csv', sep=';', header=0)
+df =pd.read_csv('Data/vadetis_injections/SAG_Amlitude_schift.csv', sep=';', header=0)
 vaditis_injvected = df[df["ts_name"] == "SAG"]
 injectedranges = vaditis_injvected[vaditis_injvected["class"] == 1].index
 vaditis_injvected = vaditis_injvected["value"]
@@ -25,6 +25,7 @@ data1 , _ = inject_amplitude_shift(data,first_injection , factor=10,stdrange=(-6
 data2 , _ = inject_amplitude_shift(data1,second_injection , factor=10 ,stdrange=(-6,6),directions=[1])
 
 difference = data2 - np.array(vaditis_injvected) # 0
+assert(sum(abs(difference)) <0.00001)
 
 ## from direction class
 
