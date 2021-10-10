@@ -28,7 +28,7 @@ if __name__ == '__main__':
     x_original = np.array([6, 10, 9.6, 8.3, 7.7, 5.4, 5.6, 5.9, 6.3, 6.8, 7.5, 8.5])
     x = x_original.copy()
     y = np.array([6, 5.6, 5.4, 5.2, 5.4, 5.4, 5.6, 5.9, 6.3, 6.8, 7.5, 8.5])
-    labels = [0,1,2,5,11]
+        labels = [0,1,2,5,11]
 
     theta = ARX_labeled_OLS(x,y ,labels)   #problem here is the fit rouned ?
     phi = theta[1]
