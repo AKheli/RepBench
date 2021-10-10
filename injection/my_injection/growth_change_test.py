@@ -44,11 +44,11 @@ plt.plot(np.array(vaditis_injvected),linestyle = "dashed")
 plt.show()
 
 
-data = pd.read_csv("Data/stock10k.data", sep=",")
-data = pd.read_csv("Data/stock10k.data", sep="," , names=list(range(data.shape[1])))
+data = pd.read_csv("Data/stock10k.data", sep="," , header = 0)
+data = pd.read_csv("Data/stock10k.data", sep="," , names=list(range(data.shape[1])), header = 0)
 
 injector = Anomalygenerator(np.array(data[2].copy()))
 
-injector = Anomalygenerator(data.copy())
-injector.add_growth( )
+injector = Anomalygenerator(data[2].copy())
+injector.add_growth(length=100)
 
