@@ -1,12 +1,16 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 import timeit
+from matplotlib.ticker import MaxNLocator
+
+from Screen.GlobalLP import LPconstrainedAE
+
 i = 0
 
 #RMS = lambda x, y: np.mean(np.square(x - y)) ** (1 / 2)
 
 
-def local(sub_times, sub_values, pre_time , pre_val , kp_time , kp_val , SMIN = -6, SMAX = 6):
+def local(sub_times, sub_values, pre_time , pre_val , kp_time , kp_val , SMIN = -3, SMAX = 3):
     global i
     i = i+1
     #print(sub_times)
@@ -30,7 +34,7 @@ if __name__ == '__main__':
     print("start")
 
 
-def screen(  Series , datasize = None  ,T = 1  ):
+def screen(  Series , datasize = None  ,T = 1   , SMIN = -3, SMAX = 3):
     #Series = (pandas.read_csv(datafile , names = ("timestamp", "mod" , "true"))).to_numpy()
 
     #maybe throw an error message here if datasize is to big
@@ -45,14 +49,6 @@ def screen(  Series , datasize = None  ,T = 1  ):
         #truth =  Series[:datasize, 2]
 
     mod = mod*1
-    #truth = truth*1
-
-
-    #RMS = lambda x,y: np.mean(np.square(x-y))**(1/2)
-
-    modcopy = mod + 0
-
-
 
     preEnd = -1
     wStartTime =  timestamps[0]
@@ -88,7 +84,7 @@ def screen(  Series , datasize = None  ,T = 1  ):
 
                 mod[kp_index] = local(timestamps[tmp_indices], mod[tmp_indices]
                                       ,timestamps[prepoint_index] , mod[prepoint_index]
-                                      , timestamps[kp_index] , mod[kp_index])
+                                      , timestamps[kp_index] , mod[kp_index] ,  SMIN = SMIN, SMAX = SMAX)
 
                 prepoint_index = kp_index
                 preEnd = curEnd
@@ -103,4 +99,41 @@ def screen(  Series , datasize = None  ,T = 1  ):
     return mod
 
 
-
+# timestamps =  np.array([1,2,3,5,6,8,9,10, 11 ,15, 16 ,17, 18,19,20 ],dtype = int)
+# values = np.array([5,6,5,6,7,18,7,5,5,6.5,8,7.5,22,8,6])
+#
+#
+#
+# modified = screen(np.array([timestamps,values]).T , T=1 , SMIN=-2, SMAX= 2)
+# modified_global = LPconstrainedAE(values.copy(), min=2, max= 2)
+#
+# print("local",np.mean(abs(values-modified))**(1/2))
+# print("global",np.mean(abs(values-modified_global))**(1/2))
+#
+#
+# plt.plot(range(len(timestamps)),values, 'b' , label = "original")
+# plt.plot(range(len(timestamps)),modified, 'o' , label = "local")
+# plt.plot(range(len(timestamps)),modified_global, 'x' , label = "local" , color = "red")
+#
+#
+# plt.show()
+#
+#
+# timestamps =  np.array([1,2,3,4,5,6,8,9,10, 11 ,12,13,15, 16 ,17 ],dtype=int)
+# values = np.array([5,6,5,6,7,6,5,5,5,16.5,18,17.5,20,8,6])
+#
+#
+# min = 2
+# max = 2
+# modified = screen(np.array([timestamps,values]).T , T=1 , SMIN=-min, SMAX= max)
+# modified_global = LPconstrainedAE(values.copy(), min=min, max= max)
+#
+# print("local",np.mean(abs(values-modified))**(1/2))
+# print("global",np.mean(abs(values-modified_global))**(1/2))
+#
+#
+# plt.plot(timestamps,values, 'b' , label = "original")
+# plt.plot(timestamps,modified, 'o' , label = "local")
+# plt.plot(timestamps,modified_global, 'x' , label = "local" , color = "red")
+#
+# plt.show()
