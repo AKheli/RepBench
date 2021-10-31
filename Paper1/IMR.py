@@ -1,22 +1,23 @@
 
 import numpy as np
 import pandas as pd
+import scipy
 from statsmodels.regression.linear_model import OLS
 import matplotlib.pyplot as plt
 
 
 
-def ols(respond,x , p = 1, c = 0):
-    # [ 0 , x[1:-p+1] , x[2:-p+2] ]
-    X = np.zeros((len(x),p+1))
-    X[:,0] = c
-    for i in range(1,p+1):
-        X[i:,i] = x[:-i]
-    X = X[p:,:]
-
-    #X = np.array( [ np.repeat(c,len(x)-p) ] +  [ x[i: -p+i] for i in range(0,p)] ).T
-    #print(X,"before")
-    return OLS(respond[p:], X).fit().params[1:]
+# def ols(respond,x , p = 1, c = 0):
+#     # [ 0 , x[1:-p+1] , x[2:-p+2] ]
+#     X = np.zeros((len(x),p+1))
+#     X[:,0] = c
+#     for i in range(1,p+1):
+#         X[i:,i] = x[:-i]
+#     X = X[p:,:]
+#
+#     #X = np.array( [ np.repeat(c,len(x)-p) ] +  [ x[i: -p+i] for i in range(0,p)] ).T
+#     #print(X,"before")
+#     return OLS(respond[p:], X).fit().params[1:]
 
 def paramestimation(x,y_k,p=1):
     return ols(y_k - x, y_k - x,p)
@@ -48,36 +49,87 @@ def repair_value_index(y_hat,x,indices):
 # y_k = np.array([6, 5.6, 5.4, 8.3, 7.7, 5.4, 5.6, 5.9, 6.3, 6.8, 7.5, 8.5])
 # y= y_k.copy()
 
+def ols(yvec,xMat):
+    nonzeros = np.unique(np.nonzero(xMat)[0])
+    return np.linalg.lstsq(xMat[nonzeros,:],yvec[nonzeros],rcond=-1)[0]
+
+def ols_sparse(yvec,xMat):
+    return scipy.sparse.linalg.lsqr(xMat,yvec)
+
+
+
+
+def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
+    z = np.array(y_k,dtype=np.single) - np.array(x,dtype=np.single)
+    yvec = z[p:]
+    xMat = np.zeros((len(x) - p, p),dtype=np.single)
+
+    shifted_non_labelled = np.ones(len(x)-p,dtype=bool)
+    shifted_non_labelled[ (labels-p)[(labels-p) >= 0]] = False  #  if i + p not in labels:
+
+    for i in range(len(x) - p):
+        for j in range(p):
+            xMat[i, j] = z[p + i - j - 1]
+
+    for i in range(k):
+        phi = ols(yvec, xMat)
+        #phi_sparse = ols_sparse(yvec, xMat)
+        #print(phi,phi_sparse)
+        y_hat = xMat.dot(phi)
+        elements = np.arange(len(x) - p)[(np.abs(y_hat - yvec) >= tau) * shifted_non_labelled]
+        try:
+            index = elements[ np.argmin(np.abs( y_hat[elements] ),) ]
+        except ValueError as e:
+            print(f'terminated after {i} iterations')
+            break
+        val = y_hat[index]
+        yvec[index] = val
+        for j in range(p):
+            if index + 1 + j >= len(x) - p:
+                break
+            if index + 1 + j < 0:
+                continue
+            xMat[index + 1 + j, j] = val
+
+    modify = x.copy()
+    modify[labels] = y_k[labels]
+    for i in range(len(modify)):
+        if i not in labels:
+            modify[i] = x[i] + yvec[i - p]
+
+    return modify
 
 def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
     z = np.array(y_k) - np.array(x)
     yvec = z[p:]
     xMat = np.zeros((len(x)-p,p))
+
     for i in range(len(x)-p):
         for j in range(p):
             xMat[i,j] = z[p + i - j - 1]
 
     for i in range(k):
-        phi = OLS(yvec,xMat).fit().params
+        phi = ols(yvec,xMat)
         y_hat = xMat.dot(phi)
-        print("phi",phi)
+        #print("phi",phi)
         residuals = y_hat-yvec
-        abs_res = abs(residuals)
+        abs_res = np.abs(residuals)
         minA = 100000000000
         index = -1
-        for i in range(len(x)-p):
+        for i in np.arange(len(x)-p):
             if i +p in labels:
                 continue
             if abs_res[i] < tau:
                 continue
-            y_hat_point = abs(y_hat[i])
+            y_hat_point = np.abs(y_hat[i])
             if(y_hat_point < minA):
                 minA = y_hat_point
                 index = i
-        if abs_res[index] == 100000000000 :
+        print(index)
+        if index == -1:
             print(f'terminated after {i} iterations')
             break
-        print(index)
+        #print(index)
         val = y_hat[index]
         yvec[index] = val
         for j in range(p):
@@ -92,7 +144,9 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
     for i in range(len(modify)):
         if i not in labels:
             modify[i] =x[i]+ yvec[i-p]
-
+    #print("AAAAA")
+    #print("suum",sum(modify - imr2(x,y_k,labels,tau=tau,p=p,k=k)))
+    assert np.array_equal(modify, imr2(x,y_k,labels,tau=tau,p=p,k=k))
     return modify
 
 
@@ -105,27 +159,52 @@ def IMRsave(index,x,y_o,truth,labels,repair,name , arrows = True):
     #print(frame)
     frame.to_csv("data/IRMSAVE/"+name)
 
-def plot(injected,repair,truth,labels,title, index=None , arrows = False ,show = True):
+def plot(injected,repair={},truth=[],title = "",labels = [], index=None , arrows = False ,show = True , observation_rms = ""):
     injected =np.array(injected)
-    repair =np.array(repair)
     truth =np.array(truth)
 
     if index is None:
-        index = np.array(range(len(repair)))
-    plt.plot(index,injected, 'x', label="injected")
+        index = np.array(range(len(truth)))
+
+    print(labels)
+    print(index[labels])
+
+    plt.plot(index,injected, label="anomaly"+observation_rms ,linestyle = "--",marker = "x", color= "red",lw=1)
     plt.title(title)
-    plt.plot(index,truth, label="truth")
-    plt.plot(index, repair, 'o', label="repair")
-    plt.plot(index[labels], truth[labels], 'o', label="labeled", )
+
+
+    markers = [ "s" , "P" ,"+" ,"<",">","8","p"]
+    if isinstance(repair, dict):
+        for key , value  in  repair.items():
+            plt.plot(index,value, label=key , marker = markers.pop()  ,mfc='none') #,markersize=10)
+    else:
+        plt.plot(index, repair, label="repair",marker = 'x')
+
+
+    plt.plot(index, truth, label="truth", color="black" , lw=3)
+    plt.plot(index[labels], truth[labels], 'o', mfc='none', label="labels",markersize=8,color="green")
+
     if arrows:
         mask = (abs(repair - injected)) > 0.01
         for i in index[mask]:
             plt.arrow(index[i],repair[i],0, injected[i]-repair[i] ,color = "grey" , alpha=0.2,ls = '--' , length_includes_head = False)
-    plt.legend()
+    #plt.legend()
     plt.grid(alpha = 0.2)
-
+    #plt.xlim( np.arange(len(repair))[truth != repair] )
     if show :
+        plt.draw()
         plt.show()
     else:
+        plt.legend(bbox_to_anchor=(0., -0.25, 1., 0.00), loc='lower left',
+                   ncol=3, mode="expand", borderaxespad=0.)
+        plt.subplots_adjust(bottom=0.2 , top = 0.92)
         return plt
+
+def rms(x,y,labels= []):
+    labeled_x , labeled_y = x[labels] , y[labels]
+    return np.sqrt(
+        (np.sum(np.square(x-y))- np.sum(np.square(labeled_x - labeled_y)))
+        /(len(x)-len(labeled_x))
+        )
+
 
