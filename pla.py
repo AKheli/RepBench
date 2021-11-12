@@ -28,7 +28,7 @@ plt.show()
 
 
 
-# import Paper1.IMR as IMR
+# import IMR.IMR as IMR
 #
 #
 # start = time.time()

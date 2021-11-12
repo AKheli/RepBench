@@ -96,7 +96,7 @@ def screen(  Series , datasize = None  ,T = 1   , SMIN = -3, SMAX = 3):
 
     #print(RMS(mod,truth))
 
-    return mod
+    return {"repair" : mod , "smin" : SMIN ,"smax": SMAX , "T": T}
 
 
 # timestamps =  np.array([1,2,3,5,6,8,9,10, 11 ,15, 16 ,17, 18,19,20 ],dtype = int)

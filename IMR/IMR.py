@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import scipy
+from numpy.linalg import LinAlgError
 from statsmodels.regression.linear_model import OLS
 import matplotlib.pyplot as plt
 
@@ -53,8 +54,24 @@ def ols(yvec,xMat):
     nonzeros = np.unique(np.nonzero(xMat)[0])
     return np.linalg.lstsq(xMat[nonzeros,:],yvec[nonzeros],rcond=-1)[0]
 
-def ols_sparse(yvec,xMat):
-    return scipy.sparse.linalg.lsqr(xMat,yvec)
+
+
+
+
+def ols_direct(yvec, xMat):
+    try:
+        return np.dot(np.linalg.inv(np.dot(xMat.T, xMat)), np.dot(xMat.T, yvec))
+    except:
+        return np.zeros(len(xMat[0,:]))
+
+def ols_direct_2(yvec, xMat):
+    try:
+        return np.linalg.inv(xMat.T.dot(xMat)).dot(xMat.T.dot(yvec))
+    except:
+        return np.zeros(len(xMat[0, :]))
+
+
+
 
 
 
@@ -62,30 +79,45 @@ def ols_sparse(yvec,xMat):
 def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
     z = np.array(y_k,dtype=np.single) - np.array(x,dtype=np.single)
     yvec = z[p:]
-    xMat = np.zeros((len(x) - p, p),dtype=np.single)
+
+    mod_length = len(x) - p
+
+    xMat = np.zeros((mod_length, p),dtype=np.single)
 
     shifted_non_labelled = np.ones(len(x)-p,dtype=bool)
     shifted_non_labelled[ (labels-p)[(labels-p) >= 0]] = False  #  if i + p not in labels:
+    iterations = 0
+
+    mod_range = np.arange(mod_length)
 
     for i in range(len(x) - p):
         for j in range(p):
             xMat[i, j] = z[p + i - j - 1]
 
     for i in range(k):
-        phi = ols(yvec, xMat)
-        #phi_sparse = ols_sparse(yvec, xMat)
-        #print(phi,phi_sparse)
+        try:
+            phi =  np.linalg.inv(xMat.T.dot(xMat)).dot(xMat.T.dot(yvec))
+        except:
+            phi =  np.zeros(len(xMat[0, :]))
+
         y_hat = xMat.dot(phi)
-        elements = np.arange(len(x) - p)[(np.abs(y_hat - yvec) >= tau) * shifted_non_labelled]
+
+
+        #assert np.allclose(phi,ols_direct(yvec, xMat), atol=1e-04)
+
+        elements = mod_range[(np.abs(y_hat - yvec) >= tau) * shifted_non_labelled]
         try:
             index = elements[ np.argmin(np.abs( y_hat[elements] ),) ]
         except ValueError as e:
+
             print(f'terminated after {i} iterations')
             break
         val = y_hat[index]
         yvec[index] = val
+
+        iterations = i
         for j in range(p):
-            if index + 1 + j >= len(x) - p:
+            if index + 1 + j >= mod_length:
                 break
             if index + 1 + j < 0:
                 continue
@@ -97,7 +129,7 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
         if i not in labels:
             modify[i] = x[i] + yvec[i - p]
 
-    return modify
+    return { "repair" : modify , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
 
 def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
     z = np.array(y_k) - np.array(x)
@@ -125,7 +157,7 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
             if(y_hat_point < minA):
                 minA = y_hat_point
                 index = i
-        print(index)
+        #print(index)
         if index == -1:
             print(f'terminated after {i} iterations')
             break
@@ -166,8 +198,8 @@ def plot(injected,repair={},truth=[],title = "",labels = [], index=None , arrows
     if index is None:
         index = np.array(range(len(truth)))
 
-    print(labels)
-    print(index[labels])
+    #print(labels)
+    #print(index[labels])
 
     plt.plot(index,injected, label="anomaly"+observation_rms ,linestyle = "--",marker = "x", color= "red",lw=1)
     plt.title(title)
@@ -200,11 +232,5 @@ def plot(injected,repair={},truth=[],title = "",labels = [], index=None , arrows
         plt.subplots_adjust(bottom=0.2 , top = 0.92)
         return plt
 
-def rms(x,y,labels= []):
-    labeled_x , labeled_y = x[labels] , y[labels]
-    return np.sqrt(
-        (np.sum(np.square(x-y))- np.sum(np.square(labeled_x - labeled_y)))
-        /(len(x)-len(labeled_x))
-        )
 
 

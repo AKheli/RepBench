@@ -1,17 +1,12 @@
 import os
-import random
-from errno import EACCES
 
 import pandas as pd
 import numpy as np
 import json
-import Paper1.IMR as IMR
+import IMR.IMR as IMR
 from Screen.Local import screen
-import matplotlib.pyplot as plt
 
 from PyPDF2 import PdfFileMerger
-
-from evaluation.plotter import plotter
 
 
 def rms(x,y,labels= [] , round = True):
@@ -22,7 +17,7 @@ def rms(x,y,labels= [] , round = True):
         ),4 )
 
 
-dir  = "data"
+dir  = "../data"
 files = [dir+"/"+file for file in os.listdir(dir) if file[-4:] != "json" and not os.path.isdir(dir+"/"+file)]
 
 

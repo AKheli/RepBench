@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 
-from Paper1.IMR import *
-import Paper1.IMR as IMR
+from IMR.IMR import *
+import IMR.IMR as IMR
 
-data = pd.read_csv("ild3k.data",names = ["index","x","y_0", "truth" , "label"   ],header = None)
+data = pd.read_csv("ild3k.data", names = ["index", "x", "y_0", "truth" , "label"], header = None)
 print(data)
 
 x = np.array(data["x"])
@@ -15,7 +15,7 @@ y_0 = np.array(data["y_0"])
 result = imr2(x,y_0,labels,tau=0.2,p=3)
 IMR.plot(x,result,truth,labels = labels)
 
-java_result = np.array(pd.read_csv("myfile.csv",header = None))[:,0]
+java_result = np.array(pd.read_csv("myfile.csv", header = None))[:, 0]
 
 print( sum(result-java_result))
 

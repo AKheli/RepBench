@@ -4,18 +4,18 @@ import scipy
 import pandas as pd
 
 
-class plotter:
+class Plotter:
 
     def get_indexes(self):
-        return self.indexes or (range(len(self.truth)) if self.truth else range(len(self.injected)))
+        return  np.array(self.indexes)  if len(self.indexes) == len(self.injected) else np.arange(len(self.injected))
 
-    def __init__(self, injected=[], truth=[], labels=[], indexes=None, title=""):
+    def __init__(self, injected=[], truth=[], labels=[], indexes=[], title=""):
         self.truth = list(truth)
         self.injected = injected
         self.indexes = indexes
         self.labels = labels
         self.lines = {}
-        self.markers = ["s", "P", "+", "<", ">", "8", "p"]
+        self.markers = ["s", "P", "+", "<", ">", "8", "p"]*10
         self.colors = ["blue", "green", "yellow", "orange"]
         self.dots = [(3, 3), (3, 1), (3, 3, 1, 3), (3, 1, 1, 1), (3, 3, 1, 1, 3)]
         self.title = title
@@ -29,6 +29,7 @@ class plotter:
             color = self.color_map[type]
 
         d = sum(1 for x in self.lines.values() if x["type"] == type)
+        print(d)
         self.lines[name] = {"values": values, "type": type, "linestyle": (0, self.dots[d]), "color": color, "lw": lw}
 
     def show(self):
@@ -36,11 +37,13 @@ class plotter:
 
     def get_plot(self):
         indexes = np.array(self.get_indexes())
-        print(indexes)
-        print(self.labels)
-        print(self.truth)
-        plt.plot(indexes[self.labels], np.array(self.truth)[self.labels], 'o', mfc='none', label="labels", markersize=8,
-                 color="blue")
+        print(self.labels ,"aaa")
+        print(indexes, "bbbb")
+        print("aaaaaaaaa" , indexes[self.labels])
+
+        if(len(self.labels) > 2):
+            plt.plot(indexes[self.labels], np.array(self.truth)[self.labels], 'o', mfc='none', label="labels", markersize=8,
+                     color="blue")
 
         for key, value in self.lines.items():
             ls = value["linestyle"]
@@ -82,7 +85,7 @@ class plotter:
 
 
 
-        plt.legend(mode="expand", bbox_to_anchor=(1.01, 0.5, 0.1, 0.5), loc='upper right', borderaxespad=0.)
+        plt.legend() #mode="expand", bbox_to_anchor=(1.01, 0.5, 0.1, 0.5), loc='upper right', borderaxespad=0.)
 
 
         return plt
