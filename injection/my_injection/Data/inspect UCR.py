@@ -11,7 +11,7 @@ injector = Anomalygenerator(np.array(data))
 injector.add_distortion(length=100 , factor=2)
 injector.plot()
 data = injector.get_injected_series()
-#plt.plot(data)
+#plt.plot(Data)
 plt.plot(range(len(data))[-300+4711:4809+300] , data[-300+4711:4809+300] )
 plt.plot(range(len(data))[4711:4809] , data[4711:4809] )
 

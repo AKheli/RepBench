@@ -18,5 +18,5 @@ args = [
 compound_anomaly = CompoundAnomaly(template, *args)
 compound_anomaly.plot()
 
-# Insert generated anomaly into time series data
+# Insert generated anomaly into time series Data
 augmented_timeseries = compound_anomaly.insert(template, index=None)

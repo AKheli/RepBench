@@ -6,7 +6,7 @@ import numpy as no
 from Injector import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-data","-d" ,nargs=1, type=str ,  required=True)
+parser.add_argument("-Data","-d" ,nargs=1, type=str ,  required=True)
 parser.add_argument('-sep',nargs=1, default=[','])
 parser.add_argument('-datacol',"-col" , nargs=1, default=[0] ,type=int )
 
@@ -26,7 +26,7 @@ print("seeeeeeeeeeeep" ,args.sep)
 
 data = pd.read_csv(args.data[0], sep=args.sep[0] , header = None)
 header = None
-#check if first data col has string
+#check if first Data col has string
 for i in data.iloc[0]:
     if isinstance(i, str):
         header = 0

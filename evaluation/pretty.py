@@ -3,8 +3,8 @@ import os
 import pandas as pd
 import numpy as np
 import json
-import IMR.IMR as IMR
-from Screen.Local import screen
+from repair_algos.IMR import IMR as IMR
+from repair_algos.Screen.Local import screen
 
 from PyPDF2 import PdfFileMerger
 
@@ -17,7 +17,7 @@ def rms(x,y,labels= [] , round = True):
         ),4 )
 
 
-dir  = "../data"
+dir  = "../Data"
 files = [dir+"/"+file for file in os.listdir(dir) if file[-4:] != "json" and not os.path.isdir(dir+"/"+file)]
 
 
@@ -29,7 +29,7 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
         data = json.load(f)
         print(data)
 
-    #labels = [0, 1,2]  + [ anom["index_range"][0]  for anom in data.values()]+[ anom["index_range"][1]  for anom in data.values()]+[ anom["index_range"][2]  for anom in data.values()]
+    #labels = [0, 1,2]  + [ anom["index_range"][0]  for anom in Data.values()]+[ anom["index_range"][1]  for anom in Data.values()]+[ anom["index_range"][2]  for anom in Data.values()]
     #labels = np.concatenate((labels, np.random.randint(0, high=len(a["truth"]), size=15)), axis=None)
     labels = np.array([0, 1, 2, 5, 11])  # in the paper add +1
 
@@ -44,7 +44,7 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
     for p in [1,3]:
         a = a.copy()
         initial = y_0.copy()
-        repair = IMR.imr2(a["injected"], y_0.copy(), labels, p=p, tau=0.1,k=2000)
+        repair = IMR.imr2(a["injected"], y_0.copy(), labels, p=p, tau=0.1, k=2000)
         #assert sum(repair-IMR.imr(a["injected"], y_0.copy(), labels, p=p, tau=0.1,k=20000)) == 0
         plot1.add(values=repair, name=f"IMR({p})", type="imr")
         #RMS += f'RMS IMR({p}) = {rms(repair,np.array(a["truth"]),labels)} \n'
@@ -62,9 +62,9 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
     plt = plot1.plotsats()
 
     if plt is not None:
-        plt.savefig("pdfs/" +str(p)+ file.replace("/","") + ".pdf")
+        plt.savefig("tmp/" +str(p)+ file.replace("/","") + ".pdf")
         plt.close()
-        pdfs += ["pdfs/" +str(p)+ file.replace("/","") + ".pdf"]
+        pdfs += ["tmp/" +str(p)+ file.replace("/","") + ".pdf"]
 
         #IMR.IMRsave(a["index"],a["injected"],y_0,a["truth"],labels ,y_k,"p"+str(3)+file.replace(dir+"/",""))
 
@@ -72,15 +72,15 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 
 #
 #
-# ### intel test data
+# ### intel test Data
 #
 #
-# data = pd.read_csv("data/intel/ild3k.data",names = ["index","injected","y_0", "truth" , "label"],header = None)
+# Data = pd.read_csv("Data/intel/ild3k.Data",names = ["index","injected","y_0", "truth" , "label"],header = None)
 #
-# x = np.array(data["injected"])
-# truth = np.array(data["truth"])
-# labels = np.arange(len(x))[data["label"]]
-# y_0 = np.array(data["y_0"])
+# x = np.array(Data["injected"])
+# truth = np.array(Data["truth"])
+# labels = np.arange(len(x))[Data["label"]]
+# y_0 = np.array(Data["y_0"])
 #
 # algos = {}
 # for tau in [0.1,0.2]:
@@ -92,7 +92,7 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 #
 #
 # s = 1
-# repair_screen = screen(np.array([data["index"], x.copy()]).T, T=1, SMIN=-s, SMAX=s)
+# repair_screen = screen(np.array([Data["index"], x.copy()]).T, T=1, SMIN=-s, SMAX=s)
 # algos[f'SCREEN({s}) {rms(repair_screen, truth)}'] = repair_screen
 #
 # y_0 = x.copy()
@@ -105,9 +105,9 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 #
 #
 # if plt is not None:
-#     plt.savefig("pdfs/" +" "+ ".pdf")
+#     plt.savefig("tmp/" +" "+ ".pdf")
 #     plt.close()
-#     pdfs += ["pdfs/" + " " + ".pdf"]
+#     tmp += ["tmp/" + " " + ".pdf"]
 #
 # print("original rms" , rms(y_0,truth, labels))
 # print("rms" , rms(repair,truth, labels))
@@ -119,7 +119,7 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 # result = IMR.imr2(x,y_0,labels,tau=0.2,p=1)
 # print("rms" , rms(result,truth, labels))
 #
-# labels2 = np.arange(500)[data["label"][1500:2000]]
+# labels2 = np.arange(500)[Data["label"][1500:2000]]
 # #plt = IMR.plot(x[1500:2000],result[1500:2000],truth[1500:2000],labels = labels,index= np.arange(1500,2000), show = False)
 #
 # plt = IMR.plot(x,algos, truth, "intel lab example ", labels2, show=False,
@@ -127,9 +127,9 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 #
 # if plt is not None:
 #     plt.xlim([1500,2000])
-#     plt.savefig("pdfs/" +" 1"+ ".pdf")
+#     plt.savefig("tmp/" +" 1"+ ".pdf")
 #     plt.close()
-#     pdfs += ["pdfs/" + " 1" + ".pdf"]
+#     tmp += ["tmp/" + " 1" + ".pdf"]
 #
 #
 # result = IMR.imr2(x.copy(),y_0,labels,tau=0.1,p=3,k=20000)
@@ -151,10 +151,10 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 #     a = pd.read_csv(file, names=["index", "truth", "injected", "class"], header=0)
 #
 #     with open(file.split(".")[0] + ".json") as f:
-#         data = json.load(f)
-#         print(data)
+#         Data = json.load(f)
+#         print(Data)
 #
-#     labels = [0, 1,2]  #+[ anom["index_range"][0]  for anom in data.values()]+[ anom["index_range"][1]  for anom in data.values()]+[ anom["index_range"][2]  for anom in data.values()]
+#     labels = [0, 1,2]  #+[ anom["index_range"][0]  for anom in Data.values()]+[ anom["index_range"][1]  for anom in Data.values()]+[ anom["index_range"][2]  for anom in Data.values()]
 #     labels = np.concatenate((labels, np.random.randint(0, high=len(a["truth"]), size= int(len(a["index"])/5))), axis=None)
 #     #labels = np.array([0, 1, 2, 5, 11])  # in the paper add +1
 #
@@ -186,9 +186,9 @@ for file in [dir+folder+"/"+file for file in os.listdir(dir+"/"+folder) if file[
 #     plt  = plotter(injected=a["injected"] , )
 #     if plt is not None:
 #         name = random.randint(0,100000)
-#         plt.savefig("pdfs/" +str(name)+ file.replace("/","") + ".pdf")
+#         plt.savefig("tmp/" +str(name)+ file.replace("/","") + ".pdf")
 #         plt.close()
-#         pdfs += ["pdfs/" +str(name)+ file.replace("/","") + ".pdf"]
+#         tmp += ["tmp/" +str(name)+ file.replace("/","") + ".pdf"]
 #
 #         #IMR.IMRsave(a["index"],a["injected"],y_0,a["truth"],labels ,y_k,"p"+str(3)+file.replace(dir+"/",""))
 

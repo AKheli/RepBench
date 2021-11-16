@@ -48,7 +48,7 @@ class MultivariateDataGenerator:
     def generate_baseline(self, correlation_min=0.9, correlation_max=0.7, initial_value_min=INITIAL_VALUE_MIN,
                           initial_value_max=INITIAL_VALUE_MAX):
         """
-        Generate the multivariate data frame
+        Generate the multivariate Data frame
         :param correlation_min: how much the k columns should at least correlate with the first one
         :param correlation_max: how much the n-k-1 columns should at max correlate with the first one
         :param initial_value_min: minimal possible value of the first entry of the time series
