@@ -1,14 +1,9 @@
-import os
-
 import numpy as np
 
-from IMR import IMR
-from Screen.Local import screen
-from evaluation.file_manipulation import read_params, search_json
-from evaluation.plotter import Plotter
-import csv
-
-
+from repair_algos.IMR import IMR
+from repair_algos.Screen.Local import screen
+from res.file_manipulation import read_params
+from res.plotter import Plotter
 
 
 def evaluate_parameter_file(injected, truth , filename, index = [] , labels = [] , plot = True, errors =  ["rmse","pearson"]):
@@ -27,7 +22,7 @@ def evaluate_from_df(df , paramfile = None ,algos = {} , labels = []   , errors 
 
 def evaluate( injected , truth ,algos = {}  , index = [] , labels= [] , plot = True , errors = ["rmse","pearson"] ):
     """
-    Running multiple algorithms and repair evaluations on the same data
+    Running multiple algorithms and repair evaluations on the same Data
     :param injected:
     :param truth:
     :param algos: list of dicts [  {"name" : "imr" , "parameters" : { "param1" : int , "param2"  : .. }  ,... ]
@@ -44,7 +39,7 @@ def evaluate( injected , truth ,algos = {}  , index = [] , labels= [] , plot = T
             if alg["name"] == "imr":
                 y_0 = observed.copy()
                 y_0[labels] = truth[labels]
-                imr_results = IMR.imr2(observed, y_0, labels,**alg["parameters"] )
+                imr_results = IMR.imr2(observed, y_0, labels, **alg["parameters"])
 
 
                 alg["repair"] = imr_results["repair"]

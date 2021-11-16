@@ -1,4 +1,4 @@
-from Screen.Local import screen
+from repair_algos.Screen.Local import screen
 from injection.agots.multivariate_generators.multivariate_variance_outlier_generator import \
     MultivariateVarianceOutlierGenerator
 
@@ -12,7 +12,7 @@ ser = pd.Series(np.arange(100)+10)
 x = gen.add_outliers(ser)
 
 
-datafile = "../../../datasets/stock/stock10k.data"
+datafile = "../../../datasets/stock/stock10k.Data"
 
 def RMS( x, y): return np.mean(np.square(x - y[:len(x)])) ** (1 / 2)
 
@@ -22,13 +22,13 @@ def accuracy(truth,dirty):
     return a
 
 
-series = (pd.read_csv(datafile, names=("timestamp", "data", "truth")))
+series = (pd.read_csv(datafile, names=("timestamp", "Data", "truth")))
 
 
 series  = series.iloc[:200]
-series["data"] = series["truth"].copy()
+series["Data"] = series["truth"].copy()
 
-onlydataseries = series["data"]
+onlydataseries = series["Data"]
 
 
 print(series)
@@ -40,14 +40,14 @@ gen = MultivariateVarianceOutlierGenerator([(3,50), (100,110) ,( 140,145)] +  [ 
 
 x = gen.add_outliers(onlydataseries)
 
-series["data"] = series["data"] + x
+series["Data"] = series["Data"] + x
 
-rms_dirty = RMS(series["truth"], series["data"])
+rms_dirty = RMS(series["truth"], series["Data"])
 
 repair = screen(series.copy().to_numpy())
 rms = RMS(series["truth"],repair)
 
 plt.plot(series["truth"] ,color = 'green' , alpha=0.5)
-plt.plot(series["data"])
+plt.plot(series["Data"])
 plt.plot(repair[:-1])
 

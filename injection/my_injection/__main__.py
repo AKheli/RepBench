@@ -8,7 +8,7 @@ from Injector import *
 outputfile = None
 
 
-print("Enter data file path")
+print("Enter Data file path")
 print("example Data/SAG.csv")
 
 while(True):

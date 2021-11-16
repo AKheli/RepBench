@@ -1,16 +1,13 @@
 import os
-from errno import EACCES
 
 import pandas as pd
 import numpy as np
-import json
-import IMR.IMR as IMR
-from Screen.Local import screen
-import matplotlib.pyplot as plt
+from repair_algos.IMR import IMR as IMR
+from repair_algos.Screen.Local import screen
 
 from PyPDF2 import PdfFileMerger
 
-dir  = "../data"
+dir  = "../Data"
 files = [dir+"/"+file for file in os.listdir(dir) if file[-4:] != "json" and not os.path.isdir(dir+"/"+file)]
 
 
@@ -23,12 +20,12 @@ for file in [dir+"/"+folder+"/"+file for file in os.listdir(dir+"/"+folder) if f
 
         repair_screen = screen(np.array([a["index"], a["injected"]]).T, T=2, SMIN=-s, SMAX=s)
 
-        plt = IMR.plot(a["injected"],repair_screen,a["truth"],file.replace("/"," ")+" s="+str(s) ,show=False)
+        plt = IMR.plot(a["injected"], repair_screen, a["truth"], file.replace("/", " ") + " s=" + str(s), show=False)
 
         if plt is not None:
-            plt.savefig("pdfs/" +str(s)+ file.replace("/","") + ".pdf")
+            plt.savefig("tmp/" +str(s)+ file.replace("/","") + ".pdf")
             plt.close()
-            pdfs += ["pdfs/" +str(s)+ file.replace("/","") + ".pdf"]
+            pdfs += ["tmp/" +str(s)+ file.replace("/","") + ".pdf"]
 
         #IMR.IMRsave(a["index"],a["injected"],y_0,a["truth"],labels ,y_k,"p"+str(3)+file.replace(dir+"/",""))
 

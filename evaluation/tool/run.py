@@ -1,22 +1,21 @@
 import argparse
 import os
-import pandas as pd
 import numpy as np
 import sys
 #problems :
 #labels , before anomaly yes no?
-#-> either data contains an entry labels or label will be randomly generated (but how)
+#-> either Data contains an entry labels or label will be randomly generated (but how)
 #idea folder or subfolder
 #if no parameter
 
 #
-#-data file1,file2,folder
+#-Data file1,file2,folder
 
 
 sys.path.append('../../')
 
-from evaluation.eval_methods import evaluate, evaluate_from_df
-from evaluation.file_manipulation import files_from_comma_string, get_df_from_file, search_json, anom_dict_from_json
+from evaluation.eval_methods import evaluate_from_df
+from res.file_manipulation import files_from_comma_string, get_df_from_file, anom_dict_from_json
 
 os.chdir("/".join(os.getcwd().split("/")[:-2]))
 

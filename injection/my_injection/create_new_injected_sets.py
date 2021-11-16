@@ -9,7 +9,7 @@ data = None
 injector = None
 outputfile = None
 
-print("select and store data file into variable datafile and run loadfromfile")
+print("select and store Data file into variable datafile and run loadfromfile")
 
 def loadfromfile():
     global data
@@ -25,7 +25,7 @@ def loadfromfile():
     else:
         data = pd.read_json(datafile)
 
-    print("select data as a single data row and run generate_injector")
+    print("select Data as a single Data row and run generate_injector")
     print(data)
     outputfile = data.copy
 
@@ -34,7 +34,7 @@ def generate_injector():
     global injector
     data = np.array(data)
     injector = Anomalygenerator(data)
-    print("start injecting with the injector , use injector.plot() to vizalize data")
+    print("start injecting with the injector , use injector.plot() to vizalize Data")
 
 
 def save():

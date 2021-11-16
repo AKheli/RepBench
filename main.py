@@ -1,24 +1,19 @@
 import argparse
-import os
 
 
-# print("workindg directory", os.getcwd())
-# os.chdir("/home/ig/Desktop/MA/MA")
-# print("workindg directory", os.getcwd())
 
-import pandas as pd
 import numpy as np
 
 #problems :
 #labels , before anomaly yes no?
-#-> either data contains an entry labels or label will be randomly generated (but how)
+#-> either Data contains an entry labels or label will be randomly generated (but how)
 #idea folder or subfolder
 #if no parameter
 
 #
-#-data file1,file2,folder
-from evaluation.eval_methods import evaluate, evaluate_from_df
-from evaluation.file_manipulation import files_from_comma_string, get_df_from_file, search_json, anom_dict_from_json
+#-Data file1,file2,folder
+from evaluation.eval_methods import evaluate_from_df
+from res.file_manipulation import files_from_comma_string, get_df_from_file, anom_dict_from_json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-data","-d" ,nargs=1, type=str , default="")
@@ -32,10 +27,11 @@ parser.add_argument('-withoutlegend', action='store_false')
 args = parser.parse_args()
 
 files = args.data[0]
-print("files" ,files)
-print(files_from_comma_string(files))
+print("files" , files_from_comma_string(files))
 for file in files_from_comma_string(files):
+    print("trying to init dataframe")
     df = get_df_from_file(file)
+    print("df" , df)
     try:
         data = anom_dict_from_json(file)
         labels = [0, 1, 2]

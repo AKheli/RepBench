@@ -19,7 +19,7 @@ def inject_amplitude_shift(data, index_range, factor=8, timedifferences=None, di
     minimum, maximum = index_range[0], index_range[-1]
 
     local_std = data[np.arange(max(0, minimum + stdrange[0]), min(maximum + stdrange[1], len(data) - 1))].std()
-    # print( data[index_range], local_std , factor, np.random.choice(directions))
+    # print( Data[index_range], local_std , factor, np.random.choice(directions))
     data[index_range] += np.random.choice(directions) * factor * local_std
     return data, {"type" :"amplitude_shift" ,"factor": int(factor), "index_range": [int(index) for index in index_range], "std_range": stdrange}
 
@@ -32,42 +32,42 @@ def inject_distortion(data, index_range, factor=8, timedifferences=None):
     return data, {"type" : "distortion" , "factor": int(factor), "index_range": [int(index) for index in index_range]}
 
 
-# def single_anomaly_dictionary(data, single_anomyl_dict):
+# def single_anomaly_dictionary(Data, single_anomyl_dict):
 #     anomaly_type = single_anomyl_dict.pop("anomaly_type")
 #
 #     if anomaly_type == "amplitude_shift":
-#         return inject_amplitude_shift(data, **single_anomyl_dict)
+#         return inject_amplitude_shift(Data, **single_anomyl_dict)
 #
 #     elif anomaly_type == "distortion":
-#         return inject_disortion(data, **single_anomyl_dict)
+#         return inject_disortion(Data, **single_anomyl_dict)
 #
 #     elif anomaly_type == "growth_change":
-#         return inject_growth_change(data, **single_anomyl_dict)
+#         return inject_growth_change(Data, **single_anomyl_dict)
 #
 #     else:
 #         print("no valid anomaly type recognized, used: amplitude_shift, distortion or growth_change")
 
 
-# def inject(data, anomaly_dict):
+# def inject(Data, anomaly_dict):
 #     """
 #
-#     :param data: a data vector
+#     :param Data: a Data vector
 #     :param anomaly_dict:e.g  {"name1" : { "anomaly_type" : "distortion" , "factor" : 8 } , name2 { ...}
-#     :return: new data vector with all the inserted anomalies , list of all the anomalies
+#     :return: new Data vector with all the inserted anomalies , list of all the anomalies
 #     """
 #     # check if a single anomaly is given
 #     anomaly_type = anomaly_dict.pop("anomaly_type", None)
 #
 #     if anomaly_type is not None:
-#         d, i = single_anomaly_dictionary(data, anomaly_dict)
+#         d, i = single_anomaly_dictionary(Data, anomaly_dict)
 #         return d, [i]
 #
 #     anom_infos = []
-#     anomaly_data = data.copy()
+#     anomaly_data = Data.copy()
 #     for anomaly in anomaly_dict.keys():
-#         single_anomaly_data, anomaly_info = single_anomaly_dictionary(data, anomaly_dict[anomaly])
+#         single_anomaly_data, anomaly_info = single_anomaly_dictionary(Data, anomaly_dict[anomaly])
 #         anom_infos.append(anomaly_info)
-#         anomaly_data += single_anomaly_data - data
+#         anomaly_data += single_anomaly_data - Data
 #
 #     return anomaly_data, anom_infos
 

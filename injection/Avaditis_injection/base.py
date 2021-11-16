@@ -7,7 +7,7 @@ from myparameters import *
 
 
 def get_datasets_from_json(dataset_series):
-    df_raw = pd.json_normalize(dataset_series['series'], record_path=['data'], meta=['id', 'type'])
+    df_raw = pd.json_normalize(dataset_series['series'], record_path=['Data'], meta=['id', 'type'])
 
     # transform raw df into dataset df and class df
     df = df_raw.pivot(index='x', columns='id', values='y').rename_axis('time', axis=0).rename_axis('ts_name', axis=1)

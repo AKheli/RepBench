@@ -32,17 +32,17 @@ plt.show()
 #
 #
 # start = time.time()
-# data = pd.read_csv("evaluation/data/intel/ild3k.data",names = ["index","injected","y_0", "truth" , "label"],header = None)
+# Data = pd.read_csv("evaluation/Data/intel/ild3k.Data",names = ["index","injected","y_0", "truth" , "label"],header = None)
 #
-# x = np.array(data["injected"])
-# truth = np.array(data["truth"])
-# labels = np.arange(len(x))[data["label"]]
-# y_0 = np.array(data["y_0"])
+# x = np.array(Data["injected"])
+# truth = np.array(Data["truth"])
+# labels = np.arange(len(x))[Data["label"]]
+# y_0 = np.array(Data["y_0"])
 #
 # algos = {}
 #
 # for i in range(100):
-#     data = data.copy()
+#     Data = Data.copy()
 #     initial = y_0.copy()
 #     repair = IMR.imr2(x , y_0.copy(), labels, p=3, tau=0.1, k=10000)
 #     #algos[f'IMR(3,{tau}) {rms(repair, truth, labels)}'] = repair
