@@ -1,4 +1,4 @@
-from repair_algos.IMR import IMR as IMR
+from Repair.repair_algos.IMR import IMR as IMR
 
 data = pd.read_csv("ild3k.Data", names = ["index", "x", "y_0", "truth" , "label"], header = None)
 print(data)

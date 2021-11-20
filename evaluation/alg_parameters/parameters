@@ -1,9 +1,0 @@
-#imr p tau maxitnumber
-imr 1 0.1  100000
-imr 2 0.1  100000
-imr 3 0.1  100000
-imr 5 0.1  100000
-#screen t s
-screen 1 2
-screen 2 1
-screen 1 1

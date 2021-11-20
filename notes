@@ -1,0 +1,9 @@
+#For robust pca add libraries to the init file
+# only allow valid data formats in data folder and add a translate commant (that handles train set ...)
+# -> add train set range to injection parameter and output , controled anomalies for length reduction?
+# for each datafile, 2 files 1 with anomalies 1 with the truth they need to have the same first line
+#scenario for the injection to e.g where and what anomalies, then either choose -t  or the -scenario
+
+?Add a split train to injection? IF there is no train set split original set?
+? what to do with rpca on single time series? split data set add a straight line , line with the slope
+? for ts lenght variation revary anomalies? (reduce number of anomalies or not )
