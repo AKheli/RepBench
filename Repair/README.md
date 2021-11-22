@@ -9,8 +9,6 @@
     $ sh install.sh
 ```
 
-
-
 ```bash
     $ cd Repair
     $ python3 repair.py [arguments]

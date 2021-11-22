@@ -306,10 +306,10 @@
     </configuration>
     <list>
       <item itemvalue="Python.extract_values" />
-      <item itemvalue="Python.param_parser" />
-      <item itemvalue="Python.run" />
       <item itemvalue="Python.scen" />
       <item itemvalue="Python.transform" />
+      <item itemvalue="Python.run" />
+      <item itemvalue="Python.param_parser" />
     </list>
     <recent_temporary>
       <list>
