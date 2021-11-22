@@ -1,8 +1,6 @@
 # Timeseries Repair evaluation Tool
 
 ## Execution
-
-
 ## Build
 
 - Build the Testing Framework using the installation script located in the root folder 
@@ -15,7 +13,7 @@
 
 ```bash
     $ cd Repair
-    $ python3 TestingFramework.exe [arguments]
+    $ python3 repair.py [arguments]
 ```
 
 ### Arguments
@@ -34,7 +32,7 @@
 
 
 ### Examples
-1. run imr onr the YAHOO dataset
+1. run imr on the YAHOO dataset
 ```bash
 
 python3 repair.py  -d YAHOO -algo imr
@@ -46,19 +44,8 @@ python3 repair.py  -d YAHOO -algo imr
 ```
 
 3. Multiple Parametrization run using the -algox command 
-  on the data file multpile algos: \
-! imr p tau k \
-1 0.1  100000 \
-2 0.1  100000 \
-3 0.1  100000 \
-5 0.1  100000 \
-\
-! screen t s \
-1 2 \
-2 1 \
-1 1 \
+ using the algorithms defined in the file multpile_algos: \
 
-```
 ```bash
 python3 repair.py  -d YAHOO,Humidity -algox multiple_algos
 ```

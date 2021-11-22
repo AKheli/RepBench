@@ -15,9 +15,7 @@ parser.add_argument('-algo',   type = str,  default="")
 parser.add_argument('-algox', type = str )
 
 
-parser.add_argument('-save',  nargs="*", type=str , default=True )
-parser.add_argument('-plotoff', action='store_false')
-parser.add_argument('-withoutlegend', action='store_false')
+
 
 args = parser.parse_args()
 
@@ -67,4 +65,4 @@ for file in datafiles:
 saver.save()
 
 
-    #
+
