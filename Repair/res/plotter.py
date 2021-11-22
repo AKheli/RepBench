@@ -30,7 +30,6 @@ class Plotter:
             color = self.color_map[type]
 
         d = sum(1 for x in self.lines.values() if x["type"] == type)
-        print(d)
         self.lines[name] = {"values": values, "type": type, "linestyle": (0, self.dots[d]), "color": color, "lw": lw}
 
     def show(self):
@@ -38,23 +37,21 @@ class Plotter:
 
     def get_plot(self):
         indexes = np.array(self.get_indexes())
-        print(self.labels ,"aaa")
-        print(indexes, "bbbb")
-        print("aaaaaaaaa" , indexes[self.labels])
+
 
         if(len(self.labels) > 2):
-            plt.plot(indexes[self.labels], np.array(self.truth)[self.labels], 'o', mfc='none', label="labels", markersize=8,
+            plt.plot(indexes[self.labels], np.array(self.truth)[self.labels], 'o', mfc='none', label="labels",
                      color="blue")
 
         for key, value in self.lines.items():
             ls = value["linestyle"]
             color = value["color"]
 
-            plt.plot(indexes, value["values"], label=key, color=color, lw=2,
-                     linestyle=ls, marker=self.markers.pop(0), mfc='none')
+            plt.plot(indexes, value["values"], label=key, color=color,
+                     linestyle=ls) #marker=self.markers.pop(0), mfc='none')
 
-        plt.plot(indexes, self.injected, label="anomaly", color="red", lw=2, ls=(0, (1, 1)))
-        plt.plot(indexes, self.truth, label="truth", color="black", lw=3)
+        plt.plot(indexes, self.injected, label="anomaly", color="red", ls=(0, (1, 1)))
+        plt.plot(indexes, self.truth, label="truth", color="black")
         plt.title(self.title)
 
         plt.legend()
@@ -68,7 +65,6 @@ class Plotter:
 
         values = list(self.lines.values())
         algos = list(self.lines.keys())
-        print(list(algos))
 
         data["algos"] = ["injected"] + algos
         for i in eval:
@@ -79,7 +75,6 @@ class Plotter:
                 data["pearson"] = [ round(a[0],4) for a in   [pearson(self.truth, self.injected)] +  [pearson(self.truth, d["values"]) for d in values] ]
 
         lenghts = [max(x)*10 for x in  [[ len(str(entry)) for entry in v ]  for v in  data.values()]]
-        print(lenghts)
         df = pd.DataFrame(data=data)
         table = plt.table(bbox=(0.13, -0.6, 0.2 * len(data.keys()), 0.5), cellText=df.values, colLabels=df.columns, cellLoc="left",
                   loc='center', colWidths=lenghts)

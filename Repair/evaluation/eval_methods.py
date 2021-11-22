@@ -25,7 +25,7 @@ def evaluate( injected , truth ,algos = {}  , index = [] , labels= [] , plot = T
     Running multiple algorithms and repair evaluations on the same Data
     :param injected:
     :param truth:
-    :param algos: list of dicts [  {"name" : "imr" , "parameters" : { "param1" : int , "param2"  : .. }  ,... ]
+    :param algos: list of dicts [  {"name" : "imr" , "multiple_algos" : { "param1" : int , "param2"  : .. }  ,... ]
     :param labels:
     :param plot:
     :param errors:
@@ -39,13 +39,13 @@ def evaluate( injected , truth ,algos = {}  , index = [] , labels= [] , plot = T
             if alg["name"] == "imr":
                 y_0 = observed.copy()
                 y_0[labels] = truth[labels]
-                imr_results = IMR.imr2(observed, y_0, labels, **alg["parameters"])
+                imr_results = IMR.imr2(observed, y_0, labels, **alg["multiple_algos"])
 
 
                 alg["repair"] = imr_results["repair"]
                 alg["title"] = f'IMR{imr_results["p"],imr_results["tau"]}'
             if alg["name"] == "screen":
-                screen_result = screen(np.array([index, observed]).T, **alg["parameters"])
+                screen_result = screen(np.array([index, observed]).T, **alg["multiple_algos"])
                 alg["repair"] = screen_result["repair"]
                 alg["title"] = f'SCREEN{screen_result["T"],screen_result["smax"]}'
 

@@ -4,13 +4,7 @@ import argparse
 
 import numpy as np
 
-#problems :
-#labels , before anomaly yes no?
-#-> either Data contains an entry labels or label will be randomly generated (but how)
-#idea folder or subfolder
-#if no parameter
 
-#
 #-Data file1,file2,folder
 from Repair.evaluation import evaluate_from_df
 from Repair.res import files_from_comma_string, get_df_from_file, anom_dict_from_json
@@ -20,7 +14,7 @@ parser.add_argument("-data","-d" ,nargs=1, type=str , default="")
 parser.add_argument('-algo',   nargs=1, default=[])
 parser.add_argument('-algox',nargs=1, default=[])
 
-parser.add_argument('-save',  nargs="*", type=str , default=False )
+parser.add_argument('-save',  nargs="*", type=str , default=True )
 parser.add_argument('-plotoff', action='store_false')
 parser.add_argument('-withoutlegend', action='store_false')
 
@@ -45,7 +39,7 @@ for file in files_from_comma_string(files):
         pass
 
     for i in args.algo:
-        algos = [{"name": alg, "parameters": {}} for alg in i.split(",")]
+        algos = [{"name": alg, "multiple_algos": {}} for alg in i.split(",")]
 
         eval = evaluate_from_df(df, algos = algos , labels= labels)
         print("eval" ,eval)

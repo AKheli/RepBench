@@ -28,9 +28,9 @@ for file in files:
     labels = np.concatenate((labels, np.random.randint(0, high=len(a["truth"]), size=int(len(a["truth"])/20))), axis=None)
 
     #labels = np.array([0, 1, 2, 5, 11])  # in the paper add +1
-    # algos = [{ "name" : "imr" , "parameters" :{} } ,{ "name" : "imr" , "parameters" :{"tau" : 0.2 ,"p" : 2} } ,
-    #          {"name": "imr", "parameters": {"tau": 0.2, "p": 3}},
-    #          {"name": "screen", "parameters": {"T": 2}}
+    # algos = [{ "name" : "imr" , "multiple_algos" :{} } ,{ "name" : "imr" , "multiple_algos" :{"tau" : 0.2 ,"p" : 2} } ,
+    #          {"name": "imr", "multiple_algos": {"tau": 0.2, "p": 3}},
+    #          {"name": "screen", "multiple_algos": {"T": 2}}
     #          ]
     #evaluate(a["injected"],a["truth"],labels=labels, algos=algos)
 

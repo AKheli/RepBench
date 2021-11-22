@@ -1,0 +1,207 @@
+{
+ "train": 0,
+ "0": {
+  "1": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "2": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    492,
+    493,
+    494,
+    495,
+    496,
+    497,
+    498,
+    499,
+    500,
+    501
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "3": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "4": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "5": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    743,
+    744,
+    745,
+    746,
+    747,
+    748,
+    749,
+    750,
+    751,
+    752
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  }
+ },
+ "1": {
+  "1": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "2": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "3": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "4": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    565,
+    566,
+    567,
+    568,
+    569,
+    570,
+    571,
+    572,
+    573,
+    574
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  },
+  "5": {
+   "type": "amplitude_shift",
+   "factor": 4,
+   "index_range": [
+    435,
+    436,
+    437,
+    438,
+    439,
+    440,
+    441,
+    442,
+    443,
+    444
+   ],
+   "std_range": [
+    -10,
+    10
+   ]
+  }
+ }
+}

@@ -48,7 +48,7 @@ for file in files_from_comma_string(files):
         pass
 
     for i in args.algo:
-        algos = [{"name": alg, "parameters": {}} for alg in i.split(",")]
+        algos = [{"name": alg, "multiple_algos": {}} for alg in i.split(",")]
 
         eval = evaluate_from_df(df, algos = algos , labels= labels)
         print("eval" ,eval)

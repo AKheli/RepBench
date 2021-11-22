@@ -4,29 +4,29 @@
 """
 import numpy as np
 
-from Repair.repair_algos.IMR.IMR import imr2
-from Repair.repair_algos.Screen.Local import screen
+from repair_algos.IMR.IMR import imr2, imr
+from repair_algos.Screen.Local import screen
+from repair_algos.aglo_helpers import generate_labels
 
-
-def IMR_repair(x, labeled_values, label_indexes, tau=0.1, p=1, k=3):
+#todo handle only labeled values but not whole truth? then when should the rmse be done
+def IMR_repair(x, truth, tau=0.1, p=4, k=10000 , anomaly_info = None):
     x = np.array(x)
-    y_0 = x
-    if (len(labeled_values) == len(x)):
-        labeled_values = np.array(labeled_values)
-        y_0[label_indexes] = labeled_values[label_indexes]
-    else:
-        assert len(set(label_indexes)) == len(labeled_values) ,  "The labebeled_values have to be" \
-                                                                   "the full truth vector or math the labeled " \
-                                                                   "indexes in length"
-        y_0[label_indexes] = labeled_values
-    assert not np.isclose(x,y_0) , "x and y_0 initialization are to close for a repair"
-
-    return imr2(x, y_0, label_indexes, tau=tau, p=p, k=k)
+    truth = np.array(truth)
+    labels = generate_labels(x,0.1,anomaly_info)
+    y_0 = x.copy()
+    y_0[labels] = truth[labels]
+    assert not np.allclose(x,y_0) , "x and y_0 initialization are to close for a repair"
+    output = imr2(x, y_0, labels, tau=tau, p=p, k=k)
+    output["name"] = f"IMR({p},{tau})"
+    return output
 
 
 
-def SCREEN_repair(x, indexes=None, t=1, smin=-3, smax=3):
+
+def SCREEN_repair(x, indexes=None, t=1, s = 3):
     if indexes is None:
         indexes = np.arange(len(x))
 
-    return screen(np.array([indexes, x]).T, datasize=None, T=t, SMIN=smin, SMAX=smax)
+    output =  screen(np.array([indexes, x]).T, datasize=None, T=t, SMIN=-s, SMAX=s)
+    output["name"] = f"SCREEN({t},{s})"
+    return output

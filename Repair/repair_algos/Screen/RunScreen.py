@@ -41,8 +41,8 @@ def visualizeLocaLvsGlobal(datafile = datafile, evelfunction = RMS):
     plt.plot(results ,color = 'black')
     print(results)
 
-    #results = [ evalfun(  LPconstrainedAE(np.copy(dirty_copy[:a]), second = True)) for a in (np.arange(stop = 14,start=1)*1000)]
-    #plt.plot(results ,color = 'g')
+    #Results = [ evalfun(  LPconstrainedAE(np.copy(dirty_copy[:a]), second = True)) for a in (np.arange(stop = 14,start=1)*1000)]
+    #plt.plot(Results ,color = 'g')
 
 
     plt.axis([0, 12, 0, 5] )

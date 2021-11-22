@@ -140,7 +140,7 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
         for j in range(p):
             xMat[i,j] = z[p + i - j - 1]
 
-    for i in range(k):
+    for j in range(k):
         phi = ols(yvec,xMat)
         y_hat = xMat.dot(phi)
         #print("phi",phi)
@@ -159,7 +159,7 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
                 index = i
         #print(index)
         if index == -1:
-            print(f'terminated after {i} iterations')
+            print(f'terminated after {j} iterations')
             break
         #print(index)
         val = y_hat[index]
@@ -178,7 +178,7 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
             modify[i] =x[i]+ yvec[i-p]
     #print("AAAAA")
     #print("suum",sum(modify - imr2(x,y_k,labels,tau=tau,p=p,k=k)))
-    assert np.allclose(modify, imr2(x,y_k,labels,tau=tau,p=p,k=k))
+    #assert np.allclose(modify, imr2(x,y_k,labels,tau=tau,p=p,k=k))
     return modify
 
 

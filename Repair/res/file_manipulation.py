@@ -24,10 +24,10 @@ def read_params(filename):
             values = row[0].split()
             if values[0].lower() == "imr":
                 algos.append(
-                    {"name" : "imr" , "parameters":{ "p" : int(values[1]) , "tau" : float(values[2]) , "k" : int(values[3])}})
+                    {"name" : "imr" , "multiple_algos":{ "p" : int(values[1]) , "tau" : float(values[2]) , "k" : int(values[3])}})
             if values[0].lower() == "screen":
                 algos.append(
-                    {"name": "screen", "parameters": {"T": int(values[1]), "SMAX": float(values[2]), "SMIN": -float(values[2]),}})
+                    {"name": "screen", "multiple_algos": {"T": int(values[1]), "SMAX": float(values[2]), "SMIN": -float(values[2]),}})
         return algos
 
 
