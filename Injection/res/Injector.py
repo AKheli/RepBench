@@ -35,8 +35,6 @@ def inject_distortion(data, index_range, factor=8, timedifferences=None):
 
 def get_possible_indexes(anomaly_class_vector, length = 10, distance = 2, type=1 ):
     for i in np.arange(10000):
-        print(distance)
-        print(len(anomaly_class_vector) - length-distance)
         candidate = np.random.randint(distance, len(anomaly_class_vector) - length-distance)
         if np.sum(anomaly_class_vector[np.arange(candidate - distance, candidate + length+distance)]) == 0:
             # we found a range
