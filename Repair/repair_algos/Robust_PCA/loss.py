@@ -81,7 +81,7 @@ class HuberLoss(MLoss):
 
     def __call__(self, x):
         x_flt = float(x)
-        assert x_flt >= 0
+        # assert x_flt >= 0
         if x_flt <= self.delta:
             return (x_flt ** 2) / 2.
         else:
@@ -92,7 +92,7 @@ class HuberLoss(MLoss):
 
     def weight(self, x):
         x_flt = float(x)
-        assert x_flt >= 0
+        #assert x_flt >= 0
         if x_flt <= self.delta:
             return 1.
         else:

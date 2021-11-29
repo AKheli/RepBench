@@ -7,6 +7,7 @@ from matplotlib.pyplot import figure
 plt.rcParams["figure.figsize"] = (15,8)
 
 
+
 def inject_growth_change(data, index_range, factor=8, timedifferences=None, directions=[1, -1]):
     data = np.array(data, dtype=np.float64)
     slope = np.random.choice(directions) * factor * np.arange(len(index_range))
@@ -44,8 +45,10 @@ def get_possible_indexes(anomaly_class_vector, length = 10, distance = 2, type=1
     print("anomaly density seems already really high in this dataset")
 
 
+anomalies = {"amplitude_shift" : inject_amplitude_shift  , "distortion" :  inject_distortion , "groth_change"  :  inject_growth_change}
 
 class Anomalygenerator:
+    anomalies = anomalies
     def __init__(self, data , parameter_file = "Parameters"):
         self.original_data = data
         self.data = data.copy()

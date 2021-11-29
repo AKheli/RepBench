@@ -1,7 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import loss
-from m_est_rpca import MRobustPCA
+
+from Repair.repair_algos.Robust_PCA import loss
+from Repair.repair_algos.Robust_PCA.m_est_rpca import MRobustPCA
 import numpy as np
 
 def df_anomaly_instances(df_class):
@@ -68,7 +69,7 @@ def robust_pca_huber_loss(df, df_train ,  delta=1, n_components=2, maximize_scor
     X_train = train.drop('class', axis=1)
     X_test = valid.drop('class', axis=1)
 
-    # Dimensionality reduction with Robust PCA and Huber Loss Function
+    # Dimensionality reduction with Robust_PCA and Huber Loss Function
     huber_loss = loss.HuberLoss(delta=delta)
     M_rpca = MRobustPCA(n_components, huber_loss)
 

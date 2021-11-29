@@ -8,7 +8,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Injection.res.Injector import inject_amplitude_shift, inject_distortion, inject_growth_change
+from Injection.res.Injector import inject_amplitude_shift, inject_distortion, inject_growth_change, Anomalygenerator
 
 
 def get_index_range(data_size, length, occupied_indices=[], location="random"):
@@ -35,7 +35,9 @@ def get_index_range(data_size, length, occupied_indices=[], location="random"):
         assert False, "no more space for random anomaly found"
 
 
-def inject_equal_spaced(data, train=0, n=10, location="center", anomalies_per_block=1, anomalylength=10, anom_func = inject_amplitude_shift , blocks = "all" ):
+def inject_equal_spaced(data, train=0, n=10, location="center", anomalies_per_block=1, anomalylength=10, anom_type = "amplitude_shift" , blocks = "all" ):
+    assert anom_type in Anomalygenerator.anomalies.keys() , f"anomaly type {anom_type} not found , suppoeted are { Anomalygenerator.anomalies.keys()} else modify the injector file"
+    anom_func = Anomalygenerator.anomalies[anom_type]
     data = np.array(data, dtype=np.float64)
     data_copy = data.copy()
     l = len(data)
@@ -73,7 +75,7 @@ def inject_equal_spaced(data, train=0, n=10, location="center", anomalies_per_bl
 
 
 
-
-res, info = inject_equal_spaced(np.arange(1000), train=0.2, n=10, location="random", anomalies_per_block=3 , anom_func=inject_growth_change , blocks = [1,2,9])
-plt.plot(res)
-plt.show()
+#
+# res, info = inject_equal_spaced(np.arange(3000), train=0.2, n=30, location="center", anomalies_per_block=1 , anom_func=inject_amplitude_shift )
+# plt.plot(res)
+# plt.show()

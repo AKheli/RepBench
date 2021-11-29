@@ -7,11 +7,13 @@ from sklearn.utils.extmath import svd_flip
 from scipy.sparse import issparse
 from scipy import linalg
 import numpy as np
-
+import warnings
+#transforming
+warnings.simplefilter("ignore", UserWarning)
 
 class MRobustPCA(_BasePCA):
     """
-    An implementation of Robust PCA using M-estimator loss. A particular case with the Huber loss
+    An implementation of Robust_PCA using M-estimator loss. A particular case with the Huber loss
     function is described in the paper:
         B.T. Polyak, M.V. Khlebnikov: Principal Component Analysis: Robust Variants, 2017.
     Parameters
@@ -203,7 +205,8 @@ class MRobustPCA(_BasePCA):
         -------
         X_new : array-like, shape (n_samples, n_components)
         """
-        return super(MRobustPCA, self).transform(X)
+        a = super(MRobustPCA, self).transform(X)
+        return a
 
     def inverse_transform(self, X):
         """Transform data back to its original space.
