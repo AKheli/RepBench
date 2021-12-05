@@ -7,7 +7,7 @@ from Repair.repair_algos.Robust_PCA import loss
 from Repair.repair_algos.Robust_PCA.helpers import normalized_anomaly_scores
 from Repair.repair_algos.Robust_PCA.huber_loss_pca import get_train_valid_sets
 from Repair.repair_algos.Robust_PCA.m_est_rpca import MRobustPCA
-from Repair.res.Error_Measures import rmse
+from Repair.res.metrics import RMSE
 import matplotlib.pyplot as plt
 os.chdir("/".join(__file__.split("/")[:-1]))
 
@@ -17,7 +17,7 @@ def normalized_scores(x,y):
     return minmax_scale(diff)
 
 
-huber_loss = loss.HuberLoss(delta=5)
+huber_loss = loss.HuberLoss(delta=1)
 def check_valid_input(injected, train):
     assert "class" in train.columns , "class in train columns"
 
@@ -38,14 +38,14 @@ def get_threshhold(fitted_M_rcpa,test , test_class):
     for i in thresholds:
         class_prediction = np.zeros(len(test_class))
         class_prediction[y_test_scores > i] = 1
-        res = rmse(class_prediction, test_class)
+        res = RMSE(class_prediction, test_class)
         if res < old_res[0]:
             old_res = (res, i)
     threshold = old_res[1]
     return threshold
 
 
-def RPCA1(injected, train_set , n_components = 2,  col = 0  ):
+def RPCA1(injected, train_set , n_components = 2,  col = 0  , threshold = None ,return_reconstructed = False):
     try:
         injected = injected.drop("class" , axis = 1)
     except:
@@ -60,18 +60,23 @@ def RPCA1(injected, train_set , n_components = 2,  col = 0  ):
 
     # Fit R-PCA on Train Set
     M_rpca.fit(X_train)
-
-    threshold = get_threshhold(M_rpca, X_test , test_class)
+    print(get_threshhold(M_rpca, X_test , test_class))
+    if threshold is None:
+        threshold = get_threshhold(M_rpca, X_test , test_class)
 
     #print("threshhold" , threshold)
     repair = np.array(injected.iloc[:,col])
     Repair_reduced = M_rpca.transform(injected)
     Repair_reduced = pd.DataFrame(data=Repair_reduced)
     Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = np.array(pd.DataFrame(data=Repair_reconstructed).iloc[:,col])
+    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
 
-    y_repair_scores = normalized_scores(repair, Repair_reconstructed)
-    repair[y_repair_scores > threshold] = Repair_reconstructed[y_repair_scores > threshold]
+    if return_reconstructed:
+        return Repair_reconstructed
+
+    repair_row = np.array(Repair_reconstructed.iloc[:,col])
+    y_repair_scores = normalized_scores(repair, repair_row)
+    repair[y_repair_scores > threshold] = repair_row[y_repair_scores > threshold]
     """
     uses the fit from the train set
     """
@@ -79,7 +84,7 @@ def RPCA1(injected, train_set , n_components = 2,  col = 0  ):
 
 
 
-def RPCA2(injected, train_set ,n_components = 2, col = 0 , threshold = None):
+def RPCA2(injected, train_set ,n_components = 2, col = 0 , threshold = None ,return_reconstructed = False):
     """
     uses the whole train to fit
     """
@@ -87,6 +92,7 @@ def RPCA2(injected, train_set ,n_components = 2, col = 0 , threshold = None):
         injected = injected.drop("class" , axis = 1)
     except:
         pass
+
     train_class = train_set["class"]
     X_train = train_set.drop('class', axis=1)
     M_rpca = MRobustPCA(n_components, huber_loss)
@@ -96,17 +102,21 @@ def RPCA2(injected, train_set ,n_components = 2, col = 0 , threshold = None):
 
     if threshold is None:
         threshold = get_threshhold(M_rpca, X_train, train_class)
-
+    print(threshold)
     #print("threshhold", threshold)
     repair = np.array(injected.iloc[:, col])
     Repair_reduced = M_rpca.transform(injected)
     Repair_reduced = pd.DataFrame(data=Repair_reduced)
     Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = np.array(pd.DataFrame(data=Repair_reconstructed).iloc[:, col])
+    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
 
-    y_repair_scores = normalized_scores(repair, Repair_reconstructed)
+    if return_reconstructed:
+        return Repair_reconstructed
 
-    repair[y_repair_scores > threshold] = Repair_reconstructed[y_repair_scores > threshold]
+    repair_row = np.array(Repair_reconstructed.iloc[:, col])
+    y_repair_scores = normalized_scores(repair, repair_row)
+    repair[y_repair_scores > threshold] = repair_row[y_repair_scores > threshold]
+
     return repair
 
 def RPCA3(injected, train_set ,n_components = 2, col = 0 , threshold = None):
@@ -127,7 +137,6 @@ def RPCA3(injected, train_set ,n_components = 2, col = 0 , threshold = None):
 
     if threshold is None:
         threshold = get_threshhold(M_rpca, X_train, train_class)
-
     #print("threshhold", threshold)
     try:
         injected.drop("class" , axis = 1)
@@ -147,47 +156,70 @@ def RPCA3(injected, train_set ,n_components = 2, col = 0 , threshold = None):
     return repair
 
 
-def RPCA4(injected, train_set ,n_components = 2, col = 0 , threshold = None):
+def RPCA4(injected, train_set ,n_components = 2, col = 0 , threshold = None,return_reconstructed = False):
     """
     uses the whole train to calculate threshold and refits on normal set
     """
-    injected_class = np.array(injected["class" ],dtype=bool)
     try:
         injected = injected.drop("class" , axis = 1)
     except:
         pass
-    M_rpca = MRobustPCA(n_components, huber_loss)
+
+    M_rpca = MRobustPCA(n_components, loss.HuberLoss(delta=0.1))
     M_rpca.fit(injected)
     repair = np.array(injected.iloc[:, col])
     Repair_reduced = M_rpca.transform(injected)
     Repair_reduced = pd.DataFrame(data=Repair_reduced)
     Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = np.array(pd.DataFrame(data=Repair_reconstructed).iloc[:, col])
+    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
 
-    diff = repair - Repair_reconstructed
+    if return_reconstructed:
+        return Repair_reconstructed
+
+    repair_row = np.array(Repair_reconstructed.iloc[:, col])
+    diff = repair - repair_row
     mean =  np.mean(diff)
     std = np.std(diff)
     z_score = (diff-mean)/std
-    # print(z_score)
-    # print(sorted(z_score))
-    # plt.plot(abs(z_score))
-    # plt.plot(repair)
-    # plt.plot(Repair_reconstructed)
 
-    treshhold = 2
+    treshhold = 3
     to_repair = abs(z_score)  >treshhold
-    print("repair but not class" ,sum(to_repair > injected_class))
-    print("class but not repaired",sum(to_repair < injected_class))
-
-    repair[abs(z_score)  >treshhold] = Repair_reconstructed[abs(z_score)  > treshhold]
-    # plt.plot(repair)
-    # plt.show()
-
+    # print("repair but not class" ,sum(to_repair > injected_class))
+    # print("class but not repaired",sum(to_repair < injected_class))
+    repair[to_repair] = repair_row[to_repair]
     return repair
 
 
 import sklearn.decomposition
-def PCA(injected, train_set ,n_components = 2, col = 0 , threshold = None):
+def PCA_RPCA(injected, train_set = None ,n_components = 2, col = 0 , threshold = None,return_reconstructed = False):
+    """
+    uses the whole train to calculate threshold and refits on normal set
+    """
+    reconst_ = RPCA4(injected, None, n_components=1, return_reconstructed=True)
+    repair_row = np.array(reconst_.iloc[:, col])
+    repair = np.array(injected.iloc[:, col])
+    diff = repair - repair_row
+    mean = np.mean(diff)
+    std = np.std(diff)
+    z_score = (diff - mean) / std
+    treshhold = 4
+    to_repair = abs(z_score) > treshhold
+    print(to_repair)
+    try:
+        injected = injected.drop("class", axis=1)
+    except:
+        pass
+    pca = sklearn.decomposition.PCA()
+    X_train_PCA = pca.fit_transform(injected)
+    pca.components_[0, :] = 0  # pca.components_[2,:]*0.5
+    X_train_PCA = pd.DataFrame(data=X_train_PCA, index=injected.index)
+    X_train_PCA_inverse = pca.inverse_transform(X_train_PCA)
+    Repair_reconstructed = pd.DataFrame(data=X_train_PCA_inverse, index=injected.index)
+    repair[to_repair] = Repair_reconstructed.iloc[:,col][to_repair]
+    return repair
+
+
+def PCA(injected, train_set = None ,n_components = 2, col = 0 , threshold = None,return_reconstructed = False):
     """
     uses the whole train to calculate threshold and refits on normal set
     """
@@ -198,23 +230,24 @@ def PCA(injected, train_set ,n_components = 2, col = 0 , threshold = None):
 
     whiten = False
     random_state = 2018
-    pca = sklearn.decomposition.PCA(n_components=n_components)
+    pca = sklearn.decomposition.PCA(n_components = 2)
     X_train_PCA = pca.fit_transform(injected)
+    pca.components_[0,:] = 0#  pca.components_[2,:]*0.5
     X_train_PCA = pd.DataFrame(data=X_train_PCA, index=injected.index)
     X_train_PCA_inverse = pca.inverse_transform(X_train_PCA)
-    Repair_reconstructed = np.array(pd.DataFrame(data=X_train_PCA_inverse, \
-                                      index=injected.index).iloc[:,col])
+    Repair_reconstructed =pd.DataFrame(data=X_train_PCA_inverse,index=injected.index)
+
+    if return_reconstructed:
+        return Repair_reconstructed
+
+    Repair_reconstructed = np.array(Repair_reconstructed.iloc[:,col])
+
+
     repair = np.array(injected.iloc[:, col])
     diff = repair - Repair_reconstructed
     mean =  np.mean(diff)
     std = np.std(diff)
     z_score = (diff-mean)/std
-    # print(z_score)
-    # print(sorted(z_score))
-    # plt.plot(abs(z_score))
-    # plt.plot(repair)
-    # plt.plot(Repair_reconstructed)
-    # plt.show()
     treshhold = 3
     repair[abs(z_score)  >treshhold] = Repair_reconstructed[abs(z_score)  > treshhold]
     return repair

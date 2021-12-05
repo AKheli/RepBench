@@ -5,21 +5,6 @@ import scipy
 from numpy.linalg import LinAlgError
 from statsmodels.regression.linear_model import OLS
 import matplotlib.pyplot as plt
-
-
-
-# def ols(respond,x , p = 1, c = 0):
-#     # [ 0 , x[1:-p+1] , x[2:-p+2] ]
-#     X = np.zeros((len(x),p+1))
-#     X[:,0] = c
-#     for i in range(1,p+1):
-#         X[i:,i] = x[:-i]
-#     X = X[p:,:]
-#
-#     #X = np.array( [ np.repeat(c,len(x)-p) ] +  [ x[i: -p+i] for i in range(0,p)] ).T
-#     #print(X,"before")
-#     return OLS(respond[p:], X).fit().params[1:]
-
 def paramestimation(x,y_k,p=1):
     return ols(y_k - x, y_k - x,p)
 

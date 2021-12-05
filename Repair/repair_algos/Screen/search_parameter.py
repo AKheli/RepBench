@@ -9,7 +9,7 @@ from Repair.repair_algos.Screen.Local import screen
 
 print(os.listdir())
 print(os.getcwd())
-from Repair.res.Error_Measures import rmse
+from Repair.res.metrics import RMSE
 
 
 
@@ -24,7 +24,7 @@ def search_s(data, truth):
     dif_anom = np.array(sorted(abs(np.diff(data[anom])) ,  reverse=True))
     np.arange(len(data))
     np.array((np.arange(len(data)), data) , dtype=np.float64)
-    r  = lambda x : rmse(screen(np.array((np.arange(len(data)), data) , dtype=np.float64).T , SMIN = -x, SMAX = x )["repair"],truth )
+    r  = lambda x : RMSE(screen(np.array((np.arange(len(data)), data), dtype=np.float64).T, SMIN = -x, SMAX = x)["repair"], truth)
     valmin , argmin = 100 , -1
     #print([ valmin ,argmin = (lambda x : (valmin , argmin) if x > valmin else (x  , i))(r(i))  for i in range(int(max(dif)))])
 df = pd.read_csv("/".join(__file__.split("/")[:-1])+"/stock10k.data" , header = 0)

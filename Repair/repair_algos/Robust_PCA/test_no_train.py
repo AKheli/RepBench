@@ -3,7 +3,7 @@ import os
 
 sys.path.append('../../../')
 
-from Repair.res.Error_Measures import *
+from Repair.res.metrics import *
 from huber_loss_pca import *
 import pandas as pd
 import numpy as np
@@ -77,9 +77,9 @@ plt.plot(x ,label =  "repair")
 plt.legend()
 plt.show()
 
-print(rmse(truth,X_test_reconstructed["injected"]))
-print(rmse(truth,x))
-print(rmse(truth,truth))
+print(RMSE(truth, X_test_reconstructed["injected"]))
+print(RMSE(truth, x))
+print(RMSE(truth, truth))
 
 plt.plot(df["injected"]-truth)
 plt.plot(y-truth)

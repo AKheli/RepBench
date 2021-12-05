@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import minmax_scale
 
-from Repair.res.Error_Measures import rmse
+from Repair.res.metrics import RMSE
 from Repair.res.file_manipulation import get_df_from_file
 
 
@@ -77,9 +77,9 @@ plt.legend()
 plt.show()
 
 print(sum(y_hat_results))
-print( "original" , rmse(truth,x) )
-print("pca reconstructed" ,  rmse(truth,reconstructed))
-print("repair" , rmse(truth,repair))
+print( "original", RMSE(truth, x))
+print("pca reconstructed", RMSE(truth, reconstructed))
+print("repair", RMSE(truth, repair))
 
 
 

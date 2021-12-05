@@ -2,7 +2,7 @@ import os
 import csv
 
 from res.plotter import Plotter
-from res.Error_Measures import rmse
+from res.metrics import RMSE
 import matplotlib as plt
 
 def set_path_to_Repair():
@@ -25,11 +25,11 @@ def write_error_file(path, repairs, errors):
                     f.write('\n')
                     f.write(repair["data_set"]["name"])
                     f.write('\n')
-                    error = rmse(repair["data_set"]["injected"], repair["data_set"]["truth"], repair.get("labels", []))
+                    error = RMSE(repair["data_set"]["injected"], repair["data_set"]["truth"], repair.get("labels", []))
                     f.write(f'{str(error)}  {"injected"} ')
                     f.write('\n')
                     data_sets.add(repair["data_set"]["name"])
-                error = rmse(repair["repair"], repair["data_set"]["truth"], repair.get("labels", []))
+                error = RMSE(repair["repair"], repair["data_set"]["truth"], repair.get("labels", []))
                 f.write(f'{str(error)}  {repair["name"]} ')
                 f.write('\n')
 

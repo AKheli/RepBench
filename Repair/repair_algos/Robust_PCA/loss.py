@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from numbers import Number
 
+import numpy as np
+
 
 class MLoss:
     """
@@ -81,7 +83,8 @@ class HuberLoss(MLoss):
 
     def __call__(self, x):
         x_flt = float(x)
-        # assert x_flt >= 0
+        #return x_flt**(1/200)
+        assert x_flt >= 0
         if x_flt <= self.delta:
             return (x_flt ** 2) / 2.
         else:
@@ -94,6 +97,6 @@ class HuberLoss(MLoss):
         x_flt = float(x)
         #assert x_flt >= 0
         if x_flt <= self.delta:
-            return 1.
+            return 1.0
         else:
             return self.delta / x_flt

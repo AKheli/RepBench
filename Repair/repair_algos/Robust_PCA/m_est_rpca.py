@@ -133,10 +133,10 @@ class MRobustPCA(_BasePCA):
         not_done_yet = True
         while not_done_yet:
             # Calculating components with current weights
-            self.mean_ = np.average(X, axis=0, weights=self.weights_)
+            self.mean_ =  np.average(X, axis=0, weights=self.weights_) #np.median(X,axis= 0 )
             X_centered = X - self.mean_
             U, S, V = linalg.svd(X_centered * np.sqrt(self.weights_.reshape(-1, 1)))
-            # U, V = svd_flip(U, V)
+            #U, V = svd_flip(U, V)
             self.components_ = V[:n_components, :]
 
             # Calculate current errors in different models
@@ -172,6 +172,7 @@ class MRobustPCA(_BasePCA):
                                                                                rel_error))
             self.errors_.append(total_error)
             not_done_yet = rel_error > self.eps and self.n_iterations_ < self.max_iter
+
         if rel_error > self.eps:
             warnings.warn('[RPCA] Did not reach desired precision after %d iterations; relative\
                           error %f instead of specified maximum %f' % (self.n_iterations_,
