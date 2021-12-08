@@ -82,8 +82,9 @@ class HuberLoss(MLoss):
         self.delta_half_square = (self.delta ** 2) / 2.
 
     def __call__(self, x):
+
         x_flt = float(x)
-        #return x_flt**(1/200)
+
         assert x_flt >= 0
         if x_flt <= self.delta:
             return (x_flt ** 2) / 2.

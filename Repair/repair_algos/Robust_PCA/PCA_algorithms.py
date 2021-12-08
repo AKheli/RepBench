@@ -9,19 +9,24 @@ from Repair.repair_algos.Robust_PCA.huber_loss_pca import get_train_valid_sets
 from Repair.repair_algos.Robust_PCA.m_est_rpca import MRobustPCA
 from Repair.res.metrics import RMSE
 import matplotlib.pyplot as plt
+
 os.chdir("/".join(__file__.split("/")[:-1]))
 
-def normalized_scores(x,y):
-    diff = (x-y) ** 2
+
+def normalized_scores(x, y):
+    diff = (x - y) ** 2
     diff = pd.Series(data=diff)
     return minmax_scale(diff)
 
 
 huber_loss = loss.HuberLoss(delta=1)
-def check_valid_input(injected, train):
-    assert "class" in train.columns , "class in train columns"
 
-def get_threshhold(fitted_M_rcpa,test , test_class):
+
+def check_valid_input(injected, train):
+    assert "class" in train.columns, "class in train columns"
+
+
+def get_threshhold(fitted_M_rcpa, test, test_class):
     # R-PCA on Test Set
     X_test_reduced = fitted_M_rcpa.transform(test)
     X_test_reduced = pd.DataFrame(data=X_test_reduced, index=test.index)
@@ -45,13 +50,32 @@ def get_threshhold(fitted_M_rcpa,test , test_class):
     return threshold
 
 
-def RPCA1(injected, train_set , n_components = 2,  col = 0  , threshold = None ,return_reconstructed = False):
+def reconstuct(injected, M_rpca):
+    Repair_reduced = M_rpca.transform(injected)
+    Repair_reduced = pd.DataFrame(data=Repair_reduced)
+    Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
+    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
+
+    # print(np.array(injected))
+    # print(np.array(Repair_reconstructed))
+
+    return Repair_reconstructed
+
+
+def repair_result_df(injected, to_repair_cols, reconstructed_cols, repair_booleans, col):
+    to_repair_cols[repair_booleans] = reconstructed_cols[repair_booleans]
+    result = injected.copy()
+    result.iloc[:, col] = to_repair_cols
+    return result
+
+
+def RPCA1(injected, train, train_class, n_components=2, col=0, threshold=None, **kwargs):
     try:
-        injected = injected.drop("class" , axis = 1)
+        injected = injected.drop("class", axis=1)
     except:
         pass
-
-    train, valid = get_train_valid_sets(train_set, train_size=0.5, random_seed=10)
+    train["class"] = train_class
+    train, valid = get_train_valid_sets(train, train_size=0.5, random_seed=100)
     X_train = train.drop('class', axis=1)
     test_class = valid["class"]
     X_test = valid.drop('class', axis=1)
@@ -60,196 +84,234 @@ def RPCA1(injected, train_set , n_components = 2,  col = 0  , threshold = None ,
 
     # Fit R-PCA on Train Set
     M_rpca.fit(X_train)
-    print(get_threshhold(M_rpca, X_test , test_class))
-    if threshold is None:
-        threshold = get_threshhold(M_rpca, X_test , test_class)
-
-    #print("threshhold" , threshold)
-    repair = np.array(injected.iloc[:,col])
-    Repair_reduced = M_rpca.transform(injected)
-    Repair_reduced = pd.DataFrame(data=Repair_reduced)
-    Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
-
-    if return_reconstructed:
-        return Repair_reconstructed
-
-    repair_row = np.array(Repair_reconstructed.iloc[:,col])
-    y_repair_scores = normalized_scores(repair, repair_row)
-    repair[y_repair_scores > threshold] = repair_row[y_repair_scores > threshold]
-    """
-    uses the fit from the train set
-    """
-    return repair
-
-
-
-def RPCA2(injected, train_set ,n_components = 2, col = 0 , threshold = None ,return_reconstructed = False):
-    """
-    uses the whole train to fit
-    """
-    try:
-        injected = injected.drop("class" , axis = 1)
-    except:
-        pass
-
-    train_class = train_set["class"]
-    X_train = train_set.drop('class', axis=1)
-    M_rpca = MRobustPCA(n_components, huber_loss)
-
-    # Fit R-PCA on Train Set
-    M_rpca.fit(X_train)
 
     if threshold is None:
-        threshold = get_threshhold(M_rpca, X_train, train_class)
-    print(threshold)
-    #print("threshhold", threshold)
-    repair = np.array(injected.iloc[:, col])
-    Repair_reduced = M_rpca.transform(injected)
-    Repair_reduced = pd.DataFrame(data=Repair_reduced)
-    Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
+        threshold = get_threshhold(M_rpca, X_test, test_class)
 
-    if return_reconstructed:
-        return Repair_reconstructed
+    Repair_reconstructed = reconstuct(injected, M_rpca)
+    reconstructed_cols = np.array(Repair_reconstructed.iloc[:, col])
+    to_repair_cols = np.array(injected.iloc[:, col])
 
-    repair_row = np.array(Repair_reconstructed.iloc[:, col])
-    y_repair_scores = normalized_scores(repair, repair_row)
-    repair[y_repair_scores > threshold] = repair_row[y_repair_scores > threshold]
+    y_repair_scores = normalized_scores(to_repair_cols, reconstructed_cols)
+    to_repair_booleans = y_repair_scores > threshold
 
-    return repair
+    # replace value in original df
+    to_repair_cols[to_repair_booleans] = reconstructed_cols[to_repair_booleans]
+    result = injected.copy()
+    result.iloc[:, col] = to_repair_cols
 
-def RPCA3(injected, train_set ,n_components = 2, col = 0 , threshold = None):
-    """
-    uses the whole train to calculate threshold and refits on normal set
-    """
-    try:
-        injected = injected.drop("class" , axis = 1)
-    except:
-        pass
-
-    train_class = train_set["class"]
-    X_train = train_set.drop('class', axis=1)
-    M_rpca = MRobustPCA(n_components, huber_loss)
-
-    # Fit R-PCA on Train Set
-    M_rpca.fit(X_train)
-
-    if threshold is None:
-        threshold = get_threshhold(M_rpca, X_train, train_class)
-    #print("threshhold", threshold)
-    try:
-        injected.drop("class" , axis = 1)
-    except:
-        pass
-    M_rpca = MRobustPCA(n_components, huber_loss)
-    M_rpca.fit(injected)
-    repair = np.array(injected.iloc[:, col])
-    Repair_reduced = M_rpca.transform(injected)
-    Repair_reduced = pd.DataFrame(data=Repair_reduced)
-    Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = np.array(pd.DataFrame(data=Repair_reconstructed).iloc[:, col])
-
-    y_repair_scores = normalized_scores(repair, Repair_reconstructed)
-
-    repair[y_repair_scores > threshold] = Repair_reconstructed[y_repair_scores > threshold]
-    return repair
+    return {"repair": result, "PCA_reconstructed": Repair_reconstructed }
 
 
-def RPCA4(injected, train_set ,n_components = 2, col = 0 , threshold = None,return_reconstructed = False):
-    """
-    uses the whole train to calculate threshold and refits on normal set
-    """
-    try:
-        injected = injected.drop("class" , axis = 1)
-    except:
-        pass
-
-    M_rpca = MRobustPCA(n_components, loss.HuberLoss(delta=0.1))
-    M_rpca.fit(injected)
-    repair = np.array(injected.iloc[:, col])
-    Repair_reduced = M_rpca.transform(injected)
-    Repair_reduced = pd.DataFrame(data=Repair_reduced)
-    Repair_reconstructed = M_rpca.inverse_transform(Repair_reduced)
-    Repair_reconstructed = pd.DataFrame(data=Repair_reconstructed)
-
-    if return_reconstructed:
-        return Repair_reconstructed
-
-    repair_row = np.array(Repair_reconstructed.iloc[:, col])
-    diff = repair - repair_row
-    mean =  np.mean(diff)
-    std = np.std(diff)
-    z_score = (diff-mean)/std
-
-    treshhold = 3
-    to_repair = abs(z_score)  >treshhold
-    # print("repair but not class" ,sum(to_repair > injected_class))
-    # print("class but not repaired",sum(to_repair < injected_class))
-    repair[to_repair] = repair_row[to_repair]
-    return repair
-
-
-import sklearn.decomposition
-def PCA_RPCA(injected, train_set = None ,n_components = 2, col = 0 , threshold = None,return_reconstructed = False):
-    """
-    uses the whole train to calculate threshold and refits on normal set
-    """
-    reconst_ = RPCA4(injected, None, n_components=1, return_reconstructed=True)
-    repair_row = np.array(reconst_.iloc[:, col])
-    repair = np.array(injected.iloc[:, col])
-    diff = repair - repair_row
-    mean = np.mean(diff)
-    std = np.std(diff)
-    z_score = (diff - mean) / std
-    treshhold = 4
-    to_repair = abs(z_score) > treshhold
-    print(to_repair)
+def RPCA2(injected, train, train_class, n_components=1, col=0, threshold=None, **kwargs):
     try:
         injected = injected.drop("class", axis=1)
     except:
         pass
-    pca = sklearn.decomposition.PCA()
+    try:
+        train = train.drop("class", axis=1)
+    except:
+        pass
+
+    original_cols = list(injected.columns)
+    # train = add_shift(train,10)
+    # injected = add_shift(injected,10)
+
+    train["class"] = train_class
+    train, valid = get_train_valid_sets(train, train_size=0.8, random_seed=100)
+    X_train = train.drop('class', axis=1)
+    test_class = valid["class"]
+    X_test = valid.drop('class', axis=1)
+
+    M_rpca = MRobustPCA(n_components, loss.HuberLoss(delta=1), model="first", )
+    # Fit R-PCA on Train Set
+    M_rpca.fit(X_train)
+
+    if threshold is None:
+        threshold = get_threshhold(M_rpca, X_test, test_class)
+
+    # M_rpca.mean_ = np.array(injected.mean(axis=0))
+    Repair_reconstructed = reconstuct(injected, M_rpca)
+    reconstructed_cols = np.array(Repair_reconstructed.iloc[:, col])
+    to_repair_cols = np.array(injected.iloc[:, col])
+
+    y_repair_scores = normalized_scores(to_repair_cols, reconstructed_cols)
+    to_repair_booleans = y_repair_scores > threshold
+
+    # replace value in original df
+    to_repair_cols[to_repair_booleans] = reconstructed_cols[to_repair_booleans]
+    result = injected.copy()
+    result.iloc[:, col] = to_repair_cols
+    # injected.plot()
+    # Repair_reconstructed.plot()
+    # result.plot()
+    # plt.title("pca")
+    # plt.show()
+
+    return {"repair": result, "PCA_reconstructed": Repair_reconstructed }
+
+
+def add_shift(df, p):
+    original_cols = list(df.columns)
+    to_concat = []
+    for i in range(p):
+        right = df.shift(periods=i, fill_value=0)
+        right.columns = [f"{c}_{i}" for c in original_cols]
+        left = df.shift(periods=-i, fill_value=0)
+        left.columns = [f"{c}_{-i}" for c in original_cols]
+        to_concat.append(right)
+        to_concat.append(left)
+
+    return pd.concat([df] + to_concat, axis=1)
+
+
+def RPCA_no_train(injected, n_components=1, col=0, threshold=1, return_reconstructed=False, **kwargs):
+    """
+    uses the whole train to calculate threshold and refits on normal set
+    """
+    try:
+        injected = injected.drop("class", axis=1)
+    except:
+        pass
+
+    M_rpca = MRobustPCA(n_components, loss.HuberLoss(delta=1), model="second")
+    M_rpca.fit(injected)
+
+
+    Repair_reconstructed = reconstuct(injected, M_rpca)
+
+    reconstructed_cols = np.array(Repair_reconstructed.iloc[:, col])
+    to_repair_cols = np.array(injected.iloc[:, col])
+
+    diff = reconstructed_cols - to_repair_cols
+
+    mean = np.mean(diff)
+    std = np.std(diff)
+    abs_z_score = abs((diff - mean) / std)
+
+    to_repair_booleans = abs_z_score > threshold
+
+    to_repair_cols[to_repair_booleans] = reconstructed_cols[to_repair_booleans]
+    result = injected.copy()
+    result.iloc[:, col] = to_repair_cols
+
+    # injected.plot()
+    # Repair_reconstructed.plot()
+    # result.plot()
+    # plt.title("pca")
+    # plt.show()
+
+    return {"repair": result, "PCA_reconstructed": Repair_reconstructed }
+
+
+def RPCA_no_train_2(injected, truth=None, n_components=1, col=0, threshold=1, return_reconstructed=False, **kwargs):
+    """
+       uses the whole train to calculate threshold and refits on normal set
+       """
+
+    dif = (injected.max() - injected.min())
+    min_ = injected.min()
+    injected = (injected - min_) / dif
+    try:
+        injected = injected.drop("class", axis=1)
+    except:
+        pass
+
+    p = 1
+    original_cols = list(injected.columns)
+
+    to_concat = []
+    for i in range(p):
+        right = injected.shift(periods=i, fill_value=0)
+        right.columns = [f"{c}_{i}" for c in original_cols]
+        left = injected.shift(periods=-i, fill_value=0)
+        left.columns = [f"{c}_{-i}" for c in original_cols]
+        to_concat.append(right)
+        to_concat.append(left)
+
+    injected = pd.concat([injected] + to_concat, axis=1)
+    M_rpca = MRobustPCA(n_components, loss.HuberLoss(delta=1), model="first")
+    M_rpca.fit(injected)
+
+
+    Repair_reconstructed = reconstuct(injected, M_rpca)
+    reconstructed_cols = np.array(Repair_reconstructed.iloc[:, col])
+    to_repair_cols = np.array(injected.iloc[:, col])
+
+    diff = reconstructed_cols - to_repair_cols
+    m = np.mean(diff)
+    std = np.std(diff)
+    abs_z_score = abs((diff - m) / std)
+
+    to_repair_booleans = abs_z_score > threshold
+
+    to_repair_cols[to_repair_booleans] = reconstructed_cols[to_repair_booleans]
+    result = injected.copy()
+    result.iloc[:, col] = to_repair_cols
+    result = result[original_cols]
+
+    # injected.iloc[:, col].plot()
+    # plt.title("injected")
+    #
+    # truth.iloc[:, col].plot()
+    # plt.title("truth")
+    #
+    # plt.show()
+    # Repair_reconstructed.iloc[:, col].plot()
+    # plt.title("reconstructed")
+    # plt.show()
+    #
+    # result.iloc[:, col].plot()
+    # plt.title("result")
+    # plt.show()
+
+    # injected.plot()
+    # Repair_reconstructed.plot()
+    # result.plot()
+    # plt.title("pca")
+    # plt.show()
+    result = result * dif + min_
+    return {"repair": result, "PCA_reconstructed": Repair_reconstructed }
+
+
+import sklearn.decomposition
+
+
+def PCA_leave_out(injected, col=0, threshold=1, return_reconstructed=False, **kwargs):
+    """
+    uses the whole train to calculate threshold and refits on normal set
+    """
+    try:
+        injected = injected.drop("class", axis=1)
+    except:
+        pass
+
+    pca = sklearn.decomposition.PCA(n_components=2)
     X_train_PCA = pca.fit_transform(injected)
     pca.components_[0, :] = 0  # pca.components_[2,:]*0.5
     X_train_PCA = pd.DataFrame(data=X_train_PCA, index=injected.index)
     X_train_PCA_inverse = pca.inverse_transform(X_train_PCA)
     Repair_reconstructed = pd.DataFrame(data=X_train_PCA_inverse, index=injected.index)
-    repair[to_repair] = Repair_reconstructed.iloc[:,col][to_repair]
-    return repair
-
-
-def PCA(injected, train_set = None ,n_components = 2, col = 0 , threshold = None,return_reconstructed = False):
-    """
-    uses the whole train to calculate threshold and refits on normal set
-    """
-    try:
-        injected = injected.drop("class" , axis = 1)
-    except:
-        pass
-
-    whiten = False
-    random_state = 2018
-    pca = sklearn.decomposition.PCA(n_components = 2)
-    X_train_PCA = pca.fit_transform(injected)
-    pca.components_[0,:] = 0#  pca.components_[2,:]*0.5
-    X_train_PCA = pd.DataFrame(data=X_train_PCA, index=injected.index)
-    X_train_PCA_inverse = pca.inverse_transform(X_train_PCA)
-    Repair_reconstructed =pd.DataFrame(data=X_train_PCA_inverse,index=injected.index)
 
     if return_reconstructed:
         return Repair_reconstructed
 
-    Repair_reconstructed = np.array(Repair_reconstructed.iloc[:,col])
+    reconstructed_cols = np.array(Repair_reconstructed.iloc[:, col])
+    to_repair_cols = np.array(injected.iloc[:, col])
 
+    diff = reconstructed_cols - to_repair_cols
 
-    repair = np.array(injected.iloc[:, col])
-    diff = repair - Repair_reconstructed
-    mean =  np.mean(diff)
+    mean = np.mean(diff)
     std = np.std(diff)
-    z_score = (diff-mean)/std
-    treshhold = 3
-    repair[abs(z_score)  >treshhold] = Repair_reconstructed[abs(z_score)  > treshhold]
-    return repair
+    abs_z_score = abs((diff - mean) / std)
+    to_repair_booleans = abs_z_score > threshold
 
+    to_repair_cols[to_repair_booleans] = reconstructed_cols[to_repair_booleans]
+    result = injected.copy()
+    result.iloc[:, col] = to_repair_cols
+    print("injected_rank", np.linalg.matrix_rank(np.array(injected)))
+    print("COMPONENTS", pca.components_)
+    print(np.linalg.matrix_rank(np.dot(np.array(X_train_PCA), pca.components_)))
+    print(np.linalg.matrix_rank(np.dot(np.array(X_train_PCA), pca.components_) + pca.mean_))
 
+    return {"repair": result, "PCA_reconstructed": Repair_reconstructed}

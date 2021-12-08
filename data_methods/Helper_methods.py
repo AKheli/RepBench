@@ -40,7 +40,7 @@ def searchfiles(filename):
 def get_df_from_file(filename):
     set_path_to_MA()
     try:
-        data = pd.read_csv(filename, nrows=0, header=0, sep=None )
+        data = pd.read_csv(filename, nrows=0, header=0, sep="," )
         header = None
         for i in data.columns:
             try:
@@ -48,7 +48,7 @@ def get_df_from_file(filename):
                 pass
             except:
                 header = 0
-        data =pd.read_csv(filename, header=header, sep=None)
+        data =pd.read_csv(filename, header=header, sep=",")
     except:
         assert False , "invalid data file"
 

@@ -64,7 +64,7 @@ class MRobustPCA(_BasePCA):
                  max_iter=1000):
         self.n_components = n_components
         self.loss = loss
-        self.model = model
+        self.model = 'first'
         self.eps = eps
         self.max_iter = max_iter
         self.whiten = False  # TODO: implement proper whitening
@@ -135,14 +135,30 @@ class MRobustPCA(_BasePCA):
             # Calculating components with current weights
             self.mean_ =  np.average(X, axis=0, weights=self.weights_) #np.median(X,axis= 0 )
             X_centered = X - self.mean_
-            U, S, V = linalg.svd(X_centered * np.sqrt(self.weights_.reshape(-1, 1)))
-            #U, V = svd_flip(U, V)
-            self.components_ = V[:n_components, :]
+            x= X_centered * np.sqrt(self.weights_.reshape(-1, 1))
+
+            U, S, V = linalg.svd(x)
+            #sorted eigenvectors
+            self.components_  = V[:n_components,:]
+
+            # X_rec = self.inverse_transform(self.transform(X))
+            #
+            #
+            # h = np.array(np.linalg.norm(X-X_rec,axis=1))
+            # delta = self.loss.delta
+            # leq = np.array(h<= delta,dtype=bool)
+            #
+            # h[leq] = h[leq]**2/2
+            # h[np.invert(leq)] = h[np.invert(leq)]*delta-delta**2/2
+            # huber_loss = abs(0)
+            # print("huber_loss", sum(h))
+
 
             # Calculate current errors in different models
             if self.model == 'first':
                 non_projected_metric = np.eye(n_features) - \
                                        self.components_.T.dot(self.components_)
+
                 errors_raw = np.sqrt(np.diag(X_centered.dot(non_projected_metric.dot(X_centered.T))))
             elif self.model == 'second':
                 # Obtain inverse empirical covariance from the SVD
@@ -151,9 +167,9 @@ class MRobustPCA(_BasePCA):
                 errors_raw = np.sqrt(np.diag(X_centered.dot(inverse_cov.dot(X_centered.T))))
             else:
                 raise ValueError('Model should be either \"first\" or \"second\".')
+            #errors_raw[errors_raw == np.nan] = 0
 
             errors_loss = vectorized_loss(errors_raw)
-
             # New weights based on errors
             self.weights_ = vectorized_weights(errors_raw)
             self.weights_ /= self.weights_.sum()
@@ -171,7 +187,7 @@ class MRobustPCA(_BasePCA):
                                                                                total_error,
                                                                                rel_error))
             self.errors_.append(total_error)
-            not_done_yet = rel_error > self.eps and self.n_iterations_ < self.max_iter
+            not_done_yet = rel_error > self.eps or self.n_iterations_ < 100 # self.max_iter
 
         if rel_error > self.eps:
             warnings.warn('[RPCA] Did not reach desired precision after %d iterations; relative\
@@ -192,6 +208,7 @@ class MRobustPCA(_BasePCA):
             explained_variance_ratio_[:n_components]
 
         self.errors_ = np.array(self.errors_[1:])
+
 
     def transform(self, X):
         """Apply dimensionality reduction to X.

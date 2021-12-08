@@ -56,11 +56,6 @@ def ols_direct_2(yvec, xMat):
         return np.zeros(len(xMat[0, :]))
 
 
-
-
-
-
-
 def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
     z = np.array(y_k,dtype=np.single) - np.array(x,dtype=np.single)
     yvec = z[p:]
@@ -167,14 +162,14 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
     return modify
 
 
-def IMRsave(index,x,y_o,truth,labels,repair,name , arrows = True):
-    frame = pd.DataFrame(x)
-    frame["y_o"] = y_o
-    frame["truth"] = truth
-    frame ["labels"] = [i in labels for i in range(len(x))]
-    frame["repair"] = repair
-    #print(frame)
-    frame.to_csv("Data/IRMSAVE/"+name)
+# def IMRsave(index,x,y_o,truth,labels,repair,name , arrows = True):
+#     frame = pd.DataFrame(x)
+#     frame["y_o"] = y_o
+#     frame["truth"] = truth
+#     frame ["labels"] = [i in labels for i in range(len(x))]
+#     frame["repair"] = repair
+#     #print(frame)
+#     frame.to_csv("Data/IRMSAVE/"+name)
 
 def plot(injected,repair={},truth=[],title = "",labels = [], index=None , arrows = False ,show = True , observation_rms = ""):
     injected =np.array(injected)

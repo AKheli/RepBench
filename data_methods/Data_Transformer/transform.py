@@ -67,13 +67,13 @@ def select_ts_entries_to_create_df(filename , entries , labels ):
     df = pd.read_csv(filename, sep=delimiter)
     df = df.iloc[: , entries]
     df.columns = labels
-    df.to_csv(f"../Data/{filename.split('/')[-1]}", index=False)
-    os.remove(filename)
+    df.to_csv(filename, index=False)
+    #os.remove(filename)
 
 
 if __name__ == "__main__":
-    main()
-    #select_ts_entries_to_create_df("stock10k.data" , [1,2] , ["injected", "truth"])
+    #main()
+    select_ts_entries_to_create_df("../../Data/stock10k.data", [2], ["truth"])
 
 
 

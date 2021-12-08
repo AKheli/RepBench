@@ -3,10 +3,11 @@ import numpy as np
 from Injection.injection_methods.basic_injections import add_anomaly
 from Injection.injection_methods.index_computations import get_random_ranges
 from Scenarios.Scenario_Types import BASE_SCENARIO, scenario_specifications
-
+import pandas as pd
 
 class BaseScenario():
     scenario_type = BASE_SCENARIO
+    small_data_description = "data size"
 
     def __init__(self, anomaly_type = AMPLITUDE_SHIFT ,
                  anomaly_percentage = None,
@@ -18,7 +19,9 @@ class BaseScenario():
         self.anomaly_type = anomaly_type
 
     def get_amount_of_anomalies(self,data):
-        return int(len(data) * self.anomaly_percentage / self.anomaly_length)
+        anom_amount = round(len(data) * self.anomaly_percentage / self.anomaly_length)
+        print(anom_amount)
+        return anom_amount
 
     def inject_single(self, data):
         data = np.array(data)
@@ -29,17 +32,21 @@ class BaseScenario():
             anomaly_infos.append(info)
         return data , anomaly_infos
 
-    def data_trasform(self,data):
-        return [data]
+    @staticmethod
+    def get_class( injected, original):
+        """ generate common class where entries are different"""
+        return np.invert(np.isclose(np.array(injected.sum( axis = 1)),np.array(original.sum(axis = 1))))
+
+    def create_dict(self, injected,orignal):
+        return { "injected" : injected , "original"  : orignal.copy() , "class" : self.get_class(injected,orignal)}
 
     def transform_df(self, df, cols=[0]):
         data = df.copy()
         for col in cols:
             data.iloc[:, col]  , anomaly_infos = self.inject_single(np.array(data.iloc[:, col]))
 
-        resulting_data = self.data_trasform(data)
-        assert isinstance(resulting_data, list)
-        return {"injected_data": resulting_data, "anomaly_type": self.anomaly_type , "anomaly_infos" : [anomaly_infos]}
+        return  {"full_set" : self.create_dict(data,df)}
+
 
 
 
