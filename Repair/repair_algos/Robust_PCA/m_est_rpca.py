@@ -1,3 +1,4 @@
+import time
 import warnings
 import logging
 from sklearn.decomposition import PCA
@@ -133,7 +134,7 @@ class MRobustPCA(_BasePCA):
         not_done_yet = True
         while not_done_yet:
             # Calculating components with current weights
-            self.mean_ =  np.average(X, axis=0, weights=self.weights_) #np.median(X,axis= 0 )
+            self.mean_ =  np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
             x= X_centered * np.sqrt(self.weights_.reshape(-1, 1))
 
@@ -156,8 +157,14 @@ class MRobustPCA(_BasePCA):
 
             # Calculate current errors in different models
             if self.model == 'first':
+
                 non_projected_metric = np.eye(n_features) - \
-                                       self.components_.T.dot(self.components_)
+                                        self.components_.T.dot(self.components_)
+
+
+                # np.sqrt(np.diag(X_centered.dot(non_projected_metric.dot(X_centered.T))))
+                #
+                # np.linalg.norm(X_centered-np.dot( X_centered,self.components_.T).dot(self.components_),axis=1)
 
                 errors_raw = np.sqrt(np.diag(X_centered.dot(non_projected_metric.dot(X_centered.T))))
             elif self.model == 'second':

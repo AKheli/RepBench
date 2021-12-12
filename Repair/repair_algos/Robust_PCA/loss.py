@@ -98,6 +98,6 @@ class HuberLoss(MLoss):
         x_flt = float(x)
         #assert x_flt >= 0
         if x_flt <= self.delta:
-            return 1.0
+            return 1.0  
         else:
             return self.delta / x_flt

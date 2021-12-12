@@ -1,14 +1,13 @@
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
 from Injection.injection_methods.advanced_injections import inject_equal_spaced
-from Scenarios.Scenario_Types import VARY_TS_LENGTH, scenario_specifications
-from Scenarios.BaseScenario import BaseScenario
+from Scenarios.scenario_types.Scenario_Types import VARY_TS_LENGTH, scenario_specifications
+from Scenarios.scenario_types.BaseScenario import BaseScenario
 import numpy as np
 
 
 class TSLengthScenario(BaseScenario):
     scenario_type = VARY_TS_LENGTH
-    small_data_description = "ts lenght"
-
+    small_data_description = "TS length"
 
     def __init__(self, anomaly_type=AMPLITUDE_SHIFT,
                  anomaly_percentage=None,
@@ -38,6 +37,6 @@ class TSLengthScenario(BaseScenario):
 
         for i in range(1,self.splits+1):
             length = int(i * self.splits * len(data) / 100)
-            result[f"{length}"] = self.create_dict(data.iloc[:length] , df.iloc[:length])
+            result[f"{length}"] = self.create_scenario_part_output(data.iloc[:length], df.iloc[:length] , cols)
 
         return result

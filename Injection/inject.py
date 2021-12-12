@@ -1,6 +1,6 @@
 import sys
 
-from Scenarios.BaseScenario import BaseScenario
+from Scenarios.scenario_types.BaseScenario import BaseScenario
 from run_ressources.helpers import split_data_set
 
 sys.path.append('../') # always run from the toplevel folder

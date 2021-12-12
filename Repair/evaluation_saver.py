@@ -1,9 +1,8 @@
 import os
-import csv
 
 from res.plotter import Plotter
-from res.metrics import RMSE
-import matplotlib as plt
+from Scenarios.metrics import RMSE
+
 
 def set_path_to_Repair():
     current_path = __file__

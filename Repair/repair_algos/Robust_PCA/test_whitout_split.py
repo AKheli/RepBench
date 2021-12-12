@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import minmax_scale
 
-from Repair.res.metrics import RMSE
+from Scenarios.metrics import RMSE
 from Repair.res.file_manipulation import get_df_from_file
 
 

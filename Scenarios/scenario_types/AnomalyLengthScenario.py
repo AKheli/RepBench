@@ -1,10 +1,10 @@
 import numpy as np
 
 from Injection.injection_methods.basic_injections import add_anomaly
-from Injection.injection_methods.index_computations import get_random_ranges, get_center
+from Injection.injection_methods.index_computations import get_center
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
-from Scenarios.BaseScenario import BaseScenario
-from Scenarios.Scenario_Types import VARY_ANOMALY_SIZE, scenario_specifications
+from Scenarios.scenario_types.BaseScenario import BaseScenario
+from Scenarios.scenario_types.Scenario_Types import VARY_ANOMALY_SIZE, scenario_specifications
 
 
 class AnomalyLengthScenario(BaseScenario):

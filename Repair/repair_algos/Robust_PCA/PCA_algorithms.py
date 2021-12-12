@@ -7,7 +7,7 @@ from Repair.repair_algos.Robust_PCA import loss
 from Repair.repair_algos.Robust_PCA.helpers import normalized_anomaly_scores
 from Repair.repair_algos.Robust_PCA.huber_loss_pca import get_train_valid_sets
 from Repair.repair_algos.Robust_PCA.m_est_rpca import MRobustPCA
-from Repair.res.metrics import RMSE
+from Scenarios.metrics import RMSE, rmse
 import matplotlib.pyplot as plt
 
 os.chdir("/".join(__file__.split("/")[:-1]))
@@ -43,7 +43,7 @@ def get_threshhold(fitted_M_rcpa, test, test_class):
     for i in thresholds:
         class_prediction = np.zeros(len(test_class))
         class_prediction[y_test_scores > i] = 1
-        res = RMSE(class_prediction, test_class)
+        res = rmse(class_prediction, test_class)
         if res < old_res[0]:
             old_res = (res, i)
     threshold = old_res[1]
@@ -76,6 +76,7 @@ def RPCA1(injected, train, train_class, n_components=2, col=0, threshold=None, *
         pass
     train["class"] = train_class
     train, valid = get_train_valid_sets(train, train_size=0.5, random_seed=100)
+
     X_train = train.drop('class', axis=1)
     test_class = valid["class"]
     X_test = valid.drop('class', axis=1)

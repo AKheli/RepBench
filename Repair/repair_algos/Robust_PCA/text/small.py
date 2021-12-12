@@ -1,13 +1,8 @@
 import os
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import minmax_scale
 from Repair.repair_algos.Robust_PCA.huber_loss_pca import *
-
-from Repair.res.metrics import RMSE
-from Repair.res.file_manipulation import get_df_from_file
 
 
 def normalized_anomaly_scores(df_original, df_reconstructed):

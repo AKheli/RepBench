@@ -1,15 +1,12 @@
-import os
-
 import numpy as np
 import pandas as pd
 import os
-from scipy.optimize import minimize
 
 from Repair.repair_algos.Screen.Local import screen
 
 print(os.listdir())
 print(os.getcwd())
-from Repair.res.metrics import RMSE
+from Scenarios.metrics import RMSE
 
 
 

@@ -3,18 +3,34 @@ import scipy
 import sklearn.metrics as sm
 import matplotlib.pyplot as plt
 
-def RMSE(x, y, labels=[], r= 3):
-    return rms(x, y, labels=labels , r= r)
+def process(df_1,df_2  , cols , labels = None ):
+    l = [] if labels is None else labels
+    x_res = []
+    y_res = []
+    for i in cols:
+        x = np.array(df_1.iloc[:, i])
+        y = np.array(df_2.iloc[:, i])
+        x[l] = 0.0
+        y[l] = 0.0
+        x_res.append(x)
+        y_res.append(y)
+    return np.concatenate(x_res), np.concatenate(y_res)
 
-def rms(x, y, labels=[], r= 3):
-    x = np.array(x)
-    y = np.array(y)
-    labeled_x, labeled_y = x[labels], y[labels]
+def RMSE(df_1,df_2  , cols , labels = None ):
+    x, y = process(df_1,df_2  , cols , labels = labels)
+    return rmse(x,y)
 
-    return round(np.sqrt(
-        (np.sum(np.square(x - y)) - np.sum(np.square(labeled_x - labeled_y)))
-        / (len(x) - len(labeled_x))
-    ),r)
+def rmse(x, y, r= 3):
+    return round(np.sqrt(sum(np.square(x - y))/len(x)),r)
+
+def MAE(df_1,df_2  , cols , labels = None ):
+    x, y = process(df_1,df_2  , cols , labels = labels)
+    return mae(x,y)
+
+def mae(x,y,r=3):
+    return round(np.mean(np.abs(x-y)),r)
+
+
 
 def pearson(x, y):
     return scipy.stats.pearsonr(x, y)
