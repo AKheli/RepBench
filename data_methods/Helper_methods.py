@@ -37,7 +37,7 @@ def searchfiles(filename):
     return [ searchfile(file) for  file in filename.split(",") ]
 
 
-def get_df_from_file(filename):
+def get_df_from_file(filename, rec = True):
     set_path_to_MA()
     try:
         data = pd.read_csv(filename, nrows=0, header=0, sep="," )
@@ -50,7 +50,9 @@ def get_df_from_file(filename):
                 header = 0
         data =pd.read_csv(filename, header=header, sep=",")
     except:
-        assert False , "invalid data file"
+        if rec:
+            return get_df_from_file(searchfile(filename=filename) , rec = False)
+        assert False, "invalid data file"
 
     return data , filename.split("/")[-1]
 

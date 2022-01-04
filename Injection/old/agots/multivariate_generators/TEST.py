@@ -1,4 +1,4 @@
-from Repair.repair_algos.Screen.Local import screen
+from Repair.Screen import screen
 from Injection.old.agots.multivariate_generators.multivariate_variance_outlier_generator import \
     MultivariateVarianceOutlierGenerator
 

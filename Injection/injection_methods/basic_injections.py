@@ -2,7 +2,8 @@ import numpy as np
 
 from Scenarios.Anomaly_Types import *
 
-def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=None, stdrange=None):
+def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=None, stdrange=None
+                , random_point_outliers = True ):
     params = {name: param for name, param in zip(["factor", "directions", "stdrange"], [factor, directions, stdrange])
               if param is not None}
 
@@ -13,8 +14,23 @@ def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=No
     if anomaly_type == GROWTH_CHANGE:
         return inject_growth_change(data, index_range, **params)
     if anomaly_type == POINT_OUTLIER:
-        pass  # todo
-    assert True, "anomaly type not found"
+        if random_point_outliers is True:
+            random_indexes = np.random.choice(np.arange(len(data))[5:-2], size = len(index_range) ,replace=False )
+            index_range = sorted(random_indexes)
+        return inject_point_outlier(data,index_range,**params)
+    assert False, "anomaly type not found"
+
+def inject_point_outlier(data, indexes, factor=8, directions=[1, -1], stdrange=(-10, 10)):
+    anom_type = POINT_OUTLIER
+    data = np.array(data, dtype=np.float64)
+
+    for i in indexes:
+        local_std = data[np.arange(max(0, stdrange[0]), min(stdrange[1], len(data) - 1))].std()
+        data[i] += np.random.choice(directions) * factor * local_std
+
+    return data, {"type": anom_type, "factor": int(factor),
+                  "index_range": [int(index) for index in indexes], "std_range": stdrange}
+
 
 
 def inject_growth_change(data, index_range, factor=8, directions=[1, -1]):

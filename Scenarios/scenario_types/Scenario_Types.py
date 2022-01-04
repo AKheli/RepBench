@@ -2,13 +2,20 @@ BASE_SCENARIO = "base_scenario"
 VARY_TS_LENGTH = "vary_ts_length"
 VARY_ANOMALY_SIZE = "vary_anomaly_size"
 VARY_ANOMALY_AMOUNT = "vary_anomaly_amount"
+MINI_SCENARIO = "mini_scenario"
+ANOMALY_POSITION = "anomaly_position"
+
 
 scenario_specifications = {
     BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 10},
     VARY_TS_LENGTH: {"anomaly_percentage": 0.10, "anomaly_length": 10},
     VARY_ANOMALY_SIZE: {"anomaly_length_start": 10, "anomaly_length_step": 10},
-    VARY_ANOMALY_AMOUNT: {"anomaly_percentage": 0.15, "anomaly_length": 15}
+    VARY_ANOMALY_AMOUNT: {"anomaly_percentage": 0.15, "anomaly_length": 15},
+    MINI_SCENARIO: {"length": 25, "anomaly_length": 5},
 }
+scenario_specifications[ANOMALY_POSITION] = scenario_specifications[BASE_SCENARIO].copy()
+
+
 
 SCENARIO_TYPES = list(scenario_specifications.keys())
 
@@ -21,7 +28,7 @@ def parse_scenario_name(type_name):
         x = start_of_(type_name, scen)
         if x < v_min:
             a_min, v_min = scen, x
-    assert v_min < 100, f"could not parse scenario {type_name} , must bin in {SCENARIO_TYPES} "
+    assert v_min  == 100, f"could not parse scenario {type_name} , must bin in {SCENARIO_TYPES} "
     return a_min
 
 

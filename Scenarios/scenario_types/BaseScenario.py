@@ -20,13 +20,14 @@ class BaseScenario():
 
     def get_amount_of_anomalies(self, data):
         anom_amount = round(len(data) * self.anomaly_percentage / self.anomaly_length)
-        print(anom_amount)
         return anom_amount
 
-    def inject_single(self, data):
-        data = np.array(data)
-        index_ranges = get_random_ranges(data, self.anomaly_length, number_of_ranges=self.get_amount_of_anomalies(data))
+    def inject_single(self, data,seed  =100):
+        index_ranges = get_random_ranges(data, self.anomaly_length
+                                         , number_of_ranges=self.get_amount_of_anomalies(data),seed  =seed)
         anomaly_infos = []
+        if self.anomaly_length == 6:
+            print(index_ranges)
         for range_ in index_ranges:
             data, info = add_anomaly(anomaly_type=self.anomaly_type, data=data, index_range=range_)
             anomaly_infos.append(info)
@@ -38,15 +39,17 @@ class BaseScenario():
         return np.invert(np.isclose(np.array(injected.sum(axis=1)), np.array(original.sum(axis=1))))
 
     def create_scenario_part_output(self, injected, original, cols):
+        original = original.reset_index(drop=True)
+        injected = injected.reset_index(drop=True)
         return {
             "injected": injected,
             "original": original.copy(),
             "class": self.get_class(injected, original),
             "columns": cols}
 
-    def transform_df(self, df, cols=[0]):
+    def transform_df(self, df, cols=[0],seed = 100):
         data = df.copy()
         for col in cols:
-            data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]))
+            data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]),seed = seed)
 
         return {"full_set": self.create_scenario_part_output(data, df, cols)}

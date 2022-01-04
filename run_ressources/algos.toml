@@ -1,0 +1,68 @@
+
+[RPCA]
+#     [RPCA.1] # unique subname
+#     n_components = 3
+#     threshold = 2
+#     PCA_method = "svd"
+#
+#     [RPCA.11]
+#     n_components = 3
+#     threshold = 2
+#     PCA_method = "TruncatedSVD"
+
+    [RPCA.w5]
+    n_components = 2
+    threshold = 0.5
+    PCA_method = "TruncatedSVD"
+    window = true
+
+#     [RPCA.11w]
+#     n_components = 3
+#     threshold = 2
+#     PCA_method = "TruncatedSVD"
+#     window = true
+#
+#     [RPCA.11ww]
+#     n_components = 5
+#     threshold = 2
+#     PCA_method = "TruncatedSVD"
+#
+#     [RPCA.11ww2]
+#     n_components = 5
+#     threshold = 2
+#     PCA_method = "TruncatedSVD"
+#     window = true
+#
+#     [RPCA.11www]
+#     n_components = 5
+#     threshold = 0.5
+#     PCA_method = "TruncatedSVD"
+#
+#     [RPCA.11www2]
+#     n_components = 5
+#     threshold = 0.5
+#     PCA_method = "TruncatedSVD"
+#     window = true
+#
+#     [RPCA.2]
+#     n_components = 2
+#     threshold = 0.5
+#     PCA_method = "TruncatedSVD"
+#
+#     [RPCA.2w]
+#     n_components = 2
+#     threshold = 0.5
+#     PCA_method = "TruncatedSVD"
+#     window = true
+#
+#
+#     [RPCA.3]
+#     PCA_method = "svd"
+#     n_components = 2
+#     threshold = 2
+#
+#     [RPCA.default]
+#
+# [SCREEN]
+#     [SCREEN.defualt]
+#

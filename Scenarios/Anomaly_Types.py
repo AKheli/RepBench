@@ -18,7 +18,7 @@ def parse_anomaly_name(type_name):
         x = start_of_(type_name, anom)
         if x < v_min:
             a_min, v_min = anom, x
-    assert v_min < 100, "could not parse anomaly"
+    assert v_min < 100, f"could not parse anomaly {type_name}"
     return a_min
 
 

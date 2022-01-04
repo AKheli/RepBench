@@ -22,7 +22,7 @@ except:
 
 
 
-def vadetis_csv_to_df(filename, ts_column_name=ts_column_name , classes = classes , drop_anomalies = True):
+def vadetis_csv_to_df(filename, ts_column_name=ts_column_name , classes = None , drop_anomalies = True):
     df = pd.read_csv(filename, sep=delimiter)
     print(df)
     names = list(df[ts_column_name].unique())
@@ -47,20 +47,25 @@ def vadetis_csv_to_df(filename, ts_column_name=ts_column_name , classes = classe
     return pd.DataFrame(ts_dict)
 
 
+
+def orbits_txt_save(filename):
+    df = pd.read_csv(filename, sep=delimiter , header = None)
+    return df
+
 def main():
     transform_function = vadetis_csv_to_df
 
     for file in [f for f in os.listdir() if f[-2:] != "py"]:
         try:
             df = transform_function(file)
-            print(f"{file.split('/')[-1]}  file converted")
             print(df.head())
-            df.to_csv(f"../{file.split('/')[-1]}", index=False)
+            df.to_csv(f"../../Data/{file.split('/')[-1]}", index=False)
+            print(f"{file.split('/')[-1]}  file converted")
             if remove:
                 os.remove(file)
         except Exception as e:
             print(e)
-            print(os.listdir())
+            print(os.listdir("../../"))
             print(f"{file.split('/')[-1]} not converted")
 
 def select_ts_entries_to_create_df(filename , entries , labels ):
@@ -72,8 +77,7 @@ def select_ts_entries_to_create_df(filename , entries , labels ):
 
 
 if __name__ == "__main__":
-    #main()
-    select_ts_entries_to_create_df("../../Data/stock10k.data", [2], ["truth"])
-
+    main()
+    #select_ts_entries_to_create_df("../../Data/stock10k.data", [2], ["truth"])
 
 
