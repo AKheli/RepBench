@@ -133,7 +133,7 @@ class Robust_PCA_estimator(BaseEstimator):
             return components
 
         if self.component_method == "TruncatedSVD":
-            tsvd = TruncatedSVD(n_components=self.n_components)
+            tsvd = TruncatedSVD(n_components=min(centered_weighted_x.shape[1],self.n_components))
             tsvd.fit(centered_weighted_x)
             components = tsvd.components_
             return components

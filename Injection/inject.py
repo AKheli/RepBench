@@ -1,6 +1,7 @@
 import sys
 
 from Scenarios.scenario_types.BaseScenario import BaseScenario
+from Scenarios.scenario_types.Scenario_Constructor_mapper import SCENARIO_CONSTRUCTORS
 from run_ressources.helpers import split_data_set
 
 sys.path.append('../') # always run from the toplevel folder
@@ -11,6 +12,18 @@ def drop_class(data):
     except:
         pass
     return data
+
+
+
+
+
+#todo das its injection handling scenario string odr scenario (for specifications)
+
+
+def scenario_inject(data, scenario = BaseScenario ,anomaly_type = None  , columns_to_inject = [0] , train_split = 0):
+    if isinstance(scenario,str):
+        scenario = SCENARIO_CONSTRUCTORS[scenario]() if anomaly_type is None else SCENARIO_CONSTRUCTORS[scenario](anomaly_type)
+    return get_scenario_data(scenario , data , columns_to_inject ,train_split = train_split)
 
 
 def get_scenario_data(scenario , data , columns_to_inject ,train_split = 0.2 ):

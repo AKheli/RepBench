@@ -27,5 +27,5 @@ def search_s(data, truth):
 df = pd.read_csv("/".join(__file__.split("/")[:-1])+"/stock10k.data" , header = 0)
 data = np.array(df["injected"])
 truth = np.array(df["truth"])
-s = search_s(data,truth)
+s = search_s(data,truth,)
 

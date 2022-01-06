@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 from matplotlib import pyplot as plt
 from skopt import gp_minimize
@@ -9,37 +11,44 @@ from Scenarios.scenario_types.BaseScenario import BaseScenario
 from data_methods.Helper_methods import searchfile, get_df_from_file
 
 
+class BayesianOptimization():
+    # todo sampling
+    def __init__(self, clf, param_grid, n_jobs=-1, scoring=RMSE, **args):
+        self.clf = deepcopy(clf) #todo check if this works
+        self.n_jobs = n_jobs
+        self.param_grid = param_grid
+        self.best_params_ = None
+        self.best_estimator_ = clf
+
+    def fit(self, X, y):
+        self.best_params_ = bayesian_opt(X, y, self.clf, self.param_grid, self.n_jobs)
+
+
 def select_data(data, truth, samples, sample_offset=0):
     if samples == -1:
-        return data , truth
+        return data, truth
     np.random.seed(20)
     indexes = np.random.randint(len(data), size=samples, dtype=int)
     return data.iloc[indexes, :], truth.iloc[indexes, :]
 
 
-def bayesian_opt(data, truth, model, fix_params, params_bounds, samples=-1):
+def bayesian_opt(data, truth, model, params_bounds, samples=-1, n_jobs=-1):
     x = params_bounds.values()
 
     def f(x):
         params = {k: v for k, v in zip(params_bounds.keys(), x)}
-        params.update(fix_params)
-        model_i = model(**params)
+        for k, v in params.items():
+            setattr(model, k, v)
         selected_data, selected_truth = select_data(data, truth, samples)
-        model_i.fit(selected_data)
-        predicted = pd.DataFrame(model_i.predict(data))
-        result = RMSE(predicted, truth, params["cols"])
+        model.fit(selected_data)
+        predicted = pd.DataFrame(model.predict(data))
+        result = RMSE(predicted, truth, model.cols)
         return result
 
-    x = gp_minimize(f, x, n_jobs=-1 , n_initial_points  = 100,n_restarts_optimizer=15).x
+    x = gp_minimize(f, x, n_jobs=n_jobs, n_initial_points=100, n_restarts_optimizer=15).x
     params = {k: v for k, v in zip(params_bounds.keys(), x)}
-    params.update(fix_params)
     f(x)
-    return Search(params)
-
-class Search():
-    def __init__(self,best_params):
-        self.best_params_ = best_params
-
+    return params
 
 #
 # if __name__ == "__main__":
