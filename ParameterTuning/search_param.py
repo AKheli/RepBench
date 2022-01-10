@@ -83,12 +83,12 @@ def paramsearch(data, param_grid, opzimiter, estimator , anomaly_type=AMPLITUDE_
 if __name__ == "__main__":
     param_grid = {
         # "threshold": np.arange(0.5, 3., 0.2),
-        "n_components": [1, 2, 3]#, 4, 5, 6],
+        "n_components": [ 1]#, 4, 5, 6],
          #"delta": [0.5 ** i for i in range(11)],
        # "component_method": ["TruncatedSVD"]
     }
 
-    search1 = paramsearch("YAHOO.csv", param_grid, ["ba","gr","ha"], Robust_PCA_estimator(cols=[0,1]))
+    search1 = paramsearch("YAHOO.csv", param_grid, ["ba","gr","ha"], Robust_PCA_estimator(cols=[0]))
 
     param_grid = {
         # "threshold": np.arange(0.5, 3., 0.2),
@@ -96,4 +96,8 @@ if __name__ == "__main__":
         "s" : [2**i for i in range(20)]
         # "component_method": ["TruncatedSVD"]
     }
-    search2 = PCA_paramsearch("YAHOO.csv", param_grid, ["ba","gr","ha"], SCREEN_estimator(cols=[0,1]))
+    search2 = paramsearch("YAHOO.csv", param_grid, ["ba","gr","ha"], SCREEN_estimator(cols=[0,1]))
+
+
+# redo scenario class??
+# look at run injection think about class change

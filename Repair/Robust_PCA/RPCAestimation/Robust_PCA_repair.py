@@ -13,6 +13,8 @@ from Repair.res.timer import Timer
 import warnings
 
 # transforming
+from Scenarios.metrics import RMSE
+
 warnings.simplefilter("ignore", UserWarning)  # feaure name
 
 alg_type = RPCA
@@ -57,7 +59,6 @@ def RPCA_repair_window(injected, cols, n_components=1, threshold=2.2, **args):
     PCA_method = args.get("PCA_method","TruncatedSVD")
     pca = Robust_PCA_estimator(cols=cols, n_components=n_components, threshold=threshold , component_method= PCA_method)
 
-    print("siize",total_size)
     for i in range(max(1,int(total_size/window_size))):
         # repair.plot()
         # plt.show()
@@ -126,6 +127,7 @@ class Robust_PCA_estimator(BaseEstimator):
         return pd.concat([X] + [X.shift(i, fill_value=0) for i in range(self.shift)], axis=1)
 
     def get_components(self, centered_weighted_x):
+        n_components = min(centered_weighted_x.shape[1] - 1, self.n_components)
         if self.component_method == "fastICA":
             incPCA = FastICA(n_components=self.n_components)
             incPCA.fit(centered_weighted_x)
@@ -133,8 +135,9 @@ class Robust_PCA_estimator(BaseEstimator):
             return components
 
         if self.component_method == "TruncatedSVD":
-            tsvd = TruncatedSVD(n_components=min(centered_weighted_x.shape[1],self.n_components))
+            tsvd = TruncatedSVD(n_components=n_components)
             tsvd.fit(centered_weighted_x)
+
             components = tsvd.components_
             return components
 
@@ -144,7 +147,6 @@ class Robust_PCA_estimator(BaseEstimator):
         return components
 
     def fit(self, X, y=None):
-        self.components = None
         self.delta_half_square = (self.delta ** 2) / 2.
         self.vectorized_loss = self.vec_call #np.vectorize(self.call)
         self.vectorized_weights = np.vectorize(self.weight)
@@ -168,12 +170,13 @@ class Robust_PCA_estimator(BaseEstimator):
 
         while not_done_yet:
             # Calculating components with current weights
+
             self.mean_ = np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
             self.components_ = self.get_components(X_centered * np.sqrt(self.weights_.reshape(-1, 1)))
 
-            non_projected_metric = np.eye(self.components_.shape[1]) - \
-                                   self.components_.T.dot(self.components_)
+            # non_projected_metric = np.eye(self.components_.shape[1]) - \
+            #                        self.components_.T.dot(self.components_)
 
 
 
@@ -203,7 +206,7 @@ class Robust_PCA_estimator(BaseEstimator):
 
     def reduce(self, X):
         original_rows, original_cols = X.shape
-        X = self.add_features(X)
+        #X = self.add_features(X)
         X = self._validate_data(X, dtype=[np.float32], reset=False)
         if self.mean_ is not None:
             X = X - self.mean_
@@ -212,28 +215,36 @@ class Robust_PCA_estimator(BaseEstimator):
 
         return X_reduced[:, :original_cols]
 
-
-    def predict(self, X):
+    def classifiy_anomalies(self,X , reconstructed):
         X = X.copy()
         X_copy = self._validate_data(X, dtype=[np.float32], reset=False)
 
         # classify anomalies
         anomalies = {}
-        X_reduced = self.reduce(X)
         for col in self.cols:
-            reconstructed_col = np.array(X_reduced[:, col])
-
+            reconstructed_col = np.array(reconstructed[:, col])
             diff = reconstructed_col - X_copy[:, col]
             mean = np.mean(diff)
             std = np.std(diff)
             abs_z_score = diff * 0 if std == 0 else abs((diff - mean) / std)
             to_repair_booleans = abs_z_score > self.threshold
             anomalies[col] = to_repair_booleans
+            return anomalies
 
+    def score(self,X,y):
+        return -RMSE(pd.DataFrame(self.predict(X)),y,self.cols)
+
+    def predict(self, X):
+        X = X.copy()
+        X_copy = self._validate_data(X, dtype=[np.float32], reset=False)
+        X_reduced = self.reduce(X)
+
+        anomalies = self.classifiy_anomalies(X,X_reduced)
         #replace
         if not self.interpolate_anomalies:
-            for col in self.cols:
-                X_copy[anomalies[col],col] = reconstructed_col[anomalies[col]]
+            assert False
+        #     for col in self.cols:
+        #         X_copy[anomalies[col],col] = reconstructed_col[anomalies[col]]
 
         #interpolate wrong values
         else:

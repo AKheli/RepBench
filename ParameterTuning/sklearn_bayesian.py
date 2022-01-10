@@ -13,26 +13,34 @@ from data_methods.Helper_methods import searchfile, get_df_from_file
 
 class BayesianOptimization():
     # todo sampling
-    def __init__(self, clf, param_grid, n_jobs=-1, scoring=RMSE, **args):
+    def __init__(self, clf, param_grid,  n_jobs=-1 , **kargs):
         self.clf = deepcopy(clf) #todo check if this works
         self.n_jobs = n_jobs
         self.param_grid = param_grid
         self.best_params_ = None
         self.best_estimator_ = clf
+        self._ParamTuner__name_ = "BayesianOptimization"
 
     def fit(self, X, y):
-        self.best_params_ = bayesian_opt(X, y, self.clf, self.param_grid, self.n_jobs)
-
+        gp_minimize_result = bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
+        self.best_params_ = { k : v for k,v  in zip(self.param_grid.keys(), gp_minimize_result.x) }
+        self.clf.__dict__.update(self.best_params_)
+        self.best_estimator_ = self.clf
+        # print(gp_minimize_result.x_iters)
+        # print()
+        # print(gp_minimize_result.func_vals)
+        # print()
+        # print(gp_minimize_result.space)
 
 def select_data(data, truth, samples, sample_offset=0):
-    if samples == -1:
-        return data, truth
-    np.random.seed(20)
-    indexes = np.random.randint(len(data), size=samples, dtype=int)
-    return data.iloc[indexes, :], truth.iloc[indexes, :]
+    return data, truth
+    # np.random.seed(20)
+    # indexes = np.random.randint(len(data), size=samples, dtype=int)
+    # return data.iloc[indexes, :], truth.iloc[indexes, :]
+    #
 
-
-def bayesian_opt(data, truth, model, params_bounds, samples=-1, n_jobs=-1):
+def bayesian_opt(data, truth, model, params_bounds, scoring , samples=-1, n_jobs=-1):
+    """  wrap   """
     x = params_bounds.values()
 
     def f(x):
@@ -41,14 +49,11 @@ def bayesian_opt(data, truth, model, params_bounds, samples=-1, n_jobs=-1):
             setattr(model, k, v)
         selected_data, selected_truth = select_data(data, truth, samples)
         model.fit(selected_data)
-        predicted = pd.DataFrame(model.predict(data))
-        result = RMSE(predicted, truth, model.cols)
+        result = -model.score(data, truth)
         return result
 
-    x = gp_minimize(f, x, n_jobs=n_jobs, n_initial_points=100, n_restarts_optimizer=15).x
-    params = {k: v for k, v in zip(params_bounds.keys(), x)}
-    f(x)
-    return params
+    return gp_minimize(f, x, n_jobs=n_jobs,n_calls=30, n_initial_points=20, n_restarts_optimizer=2, n_points=100,acq_func='EI')
+
 
 #
 # if __name__ == "__main__":

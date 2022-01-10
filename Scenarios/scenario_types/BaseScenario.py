@@ -1,3 +1,5 @@
+import pandas as pd
+
 from Scenarios.Anomaly_Types import *
 import numpy as np
 from Injection.injection_methods.basic_injections import add_anomaly
@@ -36,7 +38,7 @@ class BaseScenario():
     @staticmethod
     def get_class(injected, original):
         """ generates common class where entries are different"""
-        return np.invert(np.isclose(np.array(injected.sum(axis=1)), np.array(original.sum(axis=1))))
+        return original.ne(injected)
 
     def create_scenario_part_output(self, injected, original, cols):
         original = original.reset_index(drop=True)
