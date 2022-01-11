@@ -13,9 +13,10 @@ class Robust_PCA_classifier(Robust_PCA_estimator):
         anoms = pd.DataFrame(self.classifiy_anomalies(X, X_reduced))
         return anoms
 
-    def score(self, X, y):
+    def score(self, X, y,predict= False):
         predicted_anoms = self.predict(X)
-
+        print("sum",np.sum(np.array(predicted_anoms)))
+        print("sum non", np.sum(np.invert(np.array(predicted_anoms))))
         t = []
         p = []
         for col in self.cols:
@@ -27,8 +28,10 @@ class Robust_PCA_classifier(Robust_PCA_estimator):
             t.append(true_anomalies)
             p.append(predicted_col)
 
-        t  = np.concatenate(t, axis=None)
-        p  = np.concatenate(p, axis=None)
+        t  = np.concatenate(t, axis=None,dtype=int)
+        p  = np.concatenate(p, axis=None,dtype=int)
 
-        print(f1_score(np.concatenate(t, axis=None),np.concatenate(p, axis=None)))
-        return f1_score(np.concatenate(t, axis=None),np.concatenate(p, axis=None))
+        #print(f1_score(np.concatenate(t, axis=None),np.concatenate(p, axis=None)))
+        print(np.sum(np.abs(t-p)))
+        np.sum( (t - p) >0)**1.5 + np.sum( (t - p) < 0 )
+        return -(np.sum( (t - p) >0)**2 + np.sum( (t - p) < 0 ))/len(p)

@@ -10,7 +10,7 @@ from Scenarios.metrics import RMSE
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 from data_methods.Helper_methods import searchfile, get_df_from_file
 
-
+#chalenge ts not i.i.d
 class BayesianOptimization():
     # todo sampling
     def __init__(self, clf, param_grid,  n_jobs=-1 , **kargs):

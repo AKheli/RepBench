@@ -231,8 +231,11 @@ class Robust_PCA_estimator(BaseEstimator):
             anomalies[col] = to_repair_booleans
             return anomalies
 
-    def score(self,X,y):
-        return -RMSE(pd.DataFrame(self.predict(X)),y,self.cols)
+    def score(self,X,y , predict = True):
+        if predict:
+            return -RMSE(pd.DataFrame(self.predict(X)),y,self.cols)
+        else:
+            return -RMSE(X, y, self.cols)
 
     def predict(self, X):
         X = X.copy()
