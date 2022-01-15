@@ -45,9 +45,11 @@ class ParamTuner():
 
     def optimize_scenario(self, scenario):
         scenario_data = scenario["scenario_data"]
-
         train_X,train_y = scenario["train"] , scenario["train_original"]
+
         for tuner_dict in self.parameter_tuners:
+            fig, axs =  plt.subplots(2*len(scenario_data.items())+1, figsize=(20, 7*(len(scenario_data.items())+1)), constrained_layout=True)
+            # train tuner
             tuner = tuner_dict["tuner"]
             timer = Timer()
             timer.start()
@@ -56,65 +58,45 @@ class ParamTuner():
             estimator = tuner.best_estimator_
             best_params =  tuner.best_params_
 
-            overal_train_score = -estimator.score(train_X,train_y)
-            original_train_score = -estimator.score(train_X,train_y,predict= False)
-            tuner_results = [type(tuner).__name__ ,  best_params ,  ("time" ,  time) ,("original_train_score" , original_train_score), ("train_score", overal_train_score)]
+            overal_train_error= estimator.error(train_X,train_y,plt=axs[0],name="train")
+            tuner_results = [type(tuner).__name__ ,  best_params ,  ("time" ,  time) ,overal_train_error]
+            self.results.append(tuner_results)
+            axs_counter = 0
             for scenario_part_name, scenario_part in scenario_data.items():  # scenarios
+                axs_counter += 1
                 assert "injected" in scenario_part, print(scenario_part)
                 validation_X , validation_y = scenario_part["injected"], scenario_part["original"]
-                tuner_results.append(("original_error",-estimator.score(validation_X, validation_y, predict = False)))
 
-                #validation_y.plot()
-                #plt.title("y")
-                #plt.show()
-                #validation_X.plot()
-                #plt.title("X")
-                #plt.show()
-                part_scenario_score = -estimator.score(validation_X, validation_y)
-                tuner_results.append(("pref_fit",part_scenario_score))
+                overal_train_error = estimator.error(validation_X, validation_y, plt=axs[axs_counter], name=scenario_part_name)
+                tuner_results = [type(tuner).__name__, best_params, ("time", time), overal_train_error]
 
-                # pd.DataFrame(estimator.predict(validation_X)).plot()
-                # plt.title("prefit")
-                #plt.show()
 
+                axs_counter += 1
                 estimator.fit(validation_X) #todo
-                #pd.DataFrame(estimator.predict(validation_X)).plot()
-                #plt.show()
-                part_scenario_score = -estimator.score(validation_X, validation_y)
-                tuner_results.append(("refitted_fit",part_scenario_score ))
-            print(tuner_results)
-            self.results.append(tuner_results)
+                overal_train_error = estimator.error(validation_X, validation_y, plt=axs[axs_counter],
+                                                     name=f"refitted_{scenario_part_name}")
+                tuner_results = [("time", time), overal_train_error]
+                self.results.append(tuner_results)
+
+            fig.savefig(f"{type(tuner).__name__}.svg")
+            plt.show()
+        for i in self.results:
+            print(i)
 
 
-    # def search_param(self, train_X,train_y, ):  # injected , original or class
-    #     train_X = injected.copy()
-    #     train_y = truth
-    #     search_results = []
-    #     original_rmse = RMSE(injected, truth, [0])
-    #
-    #     for tuner_dict in self.parameter_tuners:
-    #         tuner = self.update_tuner(tuner_dict,train_X,train_y)
-    #         print(tuner.cv)
-    #         print("starting", type(tuner).__name__)
-    #         timer = Timer()
-    #         timer.start()
-    #         tuner.fit(injected, truth)
-    #
-    #         time = timer.get_time()
-    #         best_params = tuner.best_params_
-    #         estimator = tuner.best_estimator_
-    #         estimator.fit(injected)
-    #         original_error = self.error(injected, truth, [0])
-    #
-    #         error = estimator.score(injected, truth)
-    #         search_results.append({"tuner": type(tuner).__name__,
-    #                                "best_params": best_params,
-    #                                "error": error,
-    #                                # "error_normalized": round(error/original_error,3),
-    #                                "error_name": self.error.__name__,
-    #                                "time": time})
-    #
-    #     return search_results
+
+
+    def plot(self,injected,original,repair, cols , title = ""):
+        repair = pd.DataFrame(repair)
+        ax = repair.plot(title=title)
+        for i, line in enumerate(ax.lines):
+            if i not in cols:
+                line.set_alpha(.1)
+            else:
+                plt.plot(injected.index,original.iloc[:,i],color="black")
+                plt.plot(injected.index,injected.iloc[:,i],color="red",ls="dashed")
+
+        return ax
 
     # def plot(self, to_plot=None, prefix=""):
     #     to_plot = to_plot if to_plot is not None else ["time", "error"]

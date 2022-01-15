@@ -9,6 +9,7 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import FastICA
 
 from Repair.Algorithms_File import RPCA, ALGORITHM_PARAMETERS
+from Repair.estimator import estimator
 from Repair.res.timer import Timer
 import warnings
 
@@ -85,7 +86,11 @@ def RPCA_repair_window(injected, cols, n_components=1, threshold=2.2, **args):
         , "threshold": threshold, "type": alg_type  , "name" : f'RPCA({n_components},{round(threshold,2)},_window)'}
 
 
-class Robust_PCA_estimator(BaseEstimator):
+
+
+import time
+
+class Robust_PCA_estimator(estimator):
     def __init__(self, cols=[0], delta=0.01
                  , threshold=1
                  , n_components=1
@@ -95,7 +100,9 @@ class Robust_PCA_estimator(BaseEstimator):
                  , max_iter=300
                  , component_method="TruncatedSVD"
                  , interpolate_anomalies = True
+                 , fit_on_truth = True
                  ):
+        self.fit_on_truth = fit_on_truth
         self.interpolate_anomalies = interpolate_anomalies
         self.cols = cols
         self.threshold = threshold
@@ -106,6 +113,9 @@ class Robust_PCA_estimator(BaseEstimator):
         self.eps = eps
         self.max_iter = max_iter
         self.component_method = component_method
+        self.times = {}
+        estimator.__init__(self)
+
 
     def get_params(self, **kwargs):
         return {"delta": self.delta
@@ -117,14 +127,15 @@ class Robust_PCA_estimator(BaseEstimator):
             , "max_iter": self.max_iter
             , "component_method": self.component_method
             , "interpolate_anomalies": self.interpolate_anomalies
+            , "fit_on_truth" : self.fit_on_truth
             }
 
     # def score(self,y,X):
     #     print("yyyy",y)
     #     return 1
 
-    def add_features(self, X):
-        return pd.concat([X] + [X.shift(i, fill_value=0) for i in range(self.shift)], axis=1)
+    # def add_features(self, X):
+    #     return pd.concat([X] + [X.shift(i, fill_value=0) for i in range(self.shift)], axis=1)
 
     def get_components(self, centered_weighted_x):
         n_components = min(centered_weighted_x.shape[1] - 1, self.n_components)
@@ -146,7 +157,9 @@ class Robust_PCA_estimator(BaseEstimator):
 
         return components
 
-    def fit(self, X, y=None):
+    def _fit(self, X, y=None):
+        if y is not None and self.fit_on_truth:
+            X = y
         self.delta_half_square = (self.delta ** 2) / 2.
         self.vectorized_loss = self.vec_call #np.vectorize(self.call)
         self.vectorized_weights = np.vectorize(self.weight)
@@ -155,8 +168,6 @@ class Robust_PCA_estimator(BaseEstimator):
             raise TypeError('MRobustPCA does not support sparse input.')
 
         col_n = X.shape[1]
-
-        X = self.add_features(X)
 
         X = check_array(X, dtype=[np.float32], ensure_2d=True,
                         copy=True)
@@ -231,13 +242,9 @@ class Robust_PCA_estimator(BaseEstimator):
             anomalies[col] = to_repair_booleans
             return anomalies
 
-    def score(self,X,y , predict = True):
-        if predict:
-            return -RMSE(pd.DataFrame(self.predict(X)),y,self.cols)
-        else:
-            return -RMSE(X, y, self.cols)
 
-    def predict(self, X):
+
+    def _predict(self, X):
         X = X.copy()
         X_copy = self._validate_data(X, dtype=[np.float32], reset=False)
         X_reduced = self.reduce(X)
