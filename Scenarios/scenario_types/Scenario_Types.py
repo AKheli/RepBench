@@ -4,14 +4,15 @@ VARY_ANOMALY_SIZE = "vary_anomaly_size"
 VARY_ANOMALY_AMOUNT = "vary_anomaly_amount"
 MINI_SCENARIO = "mini_scenario"
 ANOMALY_POSITION = "anomaly_position"
-
+ANOMALY_FACTOR  = "anomaly_factor"
 
 scenario_specifications = {
-    BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 10},
+    BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 40},
     VARY_TS_LENGTH: {"anomaly_percentage": 0.10, "anomaly_length": 10},
     VARY_ANOMALY_SIZE: {"anomaly_length_start": 10, "anomaly_length_step": 10},
     VARY_ANOMALY_AMOUNT: {"anomaly_percentage": 0.15, "anomaly_length": 15},
     MINI_SCENARIO: {"length": 25, "anomaly_length": 5},
+    ANOMALY_FACTOR: {"anomaly_percentage": 0.10, "anomaly_length": 10},
 }
 scenario_specifications[ANOMALY_POSITION] = scenario_specifications[BASE_SCENARIO].copy()
 

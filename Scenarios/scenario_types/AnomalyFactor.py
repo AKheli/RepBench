@@ -4,11 +4,11 @@ from matplotlib import pyplot as plt
 from Injection.injection_methods.basic_injections import add_anomaly
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.Scenario_Types import VARY_ANOMALY_SIZE, scenario_specifications
+from Scenarios.scenario_types.Scenario_Types import VARY_ANOMALY_SIZE, scenario_specifications, ANOMALY_FACTOR
 
 
-class AnomalyLengthScenario(BaseScenario):
-    scenario_type = VARY_ANOMALY_SIZE
+class AnomalyFactorScenario(BaseScenario):
+    scenario_type = ANOMALY_FACTOR
 
     # def __init__(self, anomaly_type=AMPLITUDE_SHIFT,
     #              default_params=scenario_specifications[scenario_type]):
@@ -30,16 +30,16 @@ class AnomalyLengthScenario(BaseScenario):
         data = df.copy()
         resulting_data = []
         result = {}
-        for i in [10*i for i in range(1,11)]:
-            self.anomaly_length = i
+        for i in [1,5,10,15,20,30,40,50,100,200]:
+            self.factor = i
             injected_df = data.copy()
             for col in cols:
                 injected_df.iloc[:, col], anomaly_info = self.inject_single(np.array(data.iloc[:, col]),
-                                                                            min_space_anom_len_multiplier=0)
+                                                                            min_space_anom_len_multiplier=0,factor=i)
             injected_df.plot()
             plt.show()
             resulting_data.append(injected_df)
-            result[f'anomaly_size{i}'] = self.create_scenario_part_output(injected_df, data, cols)
+            result[f'anomaly_factor{i}'] = self.create_scenario_part_output(injected_df, data, cols)
 
         return result
 

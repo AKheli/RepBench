@@ -1,5 +1,4 @@
 from Injection.injection_methods.basic_injections import add_anomaly
-from Injection.injection_methods.index_computations import get_random_ranges
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
 from Scenarios.scenario_types.Scenario_Types import scenario_specifications, MINI_SCENARIO
 from Scenarios.scenario_types.BaseScenario import BaseScenario

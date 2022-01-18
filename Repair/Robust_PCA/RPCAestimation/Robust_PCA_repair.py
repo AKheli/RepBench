@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sklearn
 from matplotlib import pyplot as plt
 from scipy import linalg
 from scipy.sparse import issparse
@@ -7,7 +8,9 @@ from sklearn.base import BaseEstimator
 from sklearn.utils import check_array
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import FastICA
+from skopt import gp_minimize
 
+from ParameterTuning.EM_bootstrap import in_interval, conf_interval
 from Repair.Algorithms_File import RPCA, ALGORITHM_PARAMETERS
 from Repair.estimator import estimator
 from Repair.res.timer import Timer
@@ -101,7 +104,11 @@ class Robust_PCA_estimator(estimator):
                  , component_method="TruncatedSVD"
                  , interpolate_anomalies = True
                  , fit_on_truth = True
+                 , threshold_boundaries = (0.5,4)
+                 , **kwargs
                  ):
+        self.best_threshold = None
+        self.threshold_boundaries = threshold_boundaries
         self.fit_on_truth = fit_on_truth
         self.interpolate_anomalies = interpolate_anomalies
         self.cols = cols
@@ -121,13 +128,10 @@ class Robust_PCA_estimator(estimator):
         return {"delta": self.delta
             , "threshold": self.threshold
             , "n_components": self.n_components
-            , "shift": self.shift
-            , "time": self.time
-            , "eps": self.eps
-            , "max_iter": self.max_iter
             , "component_method": self.component_method
             , "interpolate_anomalies": self.interpolate_anomalies
             , "fit_on_truth" : self.fit_on_truth
+            , "best_threshold" : self.best_threshold
             }
 
     # def score(self,y,X):
@@ -158,8 +162,8 @@ class Robust_PCA_estimator(estimator):
         return components
 
     def _fit(self, X, y=None):
-        if y is not None and self.fit_on_truth:
-            X = y
+        # if y is not None and self.fit_on_truth:
+        #     X = y
         self.delta_half_square = (self.delta ** 2) / 2.
         self.vectorized_loss = self.vec_call #np.vectorize(self.call)
         self.vectorized_weights = np.vectorize(self.weight)
@@ -178,9 +182,12 @@ class Robust_PCA_estimator(estimator):
         self.errors_ = [np.inf]
         self.n_iterations_ = 0
         not_done_yet = True
-
+        t  = time.time()
         while not_done_yet:
             # Calculating components with current weights
+            if time.time() - t > 5:
+                print("rpca_iters" , self.n_iterations_)
+                t = time.time()
 
             self.mean_ = np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
@@ -213,7 +220,23 @@ class Robust_PCA_estimator(estimator):
             not_done_yet = rel_error > self.eps and self.n_iterations_ < self.max_iter
 
         self.components_ = self.components_[:col_n]
+
+        if y is not None:
+            self.set_threshold_on_current_settings(X,y)
         return self
+
+    def f(self, t, X, y):
+        print("TTTTTTTTTTTT",self.best_threshold)
+        print(t)
+        self.best_threshold = t[0]
+        return -self.score(self._predict(X), y)
+
+    def set_threshold_on_current_settings(self,X,y):
+        x = [self.threshold_boundaries]
+
+        self.best_threshold =  gp_minimize( lambda t : self.f(t, X, y)
+        , x, n_calls=30, verbose=True, n_initial_points=30,
+                           n_restarts_optimizer=1, n_points=200, acq_func='EI').x[0]
 
     def reduce(self, X):
         original_rows, original_cols = X.shape
@@ -226,7 +249,10 @@ class Robust_PCA_estimator(estimator):
 
         return X_reduced[:, :original_cols]
 
-    def classifiy_anomalies(self,X , reconstructed):
+    def classifiy_anomalies(self,X , reconstructed ):
+        if self.best_threshold is None:
+            self.best_threshold = self.threshold
+
         X = X.copy()
         X_copy = self._validate_data(X, dtype=[np.float32], reset=False)
 
@@ -234,15 +260,36 @@ class Robust_PCA_estimator(estimator):
         anomalies = {}
         for col in self.cols:
             reconstructed_col = np.array(reconstructed[:, col])
-            diff = reconstructed_col - X_copy[:, col]
+            to_repair_booleans = np.zeros_like(reconstructed_col,dtype=bool)
+
+            #pca = sklearn.decomposition.PCA(n_components=self.n_components)
+            #self.pca = pca.inverse_transform(pca.fit_transform(X_copy))[:,col]
+            diff = abs(reconstructed_col - X_copy[:, col])
             mean = np.mean(diff)
             std = np.std(diff)
-            abs_z_score = diff * 0 if std == 0 else abs((diff - mean) / std)
-            to_repair_booleans = abs_z_score > self.threshold
+            # abs_z_score = diff * 0 if std == 0 else abs((diff - mean) / std)
+            # to_repair_booleans = abs_z_score > self.threshold
+            for i in range(10,len(to_repair_booleans)-1):
+                to_repair_booleans[i]= (1+0*sum(to_repair_booleans[i-2:i-1]))*(diff[i]-mean)/std >  self.best_threshold
+
+            self.lower = reconstructed_col - (self.best_threshold*std+mean)
+            self.upper = reconstructed_col + (self.best_threshold*std+mean)
+
+            #did not work
+            #to_repair_booleans = self.in_interval(X_copy[:, col],reconstructed_col,self.threshold)
             anomalies[col] = to_repair_booleans
             return anomalies
 
-
+    def in_interval(self, injected, reduced, alpha, samples=100):
+        injected = injected.copy()
+        reduced = np.array(reduced)
+        assert reduced.ndim == 1
+        lower, upper = conf_interval(injected, alpha, samples)
+        self.lower = lower
+        self.upper = upper
+        to_repair_values = np.logical_or(reduced < lower, reduced > upper)
+        # print(to_repair_values)
+        return to_repair_values
 
     def _predict(self, X):
         X = X.copy()
@@ -251,31 +298,36 @@ class Robust_PCA_estimator(estimator):
 
         anomalies = self.classifiy_anomalies(X,X_reduced)
         #replace
-        if not self.interpolate_anomalies:
-            assert False
-        #     for col in self.cols:
-        #         X_copy[anomalies[col],col] = reconstructed_col[anomalies[col]]
 
-        #interpolate wrong values
-        else:
-            #interplate values in X where anomalies are
-            interplated_df = X.copy()
+        #     for col in self.cols:
+        #         X_copycopy()[anomalies[col],col] = reconstructed_col[anomalies[col]]
+
+
+        to_reduce = np.array(X).copy()
+        if self.interpolate_anomalies:
             for col in self.cols:
                 to_repair_booleans= anomalies[col].copy()
-                to_repair_booleans[:3] = False
-                to_repair_booleans[-3:] = False
-                X_copy[to_repair_booleans, col] = np.nan
-                interplated_df.iloc[:,col] = pd.Series(interplated_df.iloc[:,col]).interpolate(limit=200000,limit_area='inside')
+                i = 1
+                while i < len(to_repair_booleans):
+                    if to_repair_booleans[i]:
+                        last_clean_pont = i-1
+                        while to_repair_booleans[i]:
+                            i = i+1
+                        next_clean_pont = i
+                        to_reduce[last_clean_pont+1:next_clean_pont ,col] \
+                            = np.linspace(to_reduce[last_clean_pont,col],to_reduce[next_clean_pont,col],next_clean_pont-last_clean_pont-1)
+                    else:
+                        i = i+1
+                        #anomaly_found
 
-                def print_series(df):
-                    for i in range(len(df)):
-                        print(df.iloc[i])
-                assert not interplated_df.iloc[:,col].isnull().any().any() , f"nan found{print_series(pd.Series(X_copy[:,col]))} ,{print_series(pd.Series(X_copy[:,col]).interpolate(limit=200000,limit_area='inside'))}"
 
-            #replace with the reduced data
-            X_reduced = self.reduce(interplated_df)
-            for col in self.cols:
-                X_copy[anomalies[col], col] = X_reduced[anomalies[col],col]
+
+        #replace with the reduced data
+        X_reduced = self.reduce(to_reduce)
+        for col in self.cols:
+            reduced_col = X_reduced[:,col]
+            self.reduced = reduced_col
+            X_copy[anomalies[col], col] = reduced_col[anomalies[col]]
 
         return X_copy
 

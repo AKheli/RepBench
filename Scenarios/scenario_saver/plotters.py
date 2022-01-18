@@ -8,22 +8,24 @@ from matplotlib.ticker import MaxNLocator
 from Repair.res.timer import Timer
 from Scenarios.scenario_saver.anomaly_split import split
 
-def algo_plot_faster(scenario_data, path , title):
+
+def algo_plot_faster(scenario_data, path, title):
     matplotlib.use('Agg')
     algo_plot(scenario_data, path, title)
 
-def algo_plot(scenario_data, path , title):
+
+def algo_plot(scenario_data, path, title):
     timer = Timer()
     timer.start()
     algos = list(scenario_data.values())[0]["repairs"].keys()
 
     plots_n = len(scenario_data.keys())
 
-    plot_height=7
-    total_height = plot_height* plots_n
+    plot_height = 7
+    total_height = plot_height * plots_n
     for algo in algos:
         plt.close('all')
-        fig, axs = plt.subplots(plots_n,figsize=(20, total_height),constrained_layout=True)
+        fig, axs = plt.subplots(plots_n, figsize=(20, total_height), constrained_layout=True)
         for i, (scenario_part_name, scenario_part_data) in enumerate(scenario_data.items()):
             if plots_n == 1:
                 axis = axs
@@ -36,8 +38,7 @@ def algo_plot(scenario_data, path , title):
             cols = scenario_part_data["columns"]
             repair_df = scenario_part_data["repairs"][algo]["repair"]
 
-
-            axis.set_xlim(truth.index[0]-0.1, truth.index[-1]+0.1)
+            axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
 
             line, = plt.plot(truth.iloc[:, cols[0]])
             lw = plt.getp(line, 'linewidth')
@@ -48,10 +49,9 @@ def algo_plot(scenario_data, path , title):
             generate_truth_and_injected(truth, injected, cols, lw, axis)
             axis.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-
-        fig.suptitle(title,size = 22)
-        #fig.tight_layout(pad=2.0)
-        #plt.subplots_adjust(top= 1-0.20/plots_n)
+        fig.suptitle(title, size=22)
+        # fig.tight_layout(pad=2.0)
+        # plt.subplots_adjust(top= 1-0.20/plots_n)
         timer2 = Timer()
         timer2.start()
         print(fig.lines)
@@ -64,23 +64,19 @@ def algo_plot(scenario_data, path , title):
             f2.writelines([rounded(l.split()) if l.startswith("L") else l for l in list_of_lines])
         timer.start()
 
-
         print(timer2.get_time())
 
-
-
-        #plot some anomalies
+        # plot some anomalies
         plt.close()
         plt.clf()
-        splits =  split( truth ,injected , 0 )
+        splits = split(truth, injected, 0)
         counter = 0
-        for anomaly_range in splits[-min(3,len(splits)):]:
+        for anomaly_range in splits[-min(3, len(splits)):]:
             counter += 1
-            generate_correlated_series_plot(truth.iloc[anomaly_range,:], cols, lw)
+            generate_correlated_series_plot(truth.iloc[anomaly_range, :], cols, lw)
             axis.set_prop_cycle(None)
-            generate_repair_plot(repair_df.iloc[anomaly_range,:], cols, algo, lw)
-            generate_truth_and_injected(truth.iloc[anomaly_range,:], injected.iloc[anomaly_range,:], cols, lw)
-
+            generate_repair_plot(repair_df.iloc[anomaly_range, :], cols, algo, lw)
+            generate_truth_and_injected(truth.iloc[anomaly_range, :], injected.iloc[anomaly_range, :], cols, lw)
 
             plt.savefig(f"{path}/{algo}anom{counter}.svg", dpi=3)
             plt.savefig(f"{path}/{algo}anom{counter}.svg", dpi=3)
@@ -88,6 +84,7 @@ def algo_plot(scenario_data, path , title):
             plt.close()
             plt.clf()
         print(timer.get_time())
+
 
 def scenario_plot(scenario_data, path):
     for scenario_part_name, scenario_part_data in scenario_data.items():
@@ -128,14 +125,12 @@ def scenario_part_plot(scenario_part_name, scenario_part, path):
         generate_repair_plot(repair_df, cols, algo_name, lw)
         plt.title(algo_name)
         generate_truth_and_injected(truth, injected, cols, lw)
-        #plt.savefig(f"{path}/{algo_name}.svg")  # , dpi=300)
+        # plt.savefig(f"{path}/{algo_name}.svg")  # , dpi=300)
         plt.savefig(f"{path}/{algo_name}300.png", dpi=300)
         plt.savefig(f"{path}/{algo_name}.eps")  # , dpi=300)
         plt.savefig(f"{path}/{algo_name}300.eps", dpi=300)
         plt.savefig(f"{path}/{algo_name}1000.eps", dpi=1000)
         plt.savefig(f"{path}/{algo_name}1000.png", dpi=1000)
-
-
 
         plt.close()
 
@@ -166,9 +161,16 @@ def generate_correlated_series_plot(truth, cols, lw, ax=plt):
 def generate_truth_and_injected(truth, injected, cols, lw, ax=plt):
     for i, column in enumerate(truth.columns):
         if i in cols:
-            ax.plot(injected[column], color="red", lw=lw / 2, ls="dotted", label="injected" )#, marker=".")
+            ax.plot(injected[column], color="red", lw=lw / 2, ls="dotted", label="injected")  # , marker=".")
             ax.plot(truth[column], color="black", lw=lw, label="truth")
 
+
+def generate_bouneries_plot(lower, upper, lw, ax=plt):
+    ax.plot(lower, color="green", lw=lw / 2, ls="dotted", label="lower")  # , marker=".")
+    ax.plot(upper, color="green", lw=lw / 2, ls="dotted", label="upper")
+
+def generate_line_plot(reduced,lw, ax=plt , color="brown"):
+    ax.plot(reduced, color=color, lw=lw , ls="dashed", label="lower")  # , marker=".")
 
 def generate_repair_plot(repair_df, cols, algo_name, lw, ax=plt):
     for i, column in enumerate(repair_df.columns):

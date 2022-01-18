@@ -7,7 +7,7 @@ from sklearn.base import BaseEstimator
 from Repair.res.timer import Timer
 from Scenarios.metrics import RMSE
 from Scenarios.scenario_saver.plotters import generate_repair_plot, generate_correlated_series_plot, \
-    generate_truth_and_injected
+    generate_truth_and_injected, generate_line_plot, generate_bouneries_plot
 
 
 class estimator(ABC,BaseEstimator):
@@ -54,6 +54,16 @@ class estimator(ABC,BaseEstimator):
             plt.set_title(name)
             generate_truth_and_injected(truth, X, cols, lw = 2,ax=plt)
             plt.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+            # try:
+            #self.reduced.plot(title = "reduced")
+            generate_bouneries_plot(self.lower,self.upper,lw,ax=plt)
+            generate_line_plot(self.reduced,lw,ax=plt)
+            #generate_line_plot(self.pca,lw,ax=plt , color = "yellow")
+
+            # except:
+            #     assert False
+            #     pass
 
         return {"original_error" : original_error , "error" : predicted_error , "ratio" : predicted_error/original_error}
 

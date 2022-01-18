@@ -1,21 +1,10 @@
-from matplotlib import pyplot as plt
-
-
-
-import time
-
-
-class B:
-    def predict(self):
-        t = time.time()
-        results = self._predict()
-        print("time" ,time.time()-t)
-        return results
+from play2 import B ,time_it
 
 
 class A(B):
-    def _predict(self):
-        return [a**3.5 for a in range(100000)]
-
+    @time_it
+    def predict(self):
+        x =  [a**3.5 for a in range(10000000)]
+        return None
 
 

@@ -3,13 +3,15 @@ import pandas as pd
 from Scenarios.Anomaly_Types import *
 import numpy as np
 from Injection.injection_methods.basic_injections import add_anomaly
-from Injection.injection_methods.index_computations import get_random_ranges
+from Injection.injection_methods.index_computations import  get_anomaly_indices
 from Scenarios.scenario_types.Scenario_Types import BASE_SCENARIO, scenario_specifications
 
 
-class BaseScenario():
+
+class BaseScenario:
     scenario_type = BASE_SCENARIO
     small_data_description = "data size"
+
 
     def __init__(self, anomaly_type=AMPLITUDE_SHIFT,
                  anomaly_percentage=None,
@@ -22,16 +24,18 @@ class BaseScenario():
 
     def get_amount_of_anomalies(self, data):
         anom_amount = round(len(data) * self.anomaly_percentage / self.anomaly_length)
+        assert anom_amount >= 1
         return anom_amount
 
-    def inject_single(self, data,seed  =100):
-        index_ranges = get_random_ranges(data, self.anomaly_length
-                                         , number_of_ranges=self.get_amount_of_anomalies(data),seed  =seed)
+    def inject_single(self, data,seed  =100 ,min_space_anom_len_multiplier=2 , factor=None ):
+        index_ranges = get_anomaly_indices(data, self.anomaly_length
+                                         , number_of_ranges=self.get_amount_of_anomalies(data),seed  =seed
+                                           , min_space_anom_len_multiplier=min_space_anom_len_multiplier)
         anomaly_infos = []
         if self.anomaly_length == 6:
             print(index_ranges)
         for range_ in index_ranges:
-            data, info = add_anomaly(anomaly_type=self.anomaly_type, data=data, index_range=range_)
+            data, info = add_anomaly(anomaly_type=self.anomaly_type, data=data, index_range=range_ ,factor=factor)
             anomaly_infos.append(info)
         return data, anomaly_infos
 
@@ -55,3 +59,4 @@ class BaseScenario():
             data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]),seed = seed)
 
         return {"full_set": self.create_scenario_part_output(data, df, cols)}
+

@@ -1,3 +1,4 @@
+from Scenarios.scenario_types.AnomalyFactor import AnomalyFactorScenario
 from Scenarios.scenario_types.Scenario_Types import *
 from Scenarios.scenario_types.AnomalyLengthScenario import AnomalyLengthScenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
@@ -9,6 +10,7 @@ SCENARIO_CONSTRUCTORS = {BASE_SCENARIO : BaseScenario ,
                          VARY_TS_LENGTH:TSLengthScenario ,
                          VARY_ANOMALY_SIZE: AnomalyLengthScenario,
                          MINI_SCENARIO : MiniScenario,
-                         ANOMALY_POSITION : AnomalyPositionScenario}
+                         ANOMALY_POSITION : AnomalyPositionScenario,
+                         ANOMALY_FACTOR : AnomalyFactorScenario}
 
 

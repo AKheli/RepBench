@@ -1,4 +1,5 @@
 from copy import deepcopy
+from functools import lru_cache
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,7 +13,6 @@ from data_methods.Helper_methods import searchfile, get_df_from_file
 
 #chalenge ts not i.i.d
 class BayesianOptimization():
-    # todo sampling
     def __init__(self, clf, param_grid,  n_jobs=-1 , **kargs):
         self.clf = deepcopy(clf) #todo check if this works
         self.n_jobs = n_jobs
@@ -25,13 +25,14 @@ class BayesianOptimization():
         gp_minimize_result = bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
         self.best_params_ = { k : v for k,v  in zip(self.param_grid.keys(), gp_minimize_result.x) }
         self.clf.__dict__.update(self.best_params_)
-        self.best_estimator_ = self.clf
+        self.best_estimator_ = self.clf.fit(X,y)
         # print(gp_minimize_result.x_iters)
         # print()
         # print(gp_minimize_result.func_vals)
         # print()
         # print(gp_minimize_result.space)
 
+# todo sampling
 def select_data(data, truth, samples, sample_offset=0):
     return data, truth
     # np.random.seed(20)
@@ -52,7 +53,11 @@ def bayesian_opt(data, truth, model, params_bounds, scoring , samples=-1, n_jobs
         result = -model.score(data, truth)
         return result
 
-    return gp_minimize(f, x, n_jobs=n_jobs,n_calls=30, n_initial_points=20, n_restarts_optimizer=2, n_points=100,acq_func='EI')
+    # def call_back(res):
+    #     # print(res)
+    #     print(len(res.x_iters))
+
+    return gp_minimize(f, x,callback= None , n_jobs=n_jobs,n_calls=40, verbose = True, n_initial_points=30, n_restarts_optimizer=3, n_points=1000,acq_func='EI')
 
 
 #

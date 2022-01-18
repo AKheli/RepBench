@@ -1,5 +1,5 @@
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
-from Injection.injection_methods.advanced_injections import inject_equal_spaced
+from Injection.injection_methods.advanced_injections import *
 from Scenarios.scenario_types.Scenario_Types import VARY_TS_LENGTH, scenario_specifications
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import numpy as np
@@ -19,14 +19,14 @@ class TSLengthScenario(BaseScenario):
         self.anomaly_type = anomaly_type
         self.splits = 10
 
-    def inject_single(self, data):
-        data = np.array(data)
-        anomalies_per_block = int(self.get_amount_of_anomalies(data) / self.splits)
-        anomalies_per_block = max(anomalies_per_block,1)
-        data, info = inject_equal_spaced(data, anomaly_type=self.anomaly_type, n=self.splits, location="random"
-                                         , anomalies_per_block=anomalies_per_block,
-                                         anomalylength=self.anomaly_length)
-        return data, info
+    # def inject_single(self, data):
+    #     data = np.array(data)
+    #     anomalies_per_block = int(self.get_amount_of_anomalies(data) / self.splits)
+    #     anomalies_per_block = max(anomalies_per_block,1)
+    #     data, info = inject_equal_spaced(data, anomaly_type=self.anomaly_type, n=self.splits, location="random"
+    #                                      , anomalies_per_block=anomalies_per_block,
+    #                                      anomalylength=self.anomaly_length)
+    #     return data, info
 
     def transform_df(self, df , cols = [0]):
         result = {}
