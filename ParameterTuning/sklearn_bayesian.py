@@ -21,7 +21,7 @@ class BayesianOptimization():
         self.best_estimator_ = clf
         self._ParamTuner__name_ = "BayesianOptimization"
 
-    def fit(self, X, y):
+    def fit(self, X, y , groups = None):
         gp_minimize_result = bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
         self.best_params_ = { k : v for k,v  in zip(self.param_grid.keys(), gp_minimize_result.x) }
         self.clf.__dict__.update(self.best_params_)
@@ -46,8 +46,10 @@ def bayesian_opt(data, truth, model, params_bounds, scoring , samples=-1, n_jobs
 
     def f(x):
         params = {k: v for k, v in zip(params_bounds.keys(), x)}
-        for k, v in params.items():
-            setattr(model, k, v)
+        # for k, v in params.items():
+        #     setattr(model, k, v)
+        model.__dict__.update(params)
+
         selected_data, selected_truth = select_data(data, truth, samples)
         model.fit(selected_data)
         result = -model.score(data, truth)
@@ -57,7 +59,7 @@ def bayesian_opt(data, truth, model, params_bounds, scoring , samples=-1, n_jobs
     #     # print(res)
     #     print(len(res.x_iters))
 
-    return gp_minimize(f, x,callback= None , n_jobs=n_jobs,n_calls=40, verbose = True, n_initial_points=30, n_restarts_optimizer=3, n_points=1000,acq_func='EI')
+    return gp_minimize(f, x, n_jobs=n_jobs,n_calls=40,  n_initial_points=30, n_restarts_optimizer=3, n_points=1000,acq_func='EI')
 
 
 #

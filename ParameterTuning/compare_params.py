@@ -11,30 +11,30 @@ from Scenarios.Anomaly_Types import *
 from Scenarios.scenario_types.Scenario_Types import *
 from data_methods.Helper_methods import get_df_from_file
 
-injection_scenario = VARY_TS_LENGTH
+injection_scenario = ANOMALY_POSITION
 # parameter_tuning = [bayesian_optimization,halving_grid_search,grid_search]
 
 anomaly_type = AMPLITUDE_SHIFT
 data_files = ["TemperatureTS8.csv"]  # , , "motion_normal.txt", "TemperatureTS8.csv", "BAFU.txt","batch10.txt"]
 
 param_grid = {
-    #"threshold": [1,2] ,# np.arange(0.1, 2.4 , 0.025),
+    #"threshold":  np.arange(0.5, 2.4 , 0.2),
     "n_components": [1, 2, 3, 4],  # , 4, 5, 6],
-    "delta": (0,1) ,# [0.5 ** i for i in range(11)],
-    "fit_on_truth": [False,True],
-    "interpolate_anomalies": [True,False],
+    "delta":  [0.5 ** i for i in range(5)],
+    #"fit_on_truth": [False,True],
+    "interpolate_anomalies": [False,True],
     # "component_method": ["TruncatedSVD"]
 }
 
-param_grid_s = {
-    "T": (0, 10000),
-    "s": [1, 2, 3],  # , 4, 5, 6],
-    # "component_method": ["TruncatedSVD"]
-}
+# param_grid_s = {
+#     "T": (0, 10000),
+#     "s": [1, 2, 3],  # , 4, 5, 6],
+#     # "component_method": ["TruncatedSVD"]
+# }
 
 for file_name in data_files:
     param_tuner = ParamTuner(n_jobs=-1)  # error=precision , classification=True)
-    param_tuner.add(Robust_PCA_estimator(cols=[0]), tuners=[ "ba" , "gr"]# , "ha","bc"]  # "ba",
+    param_tuner.add(Robust_PCA_estimator(cols=[0]), tuners=[ "gr", "ha","bc","ba"]  # "ba",
                     , param_grid=param_grid)
     # param_tuner.add(Robust_PCA_estimator(cols=[0]), tuners=["bc", "gr", "ha"]  # "ba",
     #                 , param_grid=param_grid , cv = CV_splitter())

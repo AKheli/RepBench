@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator
 from sklearn.utils import check_array
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import FastICA
-from skopt import gp_minimize
+from skopt import gp_minimize, dummy_minimize
 
 from ParameterTuning.EM_bootstrap import in_interval, conf_interval
 from Repair.Algorithms_File import RPCA, ALGORITHM_PARAMETERS
@@ -226,17 +226,39 @@ class Robust_PCA_estimator(estimator):
         return self
 
     def f(self, t, X, y):
-        print("TTTTTTTTTTTT",self.best_threshold)
-        print(t)
-        self.best_threshold = t[0]
-        return -self.score(self._predict(X), y)
+        #print("TTTTTTTTTTTT",self.best_threshold)
+        #print(t)
+        self.best_threshold = t
+        return -self.score(X.copy(), y.copy())
 
     def set_threshold_on_current_settings(self,X,y):
-        x = [self.threshold_boundaries]
+        x = self.threshold_boundaries
+        to_minize = lambda t : self.f(t, X, y)
 
-        self.best_threshold =  gp_minimize( lambda t : self.f(t, X, y)
-        , x, n_calls=30, verbose=True, n_initial_points=30,
-                           n_restarts_optimizer=1, n_points=200, acq_func='EI').x[0]
+        minscore =  np.inf
+        minimum_t = x[0]
+        maximum_t = x[1]
+        results = []
+        for i in np.linspace(x[0],x[1]):
+            val = to_minize(i)
+            results.append((i,val))
+            if np.isclose(val,minscore,atol=1e-08):
+                if i < minimum_t:
+                    minimum_t = i
+                if i > maximum_t:
+                    maximum_t = i
+            elif val < minscore:
+                minimum_t = i
+                maximum_t = i
+                minscore = val
+        # r = dummy_minimize( lambda t : self.f(t, X, y)
+        # , x, n_calls=30, verbose=True)
+        #
+        # r.x_iters #  location of function evaluation for each iteration
+        # func_vals #
+        # print("TTTTTTTTTTT" , minimum_t , maximum_t , to_minize(minimum_t) , to_minize(maximum_t) ,to_minize(minimum_t-0-5))
+        # print(results)
+        self.best_threshold = (minimum_t+maximum_t)/2#, n_initial_points=30,  n_restarts_optimizer=1, n_points=200, acq_func='EI').x[0]
 
     def reduce(self, X):
         original_rows, original_cols = X.shape
@@ -249,7 +271,7 @@ class Robust_PCA_estimator(estimator):
 
         return X_reduced[:, :original_cols]
 
-    def classifiy_anomalies(self,X , reconstructed ):
+    def classify_anomalies(self, X, reconstructed):
         if self.best_threshold is None:
             self.best_threshold = self.threshold
 
@@ -270,7 +292,7 @@ class Robust_PCA_estimator(estimator):
             # abs_z_score = diff * 0 if std == 0 else abs((diff - mean) / std)
             # to_repair_booleans = abs_z_score > self.threshold
             for i in range(10,len(to_repair_booleans)-1):
-                to_repair_booleans[i]= (1+0*sum(to_repair_booleans[i-2:i-1]))*(diff[i]-mean)/std >  self.best_threshold
+                to_repair_booleans[i]= (1+0*sum(to_repair_booleans[i-2:i-1]))*(diff[i]-mean)/std > self.best_threshold
 
             self.lower = reconstructed_col - (self.best_threshold*std+mean)
             self.upper = reconstructed_col + (self.best_threshold*std+mean)
@@ -278,6 +300,7 @@ class Robust_PCA_estimator(estimator):
             #did not work
             #to_repair_booleans = self.in_interval(X_copy[:, col],reconstructed_col,self.threshold)
             anomalies[col] = to_repair_booleans
+            #print("CLAAAS SUUUM" , sum(to_repair_booleans))
             return anomalies
 
     def in_interval(self, injected, reduced, alpha, samples=100):
@@ -296,7 +319,7 @@ class Robust_PCA_estimator(estimator):
         X_copy = self._validate_data(X, dtype=[np.float32], reset=False)
         X_reduced = self.reduce(X)
 
-        anomalies = self.classifiy_anomalies(X,X_reduced)
+        anomalies = self.classify_anomalies(X, X_reduced)
         #replace
 
         #     for col in self.cols:

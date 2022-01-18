@@ -25,6 +25,7 @@ class estimator(ABC,BaseEstimator):
         self.times["predict"]["total"] += timer.get_time()
         return result
 
+
     def fit(self,X,y=None , name = ""):
         timer = Timer()
         timer.start()
@@ -34,7 +35,9 @@ class estimator(ABC,BaseEstimator):
         return result
 
     def score(self,X,y):
-        return -RMSE(pd.DataFrame(self._predict(X)),y,self.cols)
+        score_ = -RMSE(pd.DataFrame(self._predict(X)),y,self.cols)
+        print(score_)
+        return score_
 
 
     ##evaluation functions

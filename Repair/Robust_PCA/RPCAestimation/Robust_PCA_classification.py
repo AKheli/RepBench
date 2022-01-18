@@ -10,7 +10,7 @@ class Robust_PCA_classifier(Robust_PCA_estimator):
         X = X.copy()
         X = self._validate_data(X, dtype=[np.float32], reset=False)
         X_reduced = self.reduce(X)
-        anoms = pd.DataFrame(self.classifiy_anomalies(X, X_reduced))
+        anoms = pd.DataFrame(self.classify_anomalies(X, X_reduced))
         return anoms
 
     def score(self, X, y,predict= False):

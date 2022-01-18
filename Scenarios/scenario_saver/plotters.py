@@ -54,7 +54,7 @@ def algo_plot(scenario_data, path, title):
         # plt.subplots_adjust(top= 1-0.20/plots_n)
         timer2 = Timer()
         timer2.start()
-        print(fig.lines)
+        #print(fig.lines)
         fig.savefig(f"{path}/{algo}.svg")
         with open(f"{path}/{algo}.svg", "r") as f:
             list_of_lines = f.readlines()
@@ -161,7 +161,7 @@ def generate_correlated_series_plot(truth, cols, lw, ax=plt):
 def generate_truth_and_injected(truth, injected, cols, lw, ax=plt):
     for i, column in enumerate(truth.columns):
         if i in cols:
-            ax.plot(injected[column], color="red", lw=lw / 2, ls="dotted", label="injected")  # , marker=".")
+            ax.plot(injected[column], color="red", lw=lw / 2, ls="dotted",marker=".", label="injected")  # , marker=".")
             ax.plot(truth[column], color="black", lw=lw, label="truth")
 
 

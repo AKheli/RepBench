@@ -1,7 +1,8 @@
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.experimental import enable_halving_search_cv  # noqa
-from sklearn.model_selection import HalvingGridSearchCV, GridSearchCV
+from sklearn.model_selection import HalvingGridSearchCV, GridSearchCV, StratifiedKFold, KFold
 from skopt import BayesSearchCV
 
 from ParameterTuning.sklearn_bayesian import BayesianOptimization
@@ -26,16 +27,17 @@ class ParamTuner():
     def init_tuner(self, tuner_name, param_grid, clf, tuner_params=None, cv=None):
         assert tuner_name.lower()[:2] in ["ba", "gr", "gs", "ha", "hg", "bc"], "tuner could not be passed"
         tuner_name = tuner_name.lower()[:2]
+        skf = KFold(n_splits=5 ,shuffle=True, random_state=1)
         if tuner_name in ["ba"]:
             return BayesianOptimization(clf, param_grid, n_jobs=self.n_jobs)
         if tuner_name in ["gr", "gs"]:
-            return GridSearchCV(clf, param_grid, n_jobs=self.n_jobs , cv = cv)
+            return GridSearchCV(clf, param_grid, n_jobs=self.n_jobs ,cv=skf)
         if tuner_name in ["bc"]:
             return BayesSearchCV(clf, param_grid, n_jobs=self.n_jobs,
-                                 random_state=0 ,cv = cv)
+                                 random_state=0 , cv=skf)
         if tuner_name in ["ha", "hg"]:
             return HalvingGridSearchCV(clf, param_grid, n_jobs=self.n_jobs,
-                                       random_state=0 ,cv = cv)
+                                       random_state=0 ,cv=skf)
 
     def add(self, repair_estimator, param_grid, tuners: list,
             cv=None):  # tuner params
@@ -59,7 +61,9 @@ class ParamTuner():
 
             timer = Timer()
             timer.start()
-            tuner.fit(train_X,train_y)
+            groups = np.array(train_X.sum(axis=1).ne(train_y.sum(axis=1)))
+
+            tuner.fit(train_X,train_y,groups=groups)
             time = timer.get_time()
             estimator = tuner.best_estimator_
             best_params =  tuner.best_params_
@@ -96,10 +100,11 @@ class ParamTuner():
             plt.clf()
 
 
+        l = ["dotted", "dashdot" , "dashed","solid"]
         for t_m in self.results:
             r =  self.results[t_m]
             print(r)
-            plt.plot(range(len(r)),r.values() , label=f"{t_m}({round(self.fit_time[t_m])}s)")
+            plt.plot(range(len(r)),r.values() , ls = l.pop(),  marker = 'x' , label=f"{t_m}({round(self.fit_time[t_m])}s)")
         plt.ylabel("error ratio")
         plt.xticks(range(len(r)),r.keys(),rotation=90)
         plt.legend()
