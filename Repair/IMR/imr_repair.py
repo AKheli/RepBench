@@ -36,7 +36,7 @@ def IMR_repair(injected, truth, cols = [0], params ={}, **kwargs):
         x = np.array(injected.iloc[:, col])
         truth = np.array(truth.iloc[:, col])
 
-        for i in range(50):
+        for i in range(500):
             labels = generate_random_labels(x,label_ratio = label_rate  , first_labels = p+1 ,already_labeled=anom_start_labels)
             y_0 = x.copy()
             y_0[labels] = truth[labels]
@@ -46,7 +46,7 @@ def IMR_repair(injected, truth, cols = [0], params ={}, **kwargs):
             plt.plot(x)
             plt.plot(truth)
             plt.show()
-            assert False  , "x and y_0 initialization are to close for a repair"
+            assert False , "x and y_0 initialization are to close for a repair"
         timer.start()
         repair_results = imr2(x, y_0, labels, tau=tau, p=p, k=max_itr_n)
         timer.pause()
@@ -54,7 +54,7 @@ def IMR_repair(injected, truth, cols = [0], params ={}, **kwargs):
         repair = injected.copy()
         repair.iloc[:, col] = repair_results["repair"]
 
-    return { "repair" : repair , "labels" : labels , "runtime" : timer.get_time() , "type" : alg_type}
+    return { "repair" : repair , "labels" : labels , "runtime" : timer.get_time() , "type" : alg_type , "name" : f'{alg_type},({p},{tau})'}
 
 
 def IMR_repair_random(injected, truth, cols = [0], params ={}, **kwargs):

@@ -1,0 +1,12 @@
+                 SCREEN(1,6)
+data size                   
+anomaly_size10   0.019      
+anomaly_size20   0.045      
+anomaly_size30   0.075      
+anomaly_size40   0.114      
+anomaly_size50   0.148      
+anomaly_size60   0.190      
+anomaly_size70   0.237      
+anomaly_size80   0.279      
+anomaly_size90   0.332      
+anomaly_size100  0.362      

@@ -14,6 +14,8 @@ def add_injection_arguments_to_parser(parser):
 
 def add_repair_arguments_to_parser(parser):
     parser.add_argument("-algo", nargs=1, type=str, default="all")
+    parser.add_argument("-algox", nargs=1, type=str, default="")
+
     parser.add_argument("-saverepair",  action='store_true')
 
 

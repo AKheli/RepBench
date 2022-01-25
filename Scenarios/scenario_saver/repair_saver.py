@@ -1,15 +1,17 @@
 import os
 
 from Scenarios.scenario_saver.plotters import algo_plot, algo_plot_faster
+from Scenarios.scenario_types.BaseScenario import BaseScenario
+from Scenarios.senario_methods import scenario_algos_figs
 
 
-def save_repair(repaired_scenario_dict, path):
+def save_repair(scenario : BaseScenario, path):
     path = f"{path}/repair"
     try:
         os.makedirs(path)
     except:
         pass
 
-    scenario_type = repaired_scenario_dict["scenario_type"]
-    scenario_data = repaired_scenario_dict["scenario_data"]
-    algo_plot(scenario_data, path, title=scenario_type.small_data_description)
+    fig_generator = scenario_algos_figs(scenario)
+    for fig , algo in fig_generator:
+        fig.savefig(f"{path}/{algo}.svg")

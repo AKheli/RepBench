@@ -2,14 +2,11 @@ import warnings
 
 import numpy as np
 from scipy import linalg
-from scipy.sparse import issparse
 from sklearn.utils import check_array
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import FastICA
 
-from ParameterTuning.EM_bootstrap import in_interval, conf_interval
 from Repair.estimator import estimator
-import time
 warnings.simplefilter("ignore", UserWarning)  # feaure name
 
 class Robust_PCA_estimator(estimator):

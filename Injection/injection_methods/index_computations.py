@@ -40,7 +40,9 @@ def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1 , seed 
     non_anomaly_space = size-anom_lenght*number_of_ranges
     additional_space = non_anomaly_space - (number_of_ranges+1)*min_space_between_anomalies
     assert additional_space >= 0 ,  f"to many anomalies with site {size} , anomaly size { anom_lenght} " \
-                                    f"and min space between anomalies {min_space_between_anomalies} "
+                                    f"and min space between anomalies {min_space_between_anomalies} " \
+                                    f"and {number_of_ranges} anomalies" \
+
 
     anomaly_free_ranges = number_of_ranges + 1
     #random spaces
@@ -60,24 +62,6 @@ def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1 , seed 
     assert len(results) == number_of_ranges
     return results
 
-
-
-# def get_random_ranges(size, anom_lenght=10, number_of_ranges=1, occupied_indices=[] , seed = 100):
-#     try:
-#         size = len(size)
-#     except:
-#         pass
-#     min_splitsize = anom_lenght+space_between_anomalies
-#     n_splits = int(size/min_splitsize)
-#     splits = np.array(np.array_split(np.arange(size),n_splits))
-#     assert len(splits) >= number_of_ranges , "not enough space for anomalies"
-#     np.random.seed(seed)
-#     choosen_splits_i = np.random.choice(np.arange(len(splits)),number_of_ranges,False)
-#     choosen_splits = splits[choosen_splits_i]
-#     ranges =  [ split[-anom_lenght:] for split in choosen_splits]
-#
-#     return ranges
-#
 
 
 def get_free_spaces(arr):

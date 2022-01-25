@@ -1,7 +1,6 @@
 from Repair.Algorithms_File import *
 from Repair.IMR.imr_repair import IMR_repair, IMR_repair_random
 from Repair.Robust_PCA.PCA_algorithms import RPCA1, RPCA3
-from Repair.Robust_PCA.RPCAestimation.RPCA_linmod import RPCA_lindmod
 from Repair.Robust_PCA.RPCAestimation.Robust_PCA_repair import RPCA_repair
 from Repair.Screen.SCREEN_repair import SCREEN_repair
 
@@ -22,11 +21,29 @@ def read_data_arguments(args):
         results[name] = data
     return results
 
+def read_columns(args):
+    return  [int(c) for c in args.col[0].split(",")]
 
-def read_injection_arguments(args):
-    anomaly = parse_anomaly_argument(args.anomaly_type[0])
-    scen = get_scenario(args.scenario[0], anomaly)
+def read_data_files(args , check= True):
+    file_paths = parse_data_argument(args.data[0])
+    if check:
+        for file in file_paths:
+            data ,_ = get_df_from_file(file)
+            print(data.head())
+    return file_paths
+
+
+def read_scenario_argument(args):
+    scen = get_scenario(args.scenario[0])
     return scen
+
+def read_anomaly_arguments(args):
+    try:
+        anomaly = parse_anomaly_name(args.anomaly_type[0])
+    except Exception as e:
+        print(args)
+        raise e
+    return anomaly
 
 
 def parse_data_argument(arg):
@@ -41,26 +58,26 @@ def parse_data_argument(arg):
     return filename_paths
 
 
-def parse_anomaly_argument(arg):
-    return parse_anomaly_name(arg)
+
 
 
 def parse_algorithm_argument(arg):
-    for i in arg.split[","]:
+    for i in arg.split(","):
         i = i.upper()
-    return [RPCA1, PCA_RPCA, RPCA3, PCA, RPCA4]
+    return [{"algorithm" : v , "params" : {} }for v in [RPCA_repair, SCREEN_repair, IMR_repair]]
 
 
-def get_scenario(scenario_name, anomaly_type, param_dict=None):
+def get_scenario(scenario_name):
     name = parse_scenario_name(scenario_name).lower()
-    if param_dict is None:
-        return SCENARIO_CONSTRUCTORS[name](anomaly_type)
-    else:
-        return SCENARIO_CONSTRUCTORS[name](anomaly_type, default_params=param_dict)
+    return SCENARIO_CONSTRUCTORS[name]
 
 
 def read_repair_algos(args):
+    # if hasattr(args, 'algox'):
+    #     return parse_toml_file(args.algox)
+    #elif hasattr(args, 'algo'):
     return parse_algorithm_argument(args.algo[0])
+
 
 
 algo_mapper = {IMR: IMR_repair, RPCA: RPCA_repair, SCREEN: SCREEN_repair}
@@ -72,7 +89,7 @@ def parse_toml_file(filename):
     for key in toml_output.keys():
         algorithm = algo_mapper[key]
         for params in toml_output[key].values():
-            results.append({"algorithm": algorithm, "algo": algorithm, "params": params, "parameters": params})
+            results.append({"algorithm": algorithm,  "params": params,})
             for param_name in params.keys():
                 assert param_name in algorithm.__code__.co_varnames , f"toml file parse error" \
                                                                       f"{param_name} not" \
@@ -83,17 +100,7 @@ def parse_toml_file(filename):
     return results
 
 
-#def parse_default(repair_algorithms , filename = toml_default ):
 
-
-
-def parse_algorithm_argument(algos) -> [dict]:
-    algos = parse_anomaly_argument(algos)
-
-    """
-    returns list of dicts [{algo: ,params: } , ...]
-    """
-    return parse_toml_file(algos)
 
     # algos =  [ {"alg" : RPCA_repair , "n_columns": 2, "threshold": 2},
     #          RPCA_repair , "n_columns": 1, "threshold": 1},

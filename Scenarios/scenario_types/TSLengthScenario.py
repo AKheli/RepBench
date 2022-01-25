@@ -1,34 +1,25 @@
-from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
-from Injection.injection_methods.advanced_injections import *
-from Scenarios.scenario_types.Scenario_Types import VARY_TS_LENGTH, scenario_specifications
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-import numpy as np
+from Scenarios.scenario_types.Scenario_Types import VARY_TS_LENGTH
 
 
 class TSLengthScenario(BaseScenario):
     scenario_type = VARY_TS_LENGTH
     small_data_description = "TS length"
 
-    def __init__(self, anomaly_type=AMPLITUDE_SHIFT,
-                 anomaly_percentage=None,
-                 anomaly_length=None,
-                 default_params=scenario_specifications[scenario_type],
-                 ):
-        self.anomaly_percentage = anomaly_percentage or default_params["anomaly_percentage"]
-        self.anomaly_length = anomaly_length or default_params["anomaly_length"]
-        self.anomaly_type = anomaly_type
+
+    def set_anomaly_params(self,anomaly_dict = None):
+        if anomaly_dict is None:
+            anomaly_dict = {}
+        assert all([k in ["anomaly_length","anomaly_type","anomaly_percentage"] for k in anomaly_dict.keys()])
+
+        self.anomaly_type = anomaly_dict.get("anomaly_type",self.default_anomaly_type)
+        self.anomaly_percentage = anomaly_dict.get("anomaly_percentage",self.default_percentage)
+        self.anomaly_length = anomaly_dict.get("anomaly_length",self.default_length)
         self.splits = 10
 
-    # def inject_single(self, data):
-    #     data = np.array(data)
-    #     anomalies_per_block = int(self.get_amount_of_anomalies(data) / self.splits)
-    #     anomalies_per_block = max(anomalies_per_block,1)
-    #     data, info = inject_equal_spaced(data, anomaly_type=self.anomaly_type, n=self.splits, location="random"
-    #                                      , anomalies_per_block=anomalies_per_block,
-    #                                      anomalylength=self.anomaly_length)
-    #     return data, info
-
-    def transform_df(self, df , cols = [0]):
+        assert isinstance(self.anomaly_type,str) and isinstance(self.anomaly_length,int) , f'{self.anomaly_length},' \
+                                                                                           f' {self.anomaly_type}'
+    def transform_df(self, df , cols = [0] ,seed = 100):
         result = {}
         data = df.copy()
 

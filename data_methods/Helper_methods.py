@@ -18,6 +18,7 @@ def display_data_folder():
 
 
 def searchfile(filename, folder = "Data"):
+    print(filename)
     set_path_to_MA()
     if filename in os.listdir(folder):
         filepath = f"{folder}/{filename}"
@@ -45,7 +46,6 @@ def get_df_from_file(filename, rec = True):
         for i in data.columns:
             try:
                 float(i)
-                pass
             except:
                 header = 0
         data =pd.read_csv(filename, header=header, sep=",")

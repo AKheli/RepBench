@@ -1,69 +1,32 @@
-from multiprocessing import Pool
+import time
 
-from Injection.inject import get_scenario_data
-from Scenarios.scenario_saver.Scenario_saver import  save_scenario
+from Scenarios.scenario_saver.Scenario_saver import save_scenario
+from Scenarios.senario_methods import repair_scenario
 from run_ressources.parser_init import init_parser
-from run_ressources.parser_results_extraction import  read_repair_algos, read_data_arguments, \
-    read_injection_arguments
+from run_ressources.parser_results_extraction import *
 
-
-def repair_scenario(injected_scenario ,repair_algos):
-    part_scenarios = injected_scenario["scenario_data"]
-
-    params = {}
-    params["train"] = injected_scenario["train"]
-    params["train_class"] = injected_scenario["train_class"]
-
-    for scenario_part_name in part_scenarios.keys():
-        part_scenario = part_scenarios[scenario_part_name]
-        params["truth"] = part_scenario["original"]
-        params["injected"] = part_scenario["injected"]
-        params["cols"] = part_scenario["columns"]
-        repairs = {}
-
-        # for algo_info in repair_algos:
-        #     algo_info["params"].update(params)
-        #     print("AAAAAa",algo_info["params"])
-        #
-        #     alg_results = algo_info["algo"](**algo_info["params"])
-        #     repairs[algo.__name__] = alg_results
-
-        global f
-        def f(algo_info ):
-
-            pre_params = algo_info["params"]
-            pre_params.update(params)
-            result = algo_info["algo"](**pre_params)
-            #print(f'done : {algo_info["algo"]}')
-            return result
-
-        with Pool() as pool:
-            results = list(map( f, repair_algos))
-            for repair in results:
-                repairs[repair["name"]] = repair
-
-        part_scenarios[scenario_part_name]["repairs"] = repairs
-    return injected_scenario
-
+scenarios = []
 if __name__ == '__main__':
-    #"-scen vary  -col 0  -data YAHOO.csv -anom a -algo 1 "
+    input ="-scen vary_ts_length  -col 1  -data YAHOO.csv -anom a -algo IMR" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
     args = init_parser()
 
+    data_files = read_data_files(args)
+    cols = read_columns(args)
+    scenario_constructor = read_scenario_argument(args)
+    anomaly_type = read_anomaly_arguments(args)
 
-    data_dict = read_data_arguments(args)
-    scenario = read_injection_arguments(args)
+    repair_algo_list = read_repair_algos(args)
 
-    anomaly_type = scenario.anomaly_type
+    print("scenario:", scenario_constructor)
+    print("repair algos:", repair_algo_list)
 
-    cols = data_dict.pop("columns")
+    t = time.time()
+    while time.time() - 3 < t:
+        pass
 
-    repair_algo_list= read_repair_algos(args)
-
-
-
-    for data_name , data in data_dict.items(): # go through the datasets
-        injected_scenario = get_scenario_data(scenario, data=data, columns_to_inject=cols, train_split=0.3)
-        repaired_scenario = repair_scenario(injected_scenario ,repair_algo_list )
-        repaired_scenario["data_name"] = data_name
-        repaired_scenario["scenario_type"] = scenario
-        save_scenario(repaired_scenario)
+    for data_file in data_files:  # go through the datasets
+        injected_scenario = scenario_constructor(data_file, anomaly_dict={"anomaly_type": anomaly_type}
+                                                        , cols_to_injected=cols)
+        scenarios.append(injected_scenario)
+        repair_scenario(injected_scenario, repair_algo_list)
+        save_scenario(injected_scenario)

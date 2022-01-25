@@ -1,27 +1,16 @@
 import pandas as pd
-
+from Scenarios.scenario_types.BaseScenario import BaseScenario
 from Repair.Algorithms_File import ALGORITHM_COLORS
 from Scenarios.metrics import *
 from itertools import cycle
 import os
 
-def calculate_errors( truth, injected, repairs, columns , error_func):
-    errors = {"original_error": error_func(truth, injected, columns)}
-    for algo_name, algo_output in repairs.items():
-        errors[algo_name] = error_func(truth, algo_output["repair"],columns, algo_output.get("labels", None))
-    return errors
+from Scenarios.senario_methods import generate_error_df
 
-def generate_error_df(values,  error_func):
-    df = pd.DataFrame()
-    for k, v in values.items():
-        truth = v.get("truth",None) if v.get("truth",None) is not None else v.get("original",None)
-        assert truth is not None
-        injected = v["injected"]
-        df = df.append(pd.Series(calculate_errors(truth, injected, v["repairs"],v["columns"], error_func), name=k))
-    return df
+errors = [RMSE,MAE]
 
 
-def save_error(repaired_scenario_dict , path):
+def save_error(repaired_scenario : BaseScenario, path ):
     lines = ["solid", "dashed",  "dotted", "dashdot"]
     #colors = ["red", "green", "green",  "green", "purple", "blue"]
     path = f"{path}/error"
@@ -30,10 +19,7 @@ def save_error(repaired_scenario_dict , path):
     except:
         pass
 
-    scenario_type = repaired_scenario_dict["scenario_type"]
-    scenario_data = repaired_scenario_dict["scenario_data"]
-
-    for error in [RMSE,MAE]:
+    for error in errors:
         error_name = error.__name__
         error_path = f'{path}/{error_name}'
         try:
@@ -41,8 +27,8 @@ def save_error(repaired_scenario_dict , path):
         except:
             pass
 
-        error_df = generate_error_df(scenario_data, error)
-        error_df.index.name = scenario_type.small_data_description
+        error_df = generate_error_df(repaired_scenario, error)
+        error_df.index.name = repaired_scenario.small_data_description
 
 
         # plot original error
@@ -59,7 +45,7 @@ def save_error(repaired_scenario_dict , path):
             if color not in cyclers:
                 cyclers[color] = cycle(lines)
             plt.plot(error_df[algo_name],marker='x',label = algo_name ,color=color,ls = next(cyclers[color]))
-        plt.xlabel(scenario_type.small_data_description)
+        plt.xlabel(repaired_scenario.small_data_description)
         plt.ylabel("error")
         lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         plt.savefig(f'{error_path}/{error_name}.png',bbox_extra_artists=(lgd,), bbox_inches='tight')
