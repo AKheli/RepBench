@@ -1,36 +1,31 @@
 from copy import deepcopy
-from functools import lru_cache
-
-import numpy as np
-from matplotlib import pyplot as plt
 from skopt import gp_minimize
-import pandas as pd
 
-from Repair.Robust_PCA.RPCAestimation.Robust_PCA_repair import Robust_PCA_estimator
-from Scenarios.metrics import RMSE
-from Scenarios.scenario_types.BaseScenario import BaseScenario
-from data_methods.Helper_methods import searchfile, get_df_from_file
+
 
 #chalenge ts not i.i.d
 class BayesianOptimization():
     def __init__(self, clf, param_grid,  n_jobs=-1 , **kargs):
         self.clf = deepcopy(clf) #todo check if this works
         self.n_jobs = n_jobs
-        self.param_grid = param_grid
+        self.set_param_grid(param_grid)
         self.best_params_ = None
         self.best_estimator_ = clf
         self._ParamTuner__name_ = "BayesianOptimization"
+
+
+    def set_param_grid(self,paramgrid):
+        self.param_grid = {}
+        for k , v in paramgrid.items():
+            self.param_grid[k]  = (min(v),max(v))  if len(v)>2 else v
+
+
 
     def fit(self, X, y , groups = None):
         gp_minimize_result = bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
         self.best_params_ = { k : v for k,v  in zip(self.param_grid.keys(), gp_minimize_result.x) }
         self.clf.__dict__.update(self.best_params_)
         self.best_estimator_ = self.clf.fit(X,y)
-        # print(gp_minimize_result.x_iters)
-        # print()
-        # print(gp_minimize_result.func_vals)
-        # print()
-        # print(gp_minimize_result.space)
 
 # todo sampling
 def select_data(data, truth, samples, sample_offset=0):
@@ -51,15 +46,11 @@ def bayesian_opt(data, truth, model, params_bounds, scoring , samples=-1, n_jobs
         model.__dict__.update(params)
 
         selected_data, selected_truth = select_data(data, truth, samples)
-        model.fit(selected_data)
+        model.fit(selected_data ,selected_truth )
         result = -model.score(data, truth)
         return result
 
-    # def call_back(res):
-    #     # print(res)
-    #     print(len(res.x_iters))
-
-    return gp_minimize(f, x, n_jobs=n_jobs,n_calls=40,  n_initial_points=30, n_restarts_optimizer=3, n_points=1000,acq_func='EI')
+    return gp_minimize(f, x, n_jobs=n_jobs,n_calls=20,  n_initial_points=20, n_restarts_optimizer=2, n_points=1000,acq_func='EI')
 
 
 #
