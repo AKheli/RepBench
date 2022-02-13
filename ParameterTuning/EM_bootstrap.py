@@ -2,14 +2,11 @@
 # https://github.com/kirajcg/pymeboot/blob/master/pymeboot/meboot.py
 import random
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.experimental import enable_halving_search_cv  # noqa
 
-from Injection.inject import scenario_inject
-from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
-from Scenarios.scenario_types.Scenario_Types import *
-from data_methods.Helper_methods import get_df_from_file
+from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT, DISTORTION
+from Scenarios.scenario_types.BaseScenario import BaseScenario
 
 
 
@@ -118,16 +115,16 @@ def meboot_np(L, J=1):
         L_out[j] = [x for y, x in sorted(zip(sorted_indices, quantiles))]
     return L_out
 
-data_file_name = "TemperatureTS8.csv"
-injection_scenario = BASE_SCENARIO
-
-df, name = get_df_from_file(data_file_name)
-scenario_data = scenario_inject(df, injection_scenario, AMPLITUDE_SHIFT, train_split=0.5)
-
-
-base_scenario = scenario_data["scenario_data"]["full_set"]
-injected = base_scenario["injected"]
-L = injected.iloc[:,0]
+# data_file_name = "TemperatureTS8.csv"
+# injection_scenario = BASE_SCENARIO
+#
+# df, name = get_df_from_file(data_file_name)
+# scenario_data = scenario_inject(df, injection_scenario, AMPLITUDE_SHIFT, train_split=0.5)
+#
+#
+# base_scenario = scenario_data["scenario_data"]["full_set"]
+# injected = base_scenario["injected"]
+# L = injected.iloc[:,0]
 # x = meboot(L,1000)
 # L  = pd.DataFrame(L)
 # for i,t in enumerate(x):
@@ -135,7 +132,7 @@ L = injected.iloc[:,0]
 # L.plot()
 # plt.show()
 
-def conf_interval(ts,alpha,samples=10):
+def conf_interval(ts,alpha=0.1,samples=300):
     x = np.array(meboot_np(ts, samples))
     upper = np.quantile(x,1-alpha/2,axis=0)
     lower = np.quantile(x,alpha/2,axis=0)
@@ -154,3 +151,20 @@ def in_interval(injected,reduced,alpha,samples=100):
     to_repair_values = np.logical_or(injected < lower , injected > upper)
     #print(to_repair_values)
     return to_repair_values
+
+
+anomaly_type = AMPLITUDE_SHIFT
+file_name = "YAHOO.csv"
+scenario_data = BaseScenario(file_name,anomaly_dict =  {"anomaly_type" : anomaly_type}, train_test_split=0.9)
+
+inj = scenario_data.train["injected"].iloc[:,0]
+org = scenario_data.train["original"].iloc[:,0]
+
+for d in [inj,org]:
+    up , low = conf_interval(d,alpha=0.01,samples=1000)
+    fig, (ax1, ax2) = plt.subplots(2)
+    ax1.plot(up)
+    ax1.plot(low)
+    ax2.plot(d)
+    ax2.plot(abs(up-low))
+    plt.show()

@@ -17,44 +17,42 @@ def display_data_folder():
     return os.listdir("Data")
 
 
-def searchfile(filename, folder = "Data"):
-    print(filename)
+# def searchfile(filename, folder = "Data"):
+#     print("aaaaaaaaaaaaaaaaaaa" , filename)
+#     set_path_to_MA()
+#     if filename in os.listdir(folder):
+#         filepath = f"{folder}/{filename}"
+#     else:
+#         raise ValueError
+#
+#     if not os.path.isdir(filepath):
+#         return filepath
+#
+#     #todo
+#     else:
+#         raise ValueError
+
+# def searchfiles(filename):
+#     "expects comma seperated file names"
+#     set_path_to_MA()
+#     return [ searchfile(file) for  file in filename.split(",") ]
+#
+
+def get_df_from_file(filename , folder = "Data" ):
     set_path_to_MA()
-    if filename in os.listdir(folder):
-        filepath = f"{folder}/{filename}"
-    else:
-        raise ValueError
+    file_path = f"{folder}/{filename}"
+    print(os.listdir())
+    print(file_path)
+    data = pd.read_csv(file_path, nrows=0, header=0, sep="," )
+    header = None
+    for i in data.columns:
+        try:
+            float(i)
+        except:
+            header = 0
+    data =pd.read_csv(file_path, header=header, sep=",")
 
-    if not os.path.isdir(filepath):
-        return filepath
-
-    #todo
-    else:
-        raise ValueError
-
-def searchfiles(filename):
-    "expects comma seperated file names"
-    set_path_to_MA()
-    return [ searchfile(file) for  file in filename.split(",") ]
-
-
-def get_df_from_file(filename, rec = True):
-    set_path_to_MA()
-    try:
-        data = pd.read_csv(filename, nrows=0, header=0, sep="," )
-        header = None
-        for i in data.columns:
-            try:
-                float(i)
-            except:
-                header = 0
-        data =pd.read_csv(filename, header=header, sep=",")
-    except:
-        if rec:
-            return get_df_from_file(searchfile(filename=filename) , rec = False)
-        assert False, "invalid data file"
-
-    return data , filename.split("/")[-1]
+    return data , filename
 
 
 def get_parameters_from_file(filename='Parameters'):

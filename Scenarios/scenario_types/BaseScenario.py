@@ -1,5 +1,6 @@
 import pandas as pd
 
+from Repair.res.timer import Timer
 from Scenarios.Anomaly_Types import *
 import numpy as np
 from Injection.injection_methods.basic_injections import add_anomaly
@@ -25,6 +26,7 @@ class BaseScenario:
         self.repairs = {}
         self.repair_names = []
 
+
     def set_anomaly_params(self, anomaly_dict=None):
         if anomaly_dict is None:
             anomaly_dict = {}
@@ -43,8 +45,10 @@ class BaseScenario:
 
         self.train = BaseScenario.transform_df(self,self.original_train, self.injected_columns, seed=200)["full_set"]
 
-
         return self.train, self.scenarios
+
+
+
 
     @staticmethod
     def split_train_test(df, train_test_split):
@@ -90,6 +94,10 @@ class BaseScenario:
         """ generates common class where entries are different"""
         return original.ne(injected)
 
+
+
+
+    ### after scenrio has been initialized
     def add_repair(self, scenario_part: str, repair_results, repair_name: str):
         assert scenario_part in self.scenarios.keys(), f'{scenario_part} not in {self.scenarios.keys()}'
 
@@ -99,3 +107,65 @@ class BaseScenario:
 
         if repair_name not in self.repair_names:
             self.repair_names.append(repair_name)
+
+
+
+
+
+    def optimize(self,tuner,name,plt=None):
+        """
+        Parameters
+        ----------
+        tuner e.g gridsearch CV with specified model and grid
+        plt or axs
+
+        Returns
+        -------
+        {"train_error" : overal_train_error ,
+                "train_time" : time ,
+                "params" : best_params,
+                "estimator"  : estimator ,
+                "scenario_errors" : dict of scenario scores}
+        """
+
+        train_X, train_y = self.train["injected"] , self.train["original"]
+        timer = Timer()
+        timer.start()
+        tuner.fit(train_X, train_y)
+        time = timer.get_time()
+        estimator = tuner.best_estimator_
+
+        if hasattr(self, "last_estimator"):
+            assert id(estimator) !=  id(self.last_estimator) , f'{id(estimator)} {id(self.last_estimator)}'
+        self.last_estimator = estimator
+
+        best_params = tuner.best_params_
+
+        overal_train_error = estimator.error(train_X, train_y, plt=plt, name="train")
+
+        scenario_scores = {}
+        for scenario_part_name, scenario_part in self.scenarios.items():
+            validation_X, validation_y = scenario_part["injected"], scenario_part["original"]
+            error = estimator.error(validation_X, validation_y)
+            scenario_scores[scenario_part_name] = error
+
+
+        results = {"train_error" : overal_train_error ,
+                "train_time" : time ,
+                "params" : best_params,
+                "estimator"  : estimator ,
+                "scenario_errors" : scenario_scores}
+
+        if not hasattr(self,"opt_results"):
+            self.opt_results = {}
+        self.opt_results[name] = results
+
+        return results
+
+
+
+
+
+
+
+

@@ -1,17 +1,25 @@
 from copy import deepcopy
 from skopt import gp_minimize
-
+import time
 
 
 #chalenge ts not i.i.d
 class BayesianOptimization():
     def __init__(self, clf, param_grid,  n_jobs=-1 , **kargs):
         self.clf = deepcopy(clf) #todo check if this works
-        self.n_jobs = n_jobs
+        assert  id(self.clf) !=  id(clf) , f'{id(clf)} {id(self.clf)}'
         self.set_param_grid(param_grid)
         self.best_params_ = None
-        self.best_estimator_ = clf
         self._ParamTuner__name_ = "BayesianOptimization"
+
+        ##internal_params
+        self.n_jobs = n_jobs
+        self.n_calls = 30
+        self.n_initial_points = 20
+        self.n_restarts_optimizer = 3
+        self.n_points = 1000
+        self.acq_func = 'EI'
+        self.kappa = 1.96
 
 
     def set_param_grid(self,paramgrid):
@@ -22,35 +30,36 @@ class BayesianOptimization():
 
 
     def fit(self, X, y , groups = None):
-        gp_minimize_result = bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
+        self.clf = deepcopy(self.clf)
+        gp_minimize_result = self.bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
         self.best_params_ = { k : v for k,v  in zip(self.param_grid.keys(), gp_minimize_result.x) }
         self.clf.__dict__.update(self.best_params_)
         self.best_estimator_ = self.clf.fit(X,y)
+        self.best_score = gp_minimize_result.fun
+        return self
 
-# todo sampling
-def select_data(data, truth, samples, sample_offset=0):
-    return data, truth
-    # np.random.seed(20)
-    # indexes = np.random.randint(len(data), size=samples, dtype=int)
-    # return data.iloc[indexes, :], truth.iloc[indexes, :]
-    #
+    def bayesian_opt(self,data, truth, clf, params_bounds, scoring , samples=-1, n_jobs=-1):
+        x = params_bounds.values()
 
-def bayesian_opt(data, truth, model, params_bounds, scoring , samples=-1, n_jobs=-1):
-    """  wrap   """
-    x = params_bounds.values()
+        def f(x):
+            model = deepcopy(clf)
+            params = {k: v for k, v in zip(params_bounds.keys(), x)}
+            # for k, v in params.items():
+            #     setattr(model, k, v)
+            model.__dict__.update(params)
 
-    def f(x):
-        params = {k: v for k, v in zip(params_bounds.keys(), x)}
-        # for k, v in params.items():
-        #     setattr(model, k, v)
-        model.__dict__.update(params)
+            selected_data, selected_truth = data.copy(), truth.copy()
+            model.fit(selected_data ,selected_truth )
+            result = -model.score(data, truth)
+            return result
 
-        selected_data, selected_truth = select_data(data, truth, samples)
-        model.fit(selected_data ,selected_truth )
-        result = -model.score(data, truth)
-        return result
-
-    return gp_minimize(f, x, n_jobs=n_jobs,n_calls=20,  n_initial_points=20, n_restarts_optimizer=2, n_points=1000,acq_func='EI')
+        return gp_minimize(f, x, n_jobs=self.n_jobs
+                           ,n_calls=self.n_calls,
+                           n_initial_points=self.n_initial_points,
+                           n_restarts_optimizer=self.n_restarts_optimizer,
+                           n_points=self.n_points,
+                           acq_func=self.acq_func,
+                           kappa=self.kappa)
 
 
 #

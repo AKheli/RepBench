@@ -5,17 +5,17 @@ from sklearn.experimental import enable_halving_search_cv  # noqa
 
 from Injection.inject import scenario_inject
 from ParameterTuning.param_tuner import ParamTuner
-from Repair.Robust_PCA.RPCAestimation.robust_PCA_estim_try import Robust_PCA_estimator_try
 from Repair.Robust_PCA.robust_PCA_estimator import Robust_PCA_estimator
 from Scenarios.Anomaly_Types import *
+from Scenarios.scenario_types.Scenario_Constructor_mapper import SCENARIO_CONSTRUCTORS
 from Scenarios.scenario_types.Scenario_Types import *
 from data_methods.Helper_methods import get_df_from_file
 
-injection_scenario = BASE_SCENARIO
+injection_scenario = SCENARIO_CONSTRUCTORS[BASE_SCENARIO]
 # parameter_tuning = [bayesian_optimization,halving_grid_search,grid_search]
 
 anomaly_type = DISTORTION
-data_files = ["BAFU20K.txt"]# , "BAFU20K.txt" ]  # , , "motion_normal.txt", "TemperatureTS8.csv", "BAFU.txt","batch10.txt"]
+data_files = ["YAHOO.csv","batch10.txt" , "TemperatureTS8.csv" , "BAFU20K.txt" ]  # , , "motion_normal.txt", "TemperatureTS8.csv", "BAFU.txt","batch10.txt"]
 
 param_grid_1 = {
     "n_components": [1, 2, 3, 4,5,6,7],  # , 4, 5, 6],
@@ -28,17 +28,16 @@ param_grid_2 = {
     "threshold":  np.arange(0.1, 3.8 , 0.2),
     "n_components": [1, 2, 3, 4,5],  # , 4, 5, 6],
     "delta":  [0.5 ** i for i in range(8)],
-    #"fit_on_truth": [False,True],
     "interpolate_anomalies": [False,True],
     # "component_method": ["TruncatedSVD"]
 }
 
-param_grid_try = {
-    "delta":  [0.5 ** i for i in range(8)],
-    #"fit_on_truth": [False,True],
-    "interpolate_anomalies": [False,True],
-    # "component_method": ["TruncatedSVD"]
-}
+# param_grid_try = {
+#     "delta":  [0.5 ** i for i in range(8)],
+#     #"fit_on_truth": [False,True],
+#     "interpolate_anomalies": [False,True],
+#     # "component_method": ["TruncatedSVD"]
+# }
 
 
 # param_grid_s = {
@@ -54,21 +53,21 @@ for file_name in data_files:
 
 tuners = []
 for i, file_name in enumerate(data_files):
-    param_tuner = ParamTuner(n_jobs=-1)  # error=precision , classification=True)
+    param_tuner = ParamTuner(n_jobs=1)  # error=precision , classification=True)
     param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="ba" , name  = "ba_no_t"
                     , param_grid=param_grid_1)
-    param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="gr", name="gr_no_t"
-                     , param_grid=param_grid_1)
-    param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="bc", name="bc_no_t"
-                    , param_grid=param_grid_1)
-    param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="gr", name="gr_no_t"
-                    , param_grid=param_grid_1)
+    # param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="gr", name="gr_no_t"
+    #                  , param_grid=param_grid_1)
+    # param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="du"
+    #                 , param_grid=param_grid_1)
+    # param_tuner.add(Robust_PCA_estimator(cols=[0]), tuner="gn"
+    #                 , param_grid=param_grid_1)
     
 
     # param_tuner.add(Robust_PCA_estimator(cols=[0]), tuners=["bc", "gr", "ha"]  # "ba",
     #                 , param_grid=param_grid , cv = CV_splitter())
     df, name = get_df_from_file(file_name)
-    scenario_data = scenario_inject(df, injection_scenario, anomaly_type, train_split=0.5)
+    scenario_data = injection_scenario(file_name, {"anomaly_type" : anomaly_type}, train_test_split=0.5)
     param_tuner.optimize_scenario(scenario_data)
     tuners.append(param_tuner)
 

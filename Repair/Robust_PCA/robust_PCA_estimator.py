@@ -16,7 +16,7 @@ class Robust_PCA_estimator(estimator):
                  , threshold=10
                  , infer_threshold = True
                  , eps=1e-8
-                 , max_iter=300
+                 , max_iter=50
                  , component_method="TruncatedSVD"
                  , interpolate_anomalies = True
                  , fit_on_truth = True
@@ -37,6 +37,7 @@ class Robust_PCA_estimator(estimator):
         self.component_method = component_method
         self.times = {}
         super().__init__(**kwargs)
+        self.exaplained_variance = []
 
 
     def get_params(self, **kwargs):
@@ -60,7 +61,7 @@ class Robust_PCA_estimator(estimator):
         if self.component_method == "TruncatedSVD":
             tsvd = TruncatedSVD(n_components=n_components)
             tsvd.fit(centered_weighted_x)
-
+            self.exaplained_variance.append(tsvd.explained_variance_ratio_)
             components = tsvd.components_
             return components
 
@@ -70,6 +71,7 @@ class Robust_PCA_estimator(estimator):
         return components
 
     def _fit(self, X, y=None):
+        self.exaplained_variance = []
 
         self.delta_half_square = (self.delta ** 2) / 2.
         self.vectorized_loss = self.vec_call
@@ -86,6 +88,7 @@ class Robust_PCA_estimator(estimator):
         not_done_yet = True
 
         while not_done_yet:
+            print(self.n_iterations_)
             # Calculating components with current weights
 
 
