@@ -32,21 +32,20 @@ if __name__ == '__main__':
 def screen(  Series , datasize = None  ,T = 1   , SMIN = -3, SMAX = 3):
     #Series = (pandas.read_csv(datafile , names = ("timestamp", "mod" , "true"))).to_numpy()
 
-
     if Series.ndim == 1:
-        mod = Series
-        timestamps = np.arange((len(mod)))
+        original = Series
+        timestamps = np.arange((len(original)))
     else:
         if datasize == None:
             timestamps = Series[:, 0]
-            mod = Series[:, 1]
+            original = Series[:, 1]
             #truth =  Series[:, 2]
         else:
             timestamps = Series[:datasize ,0]
-            mod = Series[:datasize,1]
+            original = Series[:datasize,1]
             #truth =  Series[:datasize, 2]
 
-    mod = mod.copy()
+    mod = original.copy()
 
     preEnd = -1
     wStartTime =  timestamps[0]
@@ -93,16 +92,14 @@ def screen(  Series , datasize = None  ,T = 1   , SMIN = -3, SMAX = 3):
                 wEndTime = cur_time
 
     #print(RMS(mod,truth))
-
+    print(sum(abs(mod-original)))
     return {"repair" : mod , "smin" : SMIN ,"smax": SMAX , "T": T}
 
+5
+values = np.array([12, 12.5, 13, 10, 15, 15.5])
+# print(sum(abs(values-mod1)))
+modified = screen(values , T=5 , SMIN=-0.5, SMAX= 0.5)
 
-# timestamps =  np.array([1,2,3,5,6,8,9,10, 11 ,15, 16 ,17, 18,19,20 ],dtype = int)
-# values = np.array([5,6,5,6,7,18,7,5,5,6.5,8,7.5,22,8,6])
-#
-#
-#
-# modified = screen(np.array([timestamps,values]).T , T=1 , SMIN=-2, SMAX= 2)
 # modified_global = LPconstrainedAE(values.copy(), min=2, max= 2)
 #
 # print("local",np.mean(abs(values-modified))**(1/2))

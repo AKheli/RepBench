@@ -7,12 +7,10 @@ from timeit import default_timer as timer
 
 # for time differences = 1 only
 # time = None assume values with time differences of 1
-def LPconstrainedAE(x, min=2, max=2, time=None, w=1, second=True , labels = None , truth = None):
+def LPconstrainedAE(x, min=2, max=2, time=None, w=1, second=True , truth = None):
     n = len(x)
     uuncost = x.copy()
     c = np.ones(2 * n)
-
-    #x = np.array(x)
 
     if time is None:
         time = np.arange(n)
@@ -85,29 +83,29 @@ def LPconstrainedAE(x, min=2, max=2, time=None, w=1, second=True , labels = None
 
     A_ub = sp.coo_matrix(A_ub)
 
-    A_eq = None
-    b_eq = None
-    if labels is not None:
-        labels = np.array(labels)
-        A_eq = np.zeros((len(x),len(x)),dtype=np.int)
-        A_eq[labels,labels] = 1
-
-        truth = np.array(truth)
-        constr = np.concatenate( (abs(uuncost-truth)/2+(truth-uuncost)/2, abs(x-truth)/2-(truth-x)/2  ) )
-
-        b_eq = np.zeros_like(constr)
-        b_eq[labels] = constr[labels]
-        b_eq[labels+n] = constr[labels+n]
-
-
-        D1 = np.concatenate((A_eq, np.zeros_like(A_eq)), axis=0, )
-        D2 = np.concatenate((np.zeros_like(A_eq), A_eq), axis=0, )
-        A_eq =  np.concatenate((D1,D2), axis=1, )
-
-    #
-    print(sum(b_eq), "bew")
     # A_eq = None
     # b_eq = None
+    # if labels is not None:
+    #     labels = np.array(labels)
+    #     A_eq = np.zeros((len(x),len(x)),dtype=np.int)
+    #     A_eq[labels,labels] = 1
+    #
+    #     truth = np.array(truth)
+    #     constr = np.concatenate( (abs(uuncost-truth)/2+(truth-uuncost)/2, abs(x-truth)/2-(truth-x)/2  ) )
+    #
+    #     b_eq = np.zeros_like(constr)
+    #     b_eq[labels] = constr[labels]
+    #     b_eq[labels+n] = constr[labels+n]
+    #
+    #
+    #     D1 = np.concatenate((A_eq, np.zeros_like(A_eq)), axis=0, )
+    #     D2 = np.concatenate((np.zeros_like(A_eq), A_eq), axis=0, )
+    #     A_eq =  np.concatenate((D1,D2), axis=1, )
+
+    #
+    #print(sum(b_eq), "bew")
+    A_eq = None
+    b_eq = None
     # A_ub = None
     # b_ub = None
     solution = opt.linprog(c, A_ub=A_ub, b_ub=b_ub,A_eq=A_eq,b_eq=b_eq, bounds=(0, np.inf), options={"disp": False})

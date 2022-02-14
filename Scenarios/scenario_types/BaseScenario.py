@@ -13,7 +13,7 @@ class BaseScenario:
     scenario_type = BASE_SCENARIO
     small_data_description = "data size"
     default_length = 10
-    default_percentage = 8
+    default_percentage = 20
     default_anomaly_type = AMPLITUDE_SHIFT
 
     def __init__(self, data_filename, anomaly_dict: dict = None, cols_to_injected=[0], train_test_split=0.5):

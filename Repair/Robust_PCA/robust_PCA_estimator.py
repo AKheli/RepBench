@@ -1,11 +1,12 @@
 import warnings
 
 import numpy as np
+import sklearn
 from scipy import linalg
 from sklearn.utils import check_array
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import FastICA
-
+import matplotlib.pyplot as plt
 from Repair.estimator import estimator
 warnings.simplefilter("ignore", UserWarning)  # feaure name
 
@@ -50,19 +51,15 @@ class Robust_PCA_estimator(estimator):
             , "infer_threshold" : self.infer_threshold
             }
 
-    def get_components(self, centered_weighted_x):
-        n_components = min(centered_weighted_x.shape[1] - 1, self.n_components)
-        if self.component_method == "fastICA":
-            incPCA = FastICA(n_components=self.n_components)
-            incPCA.fit(centered_weighted_x)
-            components = incPCA.components_
-            return components
+    def get_components(self, centered_weighted_x , itr = -1):
 
         if self.component_method == "TruncatedSVD":
-            tsvd = TruncatedSVD(n_components=n_components)
+            tsvd = TruncatedSVD(n_components=self.n_components)
             tsvd.fit(centered_weighted_x)
-            self.exaplained_variance.append(tsvd.explained_variance_ratio_)
+            explained_var = tsvd.explained_variance_ratio_
+            i = 1
             components = tsvd.components_
+            self.exaplained_variance.append(sum(explained_var))
             return components
 
         U, S, V = linalg.svd(centered_weighted_x)
@@ -84,30 +81,40 @@ class Robust_PCA_estimator(estimator):
         self.weights_ = 1. / n_samples * np.ones(n_samples)
 
         self.errors_ = [np.inf]
-        self.n_iterations_ = 0
+        self.n_iterations_ = 1
         not_done_yet = True
 
         while not_done_yet:
-            print(self.n_iterations_)
+            # if self.n_iterations_ %10 ==0:
+            #     print(self.n_iterations_)
             # Calculating components with current weights
 
 
             self.mean_ = np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
-            self.components_ = self.get_components(X_centered * np.sqrt(self.weights_.reshape(-1, 1)))
+            self.components = self.get_components(X_centered * np.sqrt(self.weights_.reshape(-1, 1)),self.n_iterations_)
 
             # non_projected_metric = np.eye(self.components_.shape[1]) - \
             #                        self.components_.T.dot(self.components_)
 
 
 
-            diff = X_centered - np.dot(X_centered, self.components_.T).dot(self.components_)
+            diff = X_centered - np.dot(X_centered, self.components.T).dot(self.components)
 
             errors_raw = np.linalg.norm(diff, axis=1)
 
             errors_loss = self.vectorized_loss(errors_raw)
+
+            # if y is not None and self.n_iterations_== 1:
+            #     d = X[:, self.cols[0]] - y[:, self.cols[0]]
+            #     plt.plot(d / np.linalg.norm(d))
+            #     plt.plot(errors_loss)
+            #     plt.title("start")
+            #     plt.show()
+
             # New weights based on errors
-            self.weights_ += self.vectorized_weights(errors_raw)
+            self.weights_ = self.vectorized_weights(errors_raw)
+
             self.weights_ /= self.weights_.sum()
             # Checking stopping criteria
             self.n_iterations_ += 1
@@ -124,6 +131,14 @@ class Robust_PCA_estimator(estimator):
 
         if y is not None and self.infer_threshold:
             self.set_threshold_on_current_settings(X,y)
+
+        # if y is not None:
+        #     d = X[:, self.cols[0]] - y[:, self.cols[0]]
+        #     plt.plot(d / np.linalg.norm(d))
+        #     plt.plot(errors_loss)
+        #     plt.title("end")
+        #     plt.show()
+
         return self
 
     def f(self, t, X, y):
@@ -160,8 +175,8 @@ class Robust_PCA_estimator(estimator):
         X = self._validate_data(X, dtype=[np.float32], reset=False)
         if self.mean_ is not None:
             X = X - self.mean_
-        X_transformed = np.dot(X, self.components_.T)
-        X_reduced = np.dot(X_transformed, self.components_) + self.mean_
+        X_transformed = np.dot(X, self.components.T)
+        X_reduced = np.dot(X_transformed, self.components) + self.mean_
 
         return X_reduced[:, :original_cols]
 
@@ -197,10 +212,17 @@ class Robust_PCA_estimator(estimator):
             diff = abs(reconstructed_col - X_copy[:, col])
             mean = np.mean(diff)
             std = np.std(diff)
+            normalizeddiff = (diff-min(diff))/(max(diff)-min(diff))
+            # for i in range(10,len(to_repair_booleans)-1):
+            #     to_repair_booleans[i]= (1+0*sum(to_repair_booleans[i-2:i-1]))*(diff[i]-mean)/std > self.threshold
 
-            for i in range(10,len(to_repair_booleans)-1):
-                to_repair_booleans[i]= (1+0*sum(to_repair_booleans[i-2:i-1]))*(diff[i]-mean)/std > self.threshold
+            errors_raw = diff
+            self.weights_ = self.vectorized_weights(errors_raw)
+            to_repair_booleans = normalizeddiff > 0.15
+            to_repair_booleans[-1] = False
+            to_repair_booleans[:10] = False
 
+            assert X.shape[0] == len(self.weights_)
             self.lower = reconstructed_col - (self.threshold*std+mean)
             self.upper = reconstructed_col + (self.threshold*std+mean)
 
@@ -250,17 +272,17 @@ class Robust_PCA_estimator(estimator):
         smaller = x <= self.delta
         bigger = np.invert(smaller)
         result = np.zeros_like(x)
-        result[smaller] = x[smaller] ** 2 / 2.
+        result[smaller] =  x[smaller] ** 10 / 2.
         result[bigger] = self.delta * x[bigger] - self.delta_half_square
         return result
 
-    def call(self, x):
-        x_flt = float(x)
-        assert x_flt >= 0
-        if x_flt <= self.delta:
-            return (x_flt ** 2) / 2.
-        else:
-            return self.delta * x_flt - self.delta_half_square
+    # def call(self, x):
+    #     x_flt = float(x)
+    #     assert x_flt >= 0
+    #     if x_flt <= self.delta:
+    #         return 0 #(x_flt ** 2) / 2.
+    #     else:
+    #         return self.delta * x_flt - self.delta_half_square
 
     def weight(self, x):
         x_flt = float(x)
