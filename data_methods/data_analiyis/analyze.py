@@ -28,6 +28,8 @@ def analyze(data_name, optim_params=False, anomaly_types=[], path="data_methods/
     plt.savefig(f"{path}/acf.svg")
 
 
+
+
 # for file in [x for x in os.listdir("Data") if not os.path.isdir(f"Data/{x}")]:
 #     analyze(file)
 #
