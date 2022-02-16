@@ -16,12 +16,19 @@ class BaseScenario:
     default_percentage = 20
     default_anomaly_type = AMPLITUDE_SHIFT
 
-    def __init__(self, data_filename, anomaly_dict: dict = None, cols_to_injected=[0], train_test_split=0.5):
+    def __init__(self, data_filename, anomaly_dict: dict = None
+                 , cols_to_inject=[0]
+                 , train_test_split=0.5
+                 , data_columns = "all"):
         self.set_anomaly_params(anomaly_dict)
-        self.injected_columns = [] + cols_to_injected
+        self.injected_columns = [] + cols_to_inject
         self.train_test_split = train_test_split
         self.data_filename = data_filename
+
         self.original_data, self.data_name = get_df_from_file(data_filename)
+        if data_columns != "all":
+            self.original_data = pd.DataFrame(self.original_data.iloc[:,data_columns])
+        print(self.original_data)
         self.generate_data(self.original_data)
         self.repairs = {}
         self.repair_names = []
@@ -53,7 +60,7 @@ class BaseScenario:
     @staticmethod
     def split_train_test(df, train_test_split):
         l = int(len(df) * train_test_split)
-        return df.iloc[:l, :], df.iloc[l:, :]
+        return df.iloc[:l,:], df.iloc[l:, :]
 
     def get_amount_of_anomalies(self, data):
         anom_amount = round(len(data) * self.anomaly_percentage / 100 / self.anomaly_length)
@@ -163,9 +170,26 @@ class BaseScenario:
         return results
 
 
+    def injected_anomaly_indexes(self,scenario=0):
+        scen_name =list(self.scenarios.keys())[scenario]
+        scenario_part = self.scenarios[scen_name]
+        class_ = scenario_part["class"]
+        indexes = []
+        current = []
+        for i,c in enumerate(np.array(class_)):
+            if any(c):
+                current.append(i)
+            if not any(c):
+                if len(current) > 0:
+                    indexes.append(current)
+                    current = []
+        return indexes
 
+    def get_amount_of_part_scenarios(self):
+        return len(self.scenarios)
 
-
-
-
+    def i_get_scenario(self,index):
+        scen_name = list(self.scenarios.keys())[index]
+        scenario_part = self.scenarios[scen_name]
+        return scenario_part
 

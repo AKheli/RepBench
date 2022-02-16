@@ -5,7 +5,7 @@ Robust_PCA = RPCA
 
 
 ALGORITHM_PARAMETERS = {IMR : { "p" : 2 , "tau" : 0.1 , "max_itr_n":  1000,
-                            "label_anom_start" : 2 ,"label_rate" : 0.2 },
+                            "label_anom_start" : 3 ,"label_rate" : 0.2 },
                         SCREEN : { "smin" : -6 , "smax" : 6  , "T" : 1},
                         RPCA : {"threshold" : 2.2 , "n_components" :2},
                         }
