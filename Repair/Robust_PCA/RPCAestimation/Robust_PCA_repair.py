@@ -15,14 +15,12 @@ alg_type = RPCA
 default_params = ALGORITHM_PARAMETERS[alg_type]
 
 
-def RPCA_repair(injected, cols, n_components=1, threshold=2.2, window = False, **args):
-    if window:
-        return RPCA_repair_window(injected, cols, n_components=n_components, threshold=threshold, **args)
+def RPCA_repair(injected, cols,  n_components=1, threshold=2.2, window = False, **args):
     try:
         injected = injected.drop("class", axis=1)
     except:
         pass
-
+    print("eyyyy")
     timer = Timer()
     timer.start()
     np.random.seed(100)
@@ -33,8 +31,8 @@ def RPCA_repair(injected, cols, n_components=1, threshold=2.2, window = False, *
     repair = pd.DataFrame(pca.predict(injected))
     repair.columns = list(injected.columns)
 
-    return {"repair": repair, "runtime": timer.get_time(), "n_components": n_components
-        , "threshold": threshold, "type": alg_type  , "name" : f'RPCA({n_components},{round(threshold,2)},{PCA_method})'}
+    return {"repair": repair, "runtime": timer.get_time(), "n_components": n_components,"reduced": pca.reduced_
+        , "threshold": threshold, "C" :  pca.components , "type": alg_type  , "name" : f'RPCA({n_components},{round(threshold,2)},{PCA_method})'}
 
 
 

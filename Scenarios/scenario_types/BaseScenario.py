@@ -12,27 +12,31 @@ from data_methods.Helper_methods import get_df_from_file
 class BaseScenario:
     scenario_type = BASE_SCENARIO
     small_data_description = "data size"
-    default_length = 10
-    default_percentage = 20
+    default_length = 12
+    default_percentage = 7
     default_anomaly_type = AMPLITUDE_SHIFT
 
-    def __init__(self, data_filename, anomaly_dict: dict = None
-                 , cols_to_inject=[0]
+    def __init__(self, data, anomaly_dict: dict = None
+                 , cols_to_inject=None
                  , train_test_split=0.5
-                 , data_columns = "all"):
+                 , data_columns="all", data_name=None):
         self.set_anomaly_params(anomaly_dict)
-        self.injected_columns = [] + cols_to_inject
+        self.injected_columns = [0] if cols_to_inject is None else cols_to_inject
         self.train_test_split = train_test_split
-        self.data_filename = data_filename
+        self.data_filename = data
 
-        self.original_data, self.data_name = get_df_from_file(data_filename)
+        if isinstance(data, pd.DataFrame):
+            self.original_data, self.data_name = data, data_name
+        else:
+            assert isinstance(data, str), "data must be string or DataFrame"
+            self.original_data, self.data_name = get_df_from_file(data)
+            self.data_name = self.data_name if data_name is None else data_name
+
         if data_columns != "all":
-            self.original_data = pd.DataFrame(self.original_data.iloc[:,data_columns])
-        print(self.original_data)
+            self.original_data = pd.DataFrame(self.original_data.iloc[:, data_columns])
         self.generate_data(self.original_data)
         self.repairs = {}
         self.repair_names = []
-
 
     def set_anomaly_params(self, anomaly_dict=None):
         if anomaly_dict is None:
@@ -50,17 +54,14 @@ class BaseScenario:
         self.original_train, self.original_test = self.split_train_test(original_data, self.train_test_split)
         self.scenarios = self.transform_df(self.original_test, self.injected_columns, seed=100)
 
-        self.train = BaseScenario.transform_df(self,self.original_train, self.injected_columns, seed=200)["full_set"]
+        self.train = BaseScenario.transform_df(self, self.original_train, self.injected_columns, seed=200)["full_set"]
 
         return self.train, self.scenarios
-
-
-
 
     @staticmethod
     def split_train_test(df, train_test_split):
         l = int(len(df) * train_test_split)
-        return df.iloc[:l,:], df.iloc[l:, :]
+        return df.iloc[:l, :], df.iloc[l:, :]
 
     def get_amount_of_anomalies(self, data):
         anom_amount = round(len(data) * self.anomaly_percentage / 100 / self.anomaly_length)
@@ -101,9 +102,6 @@ class BaseScenario:
         """ generates common class where entries are different"""
         return original.ne(injected)
 
-
-
-
     ### after scenrio has been initialized
     def add_repair(self, scenario_part: str, repair_results, repair_name: str):
         assert scenario_part in self.scenarios.keys(), f'{scenario_part} not in {self.scenarios.keys()}'
@@ -115,11 +113,7 @@ class BaseScenario:
         if repair_name not in self.repair_names:
             self.repair_names.append(repair_name)
 
-
-
-
-
-    def optimize(self,tuner,name,plt=None):
+    def optimize(self, tuner, name, plt=None):
         """
         Parameters
         ----------
@@ -135,7 +129,7 @@ class BaseScenario:
                 "scenario_errors" : dict of scenario scores}
         """
 
-        train_X, train_y = self.train["injected"] , self.train["original"]
+        train_X, train_y = self.train["injected"], self.train["original"]
         timer = Timer()
         timer.start()
         tuner.fit(train_X, train_y)
@@ -143,7 +137,7 @@ class BaseScenario:
         estimator = tuner.best_estimator_
 
         if hasattr(self, "last_estimator"):
-            assert id(estimator) !=  id(self.last_estimator) , f'{id(estimator)} {id(self.last_estimator)}'
+            assert id(estimator) != id(self.last_estimator), f'{id(estimator)} {id(self.last_estimator)}'
         self.last_estimator = estimator
 
         best_params = tuner.best_params_
@@ -156,27 +150,25 @@ class BaseScenario:
             error = estimator.error(validation_X, validation_y)
             scenario_scores[scenario_part_name] = error
 
+        results = {"train_error": overal_train_error,
+                   "train_time": time,
+                   "params": best_params,
+                   "estimator": estimator,
+                   "scenario_errors": scenario_scores}
 
-        results = {"train_error" : overal_train_error ,
-                "train_time" : time ,
-                "params" : best_params,
-                "estimator"  : estimator ,
-                "scenario_errors" : scenario_scores}
-
-        if not hasattr(self,"opt_results"):
+        if not hasattr(self, "opt_results"):
             self.opt_results = {}
         self.opt_results[name] = results
 
         return results
 
-
-    def injected_anomaly_indexes(self,scenario=0):
-        scen_name =list(self.scenarios.keys())[scenario]
+    def injected_anomaly_indexes(self, scenario=0):
+        scen_name = list(self.scenarios.keys())[scenario]
         scenario_part = self.scenarios[scen_name]
         class_ = scenario_part["class"]
         indexes = []
         current = []
-        for i,c in enumerate(np.array(class_)):
+        for i, c in enumerate(np.array(class_)):
             if any(c):
                 current.append(i)
             if not any(c):
@@ -188,8 +180,7 @@ class BaseScenario:
     def get_amount_of_part_scenarios(self):
         return len(self.scenarios)
 
-    def i_get_scenario(self,index):
+    def i_get_scenario(self, index):
         scen_name = list(self.scenarios.keys())[index]
         scenario_part = self.scenarios[scen_name]
         return scenario_part
-

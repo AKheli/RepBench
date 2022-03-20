@@ -13,11 +13,11 @@ warnings.simplefilter("ignore", UserWarning)  # feaure name
 class Robust_PCA_estimator(estimator):
     def __init__(self, n_components =2,
                  cols=[0]
-                 , delta=0.01
+                 , delta=0.0000001
                  , threshold=10
                  , infer_threshold = True
                  , eps=1e-8
-                 , max_iter=50
+                 , max_iter=500
                  , component_method="TruncatedSVD"
                  , interpolate_anomalies = True
                  , fit_on_truth = True
@@ -54,6 +54,7 @@ class Robust_PCA_estimator(estimator):
     def get_components(self, centered_weighted_x , itr = -1):
 
         if self.component_method == "TruncatedSVD":
+            #print(self.n_components)
             tsvd = TruncatedSVD(n_components=self.n_components)
             tsvd.fit(centered_weighted_x)
             explained_var = tsvd.explained_variance_ratio_
@@ -93,7 +94,7 @@ class Robust_PCA_estimator(estimator):
             self.mean_ = np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
             self.components = self.get_components(X_centered * np.sqrt(self.weights_.reshape(-1, 1)),self.n_iterations_)
-
+            #print(self.components)
             # non_projected_metric = np.eye(self.components_.shape[1]) - \
             #                        self.components_.T.dot(self.components_)
 
@@ -127,7 +128,7 @@ class Robust_PCA_estimator(estimator):
                 rel_error = 0.
 
             self.errors_.append(total_error)
-            not_done_yet = rel_error > self.eps and self.n_iterations_ < self.max_iter
+            not_done_yet =  self.n_iterations_ < self.max_iter # rel_error > self.eps or
 
         if y is not None and self.infer_threshold:
             self.set_threshold_on_current_settings(X,y)
@@ -182,22 +183,8 @@ class Robust_PCA_estimator(estimator):
 
     def get_fitted_attributes(self):
         "dict of fitted atributes"
-        return {"threshold" : self.threshold , "components" : self.components_.copy()  }
+        return {"threshold" : self.threshold , "components" : self.components.copy()  }
 
-    def merge_fitted_attributes(self, list_of_fit_results,anomaly_vector_list = None):
-        assert False
-        super().merge_fitted_attributes(list_of_fit_results,anomaly_vector_list)
-
-        weights = np.ones(len(list_of_fit_results))
-        weights = weights/len(weights)
-        if anomaly_vector_list is not None:
-            sums = np.array([ sum(anoms) for anoms in  anomaly_vector_list])
-            weights = sums/sum(sums)
-
-        assert np.isclose(sum(weights),1)
-
-        self.threshold =  sum([ d["threshold"]*w for w,d in zip(weights,list_of_fit_results)])
-        self.components_ =  np.sum( [d["components"] for d in list_of_fit_results ] ,axis = 1 )/len(list_of_fit_results)
 
     def classify_anomalies(self, X, reconstructed):
         X = X.copy()
@@ -218,7 +205,7 @@ class Robust_PCA_estimator(estimator):
 
             errors_raw = diff
             self.weights_ = self.vectorized_weights(errors_raw)
-            to_repair_booleans = normalizeddiff > 0.15
+            to_repair_booleans = normalizeddiff > self.threshold
             to_repair_booleans[-1] = False
             to_repair_booleans[:10] = False
 
@@ -227,6 +214,7 @@ class Robust_PCA_estimator(estimator):
             self.upper = reconstructed_col + (self.threshold*std+mean)
 
             anomalies[col] = to_repair_booleans
+            #print(anomalies)
             return anomalies
 
 
@@ -234,7 +222,7 @@ class Robust_PCA_estimator(estimator):
         X = X.copy()
         X_copy = self._validate_data(X, dtype=[np.float32], reset=False)
         X_reduced = self.reduce(X)
-
+        self.reduced_ = X_reduced.copy()
         anomalies = self.classify_anomalies(X, X_reduced)
 
         to_reduce = np.array(X).copy()

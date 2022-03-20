@@ -156,9 +156,7 @@ def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
     for i in range(len(modify)):
         if i not in labels:
             modify[i] =x[i]+ yvec[i-p]
-    #print("AAAAA")
-    #print("suum",sum(modify - imr2(x,y_k,labels,tau=tau,p=p,k=k)))
-    #assert np.allclose(modify, imr2(x,y_k,labels,tau=tau,p=p,k=k))
+
     return modify
 
 
