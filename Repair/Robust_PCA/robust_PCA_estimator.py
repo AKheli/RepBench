@@ -5,8 +5,6 @@ import sklearn
 from scipy import linalg
 from sklearn.utils import check_array
 from sklearn.decomposition import TruncatedSVD
-from sklearn.decomposition import FastICA
-import matplotlib.pyplot as plt
 from Repair.estimator import estimator
 warnings.simplefilter("ignore", UserWarning)  # feaure name
 
