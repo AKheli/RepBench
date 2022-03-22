@@ -16,10 +16,17 @@ class BaseScenario:
     default_percentage = 7
     default_anomaly_type = AMPLITUDE_SHIFT
 
-    def __init__(self, data, anomaly_dict: dict = None
+    def __init__(self, data
+                 , anomaly_dict: dict = None
                  , cols_to_inject=None
                  , train_test_split=0.5
-                 , data_columns="all", data_name=None):
+                 , train = None
+                 , data_columns="all"
+                 , data_name=None ):
+
+
+
+
         self.set_anomaly_params(anomaly_dict)
         self.injected_columns = [0] if cols_to_inject is None else cols_to_inject
         self.train_test_split = train_test_split
@@ -34,9 +41,23 @@ class BaseScenario:
 
         if data_columns != "all":
             self.original_data = pd.DataFrame(self.original_data.iloc[:, data_columns])
-        self.generate_data(self.original_data)
+
+        if train is not None:
+            if isinstance(data, pd.DataFrame):
+                self.original_train = train
+            else:
+                assert isinstance(data, str), "data must be string or DataFrame"
+                self.original_train, _ = get_df_from_file(data)
+
+            self.generate_data(self.original_data,self.original_train_data)
+        else:
+            self.generate_data(self.original_data)
+
         self.repairs = {}
         self.repair_names = []
+
+
+
 
     def set_anomaly_params(self, anomaly_dict=None):
         if anomaly_dict is None:
@@ -50,8 +71,13 @@ class BaseScenario:
         assert isinstance(self.anomaly_type, str) and isinstance(self.anomaly_length, int), f'{self.anomaly_length},' \
                                                                                             f' {self.anomaly_type}'
 
-    def generate_data(self, original_data):
-        self.original_train, self.original_test = self.split_train_test(original_data, self.train_test_split)
+    def generate_data(self, original_data , train=None):
+        if train is None:
+            self.original_train, self.original_test = self.split_train_test(original_data, self.train_test_split)
+        else:
+            self.original_train = train
+            _ , self.original_test = self.split_train_test(original_data, 0)
+
         self.scenarios = self.transform_df(self.original_test, self.injected_columns, seed=100)
 
         self.train = BaseScenario.transform_df(self, self.original_train, self.injected_columns, seed=200)["full_set"]
@@ -60,6 +86,9 @@ class BaseScenario:
 
     @staticmethod
     def split_train_test(df, train_test_split):
+        if train_test_split == 0:
+            return None , df
+
         l = int(len(df) * train_test_split)
         return df.iloc[:l, :], df.iloc[l:, :]
 
