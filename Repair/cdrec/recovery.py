@@ -125,7 +125,7 @@ def interpolate(matrix, mask):
 ##
 
 # Centroid Decomposition, with the optional possibility of specifying truncation or usage of initial sign vectors
-def centroid_decomposition(matrix, truncation=0, SV=None):
+def centroid_decomposition(matrix, truncation=0, weights = None , SV=None ):
     # input processing
     matrix = np.asarray(matrix, dtype=np.float64).copy()
     n = len(matrix)
@@ -156,9 +156,15 @@ def centroid_decomposition(matrix, truncation=0, SV=None):
     for j in range(0, truncation):
         # calculate the sign vector
         Z = local_sign_vector(matrix, SV[j])
-
+        if weights is not None:
+            Z_w = local_sign_vector(matrix * np.sqrt(weights.reshape(-1, 1)),SV[j])
+            print(weights)
+            print(Z)
+            print(Z_w)
+            print(Z_w - Z)
+        Z  = Z_w
         # calculate the column of R by X^T * Z / ||X^T * Z||
-        R_i = matrix.T @ Z
+        R_i = np.dot(np.diag(weights),matrix).T @ Z
         R_i = R_i / np.linalg.norm(R_i)
         R[j] = R_i
 

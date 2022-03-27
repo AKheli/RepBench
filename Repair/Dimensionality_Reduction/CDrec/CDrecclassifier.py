@@ -33,7 +33,7 @@ class CD_Rec_estimator():
             self.mean_ = np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
 
-            L, R, Z = centroid_decomposition(X_centered * 1, truncation=self.truncation)
+            L, R, Z = centroid_decomposition(X_centered * 1, truncation=self.truncation ,weights = self.weights_)
             self.L = L
             self.R = R
             self.Z = Z
