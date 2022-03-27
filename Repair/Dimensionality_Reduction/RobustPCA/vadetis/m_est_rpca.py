@@ -8,6 +8,8 @@ from scipy import linalg
 import numpy as np
 import builtins as bi
 
+
+
 def print(*args):
     for arg in args:
         if isinstance(arg,np.ndarray):

@@ -7,7 +7,7 @@ from Scenarios.scenario_types.Scenario_Types import VARY_ANOMALY_SIZE
 ##
 class AnomalyLengthScenario(BaseScenario):
     scenario_type = VARY_ANOMALY_SIZE
-    default_lengths = [5,10,15,20,50]
+    default_lengths = [5,10,15,20,50,100,500]
 
 
     def init_specialiced_scenario(self):
@@ -17,8 +17,6 @@ class AnomalyLengthScenario(BaseScenario):
 
     def update_lengths(self,list):
         self.lengths = list
-
-
 
 
 
@@ -32,7 +30,6 @@ class AnomalyLengthScenario(BaseScenario):
 
     def transform_df(self, df, cols=[0],seed = 100):
 
-
         # todo check result appending
         for l in self.lengths:
             x = self.anomaly_length
@@ -45,7 +42,7 @@ class AnomalyLengthScenario(BaseScenario):
             self.anomaly_length = l
             injected_df = data.copy()
             for col in cols:
-                injected_df.iloc[:, col], anomaly_info = self.inject_single(np.array(data.iloc[:, col]),
+                    injected_df.iloc[:, col], anomaly_info = self.inject_single(np.array(data.iloc[:, col]),
                                                                             min_space_anom_len_multiplier=0)
             resulting_data.append(injected_df)
             result[f'anomaly_size{i}'] = self.create_scenario_part_output(injected_df, data, cols)
