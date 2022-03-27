@@ -2,9 +2,10 @@ BASE_SCENARIO = "base_scenario"
 VARY_TS_LENGTH = "vary_ts_length"
 VARY_ANOMALY_SIZE = "vary_anomaly_size"
 VARY_ANOMALY_AMOUNT = "vary_anomaly_amount"
-MINI_SCENARIO = "mini_scenario"
 ANOMALY_POSITION = "anomaly_position"
 ANOMALY_FACTOR  = "anomaly_factor"
+
+MINI_SCENARIO = "mini_scenario"
 
 scenario_specifications = {
     BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 10},

@@ -7,28 +7,31 @@ from Repair.Screen.SCREEN_repair import SCREEN_repair
 from Scenarios.Anomaly_Types import parse_anomaly_name
 from Scenarios.scenario_types.Scenario_Constructor_mapper import SCENARIO_CONSTRUCTORS
 from Scenarios.scenario_types.Scenario_Types import parse_scenario_name
-from data_methods.Helper_methods import searchfiles, display_data_folder, get_df_from_file
+from data_methods.Helper_methods import get_df_from_file
 from run_ressources.parse_toml import load_toml_file
 
 
-def read_data_arguments(args):
-    file_paths = parse_data_argument(args.data[0])
-    cols = [int(c) for c in args.col[0].split(",")]
-    results = {}
-    results["columns"] = cols
-    for file in file_paths:
-        data, name = get_df_from_file(file)
-        results[name] = data
-    return results
+# def read_data_arguments(args):
+#     data_arg = args.data[0]
+#     print("data input" ,data_arg)
+#     file_paths = parse_data_argument(args.data[0])
+#     cols = [int(c) for c in args.col[0].split(",")]
+#     results = {}
+#     results["columns"] = cols
+#     for file in file_paths:
+#         data, name = get_df_from_file(file)
+#         results[name] = data
+#     return results
 
 def read_columns(args):
     return  [int(c) for c in args.col[0].split(",")]
 
 def read_data_files(args , check= True):
+    print("data arg" , args.data[0])
     file_paths = parse_data_argument(args.data[0])
     if check:
         for file in file_paths:
-            data ,_ = get_df_from_file(file)
+            data,_ = get_df_from_file(file)
             print(data.head())
     return file_paths
 

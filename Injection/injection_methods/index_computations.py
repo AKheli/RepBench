@@ -64,6 +64,8 @@ def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1 , seed 
 
 
 
+
+
 def get_free_spaces(arr):
     arr = np.ones_like(arr) - np.array(arr, dtype=bool)
     results = []

@@ -1,0 +1,3 @@
+           IMR,(2,0.1)
+data size             
+full_set   703.719    

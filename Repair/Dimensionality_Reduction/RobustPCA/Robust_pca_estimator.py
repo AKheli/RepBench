@@ -10,8 +10,8 @@ class Robust_PCA_estimator(estimator):
                  , cols=[0]
                  , delta=0.1
                  , threshold=0.1
-                 , eps=1e-8
-                 , max_iter=50
+                 , eps=1e-6
+                 , max_iter=100
                  , interpolate_anomalies=True
                  , center=True
                  , **kwargs
@@ -23,20 +23,12 @@ class Robust_PCA_estimator(estimator):
         self.n_components = n_components
         self.eps = eps
         self.max_iter = max_iter
-        self.center = center
         super().__init__(**kwargs)
 
     def reduce(self, matrix):
-        if self.center:
-            col_mean = matrix.mean(axis=0)
-            matrix = matrix - col_mean
-
-        C = fit_components(matrix, self.n_components, self.delta , max_iter  = self.max_iter)
-
-        if self.center:
-            reduced = np.dot(matrix, C.T).dot(C) + col_mean
-        else:
-            reduced =  np.dot(matrix, C.T).dot(C)
+        self.C , self.mean , self.weights = fit_components(matrix*1, self.n_components, self.delta , max_iter  = self.max_iter)
+        print("C",self.C )
+        reduced =  np.dot(matrix-self.mean, self.C.T).dot(self.C) + self.mean
 
         return reduced
 

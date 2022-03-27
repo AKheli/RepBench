@@ -17,7 +17,7 @@ class BaseScenario:
     default_anomaly_type = AMPLITUDE_SHIFT
 
     def __init__(self, data
-                 , anomaly_dict: dict = None
+                     , anomaly_dict: dict = None
                  , cols_to_inject=None
                  , train_test_split=0.5
                  , train = None
@@ -31,6 +31,10 @@ class BaseScenario:
         self.injected_columns = [0] if cols_to_inject is None else cols_to_inject
         self.train_test_split = train_test_split
         self.data_filename = data
+
+        self.init_specialiced_scenario()
+
+
 
         if isinstance(data, pd.DataFrame):
             self.original_data, self.data_name = data, data_name
@@ -57,7 +61,8 @@ class BaseScenario:
         self.repair_names = []
 
 
-
+    def init_specialiced_scenario(self):
+        pass
 
     def set_anomaly_params(self, anomaly_dict=None):
         if anomaly_dict is None:
@@ -97,7 +102,6 @@ class BaseScenario:
         assert anom_amount >= 1
         return anom_amount
 
-    ##### injection
     def inject_single(self, data, seed=100, min_space_anom_len_multiplier=2, factor=None):
         index_ranges = get_anomaly_indices(data, self.anomaly_length
                                            , number_of_ranges=self.get_amount_of_anomalies(data), seed=seed
