@@ -1,3 +1,0 @@
-           SCREEN(1,6)
-data size             
-full_set   1019.234   

@@ -20,13 +20,13 @@ def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=No
         return inject_point_outlier(data,index_range,**params)
     assert False, "anomaly type not found"
 
-def inject_point_outlier(data, indexes, factor=8, directions=[1, -1], stdrange=(-10, 10)):
+def inject_point_outlier(data, indexes, factor=8, directions=[1, -1], stdrange=(-100, 100)):
     anom_type = POINT_OUTLIER
     data = np.array(data, dtype=np.float64)
-
     for i in indexes:
-        local_std = data[np.arange(max(0, stdrange[0]), min(stdrange[1], len(data) - 1))].std()
-        data[i] += np.random.choice(directions) * factor * local_std
+        computation_range = data[np.arange(max(0, stdrange[0]), min(stdrange[1], len(data) - 1))]
+        local_std = np.array([min(computation_range), max(computation_range)]).std()
+        data[np.random.choice(np.arange(len(data))[10:-10])] += np.random.choice(directions) * factor * local_std
 
     return data, {"type": anom_type, "factor": int(factor),
                   "index_range": [int(index) for index in indexes], "std_range": stdrange}
@@ -42,14 +42,15 @@ def inject_growth_change(data, index_range, factor=8, directions=[1, -1]):
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}
 
 
-def inject_amplitude_shift(data, index_range, factor=8, directions=[1, -1], stdrange=(-10, 10)):
+def inject_amplitude_shift(data, index_range, factor=8, directions=[1, -1], stdrange=(-100, 100)):
     anom_type = AMPLITUDE_SHIFT
 
     data = np.array(data, dtype=np.float64)
     index_range = np.array(index_range)
     minimum, maximum = index_range[0], index_range[-1]
 
-    local_std = data[np.arange(max(0, minimum + stdrange[0]), min(maximum + stdrange[1], len(data) - 1))].std()
+    computation_range = data[np.arange(max(0, stdrange[0]), min(stdrange[1], len(data) - 1))]
+    local_std = np.array([min(computation_range), max(computation_range)]).std()
     data[index_range] += np.random.choice(directions) * factor * local_std
     return data, {"type": anom_type, "factor": int(factor),
                   "index_range": [int(index) for index in index_range], "std_range": stdrange}

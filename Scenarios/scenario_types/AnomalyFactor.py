@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from Injection.injection_methods.basic_injections import add_anomaly
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.Scenario_Types import VARY_ANOMALY_SIZE, scenario_specifications, ANOMALY_FACTOR
+from Scenarios.scenario_types.Scenario_Types import ANOMALY_SIZE, scenario_specifications, ANOMALY_FACTOR
 
 
 class AnomalyFactorScenario(BaseScenario):

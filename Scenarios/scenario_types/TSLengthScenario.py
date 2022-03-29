@@ -1,9 +1,9 @@
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.Scenario_Types import VARY_TS_LENGTH
+from Scenarios.scenario_types.Scenario_Types import TS_LENGTH
 
 
 class TSLengthScenario(BaseScenario):
-    scenario_type = VARY_TS_LENGTH
+    scenario_type = TS_LENGTH
     small_data_description = "TS length"
 
 
@@ -28,6 +28,6 @@ class TSLengthScenario(BaseScenario):
 
         for i in range(1,self.splits+1):
             length = int(i * self.splits * len(data) / 100)
-            result[f"{length}"] = self.create_scenario_part_output(data.iloc[:length], df.iloc[:length] , cols)
+            result[f"{length}"] = self.create_scenario_part_output(data.iloc[:length], df.iloc[:length] , cols ,self.train)
 
         return result

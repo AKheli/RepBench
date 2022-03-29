@@ -1,12 +1,12 @@
 import numpy as np
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.Scenario_Types import VARY_ANOMALY_SIZE
+from Scenarios.scenario_types.Scenario_Types import ANOMALY_SIZE
 
 
 
 ##
 class AnomalyLengthScenario(BaseScenario):
-    scenario_type = VARY_ANOMALY_SIZE
+    scenario_type = ANOMALY_SIZE
     default_lengths = [5,10,15,20,50,100]
 
 

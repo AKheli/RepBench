@@ -19,6 +19,10 @@ def save_error(repaired_scenario : BaseScenario, path ):
     except:
         pass
 
+    ## todo check why there was a plot here before
+    plt.clf()
+    plt.close()
+
     for error in errors:
         error_name = error.__name__
         error_path = f'{path}/{error_name}'

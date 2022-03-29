@@ -37,6 +37,7 @@ def scenario_algos_figs(scenario : BaseScenario ):
     scenario_repairs = scenario.repairs
 
     for algo in algos:
+        print(algos)
         plt.close('all')
         fig, axs = plt.subplots(plots_n, figsize=(20, total_height), constrained_layout=True)
         for i , (scenario_part_name, scenario_part_data) in enumerate(scenario_parts.items()):

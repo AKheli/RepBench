@@ -1,10 +1,8 @@
 
 import numpy as np
-import pandas as pd
-import scipy
 from numpy.linalg import LinAlgError
-from statsmodels.regression.linear_model import OLS
 import matplotlib.pyplot as plt
+
 def paramestimation(x,y_k,p=1):
     return ols(y_k - x, y_k - x,p)
 

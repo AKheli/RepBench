@@ -13,7 +13,7 @@ def z_score(x,threshold):
 
 def difference_classify(diff_matrix, threshold):
     m = diff_matrix.shape[1]
-    anomaly_matrix = np.zeros_like(diff_matrix)
+    anomaly_matrix = np.zeros_like(diff_matrix,dtype=bool)
 
     for i in range(m):
         anomaly_matrix[:,i] = min_max(diff_matrix[:,i],threshold)

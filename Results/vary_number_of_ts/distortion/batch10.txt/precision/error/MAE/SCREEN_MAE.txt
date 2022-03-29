@@ -1,0 +1,11 @@
+             SCREEN   
+data size             
+ts_number3    8337.818
+ts_number5   10845.562
+ts_number7   10770.125
+ts_number10  10679.286
+ts_number15  10731.190
+ts_number20  10511.623
+ts_number30  10321.861
+ts_number40  10528.425
+ts_number50  10636.032

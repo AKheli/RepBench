@@ -1,8 +1,0 @@
-                 RPCA(1,2.2,TruncatedSVD)
-data size                                
-anomaly_size5     371.595                
-anomaly_size10    628.631                
-anomaly_size15    866.426                
-anomaly_size20   1102.167                
-anomaly_size50   2843.788                
-anomaly_size100  3764.477                
