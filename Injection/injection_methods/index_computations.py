@@ -29,39 +29,34 @@ import numpy as np
 #     return range(mid - neg, mid + pos)
 
 
-def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1 , seed = 100 , min_space_anom_len_multiplier = 2 ):
+def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1  , min_space_anom_len_multiplier = 1 ):
     try:
         size = len(array_or_size)
         assert array_or_size.ndim == 1
     except Exception:
         size  = array_or_size
 
-    min_space_between_anomalies = anom_lenght*min_space_anom_len_multiplier #includes start and end
-    non_anomaly_space = size-anom_lenght*number_of_ranges
-    additional_space = non_anomaly_space - (number_of_ranges+1)*min_space_between_anomalies
-    assert additional_space >= 0 ,  f"to many anomalies with site {size} , anomaly size { anom_lenght} " \
-                                    f"and min space between anomalies {min_space_between_anomalies} " \
-                                    f"and {number_of_ranges} anomalies" \
+    number_of_free_spaces = number_of_ranges + 1 # freespaces
+    spaces = np.ones(number_of_free_spaces,dtype=int)*anom_lenght
+    additional_space = size-sum(spaces)
+    assert additional_space >= 0, f"to many anomalies with data size {size} , anomaly size {anom_lenght} " \
+                                  f"and min space between anomalies {min_space_anom_len_multiplier*anom_lenght} " \
+                                  f"and {number_of_ranges} anomalies"
 
+    probabilities = np.ones_like(spaces) + np.random.multinomial(len(spaces), np.ones_like(spaces) / len(spaces))**4
+    probabilities = probabilities/sum(probabilities)
 
-    anomaly_free_ranges = number_of_ranges + 1
-    #random spaces
-    np.random.seed(seed)
-    range_count = np.ones(anomaly_free_ranges,dtype=int)*min_space_between_anomalies
-    while additional_space > 0:
-            range_count[np.random.randint(len(range_count))] += 1
-            additional_space -=1
-    assert (sum(range_count) + number_of_ranges*anom_lenght) == size
+    spaces += np.random.multinomial(additional_space , probabilities)
+    print("aaaaaaaaaaa",np.random.multinomial(additional_space , np.ones_like(spaces)/len(spaces)))
+    assert np.cumsum(spaces)[-1] == size
 
-    results = []
-    current_index = 0
-    for i in range_count[:-1]:
-        range_ = np.arange(current_index+i,current_index+i+anom_lenght)
-        results.append(range_)
-        current_index = current_index + i + anom_lenght
-    assert len(results) == number_of_ranges
-    return results
-
+    result = []
+    for anom_n , space  in enumerate(np.cumsum(spaces)[:-1]):
+        start = space
+        result.append(np.arange(start,start+anom_lenght))
+    print(spaces)
+    print(result)
+    return result
 
 
 

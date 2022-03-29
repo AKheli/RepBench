@@ -1,0 +1,8 @@
+                 IMR,(2,0.1)
+data size                   
+anomaly_size5     315.573   
+anomaly_size10    385.770   
+anomaly_size15    586.305   
+anomaly_size20    836.736   
+anomaly_size50   2553.276   
+anomaly_size100  3509.571   

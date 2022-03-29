@@ -25,26 +25,35 @@ class BaseScenario:
                  , data_name=None ):
 
 
-
-
+        self.data_name = data_name
+        self.single_train = True
         self.set_anomaly_params(anomaly_dict)
         self.injected_columns = [0] if cols_to_inject is None else cols_to_inject
         self.train_test_split = train_test_split
         self.data_filename = data
 
+
+        ### get train and test split
+        self.read_data_into_train_and_test(data,train_test_split,train)
+
+
+        assert hasattr(self,"original_test") and hasattr(self,"original_train")
         self.init_specialiced_scenario()
+        self.generate_data()
+
+        self.repairs = {}
+        self.repair_names = []
 
 
 
+    def read_data_into_train_and_test(self, data , train_test_split = 0.5 , train = None):
         if isinstance(data, pd.DataFrame):
-            self.original_data, self.data_name = data, data_name
+            original_data = data
         else:
             assert isinstance(data, str), "data must be string or DataFrame"
-            self.original_data, self.data_name = get_df_from_file(data)
-            self.data_name = self.data_name if data_name is None else data_name
-
-        if data_columns != "all":
-            self.original_data = pd.DataFrame(self.original_data.iloc[:, data_columns])
+            original_data, data_name = get_df_from_file(data)
+            if self.data_name is None:
+                self.data_name = data_name
 
         if train is not None:
             if isinstance(data, pd.DataFrame):
@@ -52,13 +61,10 @@ class BaseScenario:
             else:
                 assert isinstance(data, str), "data must be string or DataFrame"
                 self.original_train, _ = get_df_from_file(data)
+            self.original_test = original_data
 
-            self.generate_data(self.original_data,self.original_train_data)
         else:
-            self.generate_data(self.original_data)
-
-        self.repairs = {}
-        self.repair_names = []
+            self.original_train ,self.original_test = self.split_train_test(original_data,train_test_split)
 
 
     def init_specialiced_scenario(self):
@@ -76,17 +82,10 @@ class BaseScenario:
         assert isinstance(self.anomaly_type, str) and isinstance(self.anomaly_length, int), f'{self.anomaly_length},' \
                                                                                             f' {self.anomaly_type}'
 
-    def generate_data(self, original_data , train=None):
-        if train is None:
-            self.original_train, self.original_test = self.split_train_test(original_data, self.train_test_split)
-        else:
-            self.original_train = train
-            _ , self.original_test = self.split_train_test(original_data, 0)
-
-        self.scenarios = self.transform_df(self.original_test, self.injected_columns, seed=100)
-
+    def generate_data(self):
+        self.train = None # needed such that the trian of train is None
         self.train = BaseScenario.transform_df(self, self.original_train, self.injected_columns, seed=200)["full_set"]
-
+        self.scenarios = self.transform_df(self.original_test, self.injected_columns)
         return self.train, self.scenarios
 
     @staticmethod
@@ -102,9 +101,9 @@ class BaseScenario:
         assert anom_amount >= 1
         return anom_amount
 
-    def inject_single(self, data, seed=100, min_space_anom_len_multiplier=2, factor=None):
+    def inject_single(self, data, min_space_anom_len_multiplier=2, factor=None):
         index_ranges = get_anomaly_indices(data, self.anomaly_length
-                                           , number_of_ranges=self.get_amount_of_anomalies(data), seed=seed
+                                           , number_of_ranges=self.get_amount_of_anomalies(data)
                                            , min_space_anom_len_multiplier=min_space_anom_len_multiplier)
         anomaly_infos = []
         if self.anomaly_length == 6:
@@ -114,21 +113,26 @@ class BaseScenario:
             anomaly_infos.append(info)
         return data, anomaly_infos
 
-    def transform_df(self, df, cols=[0], seed=100):
+    def transform_df(self, df, cols=[0],seed=100):
+        np.random.seed(seed)
         data = df.copy()
         for col in cols:
-            data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]), seed=seed)
+            data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]))
 
-        return {"full_set": self.create_scenario_part_output(data, df, cols)}
+        return {"full_set": self.create_scenario_part_output(data, df, cols ,self.train)}
 
-    def create_scenario_part_output(self, injected, original, cols):
+    def create_scenario_part_output(self, injected, original, cols , train = None):
         original = original.reset_index(drop=True)
         injected = injected.reset_index(drop=True)
+        truth = original.copy()
         return {
             "injected": injected,
-            "original": original.copy(),
+            "original": truth,
+            "truth" : truth,
             "class": self.get_class(injected, original),
-            "columns": cols}
+            "columns": cols,
+            "train": train,
+        }
 
     @staticmethod
     def get_class(injected, original):
@@ -217,3 +221,5 @@ class BaseScenario:
         scen_name = list(self.scenarios.keys())[index]
         scenario_part = self.scenarios[scen_name]
         return scenario_part
+
+

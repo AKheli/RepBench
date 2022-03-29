@@ -1,7 +1,7 @@
-BASE_SCENARIO = "base_scenario"
-VARY_TS_LENGTH = "vary_ts_length"
-VARY_ANOMALY_SIZE = "vary_anomaly_size"
-VARY_ANOMALY_AMOUNT = "vary_anomaly_amount"
+BASE_SCENARIO = "base"
+VARY_TS_LENGTH = "ts_length"
+VARY_ANOMALY_SIZE = "anomaly_size"
+VARY_ANOMALY_AMOUNT = "anomaly_amount"
 ANOMALY_POSITION = "anomaly_position"
 ANOMALY_FACTOR  = "anomaly_factor"
 

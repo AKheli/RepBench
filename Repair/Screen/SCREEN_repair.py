@@ -25,31 +25,3 @@ def SCREEN_repair(injected, cols=[0], params={}, **kwargs):
 
     return {"repair": repair, "runtime": timer.get_time(), "type": alg_type, "name": f'SCREEN({T},{SMAX})'}
 
-
-class SCREEN_estimator(BaseEstimator):
-
-    def __init__(self, cols=[0], T=1, s=1):
-        self.cols = cols
-        self.T = T
-        self.s = s
-
-    def get_params(self, **kwargs):
-        return {"T": self.T,
-                "s": self.s
-                }
-
-    def fit(self, X, y=None):
-        # nothing to fit
-        return self
-
-    def predict(self, X):
-        repair =  X.copy()
-        for col in self.cols:
-            x = np.array(X.iloc[:, col])
-            repair_results = screen(x, SMIN=-self.s, SMAX=self.s, T=self.T)
-            repair.iloc[:, col] = repair_results["repair"]
-        return repair
-
-    def __main__(self):
-        return self
-

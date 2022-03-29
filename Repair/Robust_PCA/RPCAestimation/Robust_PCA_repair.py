@@ -20,7 +20,6 @@ def RPCA_repair(injected, cols,  n_components=1, threshold=2.2, window = False, 
         injected = injected.drop("class", axis=1)
     except:
         pass
-    print("eyyyy")
     timer = Timer()
     timer.start()
     np.random.seed(100)
