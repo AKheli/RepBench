@@ -51,7 +51,7 @@ def inject_amplitude_shift(data, index_range, factor=8, directions=[1, -1], stdr
 
     computation_range = data[np.arange(max(0, stdrange[0]), min(stdrange[1], len(data) - 1))]
     local_std = np.array([min(computation_range), max(computation_range)]).std()
-    data[index_range] += np.random.choice(directions) * factor * local_std
+    data[index_range] += np.random.choice(directions) * 1.5  * local_std
     return data, {"type": anom_type, "factor": int(factor),
                   "index_range": [int(index) for index in index_range], "std_range": stdrange}
 
