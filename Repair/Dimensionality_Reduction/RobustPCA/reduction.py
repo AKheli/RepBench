@@ -32,13 +32,10 @@ def fit_components(matrix, n_components , delta , max_iter  = 20):
     while not_done_yet:
         mean = np.average(X, axis=0, weights= weights)
         X_centered = X - mean
-        print(mean)
-        print("X_centered\n", X_centered)
         C = compute_components_(X_centered * np.sqrt(weights.reshape(-1, 1)),n_components)
 
         diff = X_centered - np.dot(X_centered, C.T).dot(C)
         errors_raw = np.linalg.norm(diff, axis=1)
-        print("errors", errors_raw)
 
         errors_loss = compute_loss(errors_raw,delta)
         total_error = errors_loss.sum()
@@ -47,7 +44,9 @@ def fit_components(matrix, n_components , delta , max_iter  = 20):
         weights /= weights.sum()
         n_iterations_ += 1
 
-        not_done_yet = n_iterations_ < max_iter  #or abs(total_error - old_error) / abs(total_error)
+        not_done_yet = n_iterations_ < max_iter  \
+                       or abs(total_error - last_error) / abs(total_error) < 0.00000000000001
+
 
     return C , mean , weights
 

@@ -5,6 +5,8 @@ import pandas as pd
 from matplotlib.ticker import MaxNLocator
 from sklearn.base import BaseEstimator
 
+from ParameterTuning.gridsearch import Grid_Search
+from ParameterTuning.sklearn_bayesian import BayesianOptimization
 from Repair.res.timer import Timer
 from Scenarios.metrics import RMSE
 from Scenarios.scenario_saver.plotters import generate_repair_plot, generate_correlated_series_plot, \
@@ -21,6 +23,7 @@ class estimator(ABC, BaseEstimator):
         self.to_plot = []
         self.__dict__.update(kwargs)
         self.is_fitted = False
+        self.hashed_train ={}
 
     # predict , fit and score for the sklearn parameter opzimiters
     def predict(self, X, name=""):
@@ -82,7 +85,24 @@ class estimator(ABC, BaseEstimator):
         raise NotImplementedError
 
     def algo_name(self):
+        raise
+
+    def suggest_param_range(self,X):
         raise NotImplementedError
+
+
+    def train(self, X , y):
+        hash_ = hash(str(X) + str(y))
+        print(self.algo_name(),hash_)
+        if hash_ in self.hashed_train:
+            self.__dict__.update(self.hashed_train[hash_])
+            assert False , "hashed"
+        else:
+            opt = BayesianOptimization(self,self.suggest_param_range(X))
+            opt.fit(X,y)
+            fitted_attr = opt.best_estimator_.get_params()
+            self.__dict__.update(fitted_attr)
+            self.hashed_train[hash_] = fitted_attr.copy()
 
     def repair(self, X):
         repair = self.predict(X)

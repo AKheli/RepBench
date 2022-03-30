@@ -26,13 +26,20 @@ class Robust_PCA_estimator(estimator):
         self.alg_type = "RPCA"
         super().__init__(**kwargs)
 
+    def suggest_param_range(self,X):
+        #todo smin and smax suggestion
+        return {"n_components" : list(range(1,X.shape[1])),
+                "delta" : np.logspace(0,1,num = 100),
+                "threshold" : np.linspace(0,1,num = 50)}
+
+
+
     def reduce(self, matrix):
         matrix = matrix.copy()
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
         self.C , self.mean , self.weights = fit_components(matrix*1, self.n_components, self.delta , max_iter  = self.max_iter)
-        print("C",self.C )
         reduced =  np.dot(matrix-self.mean, self.C.T).dot(self.C) + self.mean
 
         return reduced
@@ -42,7 +49,7 @@ class Robust_PCA_estimator(estimator):
         self.is_fitted = True
         return self
 
-    def predict(self, matrix, y=None):
+    def _predict(self, matrix, y=None):
         if y is not None:
             anomaly_matrix = matrix != y
         else:

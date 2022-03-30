@@ -31,8 +31,8 @@ class SCREEN_estimator(estimator):
         differences = abs(np.diff(X.values))
         #todo smin and smax suggestion
         return {"t" : list(range(15)) ,
-                "smax" : np.linspace(min(differences),max(differences),num = 100),
-                "smin" : np.linspace(min(differences),max(differences),num = 100)}
+                "smax" : np.linspace(np.min(differences),np.max(differences),num = 100),
+                "smin" : -np.linspace(np.min(differences),np.max(differences),num = 100)}
 
 
 

@@ -53,9 +53,11 @@ if __name__ == '__main__':
             train = values["train"]
             train_injected , train_truth = train["injected"] , train["original"]
 
+            ## todo change order of evaluation or hash train differently
+            ## todo  (change name of RPCA when params change due to training)
             for esitmator in repair_estimators:
                 estim = esitmator(columns_to_repair=cols)
-                estim.fit(train_injected,train_truth)
+                estim.train(train_injected,train_truth)
                 repair_out_put = estim.repair(injected)
                 injected_scenario.add_repair(name,repair_out_put ,repair_out_put["name"])
             # with Pool() as pool:
