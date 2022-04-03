@@ -1,6 +1,0 @@
-             SCREEN 
-data size           
-ts_number3   676.052
-ts_number5   671.050
-ts_number7   674.762
-ts_number10  676.792

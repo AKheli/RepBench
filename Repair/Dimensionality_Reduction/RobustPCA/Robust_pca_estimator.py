@@ -134,4 +134,4 @@ class Robust_PCA_estimator(estimator):
     #     return repair
 
     def algo_name(self):
-        return f'RPCA({self.n_components},{self.delta},{round(self.threshold,2)})'
+        return f'RPCA' # ({self.n_components},{self.delta},{round(self.threshold,2)})'

@@ -1,3 +1,0 @@
-           SCREEN   
-data size           
-full_set   35658.036

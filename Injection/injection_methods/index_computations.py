@@ -29,35 +29,32 @@ import numpy as np
 #     return range(mid - neg, mid + pos)
 
 
-def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1  , min_space_anom_len_multiplier = 1 ):
+def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1  ,
+                        min_space_anom_len_multiplier = 1,start_at  = 0 ):
     try:
         size = len(array_or_size)
         assert array_or_size.ndim == 1
     except Exception:
         size  = array_or_size
-
+    size = size - start_at
     number_of_free_spaces = number_of_ranges + 1 # freespaces
-    spaces = np.ones(number_of_free_spaces,dtype=int)*anom_lenght
+    spaces = np.ones(number_of_free_spaces,dtype=int)*int(min(anom_lenght,size/20))
     additional_space = size-sum(spaces)
     assert additional_space >= 0, f"to many anomalies with data size {size} , anomaly size {anom_lenght} " \
                                   f"and min space between anomalies {min_space_anom_len_multiplier*anom_lenght} " \
                                   f"and {number_of_ranges} anomalies"
 
-    probabilities = np.ones_like(spaces) + np.random.multinomial(len(spaces), np.ones_like(spaces) / len(spaces))**4
-    probabilities = probabilities/sum(probabilities)
-
+    probabilities = np.random.uniform(size = number_of_free_spaces)
+    probabilities = probabilities/sum(probabilities) # more variable outcomes
     spaces += np.random.multinomial(additional_space , probabilities)
-    print("aaaaaaaaaaa",np.random.multinomial(additional_space , np.ones_like(spaces)/len(spaces)))
-    assert np.cumsum(spaces)[-1] == size
+
+    assert np.cumsum(spaces)[-1] == size , (size,np.cumsum(spaces)[-1],spaces,additional_space)
 
     result = []
-    for anom_n , space  in enumerate(np.cumsum(spaces)[:-1]):
+    for anom_n , space  in enumerate(np.cumsum(spaces)[:-1]+start_at):
         start = space
         result.append(np.arange(start,start+anom_lenght))
-    print(spaces)
-    print(result)
     return result
-
 
 
 

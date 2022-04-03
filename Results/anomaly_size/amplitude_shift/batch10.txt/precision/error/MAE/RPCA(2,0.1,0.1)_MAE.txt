@@ -1,8 +1,0 @@
-                 RPCA(2,0.1,0.1)
-data size                       
-anomaly_size5     81463.045     
-anomaly_size10   176159.954     
-anomaly_size15   283077.839     
-anomaly_size20   359606.330     
-anomaly_size50   251842.867     
-anomaly_size100  122694.730     

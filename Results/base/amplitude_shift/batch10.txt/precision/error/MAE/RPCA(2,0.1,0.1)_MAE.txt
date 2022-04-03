@@ -1,3 +1,0 @@
-           RPCA(2,0.1,0.1)
-data size                 
-full_set   2279885.916    

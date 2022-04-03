@@ -1,6 +1,0 @@
-             RPCA(2,0.1,0.1)
-data size                   
-ts_number3    8.821         
-ts_number5    7.090         
-ts_number7   22.664         
-ts_number10  13.190         

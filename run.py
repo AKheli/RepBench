@@ -40,23 +40,20 @@ if __name__ == '__main__':
         injected_scenario = scenario_constructor(data_param, cols_to_inject = cols   ,anomaly_dict={"anomaly_type": anomaly_type})
         repair_algo_list = repair_estimators
 
-
+    
         part_scenarios =  injected_scenario.scenarios
 
+        for esitmator in repair_estimators:
+            estim = esitmator(columns_to_repair=cols)
+            for name ,values  in part_scenarios.items():
+                data_params = {}
+                data_params["truth"] = values["original"]
+                injected = values["injected"]
+                data_params["cols"] = values["columns"]
+                print(values)
+                train = values["train"]
+                train_injected , train_truth = train["injected"] , train["original"]
 
-        for name ,values  in part_scenarios.items():
-            data_params = {}
-            data_params["truth"] = values["original"]
-            injected = values["injected"]
-            data_params["cols"] = values["columns"]
-            print(values)
-            train = values["train"]
-            train_injected , train_truth = train["injected"] , train["original"]
-
-            ## todo change order of evaluation or hash train differently
-            ## todo  (change name of RPCA when params change due to training)
-            for esitmator in repair_estimators:
-                estim = esitmator(columns_to_repair=cols)
                 estim.train(train_injected,train_truth)
                 repair_out_put = estim.repair(injected)
                 injected_scenario.add_repair(name,repair_out_put ,repair_out_put["name"])

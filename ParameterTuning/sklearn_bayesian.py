@@ -25,7 +25,7 @@ class BayesianOptimization():
     def set_param_grid(self,paramgrid):
         self.param_grid = {}
         for k , v in paramgrid.items():
-            self.param_grid[k]  = (min(v),max(v))  if len(v)>2 else v
+            self.param_grid[k]  = (min(v),max(v))  if len(v)>=2 else v
 
 
 
@@ -59,7 +59,7 @@ class BayesianOptimization():
                            n_restarts_optimizer=self.n_restarts_optimizer,
                            n_points=self.n_points,
                            acq_func=self.acq_func,
-                           kappa=self.kappa)
+                           kappa=self.kappa , callback=animate)
 
 
 #
@@ -107,3 +107,9 @@ class BayesianOptimization():
 #     reduced.plot()
 #     plt.show()
 #
+
+import sys
+import os
+def animate(res):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    sys.stdout.write(f'OPT{res.func_vals}')
