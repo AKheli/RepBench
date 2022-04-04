@@ -1,0 +1,8 @@
+                 SCREEN 
+data size               
+anomaly_size5     39.429
+anomaly_size10    86.068
+anomaly_size15   115.437
+anomaly_size20   160.615
+anomaly_size50   393.326
+anomaly_size100  785.440
