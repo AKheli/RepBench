@@ -23,6 +23,7 @@ class estimator(ABC, BaseEstimator):
         self.__dict__.update(kwargs)
         self.is_fitted = False
         self.hashed_train ={}
+        self.is_training = False
 
     # predict , fit and score for the sklearn parameter opzimiters
     def predict(self, X, name=""):
@@ -42,7 +43,7 @@ class estimator(ABC, BaseEstimator):
 
     def get_fitted_attributes(self):
         "dict of fitted atributes"
-        raise NotImplementedError
+        raise NotImplementedError(self)
 
     def merge_fitted_attributes(self, list_of_fit_results, anomaly_vector_list=None):
         for l in list_of_fit_results:
@@ -78,19 +79,21 @@ class estimator(ABC, BaseEstimator):
         return {"original_error": original_error, "error": predicted_error, "ratio": predicted_error / original_error}
 
     def _predict(self, X):
-        raise NotImplementedError
+        raise NotImplementedError(self)
 
     def _fit(self, X, y=None):
-        raise NotImplementedError
+        raise NotImplementedError(self)
 
 
     def suggest_param_range(self,X):
-        raise NotImplementedError
+        raise NotImplementedError(self)
 
 
     def train(self, X , y):
+        self.is_training = True
+
         hash_ = hash(str(X) + str(y))
-        print(self.algo_name(),hash_)
+
         if hash_ in self.hashed_train:
             self.__dict__.update(self.hashed_train[hash_])
         else:
@@ -99,6 +102,12 @@ class estimator(ABC, BaseEstimator):
             fitted_attr = opt.best_estimator_.get_params()
             self.__dict__.update(fitted_attr)
             self.hashed_train[hash_] = fitted_attr.copy()
+            print(self.get_fitted_attributes())
+
+        assert  self.is_training
+
+        self.is_training = False
+
 
     def repair(self, X):
         repair = self.predict(X)
@@ -112,11 +121,11 @@ class estimator(ABC, BaseEstimator):
 
     def suggest_param_range(self, X):
         "parameter ranges used for training depending on data X"
-        raise NotImplementedError
+        raise NotImplementedError(self)
 
     def get_alg_type(self):
         "e.g colors in plot"
-        raise NotImplementedError
+        raise NotImplementedError(self)
 
     def algo_name(self):
-        raise NotImplementedError
+        raise NotImplementedError(self)

@@ -2,6 +2,7 @@ IMR = "IMR"
 SCREEN = "SCREEN"
 RPCA = "RPCA"
 Robust_PCA = RPCA
+CDREC = "CDrec"
 
 
 ALGORITHM_PARAMETERS = {IMR : { "p" : 2 , "tau" : 0.1 , "max_itr_n":  1000,
@@ -10,7 +11,7 @@ ALGORITHM_PARAMETERS = {IMR : { "p" : 2 , "tau" : 0.1 , "max_itr_n":  1000,
                         RPCA : {"threshold" : 2.2 , "n_components" :2},
                         }
 
-ALGORITHM_COLORS = {IMR : "blue" , SCREEN : "purple" , RPCA : "green" }
+ALGORITHM_COLORS = {IMR : "blue" , SCREEN : "purple" , RPCA : "green" , CDREC : "orange"}
 
 ALGORITHM_TYPES = ALGORITHM_PARAMETERS.keys()
 

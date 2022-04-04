@@ -66,3 +66,6 @@ class SCREEN_estimator(estimator):
     def algo_name(self):
         # todo with different train we get different best values
         return  f'SCREEN' #({self.t},{round(self.smax,1)},{round(self.smin,1)})'
+
+    def get_fitted_attributes(self):
+        return self.get_params()

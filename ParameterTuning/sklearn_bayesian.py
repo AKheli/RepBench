@@ -8,6 +8,7 @@ class BayesianOptimization():
     def __init__(self, clf, param_grid, n_jobs=-1, **kargs):
         self.clf = deepcopy(clf)  # todo check if this works
         assert id(self.clf) != id(clf), f'{id(clf)} {id(self.clf)}'
+        assert self.clf.is_training ," nope not a good copy"
         self.set_param_grid(param_grid)
         self.best_params_ = None
         self._ParamTuner__name_ = "BayesianOptimization"
@@ -32,6 +33,7 @@ class BayesianOptimization():
         self.best_params_ = {k: v for k, v in zip(self.param_grid.keys(), gp_minimize_result.x)}
         self.clf.__dict__.update(self.best_params_)
         self.best_estimator_ = self.clf.fit(X, y)
+        self.best_estimator_.predict(X)
         self.best_score = gp_minimize_result.fun
         return self
 

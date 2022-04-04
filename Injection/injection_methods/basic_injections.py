@@ -9,7 +9,10 @@ def anomaly_size(data, indexes):
     global_range = data[np.arange(max(0, start - len(indexes*12)), min(stop+len(indexes)*12, len(data) - 1))]
     global_std = global_range.std()
     local_std = local_range.std()
-    return local_std/(global_std)
+    local_mean = local_range.mean()
+    delta_local = max(local_range)-min(local_range)
+    quants = np.quantile(data, [0.1,0.9])
+    return (quants[1]-quants[0])
 
 
 def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=None, stdrange=None
@@ -30,7 +33,7 @@ def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=No
         return inject_point_outlier(data,index_range,**params)
     assert False, "anomaly type not found"
 
-def inject_point_outlier(data, indexes, factor=8, directions=[1, -1], stdrange=(-100, 100)):
+def inject_point_outlier(data, indexes, factor=1, directions=[1, -1], stdrange=(-100, 100)):
     anom_type = POINT_OUTLIER
     data = np.array(data, dtype=np.float64)
     for i in indexes:
@@ -42,7 +45,7 @@ def inject_point_outlier(data, indexes, factor=8, directions=[1, -1], stdrange=(
 
 
 
-def inject_growth_change(data, index_range, factor=8, directions=[1, -1]):
+def inject_growth_change(data, index_range, factor=1 ,directions=[1, -1]):
     anom_type = GROWTH_CHANGE
     data = np.array(data, dtype=np.float64)
     slope = np.random.choice(directions) * factor * np.arange(len(index_range))
@@ -51,7 +54,7 @@ def inject_growth_change(data, index_range, factor=8, directions=[1, -1]):
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}
 
 
-def inject_amplitude_shift(data, index_range, factor=8, directions=[1, -1], stdrange=(-100, 100)):
+def inject_amplitude_shift(data, index_range, factor=1, directions=[1, -1], stdrange=(-100, 100)):
     anom_type = AMPLITUDE_SHIFT
 
     data = np.array(data, dtype=np.float64)
@@ -62,7 +65,7 @@ def inject_amplitude_shift(data, index_range, factor=8, directions=[1, -1], stdr
                   "index_range": [int(index) for index in index_range], "std_range": stdrange}
 
 
-def inject_distortion(data, index_range, factor=8):
+def inject_distortion(data, index_range, factor=1):
     anom_type = DISTORTION
     firstelement = index_range[0] - 1
     index_range_extended = [firstelement] + list(index_range)  # to directly start with the distortion

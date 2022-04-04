@@ -9,7 +9,7 @@ TS_NBR ="ts_nbr"
 MINI_SCENARIO = "mini_scenario"
 
 scenario_specifications = {
-    BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 10},
+    BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 20},
     TS_LENGTH: {"anomaly_percentage": 0.10, "anomaly_length": 10},
     ANOMALY_SIZE: {"anomaly_length_start": 10, "anomaly_length_step": 10},
     ANOMALY_AMOUNT: {"anomaly_percentage": 0.15, "anomaly_length": 15},
