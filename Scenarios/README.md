@@ -9,7 +9,7 @@ and the second half for testing .
 - The anomalies are placed randomly with 5% of the series space at the start , the end and between the anomalies.
 
 ## Scenarios
-N = lentgh of time series 
+N = length of time series 
 M = number of time series
 
 
@@ -41,11 +41,11 @@ anomaly_factor:
 
 -all_infected_length 
 - N = max; M = max
-- All time series are injected with 1 anomaly and the size is increased from max(10,1% of the time series ) to  30% of the time series placed randomly.
+- All time series are injected with 1 anomaly, the size is increased from max(10,1% of the time series ) to  30% of the time series placed randomly.
 
--blackout 
+-blackout_length
 - N = max; M = max
-- All time series are injected with 1 anomaly and the size is increased from max(10,1% of the time series ) to 30% of the time series starting at 20% of the time series.
+- All time series are injected with 1 anomaly,  the size is increased from max(10,1% of the time series ) to 30% of the time series starting at 20% of the time series.
 
 
 \* ts_nbr is the only scenario that modifies the train set by only selecting the time series that are used for training
