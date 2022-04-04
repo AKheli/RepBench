@@ -2,7 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.pyplot import figure
-
+import numpy as np
 from matplotlib.ticker import MaxNLocator
 
 from Repair.res.timer import Timer
@@ -158,11 +158,18 @@ def generate_correlated_series_plot(truth, cols, lw, ax=plt):
     plt.gca().set_prop_cycle(None)
 
 
-def generate_truth_and_injected(truth, injected, cols, lw, ax=plt):
+def generate_truth_and_injected(truth, injected, cols,class_, lw, ax=plt):
+    class_ = np.array(class_)
     for i, column in enumerate(truth.columns):
         if i in cols:
-            ax.plot(injected[column], color="red", lw=lw / 2, ls="dotted",marker=".", label="injected")  # , marker=".")
-            ax.plot(truth[column], color="black", lw=lw, label="truth")
+            class_c = class_[:,i]
+            mask = np.ma.masked_where(np.invert(class_c),injected[column])
+            ax.plot(mask, color="red", ls='None',marker=".")
+            extended_class = np.array([False]+[ class_c[i-1] or class_c[i] or class_c[i+1] for i in  np.arange(1,len(class_c)-1)]+[False])
+            mask = np.ma.masked_where(np.invert(extended_class),injected[column])
+            ax.plot(mask, color="red", lw=lw / 2, ls="dotted",marker=None, label="injected")
+            #ax.scatter(injected[column], s=mask, marker='.',color="red")# , marker=".")
+            ax.plot(truth[column], color="black", lw=lw, label  ="truth")
 
 
 def generate_bouneries_plot(lower, upper, lw, ax=plt):

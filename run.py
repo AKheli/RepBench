@@ -1,9 +1,10 @@
+import itertools
 import time
 
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
-from Scenarios.senario_methods import repair_scenario
+from Scenarios.scenario_types.BaseScenario import BaseScenario
 from run_ressources.parser_init import init_parser
 from run_ressources.parser_results_extraction import *
 
@@ -23,7 +24,8 @@ def split_comma_string(str, return_type  = str):
 
 if __name__ == '__main__':
     #input ="-scenario all  -col 0,1,2  -data batch10.txt -anom p -algo IMR" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-    args = init_parser( scenario_choises = possible_scenarios+["all"])
+    input = "-scenario ts_length  -col 0  -data BAFU5K.txt -anom a -algo IMR"
+    args = init_parser(input=input, scenario_choises = possible_scenarios+["all"])
     scen_param = args.scenario
     data_param = args.data
 
@@ -36,22 +38,22 @@ if __name__ == '__main__':
 
     anomaly_type = parse_anomaly_name(args.a_type)
 
-    for scenario_constructor in scenario_constructors:
-        injected_scenario = scenario_constructor(data_param, cols_to_inject = cols   ,anomaly_dict={"anomaly_type": anomaly_type})
+    scenario_constructors_data_names = itertools.product(scenario_constructors,["BAFU5K.txt","YAHOO.csv"])
+
+    for (scenario_constructor , data_name ) in scenario_constructors_data_names:
+        injected_scenario : BaseScenario = scenario_constructor(data_name, cols_to_inject = cols   ,anomaly_dict={"anomaly_type": anomaly_type})
+
         repair_algo_list = repair_estimators
 
-    
-        part_scenarios =  injected_scenario.scenarios
+
 
         for esitmator in repair_estimators:
             estim = esitmator(columns_to_repair=cols)
-            for name ,values  in part_scenarios.items():
+            for name ,train , test in injected_scenario.name_train_test_iter:
                 data_params = {}
-                data_params["truth"] = values["original"]
-                injected = values["injected"]
-                data_params["cols"] = values["columns"]
-                print(values)
-                train = values["train"]
+                data_params["truth"] = test["original"]
+                injected = test["injected"]
+                data_params["cols"] = test["columns"]
                 train_injected , train_truth = train["injected"] , train["original"]
 
                 estim.train(train_injected,train_truth)

@@ -16,7 +16,6 @@ from Scenarios.scenario_saver.plotters import generate_repair_plot, generate_cor
 class estimator(ABC, BaseEstimator):
     def __init__(self, columns_to_repair, **kwargs):
         self.cols = columns_to_repair
-
         self.times = {}
         self.times["fit"] = {"total": 0}
         self.times["predict"] = {"total": 0}
@@ -84,8 +83,6 @@ class estimator(ABC, BaseEstimator):
     def _fit(self, X, y=None):
         raise NotImplementedError
 
-    def algo_name(self):
-        raise
 
     def suggest_param_range(self,X):
         raise NotImplementedError
@@ -96,7 +93,6 @@ class estimator(ABC, BaseEstimator):
         print(self.algo_name(),hash_)
         if hash_ in self.hashed_train:
             self.__dict__.update(self.hashed_train[hash_])
-            assert False , "hashed"
         else:
             opt = BayesianOptimization(self,self.suggest_param_range(X))
             opt.fit(X,y)
@@ -113,6 +109,14 @@ class estimator(ABC, BaseEstimator):
             , "params": self.get_params()
                 }
 
-    ##add acf here
+
     def suggest_param_range(self, X):
+        "parameter ranges used for training depending on data X"
+        raise NotImplementedError
+
+    def get_alg_type(self):
+        "e.g colors in plot"
+        raise NotImplementedError
+
+    def algo_name(self):
         raise NotImplementedError

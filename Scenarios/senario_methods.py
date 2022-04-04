@@ -40,12 +40,13 @@ def scenario_algos_figs(scenario : BaseScenario ):
         print(algos)
         plt.close('all')
         fig, axs = plt.subplots(plots_n, figsize=(20, total_height), constrained_layout=True)
-        for i , (scenario_part_name, scenario_part_data) in enumerate(scenario_parts.items()):
-
+        part_list = list(scenario_parts.items())
+        for i , (scenario_part_name, scenario_part_data) in enumerate(list(scenario_parts.items())):
             axis = axs if plots_n == 1 else axs[i]
             axis.set_title(scenario_part_name)
             truth = scenario_part_data["original"]
             injected = scenario_part_data["injected"]
+            class_ = scenario_part_data["class"]
             repair_df = scenario_repairs[scenario_part_name][algo]["repair"]
 
             axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
@@ -56,7 +57,7 @@ def scenario_algos_figs(scenario : BaseScenario ):
             generate_correlated_series_plot(truth, cols, lw, axis)
             axis.set_prop_cycle(None)
             generate_repair_plot(repair_df, cols, algo, lw, axis)
-            generate_truth_and_injected(truth, injected, cols, lw, axis)
+            generate_truth_and_injected(truth, injected, cols, class_ ,lw, axis )
             axis.xaxis.set_major_locator(MaxNLocator(integer=True))
 
         fig.suptitle(scenario.data_name, size=22)

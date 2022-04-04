@@ -3,11 +3,11 @@ from skopt import gp_minimize
 import time
 
 
-#chalenge ts not i.i.d
+# chalenge ts not i.i.d
 class BayesianOptimization():
-    def __init__(self, clf, param_grid,  n_jobs=-1 , **kargs):
-        self.clf = deepcopy(clf) #todo check if this works
-        assert  id(self.clf) !=  id(clf) , f'{id(clf)} {id(self.clf)}'
+    def __init__(self, clf, param_grid, n_jobs=-1, **kargs):
+        self.clf = deepcopy(clf)  # todo check if this works
+        assert id(self.clf) != id(clf), f'{id(clf)} {id(self.clf)}'
         self.set_param_grid(param_grid)
         self.best_params_ = None
         self._ParamTuner__name_ = "BayesianOptimization"
@@ -21,24 +21,21 @@ class BayesianOptimization():
         self.acq_func = 'EI'
         self.kappa = 1.96
 
-
-    def set_param_grid(self,paramgrid):
+    def set_param_grid(self, paramgrid):
         self.param_grid = {}
-        for k , v in paramgrid.items():
-            self.param_grid[k]  = (min(v),max(v))  if len(v)>=2 else v
+        for k, v in paramgrid.items():
+            self.param_grid[k] = (min(v), max(v)) if len(v) >= 2 else v
 
-
-
-    def fit(self, X, y , groups = None):
+    def fit(self, X, y, groups=None):
         self.clf = deepcopy(self.clf)
-        gp_minimize_result = self.bayesian_opt(X, y, self.clf, self.param_grid,self.n_jobs)
-        self.best_params_ = { k : v for k,v  in zip(self.param_grid.keys(), gp_minimize_result.x) }
+        gp_minimize_result = self.bayesian_opt(X, y, self.clf, self.param_grid, self.n_jobs)
+        self.best_params_ = {k: v for k, v in zip(self.param_grid.keys(), gp_minimize_result.x)}
         self.clf.__dict__.update(self.best_params_)
-        self.best_estimator_ = self.clf.fit(X,y)
+        self.best_estimator_ = self.clf.fit(X, y)
         self.best_score = gp_minimize_result.fun
         return self
 
-    def bayesian_opt(self,data, truth, clf, params_bounds, scoring , samples=-1, n_jobs=-1):
+    def bayesian_opt(self, data, truth, clf, params_bounds, scoring, samples=-1, n_jobs=-1):
         x = params_bounds.values()
 
         def f(x):
@@ -49,17 +46,20 @@ class BayesianOptimization():
             model.__dict__.update(params)
 
             selected_data, selected_truth = data.copy(), truth.copy()
-            model.fit(selected_data ,selected_truth )
+            model.fit(selected_data, selected_truth)
             result = -model.score(data, truth)
             return result
 
-        return gp_minimize(f, x, n_jobs=self.n_jobs
-                           ,n_calls=self.n_calls,
+        sys.stdout.write('Bayesian Opt Errors')
+        minimized =  gp_minimize(f, x, n_jobs=self.n_jobs
+                           , n_calls=self.n_calls,
                            n_initial_points=self.n_initial_points,
                            n_restarts_optimizer=self.n_restarts_optimizer,
                            n_points=self.n_points,
                            acq_func=self.acq_func,
-                           kappa=self.kappa , callback=animate)
+                           kappa=self.kappa, callback=animate)
+        sys.stdout.write(f'DONE: {minimized.fun}')
+        return minimized
 
 
 #
@@ -110,6 +110,8 @@ class BayesianOptimization():
 
 import sys
 import os
+
+
 def animate(res):
-    os.system('cls' if os.name == 'nt' else 'clear')
-    sys.stdout.write(f'OPT{res.func_vals}')
+    sys.stdout.write(f' {res.func_vals[-1]},')
+    sys.stdout.flush()

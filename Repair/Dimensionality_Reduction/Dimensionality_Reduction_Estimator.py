@@ -1,15 +1,13 @@
-import pandas as pd
-from matplotlib import pyplot as plt
-
-from Repair.Dimensionality_Reduction.CDrec.recovery import interpolate
-from Repair.Dimensionality_Reduction.RobustPCA.reduction import fit_components
-from Repair.Dimensionality_Reduction.difference_classifier import difference_classify
-from Repair.estimator import estimator
 import numpy as np
 
-class Robust_PCA_estimator(estimator):
+from Repair.Dimensionality_Reduction.difference_classifier import difference_classify
+from Repair.Dimensionality_Reduction.interpolation import interpolate
+from Repair.estimator import estimator
 
-    def __init__(self, n_components=1
+
+class DimensionalityReductionEstimator(estimator):
+    def __init__(self, classification_truncation=1
+                 , repair_truncation = 1
                  , delta=0.001
                  , threshold=0.4
                  , eps=1e-6
@@ -20,31 +18,19 @@ class Robust_PCA_estimator(estimator):
         self.threshold = threshold
         self.interpolate_anomalies = interpolate_anomalies
         self.delta = delta
-        self.n_components = n_components
+        self.classification_truncation = classification_truncation
+        self.classificatrepair_truncation = repair_truncation
         self.eps = eps
         self.max_iter = max_iter
-        self.alg_type = "RPCA"
         super().__init__(**kwargs)
 
+    def suggest_param_range(self, X):
+        # todo smin and smax suggestion
+        return {"truncation": list(range(1, X.shape[1])),
+                "delta": np.logspace(0, 1, num=100),
+                "threshold": np.linspace(0, 1, num=50)}
 
-
-    def suggest_param_range(self,X):
-        #todo smin and smax suggestion
-        return {"n_components" : list(range(1,X.shape[1])),
-                "delta" : np.logspace(0,1,num = 100),
-                "threshold" : np.linspace(0,1,num = 50)}
-
-    def reduce(self, matrix):
-        matrix = matrix.copy()
-        if isinstance(matrix, pd.DataFrame):
-            matrix = matrix.values
-
-        self.C , self.mean , self.weights = fit_components(matrix*1, self.n_components, self.delta , max_iter  = self.max_iter)
-        reduced =  np.dot(matrix-self.mean, self.C.T).dot(self.C) + self.mean
-
-        return reduced
-
-    def _fit(self,X,y=None):
+    def _fit(self, X, y=None):
         self.reduce(X)
         self.is_fitted = True
         return self
@@ -55,12 +41,10 @@ class Robust_PCA_estimator(estimator):
         else:
             anomaly_matrix = None
 
-
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
         reduced = self.reduce(matrix)
-
 
         if anomaly_matrix is None:
             anomaly_matrix = self.classify(matrix, reduced=reduced)
@@ -68,7 +52,6 @@ class Robust_PCA_estimator(estimator):
         assert matrix.shape == anomaly_matrix.shape
 
         repair = matrix.copy()
-
 
         if self.interpolate_anomalies:
             matrix_to_interpolate = matrix.copy()
@@ -83,7 +66,7 @@ class Robust_PCA_estimator(estimator):
 
         return repair
 
-    def classify(self, matrix , reduced = None):
+    def classify(self, matrix, reduced=None):
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
@@ -91,9 +74,5 @@ class Robust_PCA_estimator(estimator):
             reduced = self.reduce(matrix)
         assert matrix.shape == reduced.shape
         diff = matrix - reduced
-        anomaly_matrix = difference_classify(diff, self.threshold,self.cols)
+        anomaly_matrix = difference_classify(diff, self.threshold, self.cols)
         return anomaly_matrix
-
-
-    def algo_name(self):
-        return f'RPCA' # ({self.n_components},{self.delta},{round(self.threshold,2)})'

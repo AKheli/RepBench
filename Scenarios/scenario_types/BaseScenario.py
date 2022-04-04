@@ -70,6 +70,12 @@ class BaseScenario:
     def init_specialiced_scenario(self):
         pass
 
+
+    @property
+    def name_train_test_iter(self):
+        return iter( [(name,scen_part["train"],scen_part) for name, scen_part in self.scenarios.items()])
+
+
     def set_anomaly_params(self, anomaly_dict=None):
         if anomaly_dict is None:
             anomaly_dict = {}
@@ -106,9 +112,9 @@ class BaseScenario:
                                            , number_of_ranges=self.get_amount_of_anomalies(data)
                                            , min_space_anom_len_multiplier=min_space_anom_len_multiplier)
         anomaly_infos = []
-        if self.anomaly_length == 6:
-            print(index_ranges)
+        assert len(index_ranges) != 0
         for range_ in index_ranges:
+            assert len(range_) != 0
             data, info = add_anomaly(anomaly_type=self.anomaly_type, data=data, index_range=range_, factor=factor)
             anomaly_infos.append(info)
         return data, anomaly_infos
