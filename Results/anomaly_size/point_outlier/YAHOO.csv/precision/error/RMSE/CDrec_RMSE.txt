@@ -1,0 +1,8 @@
+                 CDrec   
+data size                
+anomaly_size5       6.534
+anomaly_size10     12.189
+anomaly_size15     13.255
+anomaly_size20     14.353
+anomaly_size50   1077.126
+anomaly_size100  1667.000

@@ -5,7 +5,7 @@ import time
 
 # chalenge ts not i.i.d
 class BayesianOptimization():
-    def __init__(self, clf, param_grid, n_jobs=-1, **kargs):
+    def __init__(self, clf, param_grid, n_jobs=1, **kargs):
         self.clf = deepcopy(clf)  # todo check if this works
         assert id(self.clf) != id(clf), f'{id(clf)} {id(self.clf)}'
         assert self.clf.is_training ," nope not a good copy"
@@ -37,7 +37,7 @@ class BayesianOptimization():
         self.best_score = gp_minimize_result.fun
         return self
 
-    def bayesian_opt(self, data, truth, clf, params_bounds, scoring, samples=-1, n_jobs=-1):
+    def bayesian_opt(self, data, truth, clf, params_bounds, scoring, samples=-1, n_jobs=1):
         x = params_bounds.values()
 
         def f(x):

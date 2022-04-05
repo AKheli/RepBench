@@ -97,7 +97,7 @@ class estimator(ABC, BaseEstimator):
         if hash_ in self.hashed_train:
             self.__dict__.update(self.hashed_train[hash_])
         else:
-            opt = BayesianOptimization(self,self.suggest_param_range(X))
+            opt = BayesianOptimization(self,self.suggest_param_range(X),n_jobs=2)
             opt.fit(X,y)
             fitted_attr = opt.best_estimator_.get_params()
             self.__dict__.update(fitted_attr)
