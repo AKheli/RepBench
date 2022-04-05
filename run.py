@@ -1,6 +1,6 @@
 import itertools
-import time
-
+import os
+import os.path
 from matplotlib import pyplot as plt
 
 from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
@@ -11,13 +11,17 @@ from Scenarios.scenario_types.BaseScenario import BaseScenario
 from run_ressources.parser_init import init_parser
 from run_ressources.parser_results_extraction import *
 
+current_path = os.getcwd()
+folder = "MA"
+path =  folder.join(current_path.split(folder)[:-1])+folder
+os.chdir(path)
 
 possible_scenarios = ["anomaly_size","ts_length","ts_nbr","base"]
 
 
 
 
-repair_estimators = [Robust_PCA_estimator,SCREEN_estimator , CD_Rec_estimator] # , Robust_PCA_estimator]
+repair_estimators = [CD_Rec_estimator] # Robust_PCA_estimator,SCREEN_estimator ,
 
 scenarios = []
 
@@ -27,22 +31,27 @@ def split_comma_string(str, return_type  = str):
 
 if __name__ == '__main__':
     #input ="-scenario all  -col 0,1,2  -data batch10.txt -anom p -algo IMR" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-    input =  None #"-scenario ts_length  -col 0  -data BAFU5K.txt -anom a -algo IMR"
-    args = init_parser(input=input, scenario_choises = possible_scenarios+["all"])
+    input =  "-scenario all  -col 1  -data all  -anom p -algo IMR"
+    print(os.listdir())
+
+    data_dir = os.listdir("Data")
+    args = init_parser(input=input, scenario_choises = possible_scenarios+["all"] , data_choices = data_dir+["all"])
     scen_param = args.scenario
     data_param = args.data
+    print(data_param)
 
     cols = split_comma_string(args.col,int)
 
-    if scen_param != "all":
-        scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]]
-    else:
-        scenario_constructors = [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
+    scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]] if scen_param != "all" \
+        else [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
+
+    data_files = [data_param] if data_param != "all" \
+        else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
+
 
     anomaly_type = parse_anomaly_name(args.a_type)
 
-    scenario_constructors_data_names = itertools.product(scenario_constructors,["YAHOO.csv","BAFU5K.txt"])
-
+    scenario_constructors_data_names = itertools.product(scenario_constructors,data_files)
     for (scenario_constructor , data_name ) in scenario_constructors_data_names:
         injected_scenario : BaseScenario = scenario_constructor(data_name, cols_to_inject = cols   ,anomaly_dict={"anomaly_type": anomaly_type})
 

@@ -19,10 +19,10 @@ $ python3 inject.py [arguments]
 
  | -data  | -a_type  | -scenario | -algo | 
  | -------- | -------- | -------- | -------- | 
- | stock10k.data     | amplitude_shift |"anomaly_size"| RPCA
+ | stock10k.data     | amplitude_shift |anomaly_size| RPCA
  | SAGandStock    |distortion |  ts_length | SCREEN
  | BAFU20K.txt  | growth_change | ts_nbr |
- |            | point_outlier | base
+ | all      | point_outlier | base
  |            |  | all
 
 

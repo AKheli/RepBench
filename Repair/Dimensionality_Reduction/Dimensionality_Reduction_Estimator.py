@@ -5,9 +5,9 @@ from Repair.estimator import estimator
 
 class DimensionalityReductionEstimator(estimator):
     def __init__(self, classification_truncation=1
-                 , repair_truncation = 1
-                 , delta=0.001
-                 , threshold=0.4
+                 , repair_truncation = 2
+                 , delta=1
+                 , threshold=0.3
                  , eps=1e-6
                  , max_iter=100
                  , interpolate_anomalies=True
@@ -33,8 +33,8 @@ class DimensionalityReductionEstimator(estimator):
 
     def suggest_param_range(self, X):
         return {"classification_truncation": list(range(1, max(int(X.shape[1]/2),3))),
-                "repair_truncation": list(range(2, X.shape[1])) ,
-                "delta": np.logspace(0, 1, num=10),
+                "repair_truncation": list(range(2, X.shape[1]-1)) ,
+                "delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
                 "threshold": np.linspace(0, 0.8, num=20)}
 
     def _fit(self, X, y=None):
@@ -51,9 +51,10 @@ class DimensionalityReductionEstimator(estimator):
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
-        reduced = self.reduce(matrix,self.classification_truncation)
+
 
         if anomaly_matrix is None:
+            reduced = self.reduce(matrix, self.classification_truncation)
             anomaly_matrix = self.classify(matrix, reduced=reduced)
 
         assert matrix.shape == anomaly_matrix.shape
@@ -64,6 +65,7 @@ class DimensionalityReductionEstimator(estimator):
             matrix_to_interpolate = matrix.copy()
             matrix_to_interpolate[anomaly_matrix] = np.nan
             matrix_inter = interpolate(matrix_to_interpolate, anomaly_matrix)
+
             assert not np.isnan(matrix_inter).any() , matrix_inter
 
             reduced = self.reduce(matrix_inter,self.repair_truncation)
@@ -117,5 +119,5 @@ class DimensionalityReductionEstimator(estimator):
         anomaly_matrix = np.zeros_like(diff_matrix, dtype=bool)
         for i in [k for k in range(m) if k in injected_columns]:
             anomaly_matrix[:, i] = self.min_max(diff_matrix[:, i])
-
+            anomaly_matrix[:3, i] , anomaly_matrix[-3:, i] = False , False
         return anomaly_matrix

@@ -1,9 +1,9 @@
 import argparse
 
 
-def add_data_arguments_to_parser(parser):
-    parser.add_argument("-data", "-d", type=str, default=["stock10k.data"])
-    parser.add_argument("-col", "-ts", type=str, default=["0"])
+def add_data_arguments_to_parser(parser, data_choices = None):
+    parser.add_argument("-data", "-d", type=str,  choices=data_choices)
+    parser.add_argument("-col", "-ts", type=str, default= "0")
 
 
 def add_injection_arguments_to_parser(parser ,scenario_choises = None):
@@ -33,14 +33,15 @@ def init_repair_parser():
     return parser.parse_args()
 
 
-def init_parser(input = None , scenario_choises = None):
+def init_parser(input = None , scenario_choises = None , data_choices = None):
     parser = argparse.ArgumentParser()
 
-    add_data_arguments_to_parser(parser)
+    add_data_arguments_to_parser(parser , data_choices = data_choices)
     add_injection_arguments_to_parser(parser,scenario_choises = scenario_choises)
     add_repair_arguments_to_parser(parser)
+
     if input is not None:
-        print("EYYYY", input)
+        "For testing outside outside of the terminal"
         return parser.parse_args(input.split())
 
     return parser.parse_args()

@@ -1,4 +1,6 @@
 from copy import deepcopy
+
+import numpy as np
 from skopt import gp_minimize
 import time
 
@@ -39,6 +41,10 @@ class BayesianOptimization():
 
     def bayesian_opt(self, data, truth, clf, params_bounds, scoring, samples=-1, n_jobs=1):
         x = params_bounds.values()
+
+        assert not np.isnan(data.values).any() , "data contains nan values"
+        assert not np.isnan(truth.values).any() , "truth contains nan values"
+        print(params_bounds)
 
         def f(x):
             model = deepcopy(clf)

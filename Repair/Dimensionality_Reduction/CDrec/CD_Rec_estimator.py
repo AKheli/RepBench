@@ -2,7 +2,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from Repair.Algorithms_File import CDREC
-from Repair.cdrec.recovery import centroid_decomposition, centroid_recovery
+from Repair.Dimensionality_Reduction.CDrec.decomposition import centroid_decomposition
+from Repair.Dimensionality_Reduction.CDrec.weighted_cedomposition import weighted_centroid_decomposition
 from Repair.Dimensionality_Reduction.Dimensionality_Reduction_Estimator import DimensionalityReductionEstimator
 from Repair.Dimensionality_Reduction.RobustPCA.reduction import fit_components
 from Repair.Robust_PCA.loss import HuberLoss
@@ -28,7 +29,7 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
             self.mean_ = np.average(X, axis=0, weights=self.weights_)
             X_centered = X - self.mean_
 
-            L, R, Z = centroid_decomposition(X_centered * 1, truncation=truncation, weights=self.weights_)
+            L, R, Z = weighted_centroid_decomposition(X_centered * 1, truncation=truncation, weights=self.weights_)
             self.L = L
             self.R = R
             self.Z = Z
@@ -44,7 +45,7 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
             self.n_iterations_ += 1
             old_total_error = self.errors_[-1]
             total_error = errors_loss.sum()
-            print(total_error)
+
             if not np.equal(total_error, 0.):
                 rel_error = abs(total_error - old_total_error) / abs(total_error)
             else:
