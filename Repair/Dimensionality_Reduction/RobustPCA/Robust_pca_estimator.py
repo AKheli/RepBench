@@ -16,7 +16,7 @@ class Robust_PCA_estimator(DimensionalityReductionEstimator):
     #             "delta": np.logspace(0, 1, num=100),
     #             "threshold": np.linspace(0, 1, num=50)}
 
-    def reduce(self, matrix, truncation):
+    def _reduce(self, matrix, truncation):
         matrix = matrix.copy()
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values

@@ -32,7 +32,7 @@ def weighted_centroid_decomposition(matrix, truncation=0, weights = None , SV=No
     # main loop - goes up till the truncation param (maximum of which is the # of columns)
     for j in range(0, truncation):
         # calculate the sign vector
-        Z = local_sign_vector(matrix, SV[j])
+        #Z = local_sign_vector(matrix, SV[j])
         if weights is not None:
             Z_w = local_sign_vector(matrix * np.sqrt(weights.reshape(-1, 1)),SV[j])
             # print(weights)

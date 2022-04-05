@@ -22,6 +22,18 @@ class DimensionalityReductionEstimator(estimator):
         self.max_iter = max_iter
         super().__init__(**kwargs)
 
+
+    def normalize(self,X):
+        self.norm_std = np.std(X,axis=0)
+        self.norm_mean = np.mean(X,axis=0)
+        return (X-self.norm_mean)/self.norm_std
+
+    def undo_normalization(self,X):
+        X = X*self.norm_std+self.norm_mean
+        self.norm_std = None
+        self.norm_mean = None
+        return X
+
     def get_params(self):
         return self.__dict__
 
@@ -33,7 +45,7 @@ class DimensionalityReductionEstimator(estimator):
 
     def suggest_param_range(self, X):
         return {"classification_truncation": list(range(1, max(int(X.shape[1]/2),3))),
-                "repair_truncation": list(range(2, X.shape[1]-1)) ,
+                "repair_truncation": list(range(1, max(2,X.shape[1]-1))),
                 "delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
                 "threshold": np.linspace(0, 0.8, num=20)}
 
@@ -89,8 +101,10 @@ class DimensionalityReductionEstimator(estimator):
         return anomaly_matrix
 
     def reduce(self,matrix,truncation):
-        raise NotImplementedError
-
+        matrix = np.asarray(matrix, dtype=np.float64).copy()
+        norm_matrix = self.normalize(matrix)
+        matrix_hat = self._reduce(norm_matrix,truncation)
+        return self.undo_normalization(matrix_hat)
 
 
     ## classification_methods

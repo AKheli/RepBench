@@ -11,9 +11,10 @@ from Repair.estimator import estimator
 import numpy as np
 
 
-class CD_Rec_estimator(DimensionalityReductionEstimator):
+class weighted_CD_Rec_estimator(DimensionalityReductionEstimator):
 
-    def reduce(self, matrix,truncation):
+    def _reduce(self, matrix,truncation):
+        assert matrix[:,0].std() < 1.5 and matrix[:,0].mean() < 0.1
         self.loss = HuberLoss(self.delta)
         X = matrix.copy()
         vectorized_loss = np.vectorize(self.loss.__call__)
@@ -34,6 +35,7 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
             self.R = R
             self.Z = Z
             reduced = np.matmul(L, R.T)
+            assert reduced.shape ==  X.shape
             diff = X_centered - reduced
             errors_raw = np.linalg.norm(diff, axis=1)
             errors_loss = vectorized_loss(errors_raw)
@@ -61,4 +63,4 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
         return CDREC
 
     def algo_name(self):
-        return CDREC  # ({self.n_components},{self.delta},{round(self.threshold,2)})'
+        return "weighted_CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'

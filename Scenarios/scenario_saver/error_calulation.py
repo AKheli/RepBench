@@ -60,4 +60,5 @@ def get_alg_color(function_name):
     for type , color in  ALGORITHM_COLORS.items():
         if type.lower() in function_name.lower():
             return color
+    return "blue"
     assert False , "function name did not match any algorithm"

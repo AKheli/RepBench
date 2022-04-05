@@ -3,7 +3,7 @@ import os
 import os.path
 from matplotlib import pyplot as plt
 
-from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
+from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import weighted_CD_Rec_estimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
@@ -21,7 +21,7 @@ possible_scenarios = ["anomaly_size","ts_length","ts_nbr","base"]
 
 
 
-repair_estimators = [CD_Rec_estimator] # Robust_PCA_estimator,SCREEN_estimator ,
+repair_estimators = [weighted_CD_Rec_estimator] # Robust_PCA_estimator,SCREEN_estimator ,
 
 scenarios = []
 
@@ -30,12 +30,12 @@ def split_comma_string(str, return_type  = str):
 
 
 if __name__ == '__main__':
-    #input ="-scenario all  -col 0,1,2  -data batch10.txt -anom p -algo IMR" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+    input = "-scenario all  -col 0 -data all -anom a -algo IMR" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
     #input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
     print(os.listdir())
 
     data_dir = os.listdir("Data")
-    args = init_parser(input=None, scenario_choises = possible_scenarios+["all"] , data_choices = data_dir+["all"])
+    args = init_parser(input=input, scenario_choises = possible_scenarios+["all"] , data_choices = data_dir+["all"])
     scen_param = args.scenario
     data_param = args.data
     print(data_param)
