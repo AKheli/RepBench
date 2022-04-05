@@ -16,7 +16,7 @@ class BayesianOptimization():
         self._ParamTuner__name_ = "BayesianOptimization"
 
         ##internal_params
-        self.n_jobs = n_jobs
+        self.n_jobs = 1
         self.n_calls = 30
         self.n_initial_points = 20
         self.n_restarts_optimizer = 3
@@ -59,7 +59,7 @@ class BayesianOptimization():
             return result
 
         sys.stdout.write('Bayesian Opt Errors')
-        minimized =  gp_minimize(f, x, n_jobs=self.n_jobs
+        minimized =  gp_minimize(f, x, n_jobs=1
                            , n_calls=self.n_calls,
                            n_initial_points=self.n_initial_points,
                            n_restarts_optimizer=self.n_restarts_optimizer,

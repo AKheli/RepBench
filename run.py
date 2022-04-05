@@ -31,11 +31,11 @@ def split_comma_string(str, return_type  = str):
 
 if __name__ == '__main__':
     #input ="-scenario all  -col 0,1,2  -data batch10.txt -anom p -algo IMR" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-    input =  "-scenario all  -col 1  -data all  -anom p -algo IMR"
+    #input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
     print(os.listdir())
 
     data_dir = os.listdir("Data")
-    args = init_parser(input=input, scenario_choises = possible_scenarios+["all"] , data_choices = data_dir+["all"])
+    args = init_parser(input=None, scenario_choises = possible_scenarios+["all"] , data_choices = data_dir+["all"])
     scen_param = args.scenario
     data_param = args.data
     print(data_param)
