@@ -35,7 +35,7 @@ a_rate:
 a_dtype:
 - N = max; M = max;
 - Successively adds different anomaly types into the first time series the order is specified by -a. The total contamination rate is always ~10%
-- If -a = all, the order is: point_outlier , shift , distortion , growth change. This means we start with a time series only containing point outliers then a time series containing point outliers and shifts. The next time series contains point outliders , shift and distortion and the last one all anomaly types.
+- If -a = all, the order is: point_outlier , shift , distortion , growth change. This means we start with a time series only containing point outliers then a time series containing point outliers and shifts. The next time series contains point outliers, shifts and distortions and the last one all anomaly types.
 
 a_rtype: 
 - N = max; M = max;
