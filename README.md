@@ -17,14 +17,14 @@ $ python3 inject.py [arguments]
 ## Arguments
 
 
- | -data  | -a_type  | -scenario | -algo | 
+ | -d  | -a  | -scen | -algo | 
  | -------- | -------- | -------- | -------- | 
- | stock10k.data     | amplitude_shift |anomaly_size| RPCA
- | SAGandStock    |distortion |  ts_length | SCREEN
- | BAFU20K.txt  | growth_change | ts_nbr |
- | all      | point_outlier | base
- |            |  | all
-
+ | stock10k.data     | shift |ts_length| RPCA
+ | SAGandStock    |distortion |  a_length | SCREEN
+ | BAFU20K.txt  | growth_change | ts_nbr | IMR
+ | all      | point_outlier | base | CDRec
+ |            |all  | all | all
+ |            |all  | all | 
 
 
 

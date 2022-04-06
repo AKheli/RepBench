@@ -1,51 +1,56 @@
-# Description of recovery scenarios
+# Description of anomaly repair scenarios
 
 
 ## Setup
 - The first half of the time series are used for training 
 and the second half for testing.
+- We place anomalies randomly after the first 5% of the time series to not start inside an anomaly and the anomalies do not overlap.
+- Specifications of lengths exclude point outliers.
 
-[comment]: <> (- when percentage or division is mentioned, the result is floored down to nearest integer.)
-- The anomalies are placed randomly with 5% of the series space at the start , the end and between the anomalies.
 
 ## Scenarios
 N = length of time series 
 M = number of time series
 
 K = 1% of N
+
+
 base:
 - N = max; M = max;
-- The first time series is injected with ~10% anomalies each anomaly has length max(10,K).
+- The first time series is contaminated with ~10% anomalies each anomaly has length max(10,K).
 - **Is used for training in all scenarios.**
 
 ts_length:
 - M = max; N varies between 20% and 100% of the series;
-- The first time series is injected with ~10% anomalies each anomaly has length max(10,1% of max).
+- The first time series is contaminated with ~10% anomalies each anomaly has length max(10,1% of N max).
 
-ts_nbr*:
+a_length: 
+- N = max; M = max;
+- The first time series is contaminated with 3 anomalies and the size is increased from K to 10% of the time series.
+
+a_rate:
+- N = max; M = max;
+- The first time series is contaminated with 1 to 30 anomalies each anomaly has length K.
+
+a_mtype:
+- N = max; M = max;
+- Successively adds different anomaly types into the first time series the order is specified by -a. The total contamination rate is always ~10%
+- If -a = all, the order is: point_outlier , shift , distortion , growth change. This means we start with a time series only containing point outliers then a time series containing point outliers and shifts. The next time series contains point outliders , shift and distortion and the last one all anomaly types.
+
+a_rmtype: 
+- N = max; M = max;
+- The first time series is contaminated with ~10% anomalies each anomaly has length max(10,1% of N max).
+- As in a_dtype but the order in which the anomalies are added is random.
+
+ts_nbr:
 - N = max; M  varies from 3 columns to 100% of the columns;
-- The first time series is injected with ~10% anomalies each anomaly has length max(10,K).
+- The first time series is contaminated with 10 anomalies each anomaly has length K.
 
-anomaly_length: (maybe multiple anomalies but this really depends on the data size)
-- N = max; M = max;
-- The first time series is injected with 1 anomaly and the size is increased from max(10,K) to 30% of the time series
-
-anomaly_factor:
-- N = max; M = max;
-- The first time series is injected with ~10% anomalies each anomaly has length max(10,K).
-- The difference of the anomalous points is changed from 1/4 to 4 time the normal level.
-
-infected_ts_nbr:
+cts_nbr:
 - N = max; M = max
-- number of infected time series from 1 to M  each containing ~10% anomalies each anomaly has length 20 placed randomly
-
-all_infected_length:
-- N = max; M = max
-- All time series are injected with 1 anomaly, the size is increased from max(10,K) to  30% of the time series placed randomly.
-
-blackout_length:
-- N = max; M = max
-- All time series are injected with 1 anomaly,  the size is increased from max(10,K ) to 30% of the time series starting at 20% of the time series.
+- Number of infected time series from 1 to M  each containing 10 anomalies. Each anomaly has length K and is placed randomly.
 
 
-\* ts_nbr is the only scenario that modifies the train set by only selecting the time series that are used for training
+
+
+
