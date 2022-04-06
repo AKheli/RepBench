@@ -12,7 +12,7 @@ Implements repair of anomalies with different data sets and injection scenarios
 ```
 ## Execution
 ```bash
-$ python3 inject.py [arguments]
+$ python3 run.py [arguments]
 ```
 ## Arguments
 
@@ -24,22 +24,20 @@ $ python3 inject.py [arguments]
  | BAFU20K.txt  | growth_change | ts_nbr | IMR
  | all      | point_outlier | base | CDRec
  |            |all  | all | all
- |            |all  | all | 
 
 
 
 ### Remarks
 - Data\
-The data has to be in csv or txt  format.
+The data has to be in csv or txt format.
 
 The Results will be saved into the Results folder.
-The data argument expects the data to be in the Data folder and the second argument
-is the column starting at 0. ## todo
+The data argument expects the data to be in the Data folder.
 
 
 ### Examples:
 ```bash
-python3 run.py -scenario all  -col 0,1,2  -data batch10.txt -anom p -algo IMR
+python3 run.py -sce all  -d batch10.txt -a p -algo IMR
 ```
 
 [comment]: <> (### Additional experimental run)
