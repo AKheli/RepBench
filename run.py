@@ -16,6 +16,10 @@ os.chdir(path)
 
 now = datetime.now()
 dt_string = now.strftime("%d_%H:%M:%S")
+try:
+    os.makedirs("logs")
+except:
+    pass
 logging.basicConfig(filename=f'logs/run_{dt_string}.log',  level=logging.INFO)
 
 
