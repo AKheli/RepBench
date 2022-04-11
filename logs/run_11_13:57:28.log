@@ -1,1 +1,0 @@
-INFO:root:-scenario all  -col 0 -data all -anom a -algo IMR->cols:[0],anomaly_type:amplitude_shift,scen and data <itertools.product object at 0x7ff219f67e40>
