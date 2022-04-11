@@ -1,0 +1,8 @@
+                 weighted_CDREC
+data size                      
+anomaly_size5      0.546       
+anomaly_size10     1.799       
+anomaly_size15     2.591       
+anomaly_size20     2.262       
+anomaly_size50   305.260       
+anomaly_size100  753.913       

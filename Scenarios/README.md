@@ -8,7 +8,7 @@ and the second half for testing.
 - Specifications of lengths exclude point outliers.
 
 
-## Scenarios
+## Patterns
 N = length of time series 
 M = number of time series
 
