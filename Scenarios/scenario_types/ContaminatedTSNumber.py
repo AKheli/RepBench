@@ -28,5 +28,5 @@ class ContaminatedNumberOfTSScenario(BaseScenario):
 
             result[f"ts_number{l}"] = self.create_scenario_part_output(
                 injected, df,
-                list(range(l)))
+                list(range(l)),self.train)
         return result

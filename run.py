@@ -3,7 +3,8 @@ import os.path
 
 from matplotlib import pyplot as plt
 
-from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import weighted_CD_Rec_estimator
+from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
+from Repair.Dimensionality_Reduction.CDrec.weighted_CD_Rec_estimator import weighted_CD_Rec_estimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
@@ -28,7 +29,7 @@ logging.basicConfig(filename=f'logs/run_{dt_string}.log', level=logging.INFO)
 
 possible_scenarios = ["anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
 
-repair_estimators = [weighted_CD_Rec_estimator,Robust_PCA_estimator,SCREEN_estimator]
+repair_estimators = [weighted_CD_Rec_estimator,CD_Rec_estimator,Robust_PCA_estimator,SCREEN_estimator]
 
 scenarios = []
 
@@ -61,7 +62,6 @@ if __name__ == '__main__':
     logging.info(
         f'{input}->cols:{cols},anomaly_type:{anomaly_type},scen and data {list(itertools.product(scenario_constructors, data_files))}')
     for estimator in repair_estimators:
-        print(estimator)
         estim = estimator(columns_to_repair=cols)
         for (scenario_constructor, data_name) in scenario_constructors_data_names:
             injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
