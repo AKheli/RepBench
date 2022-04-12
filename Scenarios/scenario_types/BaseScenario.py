@@ -5,7 +5,7 @@ from Scenarios.Anomaly_Types import *
 import numpy as np
 from Injection.injection_methods.basic_injections import add_anomaly
 from Injection.injection_methods.index_computations import get_anomaly_indices
-from Scenarios.scenario_types.Scenario_Types import BASE_SCENARIO
+from Scenarios.scenario_types.ScenarioConfig import *
 from data_methods.Helper_methods import get_df_from_file
 
 
@@ -17,17 +17,15 @@ class BaseScenario:
     default_anomaly_type = AMPLITUDE_SHIFT
 
     def __init__(self, data
-                     , anomaly_dict: dict = None
                  , cols_to_inject=None
                  , train_test_split=0.5
                  , train = None
-                 , data_columns="all"
-                 , data_name=None ):
+                 , data_name=None , **kwargs ):
 
 
         self.data_name = data_name
         self.single_train = True
-        self.set_anomaly_params(anomaly_dict)
+        self.set_anomaly_params(**kwargs)
         self.injected_columns = [0] if cols_to_inject is None else cols_to_inject
         self.train_test_split = train_test_split
         self.data_filename = data
@@ -65,7 +63,7 @@ class BaseScenario:
 
         else:
             self.original_train ,self.original_test = self.split_train_test(original_data,train_test_split)
-
+        self.n_cols = self.original_test.shape[0]
 
     def init_specialiced_scenario(self):
         pass
@@ -76,17 +74,13 @@ class BaseScenario:
         return iter( [(name,scen_part["train"],scen_part) for name, scen_part in self.scenarios.items()])
 
 
-    def set_anomaly_params(self, anomaly_dict=None):
-        if anomaly_dict is None:
-            anomaly_dict = {}
-        assert all([k in ["anomaly_length", "anomaly_type", "anomaly_percentage"] for k in anomaly_dict.keys()])
+    def set_anomaly_params(self , **kwargs):
+        self.anomaly_type = self.default_anomaly_type
+        self.__dict__.update(scenario_specifications[self.scenario_type])
+        for name in kwargs.keys():
+            assert name in self.__dict__ , f'{name} is not a valid parameter'
+        self.__dict__.update(**kwargs)
 
-        self.anomaly_type = anomaly_dict.get("anomaly_type", self.default_anomaly_type)
-        self.anomaly_percentage = anomaly_dict.get("anomaly_percentage", self.default_percentage)
-        self.anomaly_length = anomaly_dict.get("anomaly_length", self.default_length)
-
-        assert isinstance(self.anomaly_type, str) and isinstance(self.anomaly_length, int), f'{self.anomaly_length},' \
-                                                                                            f' {self.anomaly_type}'
 
     def generate_data(self):
         self.train = None # needed such that the trian of train is None
@@ -102,14 +96,18 @@ class BaseScenario:
         l = int(len(df) * train_test_split)
         return df.iloc[:l, :], df.iloc[l:, :]
 
-    def get_amount_of_anomalies(self, data):
-        anom_amount = round(len(data) * self.anomaly_percentage / 100 / self.anomaly_length)
+    @property
+    def anomaly_length(self):
+        return int(self.n_cols*self.anomaly_size/100)
+
+    def get_amount_of_anomalies(self):
+        anom_amount = round(self.anomaly_percentage / self.anomaly_size)
         assert anom_amount >= 1
         return anom_amount
 
     def inject_single(self, data, min_space_anom_len_multiplier=2, factor=None):
         index_ranges = get_anomaly_indices(data, self.anomaly_length
-                                           , number_of_ranges=self.get_amount_of_anomalies(data)
+                                           , number_of_ranges=self.get_amount_of_anomalies()
                                            , min_space_anom_len_multiplier=min_space_anom_len_multiplier)
         anomaly_infos = []
         assert len(index_ranges) != 0

@@ -1,18 +1,15 @@
-from Scenarios.scenario_types.AnomalyFactor import AnomalyFactorScenario
+from Scenarios.scenario_types.AnomalyRate import AnomalyRateScenario
+from Scenarios.scenario_types.ContaminatedTSNumber import ContaminatedNumberOfTSScenario
 from Scenarios.scenario_types.NumberOfTimeSeries import NumberOfTSScenario
-from Scenarios.scenario_types.Scenario_Types import *
+from Scenarios.scenario_types.ScenarioConfig import *
 from Scenarios.scenario_types.AnomalyLengthScenario import AnomalyLengthScenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.MiniScenario import MiniScenario
 from Scenarios.scenario_types.TSLengthScenario import TSLengthScenario
-from Scenarios.scenario_types.Position_scenario import AnomalyPositionScenario
 
-SCENARIO_CONSTRUCTORS = {BASE_SCENARIO : BaseScenario ,
-                         TS_LENGTH:TSLengthScenario ,
+SCENARIO_CONSTRUCTORS = {BASE_SCENARIO: BaseScenario,
+                         TS_LENGTH: TSLengthScenario,
                          ANOMALY_SIZE: AnomalyLengthScenario,
-                         MINI_SCENARIO : MiniScenario,
-                         ANOMALY_POSITION : AnomalyPositionScenario,
-                         ANOMALY_FACTOR : AnomalyFactorScenario,
-                         TS_NBR : NumberOfTSScenario}
-
-
+                         ANOMALY_RATE: AnomalyRateScenario,
+                         TS_NBR: NumberOfTSScenario,
+                         CTS_NBR: ContaminatedNumberOfTSScenario
+                         }

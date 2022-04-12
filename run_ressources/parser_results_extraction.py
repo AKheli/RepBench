@@ -6,7 +6,7 @@ from Repair.Screen.SCREEN_repair import SCREEN_repair
 
 from Scenarios.Anomaly_Types import parse_anomaly_name
 from Scenarios.scenario_types.Scenario_Constructor_mapper import SCENARIO_CONSTRUCTORS
-from Scenarios.scenario_types.Scenario_Types import parse_scenario_name
+from Scenarios.scenario_types.ScenarioConfig import parse_scenario_name
 from data_methods.Helper_methods import get_df_from_file
 from run_ressources.parse_toml import load_toml_file
 

@@ -1,6 +1,6 @@
 from Injection.injection_methods.basic_injections import add_anomaly
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
-from Scenarios.scenario_types.Scenario_Types import scenario_specifications, MINI_SCENARIO
+from Scenarios.scenario_types.ScenarioConfig import scenario_specifications, MINI_SCENARIO
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import numpy as np
 
@@ -9,7 +9,7 @@ class MiniScenario(BaseScenario):
     scenario_type = MINI_SCENARIO
 
 
-    def get_amount_of_anomalies(self, data):
+    def get_amount_of_anomalies(self):
         return 1
 
 

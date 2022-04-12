@@ -1,5 +1,8 @@
 import itertools
 import os.path
+
+from matplotlib import pyplot as plt
+
 from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import weighted_CD_Rec_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
@@ -25,7 +28,7 @@ logging.basicConfig(filename=f'logs/run_{dt_string}.log',  level=logging.INFO)
 
 
 
-possible_scenarios = ["anomaly_size","ts_length","ts_nbr","base"]
+possible_scenarios = ["anomaly_size","ts_length","ts_nbr", "anomaly_rate" , "cts_nbr"]
 
 repair_estimators = [weighted_CD_Rec_estimator] # Robust_PCA_estimator,SCREEN_estimator ,
 
@@ -61,7 +64,7 @@ if __name__ == '__main__':
     for estimator in repair_estimators:
         estim = estimator(columns_to_repair=cols)
         for (scenario_constructor , data_name ) in scenario_constructors_data_names:
-            injected_scenario : BaseScenario = scenario_constructor(data_name, cols_to_inject = cols   ,anomaly_dict={"anomaly_type": anomaly_type})
+            injected_scenario : BaseScenario = scenario_constructor(data_name, cols_to_inject = cols , anomaly_type =  anomaly_type)
             repair_algo_list = repair_estimators
 
             for name ,train , test in injected_scenario.name_train_test_iter:
@@ -71,23 +74,11 @@ if __name__ == '__main__':
                     injected = test["injected"]
                     data_params["cols"] = test["columns"]
                     train_injected , train_truth = train["injected"] , train["original"]
-                    # train_truth.plot()
-                    # plt.show()
-                    # train_injected.plot()
-                    # plt.show()
-                    # train["class"].astype(int).plot()
-                    # plt.show()
-
 
                     estim.train(train_injected,train_truth)
                     repair_out_put = estim.repair(injected)
                     injected_scenario.add_repair(name,repair_out_put ,repair_out_put["name"])
-            # with Pool() as pool:
-            #     results = list(map(f, repair_algos))
-            #     for repair in results:
-            #         repairs[repair["name"]] = repair
-            #
-            # part_scenarios[scenario_part_name]["repairs"] = repairs
+
                 except Exception as e:
                     logging.info(f'failed repair: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
                     logging.error(f'{e})')

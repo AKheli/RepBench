@@ -4,9 +4,11 @@ import pandas as pd
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import numpy as np
 
+from Scenarios.scenario_types.ScenarioConfig import TS_NBR
+
 
 class NumberOfTSScenario(BaseScenario):
-    scenario_type = "vary_number_of_ts"
+    scenario_type = TS_NBR
     default_numbers = [3,5,7,10,15,20,30,40,50]
 
 

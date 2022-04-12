@@ -129,3 +129,4 @@ class estimator(ABC, BaseEstimator):
 
     def algo_name(self):
         raise NotImplementedError(self)
+

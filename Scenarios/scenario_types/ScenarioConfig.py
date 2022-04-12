@@ -1,22 +1,23 @@
 BASE_SCENARIO = "base"
 TS_LENGTH = "ts_length"
 ANOMALY_SIZE = "anomaly_size"
-ANOMALY_AMOUNT = "anomaly_amount"
+ANOMALY_RATE = "anomaly_rate"
 ANOMALY_POSITION = "anomaly_position"
 ANOMALY_FACTOR  = "anomaly_factor"
 TS_NBR ="ts_nbr"
+CTS_NBR = "cts_nbr"
 
 MINI_SCENARIO = "mini_scenario"
 
 scenario_specifications = {
-    BASE_SCENARIO: {"anomaly_percentage": 0.10, "anomaly_length": 20},
-    TS_LENGTH: {"anomaly_percentage": 0.10, "anomaly_length": 10},
-    ANOMALY_SIZE: {"anomaly_length_start": 10, "anomaly_length_step": 10},
-    ANOMALY_AMOUNT: {"anomaly_percentage": 0.15, "anomaly_length": 15},
+    BASE_SCENARIO: {"anomaly_percentage": 10, "anomaly_size": 1},
+    TS_LENGTH: {"anomaly_percentage": 10, "anomaly_size": 1},
+    ANOMALY_SIZE: {"anomaly_sizes": [1,2,3,4,5,6,7,8,9,10] , "anomaly_percentage": 3, },
+    ANOMALY_RATE: {"anomaly_percentage": 10 , "anomaly_percentages":[1,2,5,10,15,20,30], "anomaly_size": 1},
     MINI_SCENARIO: {"length": 25, "anomaly_length": 5},
     ANOMALY_FACTOR: {"anomaly_percentage": 0.10, "anomaly_length": 10},
-    TS_NBR : {"anomaly_percentage": 0.5, "anomaly_length": 10}}
-
+    TS_NBR : {"anomaly_percentage": 10, "anomaly_size": 1},
+    CTS_NBR : {"anomaly_percentage": 10, "anomaly_size": 1}}
 scenario_specifications[ANOMALY_POSITION] = scenario_specifications[BASE_SCENARIO].copy()
 
 

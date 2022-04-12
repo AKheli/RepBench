@@ -14,7 +14,8 @@ import numpy as np
 class weighted_CD_Rec_estimator(DimensionalityReductionEstimator):
 
     def _reduce(self, matrix,truncation):
-        assert matrix[:,0].std() < 1.5 and matrix[:,0].mean() < 0.1
+        assert matrix[:,0].std() < 1.01 and matrix[:,0].mean() < 0.01 and matrix[:,0].mean() > -0.01
+
         self.loss = HuberLoss(self.delta)
         X = matrix.copy()
         vectorized_loss = np.vectorize(self.loss.__call__)
@@ -41,7 +42,7 @@ class weighted_CD_Rec_estimator(DimensionalityReductionEstimator):
             errors_loss = vectorized_loss(errors_raw)
 
             self.weights_ = vectorized_weights(errors_raw)
-            self.weights_ /= self.weights_.sum()
+            #self.weights_ /= self.weights_.sum()
 
             # Checking stopping criteria
             self.n_iterations_ += 1
@@ -56,6 +57,7 @@ class weighted_CD_Rec_estimator(DimensionalityReductionEstimator):
             self.errors_.append(total_error)
             not_done_yet = self.n_iterations_ < self.max_iter and rel_error > self.eps
 
+        self.weights = self.weights_
         return np.matmul(L, R.T) + self.mean_
 
     @property

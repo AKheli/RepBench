@@ -1,6 +1,6 @@
 from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.Scenario_Types import ANOMALY_POSITION
+from Scenarios.scenario_types.ScenarioConfig import ANOMALY_POSITION
 
 
 class AnomalyPositionScenario(BaseScenario):

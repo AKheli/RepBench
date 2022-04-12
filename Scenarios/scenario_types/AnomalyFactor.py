@@ -1,10 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
-from Injection.injection_methods.basic_injections import add_anomaly
-from Scenarios.Anomaly_Types import AMPLITUDE_SHIFT
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.Scenario_Types import ANOMALY_SIZE, scenario_specifications, ANOMALY_FACTOR
+from Scenarios.scenario_types.ScenarioConfig import ANOMALY_FACTOR
 
 
 class AnomalyFactorScenario(BaseScenario):
@@ -13,7 +10,7 @@ class AnomalyFactorScenario(BaseScenario):
     # def __init__(self, anomaly_type=AMPLITUDE_SHIFT,
     #              default_params=scenario_specifications[scenario_type]):
 
-    def get_amount_of_anomalies(self, data):
+    def get_amount_of_anomalies(self):
         anom_amount = round(len(data)/100/3)
         assert anom_amount >= 1 , f'{len(data)}'
         return anom_amount

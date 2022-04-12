@@ -41,7 +41,7 @@ def fit_components(matrix, n_components , delta , max_iter  = 20):
         total_error = errors_loss.sum()
 
         weights = compute_weights(errors_raw,delta)
-        weights /= weights.sum()
+
         n_iterations_ += 1
 
         not_done_yet = n_iterations_ < max_iter  \

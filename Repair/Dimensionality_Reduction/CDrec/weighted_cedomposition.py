@@ -35,14 +35,10 @@ def weighted_centroid_decomposition(matrix, truncation=0, weights = None , SV=No
         #Z = local_sign_vector(matrix, SV[j])
         if weights is not None:
             Z_w = local_sign_vector(matrix * np.sqrt(weights.reshape(-1, 1)),SV[j])
-            # print(weights)
-            # print(Z)
-            # print(Z_w)
-            # print(Z_w - Z)
-            # print(Z_w - Z)
+
         Z  = Z_w
         # calculate the column of R by X^T * Z / ||X^T * Z||
-        R_i = np.dot(np.diag(weights),matrix).T @ Z
+        R_i =  np.dot(np.diag(weights),matrix).T @ Z
         R_i = R_i / np.linalg.norm(R_i)
         R[j] = R_i
 

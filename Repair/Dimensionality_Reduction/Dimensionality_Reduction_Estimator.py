@@ -6,7 +6,7 @@ from Repair.estimator import estimator
 class DimensionalityReductionEstimator(estimator):
     def __init__(self, classification_truncation=1
                  , repair_truncation = 2
-                 , delta=1
+                 , delta=1.5
                  , threshold=0.3
                  , eps=1e-6
                  , max_iter=100
@@ -20,6 +20,7 @@ class DimensionalityReductionEstimator(estimator):
         self.repair_truncation = repair_truncation
         self.eps = eps
         self.max_iter = max_iter
+
         super().__init__(**kwargs)
 
 
@@ -34,19 +35,19 @@ class DimensionalityReductionEstimator(estimator):
         self.norm_mean = None
         return X
 
-    def get_params(self):
+    def get_params(self,deep = False):
         return self.__dict__
 
     def get_fitted_attributes(self):
         return {"classification_truncation": self.classification_truncation,
                 "repair_truncation": self.repair_truncation,
-                "delta": self.delta,
+                #"delta": self.delta,
                 "threshold": self.threshold}
 
     def suggest_param_range(self, X):
         return {"classification_truncation": list(range(1, max(int(X.shape[1]/2),3))),
                 "repair_truncation": list(range(1, max(2,X.shape[1]-1))),
-                "delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
+                #"delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
                 "threshold": np.linspace(0, 0.8, num=20)}
 
     def _fit(self, X, y=None):

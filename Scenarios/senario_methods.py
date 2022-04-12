@@ -22,6 +22,7 @@ def generate_error_df(scenario : BaseScenario,  error_func):
         for algo_name, algo_output in  repairs[scenario_part_name].items():
             errors[algo_name] = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))
 
+
         df = df.append(pd.Series(errors,name=scenario_part_name))
     return df
 
