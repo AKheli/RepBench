@@ -45,4 +45,4 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
 
 
     def algo_name(self):
-        return "weighted_CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'
+        return "CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'

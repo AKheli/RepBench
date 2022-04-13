@@ -62,9 +62,11 @@ if __name__ == '__main__':
     # logging.info(
     #     f'{input}->cols:{cols},anomaly_type:{anomaly_type},scen and data {list(itertools.product(scenario_constructors, data_files))}')
     print(list(itertools.product(scenario_constructors, data_files)))
+    print(repair_estimators)
     for estimator in repair_estimators:
         estim = estimator(columns_to_repair=cols)
-        for (scenario_constructor, data_name) in scenario_constructors_data_names:
+
+        for (scenario_constructor, data_name) in itertools.product(scenario_constructors, data_files):
             injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
                                                                    anomaly_type=anomaly_type)
             repair_algo_list = repair_estimators
