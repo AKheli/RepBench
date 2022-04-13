@@ -29,7 +29,7 @@ logging.basicConfig(filename=f'logs/run_{dt_string}.log', level=logging.INFO)
 
 possible_scenarios = ["anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
 
-repair_estimators = [weighted_CD_Rec_estimator,CD_Rec_estimator,Robust_PCA_estimator,SCREEN_estimator]
+repair_estimators = [CD_Rec_estimator,weighted_CD_Rec_estimator,Robust_PCA_estimator,SCREEN_estimator]
 
 scenarios = []
 
@@ -52,15 +52,16 @@ if __name__ == '__main__':
     scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]] if scen_param != "all" \
         else [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
 
-    data_files = [data_param] if data_param != "all" \
+    data_files = [f'{data_param}'.csv] if data_param != "all" \
         else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
 
     anomaly_type = parse_anomaly_name(args.a_type)
 
     scenario_constructors_data_names = itertools.product(scenario_constructors, data_files)
 
-    logging.info(
-        f'{input}->cols:{cols},anomaly_type:{anomaly_type},scen and data {list(itertools.product(scenario_constructors, data_files))}')
+    # logging.info(
+    #     f'{input}->cols:{cols},anomaly_type:{anomaly_type},scen and data {list(itertools.product(scenario_constructors, data_files))}')
+    print(list(itertools.product(scenario_constructors, data_files)))
     for estimator in repair_estimators:
         estim = estimator(columns_to_repair=cols)
         for (scenario_constructor, data_name) in scenario_constructors_data_names:
@@ -87,3 +88,6 @@ if __name__ == '__main__':
             # logging.info(
             #     f'failed save: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
             # logging.error(f'{e})')
+
+
+    print(12)

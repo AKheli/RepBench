@@ -39,10 +39,10 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
         return np.matmul(L, R.T) + self.mean_
 
 
-@property
-def alg_type(self):
-    return CDREC
+    @property
+    def alg_type(self):
+        return CDREC
 
 
-def algo_name(self):
-    return "weighted_CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'
+    def algo_name(self):
+        return "weighted_CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'

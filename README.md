@@ -19,9 +19,9 @@ $ python3 run.py [arguments]
 
  | -d  | -a  | -scen | -algo | 
  | -------- | -------- | -------- | -------- | 
- | stock10k.data     | shift |ts_length| RPCA
- | SAGandStock    |distortion |  a_length | SCREEN
- | BAFU20K.txt  | growth_change | ts_nbr | IMR
+ | YAHOO     | shift |ts_length| RPCA
+ | Humidity    |distortion |  a_length | SCREEN
+ | BAFU5K | growth_change | ts_nbr | IMR
  | all      | point_outlier | base | CDRec
  |            |all  | all | all
 
