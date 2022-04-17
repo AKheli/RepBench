@@ -1,5 +1,0 @@
-,tuner,best_params,error,error_name,time,scenario_part
-0,HalvingGridSearchCV,"{'delta': 0.5, 'n_components': 1, 'threshold': 2.0999999999999996}",287.985,RMSE,16.342822074890137,full_set
-1,BayesianOptimization,"{'threshold': 0.8999999999999999, 'n_components': 2, 'delta': 0.001953125}",82.465,RMSE,46.23820400238037,full_set
-2,HalvingGridSearchCV,"{'T': 10000, 's': 2}",708.893,RMSE,0.31250882148742676,full_set
-3,BayesianOptimization,"{'T': 7252, 's': 2}",708.893,RMSE,28.390487670898438,full_set
