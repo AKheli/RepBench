@@ -10,6 +10,7 @@ from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
+import  Scenarios.scenario_types.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
 from run_ressources.parser_results_extraction import *
 import logging
@@ -26,9 +27,8 @@ try:
     os.makedirs("logs")
 except:
     pass
-logging.basicConfig(filename=f'logs/run_{dt_string}.log', level=logging.INFO)
 
-possible_scenarios = ["cts_nbr","anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
+possible_scenarios = [sc.ANOMALY_RATE,sc.ANOMALY_SIZE, sc.CTS_NBR ,sc.TS_NBR, sc.TS_LENGTH]
 
 repair_estimators = [IMR_estimator,CD_Rec_estimator , weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator]
 
@@ -44,12 +44,12 @@ if __name__ == '__main__':
     # input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
 
     data_dir = os.listdir("Data")
-    args = init_parser(input=None, scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
+    args = init_parser( scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
     scen_param = args.scenario
     data_param = args.data
 
     cols = split_comma_string(args.col, int)
-
+    print("aaaaaaaaaaaaaa" ,scen_param)
     scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]] if scen_param != "all" \
         else [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
 

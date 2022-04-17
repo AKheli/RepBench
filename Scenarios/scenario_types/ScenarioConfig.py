@@ -7,6 +7,7 @@ ANOMALY_FACTOR  = "anomaly_factor"
 TS_NBR ="ts_nbr"
 CTS_NBR = "cts_nbr"
 
+
 default_percentage = 10
 
 scenario_specifications = {
