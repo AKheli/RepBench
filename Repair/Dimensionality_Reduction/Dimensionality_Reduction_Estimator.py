@@ -56,10 +56,8 @@ class DimensionalityReductionEstimator(estimator):
         return self
 
     def _predict(self, matrix, y=None):
-        if y is not None:
-            anomaly_matrix = matrix != y
-        else:
-            anomaly_matrix = None
+
+        anomaly_matrix = None
 
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
@@ -123,11 +121,11 @@ class DimensionalityReductionEstimator(estimator):
         x_normalized = (x_abs - min_) / (max_ - min_)
         return x_normalized > self.threshold
 
-    def z_score(self,x):
-        x_abs = np.abs(x)
-
-        x_normalized = (x_abs - min(x_abs)) / (max(x_abs) - min(x_abs))
-        return x_normalized > self.threshold
+    # def z_score(self,x):
+    #     x_abs = np.abs(x)
+    #
+    #     x_normalized = (x_abs - min(x_abs)) / (max(x_abs) - min(x_abs))
+    #     return x_normalized > self.threshold
 
     def difference_classify(self, diff_matrix, injected_columns):
         m = diff_matrix.shape[1]

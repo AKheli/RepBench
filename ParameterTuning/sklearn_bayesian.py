@@ -35,7 +35,7 @@ class BayesianOptimization():
         self.best_params_ = {k: v for k, v in zip(self.param_grid.keys(), gp_minimize_result.x)}
         self.clf.__dict__.update(self.best_params_)
         self.best_estimator_ = self.clf.fit(X, y)
-        self.best_estimator_.predict(X)
+        self.best_estimator_.predict(X,y)
         self.best_score = gp_minimize_result.fun
         return self
 

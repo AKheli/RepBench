@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from Repair.Algorithms_File import RPCA, ALGORITHM_PARAMETERS
+from Repair.Algorithms_Config import RPCA, ALGORITHM_PARAMETERS
 from Repair.Robust_PCA.robust_PCA_estimator import Robust_PCA_estimator
 from Repair.res.timer import Timer
 import warnings

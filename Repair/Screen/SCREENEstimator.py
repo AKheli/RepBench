@@ -1,6 +1,6 @@
 import pandas as pd
 
-from Repair.Algorithms_File import SCREEN
+from Repair.Algorithms_Config import SCREEN
 from Repair.Screen.Local import screen
 from Repair.estimator import estimator
 import numpy as np
@@ -37,20 +37,20 @@ class SCREEN_estimator(estimator):
 
 
     def _fit(self, X, y=None): ## no fitting
-        if isinstance(X,pd.DataFrame):
-            X = X.values
-            y = y.values
+        # if isinstance(X,pd.DataFrame):
+        #     X = X.values
+        #     y = y.values
 
-        X_bar = np.mean(X,axis=1)
-        y_bar = np.mean(y,axis=1)
-        non_anom = np.isclose(X_bar,y_bar)
-        diff = np.diff(X_bar[non_anom])
-        self.smin = min(diff)
-        self.smax =  max(diff)
+        # X_bar = np.mean(X,axis=1)
+        # y_bar = np.mean(y,axis=1)
+        # non_anom = np.isclose(X_bar,y_bar)
+        # diff = np.diff(X_bar[non_anom])
+        # self.smin = min(diff)
+        # self.smax =  max(diff)
         self.is_fitted = True
         return self
 
-    def _predict(self, X):
+    def _predict(self, X , y = None):
         repair = X.copy()
         for col in [c for c in self.cols if c < X.shape[1]]:
             x = np.array(X.iloc[:, col])
@@ -59,13 +59,12 @@ class SCREEN_estimator(estimator):
 
         return repair
 
-    def __main__(self):
-        return self
-
+    def alg_type(self):
+        return "SCREEN"
 
     def algo_name(self):
-        # todo with different train we get different best values
-        return  f'SCREEN' #({self.t},{round(self.smax,1)},{round(self.smin,1)})'
+        return  f'SCREEN({self.t},{round(self.smax,1)},{round(self.smin,1)})'
+
 
     def get_fitted_attributes(self):
         return self.get_params()

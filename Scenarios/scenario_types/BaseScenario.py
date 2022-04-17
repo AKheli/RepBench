@@ -76,7 +76,13 @@ class BaseScenario:
 
     def set_anomaly_params(self , **kwargs):
         self.anomaly_type = self.default_anomaly_type
-        self.__dict__.update(scenario_specifications[self.scenario_type])
+
+        # add default params
+        self.__dict__.update(scenario_specifications[BASE_SCENARIO])
+
+        if self.scenario_type != BASE_SCENARIO:
+            self.__dict__.update(scenario_specifications[self.scenario_type])
+
         for name in kwargs.keys():
             assert name in self.__dict__ , f'{name} is not a valid parameter'
         self.__dict__.update(**kwargs)

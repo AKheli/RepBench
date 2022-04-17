@@ -10,12 +10,6 @@ import numpy as np
 
 class Robust_PCA_estimator(DimensionalityReductionEstimator):
 
-    # def suggest_param_range(self, X):
-    #     # todo smin and smax suggestion
-    #     return {"n_components": list(range(2, X.shape[1])),
-    #             "delta": np.logspace(0, 1, num=100),
-    #             "threshold": np.linspace(0, 1, num=50)}
-
     def _reduce(self, matrix, truncation):
         matrix = matrix.copy()
         if isinstance(matrix, pd.DataFrame):
@@ -31,4 +25,4 @@ class Robust_PCA_estimator(DimensionalityReductionEstimator):
         return "RPCA"
 
     def algo_name(self):
-        return f'RPCA'  # ({self.n_components},{self.delta},{round(self.threshold,2)})'
+        return f'RPCA({self.repair_truncation},{self.classification_truncation},{self.delta},{round(self.threshold,2)})'

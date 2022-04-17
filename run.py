@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
 from Repair.Dimensionality_Reduction.CDrec.weighted_CD_Rec_estimator import weighted_CD_Rec_estimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
+from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
@@ -27,9 +28,9 @@ except:
     pass
 logging.basicConfig(filename=f'logs/run_{dt_string}.log', level=logging.INFO)
 
-possible_scenarios = ["anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
+possible_scenarios = ["cts_nbr"]  # ["anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
 
-repair_estimators = [CD_Rec_estimator,weighted_CD_Rec_estimator,Robust_PCA_estimator,SCREEN_estimator]
+repair_estimators = [IMR_estimator,CD_Rec_estimator, weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator]
 
 scenarios = []
 
@@ -63,10 +64,11 @@ if __name__ == '__main__':
     #     f'{input}->cols:{cols},anomaly_type:{anomaly_type},scen and data {list(itertools.product(scenario_constructors, data_files))}')
     print(list(itertools.product(scenario_constructors, data_files)))
     print(repair_estimators)
-    for estimator in repair_estimators:
-        estim = estimator(columns_to_repair=cols)
 
-        for (scenario_constructor, data_name) in itertools.product(scenario_constructors, data_files):
+    estimators = [estimator(columns_to_repair=cols) for estimator in repair_estimators]
+
+    for (scenario_constructor, data_name) in itertools.product(scenario_constructors, data_files):
+        for estim in estimators:
             injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
                                                                    anomaly_type=anomaly_type)
             repair_algo_list = repair_estimators
@@ -75,21 +77,22 @@ if __name__ == '__main__':
                 data_params = {}
                 data_params["truth"] = test["original"]
                 injected = test["injected"]
+                truth = test["truth"]
+
                 data_params["cols"] = test["columns"]
                 train_injected, train_truth = train["injected"], train["original"]
 
                 estim.train(train_injected, train_truth)
-                repair_out_put = estim.repair(injected)
+                repair_out_put = estim.repair(injected , truth)
                 injected_scenario.add_repair(name, repair_out_put, repair_out_put["name"])
 
                 # logging.info(
                 #     f'failed repair: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
                 # logging.error(f'{e})')
 
-            save_scenario(injected_scenario)
-            # logging.info(
-            #     f'failed save: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
-            # logging.error(f'{e})')
+        save_scenario(injected_scenario)
+        # logging.info(
+        #     f'failed save: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
+        # logging.error(f'{e})')
 
-
-    print(12)
+print(12)

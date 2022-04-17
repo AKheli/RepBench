@@ -1,9 +1,7 @@
-from Repair.Algorithms_File import *
+from Repair.Algorithms_Config import *
 from Repair.IMR.imr_repair import IMR_repair, IMR_repair_random
 from Repair.Robust_PCA.PCA_algorithms import RPCA1, RPCA3
 from Repair.Robust_PCA.RPCAestimation.Robust_PCA_repair import RPCA_repair
-from Repair.Screen.SCREEN_repair import SCREEN_repair
-
 from Scenarios.Anomaly_Types import parse_anomaly_name
 from Scenarios.scenario_types.Scenario_Constructor_mapper import SCENARIO_CONSTRUCTORS
 from Scenarios.scenario_types.ScenarioConfig import parse_scenario_name
@@ -83,24 +81,23 @@ def read_repair_algos(args):
 
 
 
-algo_mapper = {IMR: IMR_repair, RPCA: RPCA_repair, SCREEN: SCREEN_repair}
 
-
-def parse_toml_file(filename):
-    toml_output = load_toml_file()
-    results = []
-    for key in toml_output.keys():
-        algorithm = algo_mapper[key]
-        for params in toml_output[key].values():
-            results.append({"algorithm": algorithm,  "params": params,})
-            for param_name in params.keys():
-                assert param_name in algorithm.__code__.co_varnames , f"toml file parse error" \
-                                                                      f"{param_name} not" \
-                                                                      f"found in " \
-                                                                      f"{algorithm.__code__.co_varnames[:algorithm.__code__.co_argcount]}"
-
-
-    return results
+#
+# def parse_toml_file(filename):
+#     toml_output = load_toml_file()
+#     results = []
+#     for key in toml_output.keys():
+#         algorithm = algo_mapper[key]
+#         for params in toml_output[key].values():
+#             results.append({"algorithm": algorithm,  "params": params,})
+#             for param_name in params.keys():
+#                 assert param_name in algorithm.__code__.co_varnames , f"toml file parse error" \
+#                                                                       f"{param_name} not" \
+#                                                                       f"found in " \
+#                                                                       f"{algorithm.__code__.co_varnames[:algorithm.__code__.co_argcount]}"
+#
+#
+#     return results
 
 
 

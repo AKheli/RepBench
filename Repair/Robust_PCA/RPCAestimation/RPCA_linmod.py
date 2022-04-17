@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from Repair.Algorithms_File import  RPCA
+from Repair.Algorithms_Config import  RPCA
 from sklearn import linear_model
 
 from Repair.Robust_PCA.RPCAestimation.Robust_PCA_repair import Robust_PCA_estimator

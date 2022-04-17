@@ -108,54 +108,54 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
             modify[i] = x[i] + yvec[i - p]
 
     return { "repair" : modify , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
-
-def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
-    z = np.array(y_k) - np.array(x)
-    yvec = z[p:]
-    xMat = np.zeros((len(x)-p,p))
-
-    for i in range(len(x)-p):
-        for j in range(p):
-            xMat[i,j] = z[p + i - j - 1]
-
-    for j in range(k):
-        phi = ols(yvec,xMat)
-        y_hat = xMat.dot(phi)
-        #print("phi",phi)
-        residuals = y_hat-yvec
-        abs_res = np.abs(residuals)
-        minA = 100000000000
-        index = -1
-        for i in np.arange(len(x)-p):
-            if i +p in labels:
-                continue
-            if abs_res[i] < tau:
-                continue
-            y_hat_point = np.abs(y_hat[i])
-            if(y_hat_point < minA):
-                minA = y_hat_point
-                index = i
-        #print(index)
-        if index == -1:
-            print(f'terminated after {j} iterations')
-            break
-        #print(index)
-        val = y_hat[index]
-        yvec[index] = val
-        for j in range(p):
-            if index +1+j >= len(x)-p:
-                break
-            if index +1+j < 0:
-                continue
-            xMat[index +1+j, j] = val
-
-    modify = x.copy()
-    modify[labels] = y_k[labels]
-    for i in range(len(modify)):
-        if i not in labels:
-            modify[i] =x[i]+ yvec[i-p]
-
-    return modify
+#
+# def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
+#     z = np.array(y_k) - np.array(x)
+#     yvec = z[p:]
+#     xMat = np.zeros((len(x)-p,p))
+#
+#     for i in range(len(x)-p):
+#         for j in range(p):
+#             xMat[i,j] = z[p + i - j - 1]
+#
+#     for j in range(k):
+#         phi = ols(yvec,xMat)
+#         y_hat = xMat.dot(phi)
+#         #print("phi",phi)
+#         residuals = y_hat-yvec
+#         abs_res = np.abs(residuals)
+#         minA = 100000000000
+#         index = -1
+#         for i in np.arange(len(x)-p):
+#             if i +p in labels:
+#                 continue
+#             if abs_res[i] < tau:
+#                 continue
+#             y_hat_point = np.abs(y_hat[i])
+#             if(y_hat_point < minA):
+#                 minA = y_hat_point
+#                 index = i
+#         #print(index)
+#         if index == -1:
+#             print(f'terminated after {j} iterations')
+#             break
+#         #print(index)
+#         val = y_hat[index]
+#         yvec[index] = val
+#         for j in range(p):
+#             if index +1+j >= len(x)-p:
+#                 break
+#             if index +1+j < 0:
+#                 continue
+#             xMat[index +1+j, j] = val
+#
+#     modify = x.copy()
+#     modify[labels] = y_k[labels]
+#     for i in range(len(modify)):
+#         if i not in labels:
+#             modify[i] =x[i]+ yvec[i-p]
+#
+#     return modify
 
 
 # def IMRsave(index,x,y_o,truth,labels,repair,name , arrows = True):

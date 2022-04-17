@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from Repair.Algorithms_File import CDREC
+from Repair.Algorithms_Config import CDREC
 from Repair.Dimensionality_Reduction.CDrec.decomposition import centroid_decomposition
 from Repair.Dimensionality_Reduction.CDrec.weighted_cedomposition import weighted_centroid_decomposition
 from Repair.Dimensionality_Reduction.Dimensionality_Reduction_Estimator import DimensionalityReductionEstimator
@@ -43,6 +43,5 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
     def alg_type(self):
         return CDREC
 
-
     def algo_name(self):
-        return "CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'
+        return f'CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold,2)})'

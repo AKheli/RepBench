@@ -2,7 +2,7 @@ import os
 from Scenarios.metrics import RMSE, MAE
 import matplotlib.pyplot as plt
 
-from Scenarios.scenario_saver.error_calulation import generate_error_df, save_error
+from Scenarios.scenario_saver.error_calulation import save_error
 from Scenarios.scenario_saver.repair_saver import save_repair
 from Scenarios.scenario_saver.run_time import save_runtime
 from Scenarios.scenario_types.BaseScenario import BaseScenario

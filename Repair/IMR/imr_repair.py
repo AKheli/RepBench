@@ -1,6 +1,6 @@
 import numpy as np
 
-from Repair.Algorithms_File import IMR, ALGORITHM_PARAMETERS
+from Repair.Algorithms_Config import IMR, ALGORITHM_PARAMETERS
 from Repair.IMR.IMR import imr2
 from Repair.IMR.label_generator import  generate_random_labels, \
     generate_anomaly_start_labels

@@ -1,11 +1,11 @@
 import pandas as pd
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Repair.Algorithms_File import ALGORITHM_COLORS
+from Repair.Algorithms_Config import ALGORITHM_COLORS
 from Scenarios.metrics import *
 from itertools import cycle
 import os
 
-from Scenarios.senario_methods import generate_error_df
+from Scenarios.senario_methods import generate_error_df_and_error_tables
 
 errors = [RMSE,MAE]
 
@@ -31,9 +31,14 @@ def save_error(repaired_scenario : BaseScenario, path ):
         except:
             pass
 
-        error_df = generate_error_df(repaired_scenario, error)
+        error_df , error_tables  = generate_error_df_and_error_tables(repaired_scenario, error)
         error_df.index.name = repaired_scenario.small_data_description
 
+        #save csv files
+        for alg_error , values in error_tables.items():
+            values.to_csv(f'{error_path}/{alg_error}.txt')
+
+        error_df.to_csv(f'{error_path}/{error_name}.txt')
 
         # plot original error
         columns = list(error_df.columns)
@@ -42,9 +47,9 @@ def save_error(repaired_scenario : BaseScenario, path ):
 
         cyclers = {}
         for algo_name in columns[1:]:
-            string_representation = error_df.to_string(columns=[algo_name],justify="left")
-            with open(f'{error_path}/{algo_name}_{error_name}.txt', "w") as text_file:
-                text_file.write(string_representation)
+            # string_representation = error_df.to_string(columns=[algo_name],justify="left")
+            # with open(f'{error_path}/{algo_name}_{error_name}.txt', "w") as text_file:
+            #     text_file.write(string_representation)
             color = get_alg_color(algo_name)
             if color not in cyclers:
                 cyclers[color] = cycle(lines)

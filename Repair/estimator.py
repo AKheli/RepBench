@@ -5,7 +5,6 @@ import pandas as pd
 from matplotlib.ticker import MaxNLocator
 from sklearn.base import BaseEstimator
 
-from ParameterTuning.gridsearch import Grid_Search
 from ParameterTuning.sklearn_bayesian import BayesianOptimization
 from Repair.res.timer import Timer
 from Scenarios.metrics import RMSE
@@ -22,14 +21,14 @@ class estimator(ABC, BaseEstimator):
         self.to_plot = []
         self.__dict__.update(kwargs)
         self.is_fitted = False
-        self.hashed_train ={}
+        self.hashed_train = {}
         self.is_training = False
 
     # predict , fit and score for the sklearn parameter opzimiters
-    def predict(self, X, name=""):
+    def predict(self, X ,y=None):
         timer = Timer()
         timer.start()
-        result = self._predict(X)
+        result = self._predict(X,y)
         self.times["predict"] = timer.get_time()
         return result
 
@@ -52,7 +51,7 @@ class estimator(ABC, BaseEstimator):
             pass
 
     def score(self, X, y):
-        score_ = -RMSE(pd.DataFrame(self._predict(X)), pd.DataFrame(y), self.cols)
+        score_ = -RMSE(pd.DataFrame(self._predict(X,y)), pd.DataFrame(y), self.cols)
         return score_
 
     ##evaluation functions
@@ -78,18 +77,16 @@ class estimator(ABC, BaseEstimator):
 
         return {"original_error": original_error, "error": predicted_error, "ratio": predicted_error / original_error}
 
-    def _predict(self, X):
+    def _predict(self, X , y = None):
         raise NotImplementedError(self)
 
     def _fit(self, X, y=None):
         raise NotImplementedError(self)
 
-
-    def suggest_param_range(self,X):
+    def suggest_param_range(self, X):
         raise NotImplementedError(self)
 
-
-    def train(self, X , y):
+    def train(self, X, y):
         self.is_training = True
 
         hash_ = hash(str(X) + str(y))
@@ -97,20 +94,19 @@ class estimator(ABC, BaseEstimator):
         if hash_ in self.hashed_train:
             self.__dict__.update(self.hashed_train[hash_])
         else:
-            opt = BayesianOptimization(self,self.suggest_param_range(X),n_jobs=1)
-            opt.fit(X,y)
+            opt = BayesianOptimization(self, self.suggest_param_range(X), n_jobs=1)
+            opt.fit(X, y)
             fitted_attr = opt.best_estimator_.get_params()
             self.__dict__.update(fitted_attr)
             self.hashed_train[hash_] = fitted_attr.copy()
             print(self.get_fitted_attributes())
 
-        assert  self.is_training
+        assert self.is_training
 
         self.is_training = False
 
-
-    def repair(self, X):
-        repair = self.predict(X)
+    def repair(self, X ,y = None):
+        repair = self.predict(X,y)
         return {"repair": pd.DataFrame(repair)
             , "runtime": self.times["predict"]
             , "type": self.alg_type
@@ -118,15 +114,16 @@ class estimator(ABC, BaseEstimator):
             , "params": self.get_params()
                 }
 
-
     def suggest_param_range(self, X):
         "parameter ranges used for training depending on data X"
         raise NotImplementedError(self)
 
     def get_alg_type(self):
-        "e.g colors in plot"
+        "e.g for colors in plot"
         raise NotImplementedError(self)
 
     def algo_name(self):
         raise NotImplementedError(self)
 
+    def __main__(self):
+        return self

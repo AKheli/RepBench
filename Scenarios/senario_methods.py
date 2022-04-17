@@ -7,7 +7,8 @@ from Scenarios.scenario_saver.plotters import generate_truth_and_injected, gener
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 
 
-def generate_error_df(scenario : BaseScenario,  error_func):
+
+def generate_error_df_and_error_tables(scenario : BaseScenario,  error_func):
     df = pd.DataFrame()
     repairs = scenario.repairs
     columns =  scenario.injected_columns
@@ -17,14 +18,24 @@ def generate_error_df(scenario : BaseScenario,  error_func):
         assert truth is not None
         injected = v["injected"]
 
-        errors = {"original_error": error_func(truth, injected,columns)}
+        errors = {"original_error": (error_func(truth, injected,columns), "" )}
 
         for algo_name, algo_output in  repairs[scenario_part_name].items():
-            errors[algo_name] = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))
+            error = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))
+            errors[algo_output["type"]] = (error , algo_output["name"])
 
 
         df = df.append(pd.Series(errors,name=scenario_part_name))
-    return df
+        print(df)
+        error_df = df.applymap(lambda x : x[0])
+
+    error_tables = {}
+
+    for alg_type in df.columns:
+        df_colum = df[alg_type]
+        error_tables[alg_type] = pd.DataFrame(df_colum.tolist(), index=df.index , columns = ["error" , "algorithm"])
+
+    return error_df ,error_tables
 
 
 def scenario_algos_figs(scenario : BaseScenario ):
@@ -66,32 +77,32 @@ def scenario_algos_figs(scenario : BaseScenario ):
         yield fig , algo
 
 
-def repair_scenario(injected_scenario : BaseScenario, repair_algos):
-
-    params = {}
-    params["train"] = injected_scenario.train
-    params["train_class"] = injected_scenario.train["class"]
-
-    part_scenarios = injected_scenario.scenarios
-
-    for name ,values  in part_scenarios.items():
-        params["truth"] = values["original"]
-        params["injected"] = values["injected"]
-        params["cols"] = values["columns"]
-
-        for algo_info in repair_algos:
-            print("info" , algo_info)
-            pre_params = algo_info["params"]
-            pre_params.update(params)
-            result = algo_info["algorithm"](**pre_params)
-            injected_scenario.add_repair(name,result , result["name"])
-        # with Pool() as pool:
-        #     results = list(map(f, repair_algos))
-        #     for repair in results:
-        #         repairs[repair["name"]] = repair
-        #
-        # part_scenarios[scenario_part_name]["repairs"] = repairs
-    return injected_scenario
-
-
+# def repair_scenario(injected_scenario : BaseScenario, repair_algos):
+#
+#     params = {}
+#     params["train"] = injected_scenario.train
+#     params["train_class"] = injected_scenario.train["class"]
+#
+#     part_scenarios = injected_scenario.scenarios
+#
+#     for name ,values  in part_scenarios.items():
+#         params["truth"] = values["original"]
+#         params["injected"] = values["injected"]
+#         params["cols"] = values["columns"]
+#
+#         for algo_info in repair_algos:
+#             print("info" , algo_info)
+#             pre_params = algo_info["params"]
+#             pre_params.update(params)
+#             result = algo_info["algorithm"](**pre_params)
+#             injected_scenario.add_repair(name,result , result["name"])
+#         # with Pool() as pool:
+#         #     results = list(map(f, repair_algos))
+#         #     for repair in results:
+#         #         repairs[repair["name"]] = repair
+#         #
+#         # part_scenarios[scenario_part_name]["repairs"] = repairs
+#     return injected_scenario
+#
+#
 
