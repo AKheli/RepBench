@@ -28,9 +28,9 @@ except:
     pass
 logging.basicConfig(filename=f'logs/run_{dt_string}.log', level=logging.INFO)
 
-possible_scenarios = ["cts_nbr"]  # ["anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
+possible_scenarios = ["cts_nbr","anomaly_size", "ts_length", "ts_nbr", "anomaly_rate", "cts_nbr"]
 
-repair_estimators = [IMR_estimator,CD_Rec_estimator, weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator]
+repair_estimators = [IMR_estimator,CD_Rec_estimator , weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator]
 
 scenarios = []
 
