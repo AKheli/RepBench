@@ -2,12 +2,9 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from Repair.Algorithms_Config import CDREC
-from Repair.Dimensionality_Reduction.CDrec.decomposition import centroid_decomposition
 from Repair.Dimensionality_Reduction.CDrec.weighted_cedomposition import weighted_centroid_decomposition
 from Repair.Dimensionality_Reduction.Dimensionality_Reduction_Estimator import DimensionalityReductionEstimator
-from Repair.Dimensionality_Reduction.RobustPCA.reduction import fit_components
 from Repair.Robust_PCA.loss import HuberLoss
-from Repair.estimator import estimator
 import numpy as np
 
 
