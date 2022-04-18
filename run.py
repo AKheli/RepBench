@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 data_params["cols"] = test["columns"]
                 train_injected, train_truth = train["injected"], train["original"]
 
-                #estim.train(train_injected, train_truth)
+                estim.train(train_injected, train_truth)
                 repair_out_put = estim.repair(injected, truth)
                 injected_scenario.add_repair(name, repair_out_put, repair_out_put["type"])
 
