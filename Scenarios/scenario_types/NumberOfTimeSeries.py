@@ -10,6 +10,9 @@ from Scenarios.scenario_types.ScenarioConfig import TS_NBR
 class NumberOfTSScenario(BaseScenario):
     scenario_type = TS_NBR
     default_numbers = [3,5,7,10,15,20,30,40,50]
+    small_data_description = "TS #"
+
+
 
 
     def init_specialiced_scenario(self):
@@ -31,7 +34,7 @@ class NumberOfTSScenario(BaseScenario):
                 train_part[key] = v.iloc[:,:l] if isinstance(v,pd.DataFrame) else v
 
             cols_part  = [c for c in cols if c < l]
-            result[f"ts_number{l}"] = self.create_scenario_part_output(
+            result[l] = self.create_scenario_part_output(
                 injected_part, original_part,
                 cols_part , train_part)
         return result

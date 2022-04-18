@@ -10,7 +10,7 @@ from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-import  Scenarios.scenario_types.ScenarioConfig as sc
+import Scenarios.scenario_types.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
 from run_ressources.parser_results_extraction import *
 import logging
@@ -28,9 +28,9 @@ try:
 except:
     pass
 
-possible_scenarios = [sc.ANOMALY_RATE,sc.ANOMALY_SIZE, sc.CTS_NBR ,sc.TS_NBR, sc.TS_LENGTH]
+possible_scenarios = [sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR ,sc.TS_NBR, sc.TS_LENGTH]
 
-repair_estimators = [IMR_estimator,CD_Rec_estimator , weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator]
+repair_estimators = [ CD_Rec_estimator, weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator] #IMR_estimator
 
 scenarios = []
 
@@ -40,22 +40,22 @@ def split_comma_string(str, return_type=str):
 
 
 if __name__ == '__main__':
-    input = "-scenario all  -col 0 -data all -anom a -algo IMR"  # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+    input = "-scenario all  -col 0 -data all -anom d -algo IMR"  # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
     # input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
 
-    data_dir = os.listdir("Data")
-    args = init_parser( scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
+    data_dir =  os.listdir("Data")
+    args = init_parser(input=input, scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
     scen_param = args.scenario
     data_param = args.data
 
     cols = split_comma_string(args.col, int)
-    print("aaaaaaaaaaaaaa" ,scen_param)
+    print("aaaaaaaaaaaaaa", scen_param)
     scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]] if scen_param != "all" \
         else [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
 
-    data_files = [f'{data_param}'.csv] if data_param != "all" \
+    print(data_param)
+    data_files = [f'{data_param}.csv'] if data_param != "all" \
         else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
-
     anomaly_type = parse_anomaly_name(args.a_type)
 
     scenario_constructors_data_names = itertools.product(scenario_constructors, data_files)
@@ -68,11 +68,10 @@ if __name__ == '__main__':
     estimators = [estimator(columns_to_repair=cols) for estimator in repair_estimators]
 
     for (scenario_constructor, data_name) in itertools.product(scenario_constructors, data_files):
+        # todo map scenarioinput and anomaly input -> scen anonaly a ,  scen anonaly a,b if scenario suppoerst mutiple anomalies
+        injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
+                                                               anomaly_type=anomaly_type)
         for estim in estimators:
-            injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
-                                                                   anomaly_type=anomaly_type)
-            repair_algo_list = repair_estimators
-
             for name, train, test in injected_scenario.name_train_test_iter:
                 data_params = {}
                 data_params["truth"] = test["original"]
@@ -82,9 +81,9 @@ if __name__ == '__main__':
                 data_params["cols"] = test["columns"]
                 train_injected, train_truth = train["injected"], train["original"]
 
-                estim.train(train_injected, train_truth)
-                repair_out_put = estim.repair(injected , truth)
-                injected_scenario.add_repair(name, repair_out_put, repair_out_put["name"])
+                #estim.train(train_injected, train_truth)
+                repair_out_put = estim.repair(injected, truth)
+                injected_scenario.add_repair(name, repair_out_put, repair_out_put["type"])
 
                 # logging.info(
                 #     f'failed repair: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
@@ -95,4 +94,4 @@ if __name__ == '__main__':
         #     f'failed save: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
         # logging.error(f'{e})')
 
-print(12)
+        print(12)

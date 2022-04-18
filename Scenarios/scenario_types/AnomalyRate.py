@@ -5,7 +5,7 @@ from Scenarios.scenario_types.ScenarioConfig import ANOMALY_RATE
 
 class AnomalyRateScenario(BaseScenario):
     scenario_type = ANOMALY_RATE
-
+    small_data_description = "anomaly %"
     # @property
     # def anomaly_length(self):
     #     """
@@ -22,7 +22,6 @@ class AnomalyRateScenario(BaseScenario):
     #     return anom_amount
 
     def transform_df(self, df, cols=[0], seed=100):
-        print("AAAAAAAA")
         data = df.copy()
         resulting_data = []
         result = {}
@@ -34,5 +33,5 @@ class AnomalyRateScenario(BaseScenario):
                 injected_df.iloc[:, col], anomaly_info = self.inject_single(np.array(data.iloc[:, col]),
                                                                             min_space_anom_len_multiplier=0)
             resulting_data.append(injected_df)
-            result[f'anomalous: {perc}%'] = self.create_scenario_part_output(injected_df, data, cols, self.train)
+            result[perc] = self.create_scenario_part_output(injected_df, data, cols, self.train)
         return result

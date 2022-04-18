@@ -33,4 +33,4 @@ def generate_random_labels(injected , label_ratio = 0.2  , first_labels = 5 , al
         choosen_indices =  np.random.choice(possible_indices,replace=False,size=amount_to_add)
         labels[choosen_indices]=1
 
-    return np.arange(len(labels))[labels.astype(bool)]
+    return labels.astype(bool)

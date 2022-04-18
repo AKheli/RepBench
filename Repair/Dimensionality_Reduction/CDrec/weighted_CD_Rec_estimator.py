@@ -59,7 +59,7 @@ class weighted_CD_Rec_estimator(DimensionalityReductionEstimator):
 
     @property
     def alg_type(self):
-        return CDREC
+        return "weighted"+CDREC
 
     def algo_name(self):
         return "weighted_CDREC"  # ({self.n_components},{self.delta},{round(self.threshold,2)})'

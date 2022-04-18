@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 from Repair.Algorithms_Config import ALGORITHM_COLORS
@@ -9,6 +10,37 @@ from Scenarios.senario_methods import generate_error_df_and_error_tables
 
 errors = [RMSE,MAE]
 
+def latex_str(path , error_df , error_name):
+    r = ""
+    r+=f"xlabel = _{error_df.index.name}-\n"
+    r+=f"ylabel=_{error_name}-\n"
+    x_ticks = f"xtick=_"
+    for i in error_df.index:
+        x_ticks += f"{i},"
+    x_ticks = x_ticks[:-1]+"-\n"
+    r+=x_ticks
+    y_ticks = f"ytick=_"
+    for x in np.arange(0, error_df.max().max(), step=0.2):
+        y_ticks += f"{round(x,1)},"
+    y_ticks = y_ticks[:-1] + "-\n"
+    r += y_ticks
+    legend = "\legend_"
+    for column in error_df.columns:
+        legend += f"{column},"
+        coordinates = ""
+        for i,c in zip(error_df.index,error_df[column]):
+            coordinates += f"({i,c})"
+
+        r+= f"\\addplot \n coordinates_{coordinates}-; \n"
+    legend = legend[:-1]+"-"
+    r+=legend
+    r= r.replace("_","{")
+    r = r.replace("-","}")
+    print(r)
+    with open(f'{path}/{error_name}_for_text.txt', "w") as text_file:
+        text_file.write(r)
+
+    pass
 
 def save_error(repaired_scenario : BaseScenario, path ):
     lines = ["solid", "dashed",  "dotted", "dashdot"]
@@ -39,6 +71,7 @@ def save_error(repaired_scenario : BaseScenario, path ):
             values.to_csv(f'{error_path}/{alg_error}.txt')
 
         error_df.to_csv(f'{error_path}/{error_name}.txt')
+        latex_str(error_path,error_df,error_name)
 
         # plot original error
         columns = list(error_df.columns)

@@ -108,7 +108,7 @@ class DimensionalityReductionEstimator(estimator):
 
     ## classification_methods
     def min_max(self,x):
-        x_abs = np.abs(x)
+        x_abs = x  #todo check whitout training and abs or not
         if(self.is_training):
             self.train_min = min_ = min(x_abs)
             self.train_max = max_ =  max(x_abs)
@@ -116,7 +116,8 @@ class DimensionalityReductionEstimator(estimator):
             min_ = self.train_min
             max_ = self.train_max
         else:
-            assert False
+            min_ = min(x)
+            max_ = max(x)
 
         x_normalized = (x_abs - min_) / (max_ - min_)
         return x_normalized > self.threshold

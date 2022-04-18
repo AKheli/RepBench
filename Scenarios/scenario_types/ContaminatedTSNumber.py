@@ -9,6 +9,7 @@ from Scenarios.scenario_types.ScenarioConfig import CTS_NBR
 
 class ContaminatedNumberOfTSScenario(BaseScenario):
     scenario_type = CTS_NBR
+    small_data_description = "infected TS #"
 
     def transform_df(self, df, cols=None, seed=0):
         fully_injected = df.copy()
@@ -32,7 +33,7 @@ class ContaminatedNumberOfTSScenario(BaseScenario):
 
             injected.iloc[:, :l] = fully_injected.iloc[:, :l].copy()
 
-            result[f"ts_number {l}"] = self.create_scenario_part_output(
+            result[f"{l}"] = self.create_scenario_part_output(
                 injected, df,
                 list(range(l)), self.train)
 

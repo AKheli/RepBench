@@ -11,7 +11,7 @@ from data_methods.Helper_methods import get_df_from_file
 
 class BaseScenario:
     scenario_type = BASE_SCENARIO
-    small_data_description = "data size"
+    small_data_description = "data size %"
     default_length = 12
     default_percentage = 7
     default_anomaly_type = AMPLITUDE_SHIFT
@@ -90,7 +90,7 @@ class BaseScenario:
 
     def generate_data(self):
         self.train = None # needed such that the trian of train is None
-        self.train = BaseScenario.transform_df(self, self.original_train, self.injected_columns, seed=200)["full_set"]
+        self.train = BaseScenario.transform_df(self, self.original_train, self.injected_columns, seed=200)[100]
         self.scenarios = self.transform_df(self.original_test, self.injected_columns)
         return self.train, self.scenarios
 
@@ -129,7 +129,7 @@ class BaseScenario:
         for col in cols:
             data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]))
 
-        return {"full_set": self.create_scenario_part_output(data, df, cols ,self.train)}
+        return {100: self.create_scenario_part_output(data, df, cols ,self.train)}
 
     def create_scenario_part_output(self, injected, original, cols , train = None):
         original = original.reset_index(drop=True)
@@ -155,6 +155,7 @@ class BaseScenario:
 
         if scenario_part not in self.repairs.keys():
             self.repairs[scenario_part] = {}
+        assert repair_name not in  self.repairs[scenario_part], f"such a repair already exists: {repair_name} in {self.repairs[scenario_part].keys()}"
         self.repairs[scenario_part][repair_name] = repair_results
 
         if repair_name not in self.repair_names:

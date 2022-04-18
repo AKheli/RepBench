@@ -46,14 +46,19 @@ class IMR_estimator(estimator):
             anom_start_labels = generate_anomaly_start_labels(x, truth,
                                                               start_of_anomaly=True)
 
-
-
             labels = generate_random_labels(x, label_ratio=0.2, first_labels=self.p + 3,
                                                 already_labeled=anom_start_labels)
+
             y_0 = x.copy()
             y_0[labels] = truth[labels]
             if  np.allclose(x, y_0):
+                plt.plot(x)
+                plt.plot(truth)
+                plt.show()
+                plt.plot(y_0)
+                plt.show()
                 assert False, "x and y_0 initialization are to close for a repair"
+
 
             repair_results = imr2(x, y_0, labels, tau=self.tau, p=self.p, k=self.max_itr_n)
 
@@ -67,7 +72,7 @@ class IMR_estimator(estimator):
         return "IMR"
 
     def algo_name(self):
-        return  f'IMR({self.p},{round(self.tau,2)}'
+        return  f'IMR({self.p},{round(self.tau,2)})'
 
 
     def get_fitted_attributes(self):

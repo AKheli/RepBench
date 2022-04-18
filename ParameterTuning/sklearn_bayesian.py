@@ -17,10 +17,10 @@ class BayesianOptimization():
 
         ##internal_params
         self.n_jobs = 1
-        self.n_calls = 30
-        self.n_initial_points = 20
-        self.n_restarts_optimizer = 3
-        self.n_points = 1000
+        self.n_calls = 20
+        self.n_initial_points = 10
+        self.n_restarts_optimizer = 1
+        self.n_points = 20
         self.acq_func = 'EI'
         self.kappa = 1.96
 
