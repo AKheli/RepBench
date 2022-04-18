@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
 
     data_dir =  os.listdir("Data")
-    args = init_parser(input=input, scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
+    args = init_parser( scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
     scen_param = args.scenario
     data_param = args.data
 
