@@ -106,9 +106,11 @@ class estimator(ABC, BaseEstimator):
         self.is_training = False
 
     def repair(self, X ,y = None):
+        timer = Timer()
+        timer.start()
         repair = self.predict(X,y)
         return {"repair": pd.DataFrame(repair)
-            , "runtime": self.times["predict"]
+            , "runtime": timer.get_time()
             , "type": self.alg_type
             , "name": self.algo_name()
             , "params": self.get_params()

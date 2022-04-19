@@ -30,7 +30,7 @@ except:
 
 possible_scenarios = [sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR ,sc.TS_NBR, sc.TS_LENGTH]
 
-repair_estimators = [ CD_Rec_estimator, weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator] #IMR_estimator
+repair_estimators = [ CD_Rec_estimator , weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator] #IMR_estimator
 
 scenarios = []
 
@@ -44,12 +44,12 @@ if __name__ == '__main__':
     # input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
 
     data_dir =  os.listdir("Data")
-    args = init_parser( scenario_choises=possible_scenarios + ["all"], data_choices=data_dir + ["all"])
+    data_dir_trim = [txt.split(".")[0] for txt in data_dir]
+    args = init_parser( scenario_choises=possible_scenarios + ["all"], data_choices=data_dir_trim + ["all"])
     scen_param = args.scenario
     data_param = args.data
 
     cols = split_comma_string(args.col, int)
-    print("aaaaaaaaaaaaaa", scen_param)
     scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]] if scen_param != "all" \
         else [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
 

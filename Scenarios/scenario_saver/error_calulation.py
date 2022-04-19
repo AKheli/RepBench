@@ -36,6 +36,9 @@ def latex_str(path , error_df , error_name):
     r+=legend
     r= r.replace("_","{")
     r = r.replace("-","}")
+    r = r.replace("((", "(")
+    r = r.replace("))", ")")
+
     print(r)
     with open(f'{path}/{error_name}_for_text.txt', "w") as text_file:
         text_file.write(r)

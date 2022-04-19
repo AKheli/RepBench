@@ -108,7 +108,7 @@ class DimensionalityReductionEstimator(estimator):
 
     ## classification_methods
     def min_max(self,x):
-        x_abs = x  #todo check whitout training and abs or not
+        x_abs = abs(x)  #todo check whitout training and abs or not
         if(self.is_training):
             self.train_min = min_ = min(x_abs)
             self.train_max = max_ =  max(x_abs)

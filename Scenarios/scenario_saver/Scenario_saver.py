@@ -37,7 +37,7 @@ def save_scenario(repaired_scenario : BaseScenario):
         pass
 
     save_precision(repaired_scenario,path)
-    #save_runtime(repaired_scenario,path)
+    save_runtime(repaired_scenario,path)
 
 
 
