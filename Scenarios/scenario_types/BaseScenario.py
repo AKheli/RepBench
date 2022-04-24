@@ -100,7 +100,7 @@ class BaseScenario:
             return None , df
 
         l = int(len(df) * train_test_split)
-        return df.iloc[:l, :], df.iloc[l:, :]
+        return df.iloc[max(0,l-3000):l, :], df.iloc[l:, :]
 
     @property
     def anomaly_length(self):
@@ -108,7 +108,7 @@ class BaseScenario:
 
     def get_amount_of_anomalies(self):
         anom_amount = round(self.anomaly_percentage / self.anomaly_size)
-        assert anom_amount >= 1
+        anom_amount =  anom_amount if anom_amount >= 1 else 1
         return anom_amount
 
     def inject_single(self, data, min_space_anom_len_multiplier=2, factor=None):

@@ -14,7 +14,7 @@ scenario_specifications = {
     BASE_SCENARIO: {"anomaly_percentage": default_percentage, "anomaly_size": 1},
     TS_LENGTH: {"anomaly_percentage": default_percentage, "anomaly_size": 1},
     ANOMALY_SIZE: {"anomaly_sizes": [1,2,3,4,5,6,7,8,9,10] , "anomaly_percentage": 3, },
-    ANOMALY_RATE: {"anomaly_percentage": 10 , "anomaly_percentages":[1,2,5,10,15,20,30], "anomaly_size": 1},
+    ANOMALY_RATE: {"anomaly_percentage": 10 , "anomaly_percentages":[0.25,0.5,1,2,4,8,16], "anomaly_size": 1},
     #MINI_SCENARIO: {"length": 25, "anomaly_length": 5},
     ANOMALY_FACTOR: {"anomaly_percentage": 0.10, "anomaly_length": 10},
     TS_NBR : {"anomaly_percentage": 10, "anomaly_size": 1},

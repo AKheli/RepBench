@@ -30,7 +30,7 @@ except:
 
 possible_scenarios = [sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR ,sc.TS_NBR, sc.TS_LENGTH]
 
-repair_estimators = [ CD_Rec_estimator , weighted_CD_Rec_estimator, Robust_PCA_estimator, SCREEN_estimator] #IMR_estimator
+repair_estimators = [ CD_Rec_estimator , Robust_PCA_estimator, weighted_CD_Rec_estimator, SCREEN_estimator] #IMR_estimator
 
 scenarios = []
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     data_dir =  os.listdir("Data")
     data_dir_trim = [txt.split(".")[0] for txt in data_dir]
-    args = init_parser( scenario_choises=possible_scenarios + ["all"], data_choices=data_dir_trim + ["all"])
+    args = init_parser( input = None ,scenario_choises=possible_scenarios + ["all"], data_choices=data_dir_trim + ["all"])
     scen_param = args.scenario
     data_param = args.data
 

@@ -87,6 +87,7 @@ class estimator(ABC, BaseEstimator):
         raise NotImplementedError(self)
 
     def train(self, X, y):
+        print("train size:"  ,X.shape,y.shape)
         self.is_training = True
 
         hash_ = hash(str(X) + str(y))

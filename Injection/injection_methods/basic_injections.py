@@ -65,7 +65,7 @@ def inject_amplitude_shift(data, index_range, factor=1, directions=[1, -1], stdr
                   "index_range": [int(index) for index in index_range], "std_range": stdrange}
 
 
-def inject_distortion(data, index_range, factor=1):
+def inject_distortion(data, index_range, factor=8):
     anom_type = DISTORTION
     firstelement = index_range[0] - 1
     index_range_extended = [firstelement] + list(index_range)  # to directly start with the distortion
