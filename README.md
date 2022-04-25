@@ -19,26 +19,47 @@ $ python3 run.py [arguments]
 
  | -d  | -a  | -scen | -algo | 
  | -------- | -------- | -------- | -------- | 
- | YAHOO     | shift |ts_length| RPCA
- | Humidity    |distortion |  a_length | SCREEN
- | BAFU5K | growth_change | ts_nbr | IMR
- | all      | point_outlier | base | CDRec
- |            |all  | all | all
+ | bafu5k     | shift |ts_len| rpca
+ | humidity    |distortion |  a_size | scree
+ | msd           | growth | a_rate | imr
+ | all      | outlier | ts_nbr | cdrec
+ |            |all  | cts_nbr | all
+ |            |  | all | 
 
 
 
 ### Remarks
 - Data\
-The data has to be in csv or txt format.
-
+The data has to be in csv  format.
 The Results will be saved into the Results folder.
-The data argument expects the data to be in the Data folder.
+The data argument expects the Data to be in the Data folder.
 
 
 ### Examples:
+<ol>
+  <li>
+ Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
+</li>
+
 ```bash
-python3 run.py -sce all  -d batch10.txt -a p -algo IMR
+python3 run.py -scen ts_nbr -data bafu5k -anom shift -alg cdrec
 ```
+ <li>
+Run two algorithms (cdrec, rpca) on two dataset (bafu5k,msd) using one scenario (a_rate) and two anomalies (shift,outlier)
+</li>
+
+```bash
+python3 run.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -alg cdrec,rpca
+```
+ <li>
+Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies
+</li>
+
+```bash
+python3 run.py --scen all -data all -anom all -alg all
+```
+
+</ol>
 
 [comment]: <> (### Additional experimental run)
 

@@ -14,7 +14,7 @@ def save_repair(scenario : BaseScenario, path):
     except:
         pass
 
-    fig_generator = scenario_algos_figs(scenario)
-    for fig , algo in fig_generator:
-        fig.savefig(f"{path}/{algo}.svg")
-    plt.close('all')
+    scenario_algos_figs(scenario, path)
+    # for fig , algo in fig_generator:
+    #     fig.savefig(f"{path}/{algo}.svg")
+    # plt.close('all')

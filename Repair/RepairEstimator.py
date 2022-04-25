@@ -35,8 +35,9 @@ class Robust_PCA_estimator(estimator):
         self.max_iter = max_iter
         self.component_method = component_method
         self.times = {}
-        super().__init__(**kwargs)
         self.exaplained_variance = []
+        self.train_transform = None
+        super().__init__(**kwargs)
 
 
     def get_params(self, **kwargs):

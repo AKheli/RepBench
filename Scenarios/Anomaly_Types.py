@@ -1,7 +1,7 @@
-AMPLITUDE_SHIFT = "amplitude_shift"
+AMPLITUDE_SHIFT = "shift"
 DISTORTION = "distortion"
-GROWTH_CHANGE = "growth_change"
-POINT_OUTLIER = "point_outlier"
+GROWTH_CHANGE = "growth"
+POINT_OUTLIER = "outlier"
 
 ANOMALY_TYPES = (AMPLITUDE_SHIFT,
                  DISTORTION,

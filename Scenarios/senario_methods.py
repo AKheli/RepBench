@@ -6,39 +6,38 @@ from Scenarios.scenario_saver.plotters import generate_truth_and_injected, gener
     generate_correlated_series_plot
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 
+import os
 
-
-def generate_error_df_and_error_tables(scenario : BaseScenario,  error_func):
+def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
     df = pd.DataFrame()
     repairs = scenario.repairs
-    columns =  scenario.injected_columns
+    columns = scenario.injected_columns
 
-    for scenario_part_name , v in scenario.scenarios.items():
-        truth = v.get("truth",None) if v.get("truth",None) is not None else v.get("original",None)
+    for scenario_part_name, v in scenario.scenarios.items():
+        truth = v.get("truth", None) if v.get("truth", None) is not None else v.get("original", None)
         assert truth is not None
         injected = v["injected"]
 
-        errors = {"original_error": (error_func(truth, injected,columns), "" )}
+        errors = {"original_error": (error_func(truth, injected, columns), "")}
 
-        for algo_name, algo_output in  repairs[scenario_part_name].items():
+        for algo_name, algo_output in repairs[scenario_part_name].items():
             error = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))
-            errors[algo_output["type"]] = (error , algo_output["name"])
+            errors[algo_output["type"]] = (error, algo_output["name"])
 
-
-        df = df.append(pd.Series(errors,name=scenario_part_name))
+        df = df.append(pd.Series(errors, name=scenario_part_name))
         print(df)
-        error_df = df.applymap(lambda x : x[0])
+        error_df = df.applymap(lambda x: x[0])
 
     error_tables = {}
 
     for alg_type in df.columns:
         df_colum = df[alg_type]
-        error_tables[alg_type] = pd.DataFrame(df_colum.tolist(), index=df.index , columns = ["error" , "algorithm"])
+        error_tables[alg_type] = pd.DataFrame(df_colum.tolist(), index=df.index, columns=["error", "algorithm"])
 
-    return error_df ,error_tables
+    return error_df, error_tables
 
 
-def scenario_algos_figs(scenario : BaseScenario ):
+def scenario_algos_figs(scenario: BaseScenario, path ,rasterize=True):
     algos = scenario.repair_names
     scenario_parts = scenario.scenarios
     plots_n = len(scenario_parts.keys())
@@ -49,18 +48,28 @@ def scenario_algos_figs(scenario : BaseScenario ):
     scenario_repairs = scenario.repairs
 
     for algo in algos:
+        algo_path = f'{path}/{algo}'
+        try:
+            os.mkdir(algo_path)
+        except:
+            pass
         print(algos)
         plt.close('all')
-        fig, axs = plt.subplots(plots_n, figsize=(20, total_height), constrained_layout=True)
+        #fig, axs = plt.subplots(plots_n, figsize=(20, total_height), constrained_layout=True)
+        # if rasterize:
+        #     for ax in axs:
+        #         ax.set_rasterization_zorder(0)
+
         part_list = list(scenario_parts.items())
-        for i , (scenario_part_name, scenario_part_data) in enumerate(list(scenario_parts.items())):
-            axis = axs if plots_n == 1 else axs[i]
+        for i, (scenario_part_name, scenario_part_data) in enumerate(list(scenario_parts.items())):
+            axis = plt.gca() #axs if plots_n == 1 else axs[i]
+            axis.set_rasterization_zorder(0)
             axis.set_title(scenario_part_name)
             truth = scenario_part_data["original"]
             injected = scenario_part_data["injected"]
             class_ = scenario_part_data["class"]
             repair_df = scenario_repairs[scenario_part_name][algo]["repair"]
-
+            algo_name = scenario_repairs[scenario_part_name][algo]["name"]
             axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
 
             line, = plt.plot(truth.iloc[:, cols[0]])
@@ -69,13 +78,13 @@ def scenario_algos_figs(scenario : BaseScenario ):
             generate_correlated_series_plot(truth, cols, lw, axis)
             axis.set_prop_cycle(None)
             generate_repair_plot(repair_df, cols, algo, lw, axis)
-            generate_truth_and_injected(truth, injected, cols, class_ ,lw, axis )
+            generate_truth_and_injected(truth, injected, cols, class_, lw, axis)
             axis.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-        fig.suptitle(scenario.data_name, size=22)
+            #fig.suptitle(f'{scenario.data_name} ,{algo_name}' , size=22)
 
-        yield fig , algo
-
+            plt.savefig(f"{algo_path}/{scenario_part_name}.svg")
+            plt.close('all')
 
 # def repair_scenario(injected_scenario : BaseScenario, repair_algos):
 #
@@ -105,4 +114,3 @@ def scenario_algos_figs(scenario : BaseScenario ):
 #     return injected_scenario
 #
 #
-

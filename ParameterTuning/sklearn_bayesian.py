@@ -57,7 +57,7 @@ class BayesianOptimization():
             model.fit(selected_data, selected_truth)
             result = -model.score(data, truth)
             return result
-
+        print(x)
         sys.stdout.write('Bayesian Opt Errors')
         minimized =  gp_minimize(f, x, n_jobs=1
                            , n_calls=self.n_calls,

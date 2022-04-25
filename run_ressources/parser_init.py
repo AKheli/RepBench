@@ -1,22 +1,35 @@
 import argparse
+import sys
 
 
-def add_data_arguments_to_parser(parser, data_choices = None):
-    parser.add_argument("-data", "-d", type=str,  choices=data_choices)
+def type_convertion(choices, para_name):
+    def f(str):
+        result = []
+        for s in str.split(","):
+            if s not in choices:
+                sys.tracebacklimit = 0
+                raise SystemExit(f'{s} not in possible {para_name} inputs:{choices}')
+            result.append(s)
+        return result
+    return f
+
+def add_data_arguments_to_parser(parser, data_choices):
+    parser.add_argument("-data", "-d", type= type_convertion(choices=data_choices, para_name="d"))
     parser.add_argument("-col", "-ts", type=str, default= "0")
 
 
-def add_injection_arguments_to_parser(parser ,scenario_choises = None):
-    parser.add_argument('-a_type','-anom' ,  default="amp" , help="anomaly type")
-    parser.add_argument("-scenario", "-scen" ,type=str,  choices=scenario_choises)
+def add_injection_arguments_to_parser(parser ,scenario_choices ,anomaly_choices):
+    print(scenario_choices)
+    parser.add_argument('-a_type','-anom' ,  type=type_convertion(choices=anomaly_choices, para_name="a_type"))
+    parser.add_argument("-scenario", "-scen", type=type_convertion(choices=scenario_choices, para_name="scen"))
     parser.add_argument("-saveinjected",  action='store_true')
 
 
-def add_repair_arguments_to_parser(parser):
-    parser.add_argument("-algo", type=str, default="all")
-    parser.add_argument("-algox", type=str, default="")
+def add_repair_arguments_to_parser(parser,estimator_choices):
+    parser.add_argument("-alg", type=type_convertion(choices=estimator_choices, para_name="alg"))
+    #parser.add_argument("-algox", type=str, default="")
 
-    parser.add_argument("-saverepair",  action='store_true')
+    #parser.add_argument("-saverepair",  action='store_true')
 
 
 def init_injection_parser(scenario_choises = None):
@@ -33,15 +46,15 @@ def init_repair_parser():
     return parser.parse_args()
 
 
-def init_parser(input = None , scenario_choises = None , data_choices = None):
+def init_parser(input = None , estimator_choices = None ,scenario_choices = None , data_choices = None ,anomaly_choices = None):
     parser = argparse.ArgumentParser()
 
     add_data_arguments_to_parser(parser , data_choices = data_choices)
-    add_injection_arguments_to_parser(parser,scenario_choises = scenario_choises)
-    add_repair_arguments_to_parser(parser)
+    add_injection_arguments_to_parser(parser,scenario_choices = scenario_choices , anomaly_choices = anomaly_choices)
+    add_repair_arguments_to_parser(parser,estimator_choices = estimator_choices)
 
     if input is not None:
-        "For testing outside outside of the terminal"
+        "For testing outside of the terminal"
         return parser.parse_args(input.split())
 
     return parser.parse_args()

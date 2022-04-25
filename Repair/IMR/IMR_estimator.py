@@ -40,8 +40,9 @@ class IMR_estimator(estimator):
         for col in self.cols:
             x = np.array(injected.iloc[:, col])
             truth = np.array(truth.iloc[:, col])
-            if np.allclose(x,truth) :
-              continue # todo mean there are no anomalies in the data
+            if np.allclose(x,truth):
+              #assert False, "x and y_0 initialization are to close for a repair"
+              repair.iloc[:, col] = x
 
             anom_start_labels = generate_anomaly_start_labels(x, truth,
                                                               start_of_anomaly=True)
@@ -57,7 +58,6 @@ class IMR_estimator(estimator):
                 plt.show()
                 plt.plot(y_0)
                 plt.show()
-                assert False, "x and y_0 initialization are to close for a repair"
 
 
             repair_results = imr2(x, y_0, labels, tau=self.tau, p=self.p, k=self.max_itr_n)

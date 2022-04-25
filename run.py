@@ -4,70 +4,65 @@ import os.path
 from matplotlib import pyplot as plt
 
 from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
-from Repair.Dimensionality_Reduction.CDrec.weighted_CD_Rec_estimator import weighted_CD_Rec_estimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
+import  Scenarios.Anomaly_Types as at
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import Scenarios.scenario_types.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
 from run_ressources.parser_results_extraction import *
-import logging
-from datetime import datetime
 
 current_path = os.getcwd()
 folder = "MA"
 path = folder.join(current_path.split(folder)[:-1]) + folder
 os.chdir(path)
 
-now = datetime.now()
-dt_string = now.strftime("%d_%H:%M:%S")
-try:
-    os.makedirs("logs")
-except:
-    pass
 
-possible_scenarios = [sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR ,sc.TS_NBR, sc.TS_LENGTH]
+repair_estimators = {"rpca" : Robust_PCA_estimator , "screen": SCREEN_estimator , "cdrec" : CD_Rec_estimator , "imr" : IMR_estimator }
+estimator_choices = list(repair_estimators.keys()) + ["all"]
 
-repair_estimators = [ CD_Rec_estimator , Robust_PCA_estimator, weighted_CD_Rec_estimator, SCREEN_estimator] #IMR_estimator
+scenarios = [sc.TS_NBR,sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR , sc.TS_LENGTH]
+scenario_choices = scenarios + ["all"]
 
-scenarios = []
+all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER,at.GROWTH_CHANGE]
+anomaly_choices =all_anomalies+["all"]
 
-
-def split_comma_string(str, return_type=str):
-    return [return_type(r) for r in str.split(",")]
-
-
-if __name__ == '__main__':
-    input = "-scenario all  -col 0 -data all -anom d -algo IMR"  # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-    # input =  "-scenario all  -col 1  -data all  -anom a -algo IMR"
-
+def main(input = None):
     data_dir =  os.listdir("Data")
     data_dir_trim = [txt.split(".")[0] for txt in data_dir]
-    args = init_parser( input = None ,scenario_choises=possible_scenarios + ["all"], data_choices=data_dir_trim + ["all"])
-    scen_param = args.scenario
-    data_param = args.data
+    args = init_parser( input = input ,
+                        estimator_choices = estimator_choices,
+                        scenario_choices=scenario_choices ,
+                        data_choices=data_dir_trim + ["all"],
+                        anomaly_choices = anomaly_choices)
 
-    cols = split_comma_string(args.col, int)
-    scenario_constructors = [SCENARIO_CONSTRUCTORS[scen_param]] if scen_param != "all" \
-        else [SCENARIO_CONSTRUCTORS[scen] for scen in possible_scenarios]
+    scen_params = args.scenario
+    data_params = args.data
+    estim_params = args.alg
+    anomaly_types_param = args.a_type
 
-    print(data_param)
-    data_files = [f'{data_param}.csv'] if data_param != "all" \
+    # map scenario input
+    cols = [0] #(args.col)
+    scenario_constructors = [SCENARIO_CONSTRUCTORS[scen] for scen in scenarios] if "all" in scen_params \
+        else [SCENARIO_CONSTRUCTORS[scen] for scen in scen_params]
+
+    # map data input
+    data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
         else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
-    anomaly_type = parse_anomaly_name(args.a_type)
 
+    # map repair estimator input
     scenario_constructors_data_names = itertools.product(scenario_constructors, data_files)
+    estimators =  [repair_estimators[estim_param](columns_to_repair=cols) for estim_param in estim_params] if "all" not in estim_params\
+        else [estim(columns_to_repair=cols) for estim in repair_estimators.values()]
 
-    # logging.info(
-    #     f'{input}->cols:{cols},anomaly_type:{anomaly_type},scen and data {list(itertools.product(scenario_constructors, data_files))}')
-    print(list(itertools.product(scenario_constructors, data_files)))
-    print(repair_estimators)
+    anomalies = [parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in estim_params \
+        else all_anomalies
 
-    estimators = [estimator(columns_to_repair=cols) for estimator in repair_estimators]
 
-    for (scenario_constructor, data_name) in itertools.product(scenario_constructors, data_files):
+    for (scenario_constructor, data_name , anomaly_type) in itertools.product(scenario_constructors, data_files , anomalies):
+        print(str(scenario_constructor).split(".")[-1][:-2], data_name ,anomaly_type )
         # todo map scenarioinput and anomaly input -> scen anonaly a ,  scen anonaly a,b if scenario suppoerst mutiple anomalies
         injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
                                                                anomaly_type=anomaly_type)
@@ -89,9 +84,11 @@ if __name__ == '__main__':
                 #     f'failed repair: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
                 # logging.error(f'{e})')
 
-        save_scenario(injected_scenario)
+        save_scenario(injected_scenario,repair_plot=True)
         # logging.info(
         #     f'failed save: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
         # logging.error(f'{e})')
 
-        print(12)
+
+if __name__ == '__main__':
+    main()
