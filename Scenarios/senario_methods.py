@@ -75,7 +75,7 @@ def scenario_algos_figs(scenario: BaseScenario, path ,rasterize=True):
             line, = plt.plot(truth.iloc[:, cols[0]])
             lw = plt.getp(line, 'linewidth')
 
-            generate_correlated_series_plot(truth, cols, lw, axis)
+            #generate_correlated_series_plot(truth, cols, lw, axis)
             axis.set_prop_cycle(None)
             generate_repair_plot(repair_df, cols, algo, lw, axis)
             generate_truth_and_injected(truth, injected, cols, class_, lw, axis)

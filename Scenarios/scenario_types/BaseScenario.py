@@ -100,7 +100,7 @@ class BaseScenario:
             return None , df
 
         l = int(len(df) * train_test_split)
-        return df.iloc[max(0,l-3000):l, :], df.iloc[l:, :]
+        return df.iloc[max(0,l-3000):l, :], df.iloc[l:min(l+5000,len(df)), :]
 
     @property
     def anomaly_length(self):

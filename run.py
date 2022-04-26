@@ -30,7 +30,7 @@ all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER,at.GROWTH_CHA
 anomaly_choices =all_anomalies+["all"]
 
 def main(input = None):
-    data_dir =  os.listdir("Dataa")
+    data_dir =  os.listdir("Data")
     data_dir_trim = [txt.split(".")[0] for txt in data_dir]
     args = init_parser( input = input ,
                         estimator_choices = estimator_choices,
@@ -50,14 +50,16 @@ def main(input = None):
 
     # map data input
     data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
-        else [d for d in data_dir if os.path.isfile(f"Dataa/{d}")]
+        else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
 
     # map repair estimator input
     scenario_constructors_data_names = itertools.product(scenario_constructors, data_files)
     estimators =  [repair_estimators[estim_param](columns_to_repair=cols) for estim_param in estim_params] if "all" not in estim_params\
         else [estim(columns_to_repair=cols) for estim in repair_estimators.values()]
 
-    anomalies = [parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in estim_params \
+    # print(anomaly_types_param)
+    # assert False
+    anomalies = [parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
 
 
@@ -90,5 +92,20 @@ def main(input = None):
         # logging.error(f'{e})')
 
 
+
+import pandas as pd
+def create_summary(error = "RMSE"):
+    error = "RMSE"
+    results = "Results"
+    for path in [x[0] for x in os.walk("Results") if x[0].endswith(error)]:
+        file_name = error+".txt"
+        df = pd.read_table(f'{path}/{file_name}')
+        print(df)
+
+
+
+
+
 if __name__ == '__main__':
     main()
+
