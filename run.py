@@ -68,7 +68,6 @@ def main(input = None):
         # todo map scenarioinput and anomaly input -> scen anonaly a ,  scen anonaly a,b if scenario suppoerst mutiple anomalies
         injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
                                                                anomaly_type=anomaly_type)
-        continue
         for estim in estimators:
             for name, train, test in injected_scenario.name_train_test_iter:
                 data_params = {}
