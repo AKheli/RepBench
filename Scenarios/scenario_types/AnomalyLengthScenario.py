@@ -16,23 +16,27 @@ class AnomalyLengthScenario(BaseScenario):
             return int(self.n_cols * self.anomaly_sizes[3] / 100)
         return int(self.n_cols * self.anomaly_size / 100)
 
-    def get_amount_of_anomalies(self):
-        anom_amount = round(self.anomaly_percentage / self.anomaly_sizes[0])
-        assert anom_amount >= 1
-        return anom_amount
+    def get_amount_and_length(self, counter=0):
+        l = self.a_lengths[counter]
+        n = self.n_rows
+        p = self.a_percentage
+        anom_amount = round(n / 100 / 10 * p)
+        return anom_amount, l
 
-    def transform_df(self, df, cols=[0], seed=100):
-        print("AAAAAAAA")
+    def transform_df(self, df,seed=100):
+        np.random.seed(seed)
         data = df.copy()
-        resulting_data = []
+        cols = self.injected_columns
         result = {}
-        for size in self.anomaly_sizes:
+        for c in range(len(self.a_lengths)):
+            amount , length =  self.get_amount_and_length( counter=c)
             np.random.seed(100)
-            self.anomaly_size = size
             injected_df = data.copy()
             for col in cols:
                 injected_df.iloc[:, col], anomaly_info = self.inject_single(np.array(data.iloc[:, col]),
-                                                                            min_space_anom_len_multiplier=0)
-            resulting_data.append(injected_df)
-            result[f'anomaly_size: {size}%'] = self.create_scenario_part_output(injected_df, data, cols, self.train)
+                                                                            anomaly_length = length,
+                                                                            anomaly_amount=amount,
+                                                                            min_space_anom_len_multiplier=0.5)
+            #resulting_data.append(injected_df)
+            result[f'anomaly length: {length}'] = self.create_scenario_part_output(injected_df, data, cols, self.train)
         return result

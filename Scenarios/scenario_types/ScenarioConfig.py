@@ -8,17 +8,19 @@ TS_NBR ="ts_nbr"
 CTS_NBR = "cts_nbr"
 
 
-default_percentage = 10
+default_percentage = 5
+default_length = 10
 
 scenario_specifications = {
-    BASE_SCENARIO: {"anomaly_percentage": default_percentage, "anomaly_size": 1},
-    TS_LENGTH: {"anomaly_percentage": default_percentage, "anomaly_size": 1},
-    ANOMALY_SIZE: {"anomaly_sizes": [1,2,3,4,5,6,7,8,9,10] , "anomaly_percentage": 3, },
-    ANOMALY_RATE: {"anomaly_percentage": 10 , "anomaly_percentages":[0.25,0.5,1,2,4,8,16], "anomaly_size": 1},
+    BASE_SCENARIO: {"a_percentage": default_percentage, "a_length": default_length},
+    TS_LENGTH: {"a_percentage": default_percentage, "a_length": default_length},
+    ANOMALY_SIZE: {"a_lengths": [5,10,20,30,50,100] , "a_percentage": default_percentage },
+    ANOMALY_RATE: {"a_percentages":[0.25,0.5,1,2,5,10,20], "a_length": default_length},
     #MINI_SCENARIO: {"length": 25, "anomaly_length": 5},
-    ANOMALY_FACTOR: {"anomaly_percentage": 0.10, "anomaly_length": 10},
-    TS_NBR : {"anomaly_percentage": 10, "anomaly_size": 1},
-    CTS_NBR : {"contaminated_ts": [1,2,3,4,5,6,7,8,9,10]}}
+    #ANOMALY_FACTOR: {"anomaly_percentage": 0.10, "anomaly_length": 10},
+    TS_NBR : {"a_percentage": default_percentage,"a_length" : default_length },
+    CTS_NBR : {"contaminated_ts": [1,2,3,4,5,6,7,8,9,10],"a_percentage" : default_percentage/2}
+}
 scenario_specifications[ANOMALY_POSITION] = scenario_specifications[BASE_SCENARIO].copy()
 
 

@@ -19,11 +19,15 @@ class NumberOfTSScenario(BaseScenario):
         self.number_of_ts = self.default_numbers
         self.single_train = False
 
-    def transform_df(self, df, cols=[0]):
+    def transform_df(self, df,seed=100):
+        np.random.seed(seed)
         data = df.copy()
-        np.random.seed(100)
+        cols = self.injected_columns
+        anom_amount, anom_length = self.get_amount_and_length()
+
         for col in cols:
-            data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]))
+            data.iloc[:, col], anomaly_infos =\
+                self.inject_single(np.array(data.iloc[:, col]),anomaly_length = anom_length,anomaly_amount=anom_amount)
 
         result = {}
         for l in [n for n in self.number_of_ts if n <= data.shape[1]] :

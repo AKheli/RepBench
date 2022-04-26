@@ -38,8 +38,8 @@ def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1  ,
         size  = array_or_size
     size = size - start_at
     number_of_free_spaces = number_of_ranges + 1 # freespaces
-    spaces = np.ones(number_of_free_spaces,dtype=int)*int(min(anom_lenght,size/20))
-    additional_space = size-sum(spaces)
+    spaces = np.ones(number_of_free_spaces,dtype=int)*int(min(anom_lenght,10))
+    additional_space = size-sum(spaces)-number_of_ranges*anom_lenght
     assert additional_space >= 0, f"to many anomalies with data size {size} , anomaly size {anom_lenght} " \
                                   f"and min space between anomalies {min_space_anom_len_multiplier*anom_lenght} " \
                                   f"and {number_of_ranges} anomalies"
@@ -48,7 +48,7 @@ def get_anomaly_indices(array_or_size,anom_lenght=10, number_of_ranges=1  ,
     probabilities = probabilities/sum(probabilities) # more variable outcomes
     spaces += np.random.multinomial(additional_space , probabilities)
 
-    assert np.cumsum(spaces)[-1] == size , (size,np.cumsum(spaces)[-1],spaces,additional_space)
+    assert np.cumsum(spaces)[-1] == size -number_of_ranges*anom_lenght, (size,np.cumsum(spaces)[-1],spaces,additional_space)
 
     result = []
     for anom_n , space  in enumerate(np.cumsum(spaces)[:-1]+start_at):

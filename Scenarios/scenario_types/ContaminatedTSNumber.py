@@ -13,11 +13,12 @@ class ContaminatedNumberOfTSScenario(BaseScenario):
 
     def transform_df(self, df, cols=None, seed=0):
         fully_injected = df.copy()
-
+        anom_amount, anom_length = self.get_amount_and_length()
         ## create fully contaminated series
         for col in range(df.shape[1]):  ## inject all
             np.random.seed(col)
-            fully_injected.iloc[:, col], anomaly_infos = self.inject_single(np.array(fully_injected.iloc[:, col]))
+            fully_injected.iloc[:, col], anomaly_infos = self.inject_single(np.array(fully_injected.iloc[:, col]),
+                                                                            anomaly_length = anom_length,anomaly_amount=anom_amount)
 
         ## create list witn amount of contaminated series
         max_contamination = fully_injected.shape[1]

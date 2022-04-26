@@ -63,7 +63,8 @@ class BaseScenario:
 
         else:
             self.original_train ,self.original_test = self.split_train_test(original_data,train_test_split)
-        self.n_cols = self.original_test.shape[0]
+        self.n_cols = self.original_test.shape[1]
+        self.n_rows = self.original_test.shape[0]
 
     def init_specialiced_scenario(self):
         pass
@@ -90,7 +91,7 @@ class BaseScenario:
 
     def generate_data(self):
         self.train = None # needed such that the trian of train is None
-        self.train = BaseScenario.transform_df(self, self.original_train, self.injected_columns, seed=200)[100]
+        self.train = BaseScenario.transform_df(self, self.original_train, seed=200)[100]
         self.scenarios = self.transform_df(self.original_test, self.injected_columns)
         return self.train, self.scenarios
 
@@ -102,32 +103,36 @@ class BaseScenario:
         l = int(len(df) * train_test_split)
         return df.iloc[max(0,l-3000):l, :], df.iloc[l:min(l+5000,len(df)), :]
 
-    @property
-    def anomaly_length(self):
-        return int(self.n_cols*self.anomaly_size/100)
 
-    def get_amount_of_anomalies(self):
-        anom_amount = round(self.anomaly_percentage / self.anomaly_size)
-        anom_amount =  anom_amount if anom_amount >= 1 else 1
-        return anom_amount
+    def get_amount_and_length(self, counter = 0):
+        l = self.a_length
+        n = self.n_rows
+        p = self.a_percentage
+        anom_amount = round(n / 100 / l * p)
+        return anom_amount , l
 
-    def inject_single(self, data, min_space_anom_len_multiplier=2, factor=None):
-        index_ranges = get_anomaly_indices(data, self.anomaly_length
-                                           , number_of_ranges=self.get_amount_of_anomalies()
+    def inject_single(self, data, anomaly_length,anomaly_amount, min_space_anom_len_multiplier=2, factor=None):
+        index_ranges = get_anomaly_indices(data, anomaly_length
+                                           , number_of_ranges=anomaly_amount
                                            , min_space_anom_len_multiplier=min_space_anom_len_multiplier)
         anomaly_infos = []
         assert len(index_ranges) != 0
         for range_ in index_ranges:
             assert len(range_) != 0
+            assert max(range_) < len(data) , (len(data),index_ranges)
+
             data, info = add_anomaly(anomaly_type=self.anomaly_type, data=data, index_range=range_, factor=factor)
             anomaly_infos.append(info)
         return data, anomaly_infos
 
-    def transform_df(self, df, cols=[0],seed=100):
+    def transform_df(self, df,seed=100):
         np.random.seed(seed)
         data = df.copy()
+        cols = self.injected_columns
+        anom_amount, anom_length = self.get_amount_and_length()
         for col in cols:
-            data.iloc[:, col], anomaly_infos = self.inject_single(np.array(data.iloc[:, col]))
+            data.iloc[:, col], _ =\
+                self.inject_single(np.array(data.iloc[:, col]),anomaly_length = anom_length,anomaly_amount=anom_amount)
 
         return {100: self.create_scenario_part_output(data, df, cols ,self.train)}
 
