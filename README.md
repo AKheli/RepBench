@@ -56,7 +56,7 @@ Run the whole benchmark: all the algorithms , all the dataset on all scenarios w
 </li>
 
 ```bash
-python3 run.py --scen all -data all -anom all -alg all
+python3 run.py -scen all -data all -anom all -alg all
 ```
 
 </ol>

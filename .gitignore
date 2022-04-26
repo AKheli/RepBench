@@ -3,7 +3,6 @@
 .idea/
 __pycache__
 logs/
-Data/
 Results/
 Data_hidden/
 /Data_hidden/

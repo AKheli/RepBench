@@ -30,7 +30,7 @@ all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER,at.GROWTH_CHA
 anomaly_choices =all_anomalies+["all"]
 
 def main(input = None):
-    data_dir =  os.listdir("Data")
+    data_dir =  os.listdir("Dataa")
     data_dir_trim = [txt.split(".")[0] for txt in data_dir]
     args = init_parser( input = input ,
                         estimator_choices = estimator_choices,
@@ -50,7 +50,7 @@ def main(input = None):
 
     # map data input
     data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
-        else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
+        else [d for d in data_dir if os.path.isfile(f"Dataa/{d}")]
 
     # map repair estimator input
     scenario_constructors_data_names = itertools.product(scenario_constructors, data_files)
