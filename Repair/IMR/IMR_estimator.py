@@ -1,48 +1,47 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from Repair.Algorithms_Config import IMR
+from Repair.algorithms_config import IMR
 from Repair.IMR.IMR import imr2
 from Repair.IMR.label_generator import generate_anomaly_start_labels, generate_random_labels
-from Repair.estimator import estimator
+from Repair.estimator import Estimator
 import numpy as np
 
 
 alg_type = IMR
-class IMR_estimator(estimator):
+class IMR_estimator(Estimator):
 
     def __init__(self, p=5,tau = 0.1, **kwargs):
         self.p = p
         self.tau = tau
         self.alg_type = alg_type
-        estimator.__init__(self,**kwargs)
+        Estimator.__init__(self, **kwargs)
         self.max_itr_n  = 1000
 
     def get_params(self, **kwargs):
-        return {"p": self.p , "tau" : self.tau}
+        return {"p": self.p , "tau" : self.tau , "columns_to_repair" : self.columns_to_repair}
 
 
     def suggest_param_range(self,X):
-        return {"p" : list(range(15)) , "tau": list(np.arange(100)/100) }
+        return {"p" : list(range(15))} # , "tau": list(np.arange(100)/100) }
 
 
-    def _fit(self, X, y=None): ## no fitting
+    def fit(self, X, y=None): ## no fitting
         self.is_fitted = True
         return self
 
-    def _predict(self, X , y =None):
+    def predict(self, X , y =None):
         # print(self.cols)
         # X.iloc[:,self.cols].plot()
         # plt.show()
         # y.iloc[:,self.cols].plot()
         # plt.show()
-        self.tau = 0.01
         assert y is not None , "IMR needs truth values to assign labels"
 
         injected = X.copy()
         truth = y.copy()
         repair = injected.copy()
-        for col in self.cols:
+        for col in self.columns_to_repair:
             x = np.array(injected.iloc[:, col])
             truth = np.array(truth.iloc[:, col])
             if np.allclose(x,truth):
@@ -98,15 +97,11 @@ class IMR_estimator(estimator):
 
         return repair
 
-
-
-
     def alg_type(self):
         return "IMR"
 
-    def algo_name(self):
+    def __str__(self):
         return  f'IMR({self.p},{round(self.tau,2)})'
-
 
     def get_fitted_attributes(self):
         return self.get_params()

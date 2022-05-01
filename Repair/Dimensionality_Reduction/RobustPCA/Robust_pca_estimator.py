@@ -6,11 +6,8 @@ from sklearn.decomposition import TruncatedSVD
 
 
 class Robust_PCA_estimator(DimensionalityReductionEstimator):
-    @property
-    def alg_type(self):
-        return "RPCA"
 
-    def algo_name(self):
+    def __str__(self):
         return f'RPCA({self.repair_truncation},{self.classification_truncation},{self.delta},{round(self.threshold,2)})'
 
     def compute_transform(self,centered_weighted_x, n_components, component_method="TruncatedSVD"):

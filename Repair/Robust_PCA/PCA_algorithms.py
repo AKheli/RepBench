@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import minmax_scale
 
-from Repair.Algorithms_Config import ALGORITHM_PARAMETERS, RPCA
+from Repair.algorithms_config import ALGORITHM_PARAMETERS, RPCA
 from Repair.Robust_PCA import loss
 from Repair.Robust_PCA.helpers import normalized_anomaly_scores
 from Repair.Robust_PCA.huber_loss_pca import get_train_valid_sets

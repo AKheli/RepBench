@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Repair.Algorithms_Config import ALGORITHM_COLORS
+from Repair.algorithms_config import ALGORITHM_COLORS
 from Scenarios.metrics import *
 from itertools import cycle
 import os

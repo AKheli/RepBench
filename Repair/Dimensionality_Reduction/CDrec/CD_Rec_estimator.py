@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from Repair.Algorithms_Config import CDREC
+from Repair.algorithms_config import CDREC
 from Repair.Dimensionality_Reduction.Dimensionality_Reduction_Estimator import DimensionalityReductionEstimator
 from Repair.Robust_PCA.loss import HuberLoss
 import numpy as np
@@ -18,7 +18,7 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
     def alg_type(self):
         return CDREC
 
-    def algo_name(self):
+    def __str__(self):
         if self.n_max_iter < 2:
             return f'CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold, 2)})'
 

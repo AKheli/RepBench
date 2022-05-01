@@ -1,13 +1,10 @@
 import itertools
 import os.path
 
-from matplotlib import pyplot as plt
+import numpy as np
 
-from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
-from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
-from Repair.IMR.IMR_estimator import IMR_estimator
-from Repair.Screen.SCREENEstimator import SCREEN_estimator
 import  Scenarios.Anomaly_Types as at
+from Repair.repair_algorithm import RepairAlgorithm
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import Scenarios.scenario_types.ScenarioConfig as sc
@@ -20,8 +17,8 @@ path = folder.join(current_path.split(folder)[:-1]) + folder
 os.chdir(path)
 
 
-repair_estimators = {"rpca" : Robust_PCA_estimator , "screen": SCREEN_estimator , "cdrec" : CD_Rec_estimator , "imr" : IMR_estimator }
-estimator_choices = list(repair_estimators.keys()) + ["all"]
+repair_estimators = ["rpca","screen","cdrec","imr"]
+estimator_choices = repair_estimators + ["all"]
 
 scenarios = [sc.TS_NBR,sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR , sc.TS_LENGTH]
 scenario_choices = scenarios + ["all"]
@@ -30,9 +27,10 @@ all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER,at.GROWTH_CHA
 anomaly_choices =all_anomalies+["all"]
 
 def main(input = None):
+    """ input : args parameter when not run in console"""
     data_dir =  os.listdir("Data")
     data_dir_trim = [txt.split(".")[0] for txt in data_dir]
-    args = init_parser( input = input ,
+    args = init_parser( input = input,
                         estimator_choices = estimator_choices,
                         scenario_choices=scenario_choices ,
                         data_choices=data_dir_trim + ["all"],
@@ -53,12 +51,10 @@ def main(input = None):
         else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
 
     # map repair estimator input
-    scenario_constructors_data_names = itertools.product(scenario_constructors, data_files)
-    estimators =  [repair_estimators[estim_param](columns_to_repair=cols) for estim_param in estim_params] if "all" not in estim_params\
-        else [estim(columns_to_repair=cols) for estim in repair_estimators.values()]
+    repair_algos =  [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols) for rep_alg in estim_params] if "all" not in estim_params\
+        else [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols) for rep_alg in repair_estimators]
 
-    # print(anomaly_types_param)
-    # assert False
+    # map anomalies
     anomalies = [parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
 
@@ -68,13 +64,14 @@ def main(input = None):
         # todo map scenarioinput and anomaly input -> scen anonaly a ,  scen anonaly a,b if scenario suppoerst mutiple anomalies
         injected_scenario: BaseScenario = scenario_constructor(data_name, cols_to_inject=cols,
                                                                anomaly_type=anomaly_type)
-        for estim in estimators:
+        for estim in repair_algos:
             for name, train, test in injected_scenario.name_train_test_iter:
                 data_params = {}
                 data_params["truth"] = test["original"]
                 injected = test["injected"]
+                injected_columns = test["columns"]
+                estim.columns_to_repair = injected_columns
                 truth = test["truth"]
-
                 data_params["cols"] = test["columns"]
                 train_injected, train_truth = train["injected"], train["original"]
 
@@ -87,23 +84,6 @@ def main(input = None):
                 # logging.error(f'{e})')
 
         save_scenario(injected_scenario,repair_plot=True)
-        # logging.info(
-        #     f'failed save: scen: {scenario_constructor} . data_name: {data_name} , estimator: {estim}')
-        # logging.error(f'{e})')
-
-
-
-import pandas as pd
-def create_summary(error = "RMSE"):
-    error = "RMSE"
-    results = "Results"
-    for path in [x[0] for x in os.walk("Results") if x[0].endswith(error)]:
-        file_name = error+".txt"
-        df = pd.read_table(f'{path}/{file_name}')
-        print(df)
-
-
-
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-from Repair.Algorithms_Config import *
+from Repair.algorithms_config import *
 from Repair.IMR.imr_repair import IMR_repair, IMR_repair_random
 from Repair.Robust_PCA.PCA_algorithms import RPCA1, RPCA3
 from Repair.Robust_PCA.RPCAestimation.Robust_PCA_repair import RPCA_repair

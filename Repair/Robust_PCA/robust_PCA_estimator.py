@@ -5,12 +5,12 @@ import sklearn
 from scipy import linalg
 from sklearn.utils import check_array
 from sklearn.decomposition import TruncatedSVD
-from Repair.estimator import estimator
+from Repair.estimator import Estimator
 
 warnings.simplefilter("ignore", UserWarning)  # feaure name
 
 
-class Robust_PCA_estimator(estimator):
+class Robust_PCA_estimator(Estimator):
     def __init__(self, n_components=2,
                  cols=[0]
                  , delta=0.0000001
@@ -195,7 +195,7 @@ def classify_anomalies(self, X, reconstructed):
 
     # classify anomalies
     anomalies = {}
-    for col in self.cols:
+    for col in self.columns_to_repair:
         reconstructed_col = np.array(reconstructed[:, col])
         to_repair_booleans = np.zeros_like(reconstructed_col, dtype=bool)
 
@@ -230,7 +230,7 @@ def _predict(self, X):
 
     to_reduce = np.array(X).copy()
     if self.interpolate_anomalies:
-        for col in self.cols:
+        for col in self.columns_to_repair:
             to_repair_booleans = anomalies[col].copy()
             i = 1
             while i < len(to_repair_booleans):
@@ -248,7 +248,7 @@ def _predict(self, X):
 
     # replace with the reduced data
     X_reduced = self.reduce(to_reduce)
-    for col in self.cols:
+    for col in self.columns_to_repair:
         reduced_col = X_reduced[:, col]
         self.reduced = reduced_col
         X_copy[anomalies[col], col] = reduced_col[anomalies[col]]

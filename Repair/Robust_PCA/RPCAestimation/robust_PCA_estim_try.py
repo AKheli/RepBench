@@ -8,11 +8,11 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import FastICA
 
 from ParameterTuning.EM_bootstrap import in_interval, conf_interval
-from Repair.estimator import estimator
+from Repair.estimator import Estimator
 import time
 warnings.simplefilter("ignore", UserWarning)  # feaure name
 
-class Robust_PCA_estimator_try(estimator):
+class Robust_PCA_estimator_try(Estimator):
     def __init__(self, cols=[0]
                  , delta=0.01
                  , threshold=10
