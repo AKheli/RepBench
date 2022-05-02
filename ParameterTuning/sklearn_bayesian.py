@@ -10,7 +10,6 @@ class BayesianOptimization():
     def __init__(self, clf, param_grid, n_jobs=1, **kargs):
         self.clf = deepcopy(clf)  # todo check if this works
         assert id(self.clf) != id(clf), f'{id(clf)} {id(self.clf)}'
-        assert self.clf.is_training ," nope not a good copy"
         self.set_param_grid(param_grid)
         self.best_params_ = None
         self._ParamTuner__name_ = "BayesianOptimization"
@@ -19,7 +18,7 @@ class BayesianOptimization():
         self.n_jobs = 1
         self.n_calls = 20
         self.n_initial_points = 10
-        self.n_restarts_optimizer = 1
+        self.n_restarts_optimizer = 2
         self.n_points = 20
         self.acq_func = 'EI'
         self.kappa = 1.96
@@ -27,8 +26,8 @@ class BayesianOptimization():
     def set_param_grid(self, paramgrid):
         self.param_grid = {}
         for k, v in paramgrid.items():
-            self.param_grid[k] = (min(v), max(v)) if len(v) >= 2 else v
-
+            self.param_grid[k] = (min(v), max(v)) if len(v) >= 2 else v[0]
+        print("grid" , self.param_grid)
     def fit(self, X, y, groups=None):
         self.clf = deepcopy(self.clf)
         gp_minimize_result = self.bayesian_opt(X, y, self.clf, self.param_grid, self.n_jobs)
@@ -49,10 +48,7 @@ class BayesianOptimization():
         def f(x):
             model = deepcopy(clf)
             params = {k: v for k, v in zip(params_bounds.keys(), x)}
-            # for k, v in params.items():
-            #     setattr(model, k, v)
             model.__dict__.update(params)
-
             selected_data, selected_truth = data.copy(), truth.copy()
             model.fit(selected_data, selected_truth)
             result = -model.score(data, truth)

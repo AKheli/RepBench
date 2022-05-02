@@ -12,7 +12,7 @@ class Estimator(ABC, BaseEstimator):
 
     # predict , fit and score for the sklearn parameter optizimiters
     def score(self, X, y, columns=None):
-        score_ = -RMSE(pd.DataFrame(self._predict(X, y)), pd.DataFrame(y), self.columns_to_repair)
+        score_ = -RMSE(pd.DataFrame(self.predict(X, y)), pd.DataFrame(y), self.columns_to_repair)
         return score_
 
     def fit(self, X, y=None):

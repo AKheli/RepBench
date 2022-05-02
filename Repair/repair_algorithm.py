@@ -1,6 +1,8 @@
+import numpy as np
 import pandas as pd
 
 import Repair.algorithms_config as ac
+from ParameterTuning.sklearn_bayesian import BayesianOptimization
 from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.IMR.IMR_estimator import IMR_estimator
@@ -12,7 +14,8 @@ import sklearn.model_selection as sk_ms
 
 
 class RepairAlgorithm:
-    optimizer = "gridcv"
+    optimizer = "bayesian"
+
     repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREEN_estimator, "cdrec": CD_Rec_estimator,
                          "imr": IMR_estimator}
 
@@ -41,9 +44,6 @@ class RepairAlgorithm:
         self.times = {}
         self.times["fit"] = {"total": 0}
         self.times["predict"] = {"total": 0}
-        to_plot = []
-        is_training = False
-        is_fitted = False
 
     @property
     def columns_to_repair(self):
@@ -65,7 +65,25 @@ class RepairAlgorithm:
         return {"original_error": original_error, "error": predicted_error,
                 "ratio": predicted_error / original_error}
 
-    def train(self, X, y):
+
+    def normalize(self,X):
+        """
+        Parameters: matrix X
+        Returns: normalized X , normalization_inverse function
+        """
+        mean_X, std_X = X.mean(), X.std()
+        assert (len(mean_X) , len(std_X)) == (X.shape[1] , X.shape[1])
+
+        def inv_func(X_norm):
+            X_norm.columns = X.columns
+            result = X_norm*std_X+mean_X
+            return result
+        return (X-mean_X)/std_X , inv_func
+
+    def train(self,  injected, truth, **kwargs):
+        #return
+        X,inv = self.normalize(injected)
+        y , _ = self.normalize(truth)
         # self.times["fit"] =  timer.get_time()
         # self.times["fit"]["total"] += timer.get_time()
 
@@ -75,15 +93,21 @@ class RepairAlgorithm:
 
         hash_ = hash(str(X) + str(y))
 
-        if hash_ in self._hashed_train_:
+        if False and hash_ in self._hashed_train_:
             self.__dict__.update(self._hashed_train_[hash_])
         else:
             param_grid = self.estimator.suggest_param_range(X)
-            param_input = {"columns_to_repair" : [self.estimator.columns_to_repair]}
-            param_input.update(param_grid)
 
+            param_input = {"columns_to_repair" : [ self.estimator.columns_to_repair]}
+
+            print(param_input)
+            if self.optimizer == "bayesian":
+                opt = BayesianOptimization(self.estimator, param_grid)
+
+            param_input.update(param_grid)
             if self.optimizer == "gridcv":
-                opt = sk_ms.GridSearchCV(self.estimator,param_input)
+                opt = sk_ms.GridSearchCV(self.estimator,param_input,cv= zip(range(injected.shape[0]),range(injected.shape[0])))
+
 
             # opt = BayesianOptimization(self, self.suggest_param_range(X), n_jobs=1)
             opt.fit(X, y)
@@ -96,13 +120,19 @@ class RepairAlgorithm:
 
         self.is_training = False
 
-    def repair(self, X, y=None):
+
+    def repair(self,  injected, truth = None , **kwargs):
+        X, X_norn_inv = self.normalize(injected)
+        y, _ = self.normalize(truth)
         timer = Timer()
         timer.start()
         repair = self.estimator.predict(X, y)
-        return {"repair": pd.DataFrame(repair)
+        repair = pd.DataFrame(repair) # *std_X+mean_X
+        repair = X_norn_inv(repair)
+
+        return {"repair": repair
             , "runtime": timer.get_time()
             , "type": self.alg_type
             , "name": str(self.estimator)
             , "params": self.estimator.get_params()
-                }
+            }

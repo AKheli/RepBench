@@ -20,7 +20,7 @@ class BaseScenario:
                  , cols_to_inject=None
                  , train_test_split=0.5
                  , train = None
-                 , data_name=None , **kwargs ):
+                 , data_name=None , n_ts_cap  =10, **kwargs ):
 
 
         self.data_name = data_name
@@ -29,11 +29,10 @@ class BaseScenario:
         self.injected_columns = [0] if cols_to_inject is None else cols_to_inject
         self.train_test_split = train_test_split
         self.data_filename = data
-
+        self.n_ts_cap = n_ts_cap
 
         ### get train and test split
         self.read_data_into_train_and_test(data,train_test_split,train)
-
 
         assert hasattr(self,"original_test") and hasattr(self,"original_train")
         self.init_specialiced_scenario()
@@ -95,13 +94,14 @@ class BaseScenario:
         self.scenarios = self.transform_df(self.original_test, self.injected_columns)
         return self.train, self.scenarios
 
-    @staticmethod
-    def split_train_test(df, train_test_split):
-        if train_test_split == 0:
-            return None , df
+    def split_train_test(self, df, train_test_split):
+        # if train_test_split == 0:
+        #     return None , df
 
-        l = int(len(df) * train_test_split)
-        return df.iloc[max(0,l-3000):l, :], df.iloc[l:min(l+5000,len(df)), :]
+        n , m = df.shape
+        l = int(n*train_test_split)
+        cap = min(self.n_ts_cap,m)
+        return df.iloc[max(0,l-3000):l, :cap], df.iloc[l:min(l+5000,len(df)), :cap]
 
 
     def get_amount_and_length(self, counter = 0):

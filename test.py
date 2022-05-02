@@ -1,31 +1,34 @@
-class A():
+from Repair.repair_algorithm import RepairAlgorithm
+import numpy as np
+import pandas as pd
+import Scenarios.scenario_types.ScenarioConfig as sc
+from Scenarios.scenario_types.AnomalyRate import AnomalyRateScenario
 
-    def f(self):
-        pass
+import matplotlib.pyplot as plt
 
+cols = [0]
 
-class A1(A):
-    def f(self):
-        return 1
+repair_alg = RepairAlgorithm("cdrec", cols)
+anomaly = "shift"
+data = "msd.csv"
+injected_scenario = AnomalyRateScenario(data, cols, anomaly_type=
+anomaly)
 
+repair_alg.estimator.refit = True
+for (name, train, test) in injected_scenario.name_train_test_iter:
+    train["injected"].iloc[:, cols].plot()
+    plt.show()
 
-class A2():
-    def f(self):
-        return 2
+    repair_alg.train(**train)
+    print("trained")
+    repair_train = repair_alg.repair(**train)["repair"]
+    print("repaired train")
+    repair_train.iloc[:, cols].plot()
+    plt.show()
+    break
 
-
-class B():
-
-    def __init__(self, x):
-
-        if x == 1:
-            a = A1()
-        if x == 2:
-            a = A2()
-        
-        self.b: A = a
-        print(self.b.f())
-
-
-b = B(1)
-b = B(2)
+for (name, train, test) in injected_scenario.name_train_test_iter:
+    print("repaired test")
+    repair_test = repair_alg.repair(**test)["repair"]
+    repair_test.iloc[:, cols].plot()
+    plt.show()

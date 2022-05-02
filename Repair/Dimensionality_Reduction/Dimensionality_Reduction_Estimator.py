@@ -12,6 +12,7 @@ class DimensionalityReductionEstimator(Estimator):
                  , threshold=0.3
                  , eps=1e-6
                  , max_iter=10
+                 , repair_iter = 10
                  , interpolate_anomalies=True
                  , **kwargs
                  ):
@@ -22,6 +23,8 @@ class DimensionalityReductionEstimator(Estimator):
         self.repair_truncation = repair_truncation
         self.eps = eps
         self.n_max_iter = max_iter
+        self.repair_iter = repair_iter
+
 
         super().__init__(**kwargs)
 
@@ -43,19 +46,21 @@ class DimensionalityReductionEstimator(Estimator):
         return {"classification_truncation": self.classification_truncation,
                 "repair_truncation": self.repair_truncation,
                 # "delta": self.delta,
-                "threshold": self.threshold}
+                "threshold": self.threshold,
+                "repair_iter" : self.repair_iter}
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
         return {"classification_truncation": list(range(1, max(2, min(int(X.shape[1] / 2), 3)))),
-                "repair_truncation": list(range(1, max(2, min(4, n_cols - 1)))),
+                "repair_truncation": list(range(2, max(4, int(n_cols / 2)))),
                 # "delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
-                "threshold": np.linspace(1, 2.8, num=20)}
+                "threshold": np.linspace(1, 2.8, num=20),
+                "repair_iter" : np.arange(10)}
 
     def fit(self, X, y=None):
         self.reduce(X, self.classification_truncation)
         self.is_fitted = True
-        assert hasattr(self,"transform_matrix")
+        assert hasattr(self, "transform_matrix")
         return self
 
     def reduce(self, matrix, truncation):
@@ -64,7 +69,7 @@ class DimensionalityReductionEstimator(Estimator):
             matrix = matrix.values
 
         transform_matrix, weighted_mean, weights = self.IRLS(matrix, truncation)
-
+        assert np.linalg.matrix_rank(transform_matrix) == truncation
         self.transform_matrix = transform_matrix
         self.weighted_mean = weighted_mean
 
@@ -72,15 +77,20 @@ class DimensionalityReductionEstimator(Estimator):
 
         return reduced
 
-    def transform_(self,matrix):
+
+    def transform_(self, matrix):
         return np.dot(matrix - self.weighted_mean, self.transform_matrix) + self.weighted_mean
 
-    def predict(self, matrix, y=None):
+        # def fitted_transform_(self,matrix):
 
+
+    def predict(self, matrix, y=None  , refit = False):
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
-        if self.is_fitted:
+        if not refit and self.is_fitted:
+            fitted_transform_matrix = self.transform_matrix
+            fitted_weighted_mean = self.weighted_mean
             reduced = self.transform_(matrix)
         else:
             reduced = self.reduce(matrix, self.classification_truncation)
@@ -88,19 +98,25 @@ class DimensionalityReductionEstimator(Estimator):
         anomaly_matrix = self.classify(matrix, reduced=reduced)
 
         assert matrix.shape == anomaly_matrix.shape
-
         repair = matrix.copy()
-
         matrix_to_interpolate = matrix.copy()
         matrix_to_interpolate[anomaly_matrix] = np.nan
         matrix_inter = interpolate(matrix_to_interpolate, anomaly_matrix)
-
         assert not np.isnan(matrix_inter).any(), "interpolation failed"
 
-        reduced = self.reduce(matrix_inter, self.repair_truncation)
-        repair[anomaly_matrix] = reduced[anomaly_matrix]
+        reduced = matrix_inter
+
+        for i in range(self.repair_iter):
+            reduced = self.reduce(reduced, self.repair_truncation)
+            repair[anomaly_matrix] = reduced[anomaly_matrix]
+            reduced = repair.copy()
+
+        if not refit and self.is_fitted:
+            self.transform_matrix = fitted_transform_matrix
+            self.weighted_mean = fitted_weighted_mean
 
         return repair
+
 
     def IRLS(self, matrix, truncation):
         X = check_array(matrix, dtype=[np.float32], ensure_2d=True,
@@ -118,7 +134,7 @@ class DimensionalityReductionEstimator(Estimator):
             assert transform_matrix.shape == (n_features, n_features), transform_matrix.shape
             diff = X_centered - np.dot(X_centered, transform_matrix)
             errors_raw = np.linalg.norm(diff, axis=1)
-
+            self.errors_raw = errors_raw
             errors_loss = compute_loss(errors_raw, self.delta)
             total_error = errors_loss.sum()
 
@@ -126,10 +142,11 @@ class DimensionalityReductionEstimator(Estimator):
 
             n_iterations_ += 1
 
-            not_done_yet = n_iterations_ < self.n_max_iter \
-                           or abs(total_error - last_error) / abs(total_error) < 0.00000000000001
+            not_done_yet = n_iterations_ < self.n_max_iter
+                          # or abs(total_error - last_error) / abs(total_error) < 0.00000000000001
 
         return transform_matrix, weighted_mean, weights
+
 
     def classify(self, matrix, reduced):
         if isinstance(matrix, pd.DataFrame):
@@ -138,13 +155,6 @@ class DimensionalityReductionEstimator(Estimator):
         diff = matrix - reduced
         anomaly_matrix = difference_classify(diff, self.columns_to_repair, self.threshold)
         return anomaly_matrix
-
-
-def reduce(self, matrix, truncation):
-    matrix = np.asarray(matrix, dtype=np.float64).copy()
-    norm_matrix = self.normalize(matrix)
-    matrix_hat = self._reduce(norm_matrix, truncation)
-    return self.undo_normalization(matrix_hat)
 
 
 ## classification_methods
