@@ -3,7 +3,7 @@ import pandas as pd
 
 import Repair.algorithms_config as ac
 from ParameterTuning.sklearn_bayesian import BayesianOptimization
-from Repair.Dimensionality_Reduction.CDrec.CD_Rec_estimator import CD_Rec_estimator
+from Repair.Dimensionality_Reduction.CD.CD_Rec_estimator import CD_Rec_estimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
@@ -44,6 +44,7 @@ class RepairAlgorithm:
         self.times = {}
         self.times["fit"] = {"total": 0}
         self.times["predict"] = {"total": 0}
+        self.train_results = {}
 
     @property
     def columns_to_repair(self):
@@ -98,20 +99,23 @@ class RepairAlgorithm:
         else:
             param_grid = self.estimator.suggest_param_range(X)
 
-            param_input = {"columns_to_repair" : [ self.estimator.columns_to_repair]}
 
-            print(param_input)
+
             if self.optimizer == "bayesian":
                 opt = BayesianOptimization(self.estimator, param_grid)
 
+            param_input = {"columns_to_repair": [ [self.estimator.columns_to_repair]]}
             param_input.update(param_grid)
+            print(param_input)
             if self.optimizer == "gridcv":
                 opt = sk_ms.GridSearchCV(self.estimator,param_input,cv= zip(range(injected.shape[0]),range(injected.shape[0])))
-
+                #self.train_results = {"name": self.optimizer}.update(opt.cv_results_)
 
             # opt = BayesianOptimization(self, self.suggest_param_range(X), n_jobs=1)
             opt.fit(X, y)
             self.estimator = opt.best_estimator_
+
+
             #self.__dict__.update(fitted_attr)
             #self._hashed_train_[hash_] = fitted_attr.copy()
             #print(self.get_fitted_attributes())
@@ -122,6 +126,8 @@ class RepairAlgorithm:
 
 
     def repair(self,  injected, truth = None , **kwargs):
+        attributes_str = str(self.estimator.get_params())
+
         X, X_norn_inv = self.normalize(injected)
         y, _ = self.normalize(truth)
         timer = Timer()
@@ -130,9 +136,14 @@ class RepairAlgorithm:
         repair = pd.DataFrame(repair) # *std_X+mean_X
         repair = X_norn_inv(repair)
 
+        assert attributes_str == str(self.estimator.get_params()) , f'{attributes_str} \n {str(self.estimator.get_params())}'
         return {"repair": repair
             , "runtime": timer.get_time()
             , "type": self.alg_type
             , "name": str(self.estimator)
-            , "params": self.estimator.get_params()
+            , "params": self.estimator.get_fitted_params()
             }
+
+
+
+

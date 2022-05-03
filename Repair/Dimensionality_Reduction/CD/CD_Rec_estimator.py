@@ -20,9 +20,13 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
 
     def __str__(self):
         if self.n_max_iter < 2:
-            return f'CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold, 2)})'
+            return f'CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold, 2), self.repair_iter})'
 
-        return f'weighted_CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold,2)})'
+        return f'weighted_CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold,2), self.repair_iter})'
+
+
+
+
 
 
 def weighted_centroid_decomposition(matrix, truncation=0, weights = None , SV=None ):

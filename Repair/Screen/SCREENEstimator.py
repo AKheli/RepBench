@@ -19,12 +19,11 @@ class SCREEN_estimator(Estimator):
 
         Estimator.__init__(self,**kwargs)
 
-    def get_params(self,**args):
+    def get_fitted_params(self, **args):
         return {"t": self.t
             , "smin": self.smin
             , "smax": self.smax
             , "method": self.method
-            , "columns_to_repair" : self.columns_to_repair
         }
 
 
@@ -57,4 +56,4 @@ class SCREEN_estimator(Estimator):
         return  f'SCREEN({self.t},{round(self.smax,1)},{round(self.smin,1)})'
 
     def get_fitted_attributes(self):
-        return self.get_params()
+        return self.get_fitted_params()

@@ -4,7 +4,7 @@ import pandas as pd
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import numpy as np
 
-from Scenarios.scenario_types.ScenarioConfig import TS_NBR
+from Scenarios.ScenarioConfig import TS_NBR
 
 
 class NumberOfTSScenario(BaseScenario):

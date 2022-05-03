@@ -1,7 +1,4 @@
 from Repair.repair_algorithm import RepairAlgorithm
-import numpy as np
-import pandas as pd
-import Scenarios.scenario_types.ScenarioConfig as sc
 from Scenarios.scenario_types.AnomalyRate import AnomalyRateScenario
 
 import matplotlib.pyplot as plt

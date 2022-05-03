@@ -18,8 +18,8 @@ class IMR_estimator(Estimator):
         Estimator.__init__(self, **kwargs)
         self.max_itr_n  = 1000
 
-    def get_params(self, **kwargs):
-        return {"p": self.p , "tau" : self.tau , "columns_to_repair" : self.columns_to_repair}
+    def get_fitted_params(self, **kwargs):
+        return {"p": self.p , "tau" : self.tau}
 
 
     def suggest_param_range(self,X):
@@ -31,6 +31,10 @@ class IMR_estimator(Estimator):
         return self
 
     def predict(self, X , y =None):
+        plt.plot(X)
+        plt.show()
+        plt.plot(y)
+        plt.show()
         # print(self.cols)
         # X.iloc[:,self.cols].plot()
         # plt.show()
@@ -39,14 +43,19 @@ class IMR_estimator(Estimator):
         assert y is not None , "IMR needs truth values to assign labels"
 
         injected = X.copy()
-        truth = y.copy()
+        truth_full = y.copy()
         repair = injected.copy()
         for col in self.columns_to_repair:
-            x = np.array(injected.iloc[:, col])
-            truth = np.array(truth.iloc[:, col])
+            print("cooooooooool" , col)
+            x = np.array(injected)[:, col]
+            truth = np.array(truth_full)[:, col]
             if np.allclose(x,truth):
-              assert False, "x and y_0 initialization are to close for a repair"
-              repair.iloc[:, col] = x
+                plt.plot(x)
+                plt.show()
+                plt.plot(truth)
+                plt.show()
+                assert False, "x and y_0 initialization are to close for a repair"
+                repair.iloc[:, col] = x
 
             anom_start_labels = generate_anomaly_start_labels(x, truth,
                                                               start_of_anomaly=True)
@@ -104,4 +113,4 @@ class IMR_estimator(Estimator):
         return  f'IMR({self.p},{round(self.tau,2)})'
 
     def get_fitted_attributes(self):
-        return self.get_params()
+        return self.get_fitted_params()

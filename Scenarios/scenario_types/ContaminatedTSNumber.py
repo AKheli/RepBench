@@ -1,10 +1,8 @@
 ##
-import pandas as pd
-from matplotlib import pyplot as plt
 
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import numpy as np
-from Scenarios.scenario_types.ScenarioConfig import CTS_NBR
+from Scenarios.ScenarioConfig import CTS_NBR
 
 
 class ContaminatedNumberOfTSScenario(BaseScenario):
@@ -35,7 +33,6 @@ class ContaminatedNumberOfTSScenario(BaseScenario):
             injected.iloc[:, :l] = fully_injected.iloc[:, :l].copy()
 
             result[f"{l}"] = self.create_scenario_part_output(
-                injected, df,
+                injected, df.copy(),
                 list(range(l)), self.train)
-
         return result

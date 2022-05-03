@@ -21,8 +21,19 @@ class Estimator(ABC, BaseEstimator):
     def predict(self, X, y=None):
         raise NotImplementedError(self)
 
-    def get_params(self, **args):
+
+    def get_params(self, deep= False):
+        "needed for training"
+        single_params = {"columns_to_repair": self.columns_to_repair}
+        single_params.update(self.get_fitted_params())
+        return single_params
+
+    def get_fitted_params(self, **args):
         raise NotImplementedError(self)
+
+
+
+
 
     def suggest_param_range(self, X):
         "parameter ranges used for training depending on data X"

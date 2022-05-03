@@ -26,9 +26,10 @@ class BayesianOptimization():
     def set_param_grid(self, paramgrid):
         self.param_grid = {}
         for k, v in paramgrid.items():
-            self.param_grid[k] = (min(v), max(v)) if len(v) >= 2 else v[0]
-        print("grid" , self.param_grid)
+            self.param_grid[k] = (min(v), max(v)) if len(v) >= 2 else v
+         #print("grid" , self.param_grid)
     def fit(self, X, y, groups=None):
+        #print(self.param_grid)
         self.clf = deepcopy(self.clf)
         gp_minimize_result = self.bayesian_opt(X, y, self.clf, self.param_grid, self.n_jobs)
         self.best_params_ = {k: v for k, v in zip(self.param_grid.keys(), gp_minimize_result.x)}
@@ -117,5 +118,6 @@ import os
 
 
 def animate(res):
+    return
     sys.stdout.write(f' {res.func_vals[-1]},')
     sys.stdout.flush()

@@ -14,10 +14,8 @@ default_length = 10
 scenario_specifications = {
     BASE_SCENARIO: {"a_percentage": default_percentage, "a_length": default_length},
     TS_LENGTH: {"a_percentage": default_percentage, "a_length": default_length},
-    ANOMALY_SIZE: {"a_lengths": [5,10,20,30,50,100] , "a_percentage": default_percentage },
-    ANOMALY_RATE: {"a_percentages":[0.25,0.5,1,2,5,10,20], "a_length": default_length},
-    #MINI_SCENARIO: {"length": 25, "anomaly_length": 5},
-    #ANOMALY_FACTOR: {"anomaly_percentage": 0.10, "anomaly_length": 10},
+    ANOMALY_SIZE: {"a_lengths": [5,10,20,30,50,100] , "a_percentage": default_percentage/2 },
+    ANOMALY_RATE: {"a_percentages":[0.25,0.5,1,2,5,10], "a_length": default_length},
     TS_NBR : {"a_percentage": default_percentage,"a_length" : default_length },
     CTS_NBR : {"contaminated_ts": [1,2,3,4,5,6,7,8,9,10],"a_percentage" : default_percentage/2}
 }

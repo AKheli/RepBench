@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.ScenarioConfig import ANOMALY_FACTOR
+from Scenarios.ScenarioConfig import ANOMALY_FACTOR
 
 
 class AnomalyFactorScenario(BaseScenario):

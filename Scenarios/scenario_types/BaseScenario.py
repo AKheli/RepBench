@@ -5,7 +5,7 @@ from Scenarios.Anomaly_Types import *
 import numpy as np
 from Injection.injection_methods.basic_injections import add_anomaly
 from Injection.injection_methods.index_computations import get_anomaly_indices
-from Scenarios.scenario_types.ScenarioConfig import *
+from Scenarios.ScenarioConfig import *
 from data_methods.Helper_methods import get_df_from_file
 
 

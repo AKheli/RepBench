@@ -39,7 +39,7 @@ class Robust_PCA_estimator_try(Estimator):
         super().__init__(**kwargs)
 
 
-    def get_params(self, **kwargs):
+    def get_fitted_params(self, **kwargs):
         return {"delta": self.delta
             , "threshold": self.threshold
             , "component_method": self.component_method

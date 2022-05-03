@@ -1,6 +1,6 @@
 import numpy as np
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.ScenarioConfig import ANOMALY_RATE
+from Scenarios.ScenarioConfig import ANOMALY_RATE
 
 
 class AnomalyRateScenario(BaseScenario):

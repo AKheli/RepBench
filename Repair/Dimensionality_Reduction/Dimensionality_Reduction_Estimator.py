@@ -11,7 +11,7 @@ class DimensionalityReductionEstimator(Estimator):
                  , delta=1.5
                  , threshold=0.3
                  , eps=1e-6
-                 , max_iter=10
+                 , n_max_iter=10
                  , repair_iter = 10
                  , interpolate_anomalies=True
                  , **kwargs
@@ -22,40 +22,27 @@ class DimensionalityReductionEstimator(Estimator):
         self.classification_truncation = classification_truncation
         self.repair_truncation = repair_truncation
         self.eps = eps
-        self.n_max_iter = max_iter
+        self.n_max_iter = n_max_iter
         self.repair_iter = repair_iter
-
-
         super().__init__(**kwargs)
 
-    # def normalize(self, X):
-    #     self.norm_std = np.std(X, axis=0)
-    #     self.norm_mean = np.mean(X, axis=0)
-    #     return (X - self.norm_mean) / self.norm_std
-
-    # def undo_normalization(self, X):
-    #     X = X * self.norm_std + self.norm_mean
-    #     self.norm_std = None
-    #     self.norm_mean = None
-    #     return X
-
-    def get_params(self, deep=False):
-        return self.__dict__
-
-    def get_fitted_attributes(self):
+    def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
                 "repair_truncation": self.repair_truncation,
                 # "delta": self.delta,
                 "threshold": self.threshold,
-                "repair_iter" : self.repair_iter}
+                "repair_iter": self.repair_iter,
+                "n_max_iter": self.n_max_iter}
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
-        return {"classification_truncation": list(range(1, max(2, min(int(X.shape[1] / 2), 3)))),
-                "repair_truncation": list(range(2, max(4, int(n_cols / 2)))),
+        return {"classification_truncation": list(range(1,min(n_cols,5))),
+                "repair_truncation": list(range(2,min(n_cols, max(4, int(n_cols / 2))))),
                 # "delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
                 "threshold": np.linspace(1, 2.8, num=20),
-                "repair_iter" : np.arange(10)}
+                "repair_iter" : np.arange(10),
+                "n_max_iter": (0,20)
+                }
 
     def fit(self, X, y=None):
         self.reduce(X, self.classification_truncation)

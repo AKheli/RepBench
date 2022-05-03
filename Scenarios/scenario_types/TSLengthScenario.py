@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-from Scenarios.scenario_types.ScenarioConfig import TS_LENGTH
+from Scenarios.ScenarioConfig import TS_LENGTH
 
 
 class TSLengthScenario(BaseScenario):

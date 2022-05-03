@@ -1,13 +1,11 @@
 import itertools
 import os.path
 
-import numpy as np
-
 import  Scenarios.Anomaly_Types as at
 from Repair.repair_algorithm import RepairAlgorithm
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
-import Scenarios.scenario_types.ScenarioConfig as sc
+import Scenarios.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
 from run_ressources.parser_results_extraction import *
 
@@ -69,14 +67,22 @@ def main(input = None):
                 data_params = {}
                 data_params["truth"] = test["original"]
                 injected = test["injected"]
-                injected_columns = test["columns"]
-                estim.columns_to_repair = injected_columns
+
+
                 truth = test["truth"]
                 data_params["cols"] = test["columns"]
                 train_injected, train_truth = train["injected"], train["original"]
 
+                injected_columns = train["columns"]
+                estim.columns_to_repair = injected_columns
                 estim.train(train_injected, train_truth)
+
+                injected_columns = test["columns"]
+                estim.columns_to_repair = injected_columns
                 repair_out_put = estim.repair(injected, truth)
+                #train_repair_output = estim.repair(train_injected, train_truth)
+
+                #injected_scenario.add_repair(name, train_repair_output, f'{repair_out_put["type"]}_train')
                 injected_scenario.add_repair(name, repair_out_put, repair_out_put["type"])
 
                 # logging.info(
