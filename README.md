@@ -21,9 +21,9 @@ $ python3 run.py [arguments]
  | -------- | -------- | -------- | -------- | 
  | bafu5k     | shift |ts_len| rpca
  | humidity    |distortion |  a_size | scree
- | msd           | growth | a_rate | imr
- | all      | outlier | ts_nbr | cdrec
- |            |all  | cts_nbr | all
+ | msd1_5          | growth | a_rate | imr
+ | msd_hc     | outlier | ts_nbr | cdrec
+ | all       |all  | cts_nbr | all
  |            |  | all | 
 
 
