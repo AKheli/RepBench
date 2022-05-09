@@ -3,16 +3,25 @@ import numpy as np
 from Scenarios.Anomaly_Types import *
 
 
+# def anomaly_size(data, indexes):
+#     start, stop = indexes[0] , indexes[-1]
+#     local_range = data[np.arange(max(0, start - len(indexes*2)), min(stop+len(indexes)*2, len(data) - 1))]
+#     global_range = data[np.arange(max(0, start - len(indexes*12)), min(stop+len(indexes)*12, len(data) - 1))]
+#     global_std = global_range.std()
+#     local_std = local_range.std()
+#     local_mean = local_range.mean()
+#     delta_local = max(local_range)-min(local_range)
+#     quants = np.quantile(data, [0.1,0.9])
+#     return (quants[1]-quants[0])
+
+
 def anomaly_size(data, indexes):
     start, stop = indexes[0] , indexes[-1]
-    local_range = data[np.arange(max(0, start - len(indexes*2)), min(stop+len(indexes)*2, len(data) - 1))]
-    global_range = data[np.arange(max(0, start - len(indexes*12)), min(stop+len(indexes)*12, len(data) - 1))]
-    global_std = global_range.std()
+    local_range = data[np.arange(max(0, start - len(indexes)*3), min(stop+len(indexes)*2, len(data) - 1))]
+    global_std = data.std()
     local_std = local_range.std()
-    local_mean = local_range.mean()
-    delta_local = max(local_range)-min(local_range)
-    quants = np.quantile(data, [0.1,0.9])
-    return (quants[1]-quants[0])
+    s = (global_std + 3*local_std)/4
+    return s*2.5
 
 
 def add_anomaly(anomaly_type, data, index_range = [], factor=None, directions=None, stdrange=None
@@ -67,8 +76,13 @@ def inject_amplitude_shift(data, index_range, factor=1, directions=[1, -1], stdr
 
 def inject_distortion(data, index_range, factor=8):
     anom_type = DISTORTION
+    # data_range = data[index_range]
+    # median_  = data_range.median()
+    # data[index_range] = (data_range - median_)*(factor-1)
     firstelement = index_range[0] - 1
     index_range_extended = [firstelement] + list(index_range)  # to directly start with the distortion
     data = np.array(data, dtype=np.float64)
-    data[index_range_extended[1::]] += (data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
+    size = anomaly_size(data, indexes=index_range)
+    diff = np.sign(data[index_range_extended[1::]] - data[index_range_extended[:-1:]])
+    data[index_range_extended[1::]] += diff*size #(data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}
