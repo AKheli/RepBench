@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
-
+import  run_ressources.Logger as log
 from Scenarios.scenario_saver.plotters import generate_truth_and_injected, generate_repair_plot, \
     generate_correlated_series_plot
 from Scenarios.scenario_types.BaseScenario import BaseScenario
@@ -20,7 +20,12 @@ def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
 
 
         original_error = error_func(truth, injected, columns)
-        assert original_error != 0 , "original error is 0"
+        if original_error == 0:
+            if log.do_log:
+                log.add_to_log( f"original error is 0 in  {scenario_part_name} ,{scenario.data_name} ")
+                continue # todo check this
+
+        assert original_error != 0 , f"original error is 0 in  {scenario_part_name} ,{scenario.data_name} "
         errors = {}#"original_error": (error_func(truth, injected, columns), "")}
 
         for algo_name, algo_output in repairs[scenario_part_name].items():
