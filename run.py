@@ -19,7 +19,7 @@ os.chdir(path)
 repair_estimators = ["rpca","screen","cdrec","imr"]
 estimator_choices = repair_estimators + ["all"]
 
-scenarios = [sc.ANOMALY_SIZE, sc.CTS_NBR]
+scenarios = [sc.ANOMALY_SIZE, sc.CTS_NBR , sc.ANOMALY_RATE ,sc.ANOMALY_SIZE , sc.TS_LENGTH,sc.TS_NBR]
 scenario_choices = scenarios + ["all"]
 
 all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER]
