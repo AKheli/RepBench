@@ -6,9 +6,8 @@ from Scenarios.metrics import RMSE
 
 class Estimator(ABC, BaseEstimator):
 
-    def __init__(self, columns_to_repair, **kwargs):
+    def __init__(self, columns_to_repair):
         self.columns_to_repair = columns_to_repair
-        self.__dict__.update(kwargs)
 
     # predict , fit and score for the sklearn parameter optizimiters
     def score(self, X, y, columns=None):

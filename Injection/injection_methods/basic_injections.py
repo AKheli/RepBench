@@ -82,7 +82,11 @@ def inject_distortion(data, index_range, factor=8):
     firstelement = index_range[0] - 1
     index_range_extended = [firstelement] + list(index_range)  # to directly start with the distortion
     data = np.array(data, dtype=np.float64)
-    size = anomaly_size(data, indexes=index_range)
-    diff = np.sign(data[index_range_extended[1::]] - data[index_range_extended[:-1:]])
-    data[index_range_extended[1::]] += diff*size #(data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
+    size = anomaly_size(data, indexes=index_range)/2
+    X = data[index_range]
+    indices = np.arange(len(X))
+    s , intercept = np.polyfit(indices, X, 1)
+    line = indices * s + intercept
+    diff = np.sign(line-X)
+    data[index_range] += diff*size #(data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}

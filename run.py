@@ -6,8 +6,9 @@ from Repair.repair_algorithm import RepairAlgorithm
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
 import Scenarios.ScenarioConfig as sc
+from Scenarios.scenario_types.Scenario_Constructor_mapper import SCENARIO_CONSTRUCTORS
 from run_ressources.parser_init import init_parser
-from run_ressources.parser_results_extraction import *
+from run_ressources.parse_toml import load_toml_file
 
 current_path = os.getcwd()
 folder = "MA"
@@ -18,10 +19,10 @@ os.chdir(path)
 repair_estimators = ["rpca","screen","cdrec","imr"]
 estimator_choices = repair_estimators + ["all"]
 
-scenarios = [sc.TS_NBR,sc.ANOMALY_RATE, sc.ANOMALY_SIZE, sc.CTS_NBR , sc.TS_LENGTH]
+scenarios = [sc.ANOMALY_SIZE, sc.CTS_NBR]
 scenario_choices = scenarios + ["all"]
 
-all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER,at.GROWTH_CHANGE]
+all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER]
 anomaly_choices =all_anomalies+["all"]
 
 def main(input = None):
@@ -48,9 +49,13 @@ def main(input = None):
     data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
         else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
 
+
+
+    ##
     # map repair estimator input
-    repair_algos =  [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols) for rep_alg in estim_params] if "all" not in estim_params\
-        else [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols) for rep_alg in repair_estimators]
+    param_dicts = load_toml_file()
+    repair_algos =  [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols , **param_dicts[rep_alg]) for rep_alg in estim_params] if "all" not in estim_params\
+        else [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols, **param_dicts[rep_alg]) for rep_alg in repair_estimators]
 
     # map anomalies
     anomalies = [parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
@@ -75,7 +80,7 @@ def main(input = None):
 
                 injected_columns = train["columns"]
                 estim.columns_to_repair = injected_columns
-                estim.train(train_injected, train_truth)
+                #estim.train(train_injected, train_truth)
 
                 injected_columns = test["columns"]
                 estim.columns_to_repair = injected_columns

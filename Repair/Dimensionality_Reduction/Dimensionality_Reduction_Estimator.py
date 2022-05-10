@@ -11,8 +11,8 @@ class DimensionalityReductionEstimator(Estimator):
                  , delta=1.5
                  , threshold=0.3
                  , eps=1e-6
-                 , n_max_iter=10
-                 , repair_iter = 10
+                 , n_max_iter=15
+                 , repair_iter = 2
                  , interpolate_anomalies=True
                  , **kwargs
                  ):
@@ -29,7 +29,6 @@ class DimensionalityReductionEstimator(Estimator):
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
                 "repair_truncation": self.repair_truncation,
-                # "delta": self.delta,
                 "threshold": self.threshold,
                 "repair_iter": self.repair_iter,
                 "n_max_iter": self.n_max_iter}
@@ -38,7 +37,6 @@ class DimensionalityReductionEstimator(Estimator):
         n_cols = X.shape[1]
         return {"classification_truncation": list(range(1,min(n_cols,5))),
                 "repair_truncation": list(range(2,min(n_cols, max(4, int(n_cols / 2))))),
-                # "delta": np.geomspace(0.001, np.mean(np.linalg.norm(X,axis=1))/3, num=30),
                 "threshold": np.linspace(1, 2.8, num=20),
                 "repair_iter" : np.arange(10),
                 "n_max_iter": (0,20)
@@ -71,7 +69,7 @@ class DimensionalityReductionEstimator(Estimator):
         # def fitted_transform_(self,matrix):
 
 
-    def predict(self, matrix, y=None  , refit = False):
+    def predict(self, matrix, y=None  , refit = True):
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 

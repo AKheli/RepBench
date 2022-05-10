@@ -3,7 +3,7 @@ import pandas as pd
 import os
 def create_summary(error = "RMSE"):
     counter = {}
-    for path in [x[0] for x in os.walk("Results") if x[0].endswith(error)]:
+    for path in [x[0] for x in os.walk("../Results") if x[0].endswith(error)]:
         results , scen , a_type , data_set , *_  = path.split("/")
 
         file_name = error+".txt"
