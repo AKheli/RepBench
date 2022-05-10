@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 
 from Repair.algorithms_config import CDREC
 from Repair.Dimensionality_Reduction.Dimensionality_Reduction_Estimator import DimensionalityReductionEstimator
-from Repair.Robust_PCA.loss import HuberLoss
 import numpy as np
 
 

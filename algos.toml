@@ -19,8 +19,8 @@
 
 [screen]
      t = 1
-     smin = -0.2
-     smax  = 0.2
+     smin = -1
+     smax  = 1
 
 
 # alg list ["rpca","screen","cdrec","imr"

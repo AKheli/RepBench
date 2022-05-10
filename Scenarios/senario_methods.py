@@ -18,14 +18,16 @@ def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
         assert truth is not None
         injected = v["injected"]
 
-        errors = {"original_error": (error_func(truth, injected, columns), "")}
+
+        original_error = error_func(truth, injected, columns)
+        assert original_error != 0 , "original error is 0"
+        errors = {}#"original_error": (error_func(truth, injected, columns), "")}
 
         for algo_name, algo_output in repairs[scenario_part_name].items():
-            error = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))
+            error = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))/original_error
             errors[algo_output["type"]] = (error, algo_output["name"])
 
         df = df.append(pd.Series(errors, name=scenario_part_name))
-        print(df)
         error_df = df.applymap(lambda x: x[0])
 
     error_tables = {}
