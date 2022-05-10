@@ -17,27 +17,6 @@ def display_data_folder():
     return os.listdir("Data")
 
 
-# def searchfile(filename, folder = "Data"):
-#     print("aaaaaaaaaaaaaaaaaaa" , filename)
-#     set_path_to_MA()
-#     if filename in os.listdir(folder):
-#         filepath = f"{folder}/{filename}"
-#     else:
-#         raise ValueError
-#
-#     if not os.path.isdir(filepath):
-#         return filepath
-#
-#     #todo
-#     else:
-#         raise ValueError
-
-# def searchfiles(filename):
-#     "expects comma seperated file names"
-#     set_path_to_MA()
-#     return [ searchfile(file) for  file in filename.split(",") ]
-#
-
 def get_df_from_file(filename , folder = "Data" ):
     set_path_to_MA()
     file_path = f"{folder}/{filename}"

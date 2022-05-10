@@ -1,4 +1,3 @@
-import pandas as pd
 from matplotlib import pyplot as plt
 
 from Repair.algorithms_config import IMR
@@ -6,7 +5,7 @@ from Repair.IMR.IMR import imr2
 from Repair.IMR.label_generator import generate_anomaly_start_labels, generate_random_labels
 from Repair.estimator import Estimator
 import numpy as np
-
+import run_ressources.Logger as log
 
 alg_type = IMR
 class IMR_estimator(Estimator):
@@ -31,10 +30,6 @@ class IMR_estimator(Estimator):
         return self
 
     def predict(self, X , y =None):
-        plt.plot(X)
-        plt.show()
-        plt.plot(y)
-        plt.show()
         # print(self.cols)
         # X.iloc[:,self.cols].plot()
         # plt.show()
@@ -46,15 +41,12 @@ class IMR_estimator(Estimator):
         truth_full = y.copy()
         repair = injected.copy()
         for col in self.columns_to_repair:
-            print("cooooooooool" , col)
             x = np.array(injected)[:, col]
             truth = np.array(truth_full)[:, col]
             if np.allclose(x,truth):
-                plt.plot(x)
-                plt.show()
-                plt.plot(truth)
-                plt.show()
-                assert False, "x and y_0 initialization are to close for a repair"
+                log.add_to_log("x and y_0 initialization are to close for a repair")
+                if not log.do_log:
+                    assert False ,"x and y_0 initialization are to close for a repair"
                 repair.iloc[:, col] = x
 
             anom_start_labels = generate_anomaly_start_labels(x, truth,

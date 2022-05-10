@@ -7,5 +7,5 @@ do_log =True
 
 def add_to_log(txt):
     with open(file_name, 'a') as f:
-        f.f.write(txt)
+        f.write(txt)
         f.write('\n')
