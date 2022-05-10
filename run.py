@@ -1,7 +1,7 @@
 import itertools
 import os.path
 
-import  Scenarios.Anomaly_Types as at
+import Scenarios.Anomaly_Types as at
 from Repair.repair_algorithm import RepairAlgorithm
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from Scenarios.scenario_types.BaseScenario import BaseScenario
@@ -58,7 +58,7 @@ def main(input = None):
         else [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols, **param_dicts[rep_alg]) for rep_alg in repair_estimators]
 
     # map anomalies
-    anomalies = [parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
+    anomalies = [at.parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
 
 
