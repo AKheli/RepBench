@@ -21,11 +21,11 @@ def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
 
         original_error = error_func(truth, injected, columns)
         if original_error == 0:
+            original_error = -1
             if log.do_log:
-                log.add_to_log( f"original error is 0 in  {scenario_part_name} ,{scenario.data_name} ")
-                continue # todo check this
-
-        assert original_error != 0 , f"original error is 0 in  {scenario_part_name} ,{scenario.data_name} "
+                log.add_to_log( f"original error is 0 in {scenario.scenario_type}, {scenario_part_name} ,{scenario.data_name} ")
+                #continue # todo check this
+        #assert original_error != 0 , f"original error is 0 in  {scenario_part_name} ,{scenario.data_name} "
         errors = {}#"original_error": (error_func(truth, injected, columns), "")}
 
         for algo_name, algo_output in repairs[scenario_part_name].items():
@@ -33,7 +33,7 @@ def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
             errors[algo_output["type"]] = (error, algo_output["name"])
 
         df = df.append(pd.Series(errors, name=scenario_part_name))
-        error_df = df.applymap(lambda x: x[0])
+    error_df = df.applymap(lambda x: x[0])
 
     error_tables = {}
 

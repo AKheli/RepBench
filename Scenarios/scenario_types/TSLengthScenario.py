@@ -29,6 +29,7 @@ class TSLengthScenario(BaseScenario):
         center= math.floor(n/2)
         fifteen_percent = math.floor(n/100*15)
         five_percent = math.floor(n/100*5)
+        #assert False, data.iloc[center-fifteen_percent:center+fifteen_percent,cols]
         for col in cols:
             data.iloc[center-fifteen_percent:center+fifteen_percent,col] , _ = \
                 self.inject_single(data.iloc[center-fifteen_percent:center+fifteen_percent,col],
@@ -37,5 +38,7 @@ class TSLengthScenario(BaseScenario):
         for i in range(8):
             lower , upper = center-i*five_percent-fifteen_percent, center+i*five_percent+fifteen_percent
             result[round(100*(upper-lower)/n)] = self.create_scenario_part_output(data.iloc[lower:upper], df.iloc[lower:upper] , cols ,self.train)
+            print(result[round(100*(upper-lower)/n)]["class"])
+            assert result[round(100*(upper-lower)/n)]["class"].any(None)
 
         return result
