@@ -36,10 +36,17 @@ def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
     error_df = df.applymap(lambda x: x[0])
 
     error_tables = {}
+    print(original_error)
+    print(error_df)
+
 
     for alg_type in df.columns:
         df_colum = df[alg_type]
         error_tables[alg_type] = pd.DataFrame(df_colum.tolist(), index=df.index, columns=["error", "algorithm"])
+
+
+
+    #assert False , (error_df ,original_error)
 
     return error_df, error_tables
 

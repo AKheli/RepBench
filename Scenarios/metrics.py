@@ -24,7 +24,7 @@ def RMSE(df_1, df_2, cols, labels=None):
 
 
 def rmse(x, y, r=3):
-    return round(np.sqrt(sum(np.square(x - y)) / len(x)), r)
+    return np.sqrt(sum(np.square(x - y)) / len(x))
 
 
 def MAE(df_1, df_2, cols, labels=None):
@@ -33,7 +33,7 @@ def MAE(df_1, df_2, cols, labels=None):
 
 
 def mae(x, y, r=3):
-    return round(np.mean(np.abs(x - y)), r)
+    return np.mean(np.abs(x - y))
 
 
 def pearson(x, y):
