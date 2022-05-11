@@ -36,6 +36,8 @@ def save_runtime(repaired_scenario :BaseScenario, path):
     runtime_df = generate_runtime_df(scenario_repair)
     runtime_df.index.name = repaired_scenario.small_data_description
 
+    runtime_df.to_csv(f'{path}/runtime.txt')
+
     for algo in list(runtime_df.columns):
         string_representation = runtime_df.to_string(columns=[algo], justify="left")
 

@@ -50,6 +50,10 @@ class DimensionalityReductionEstimator(Estimator):
 
     def reduce(self, matrix, truncation):
         matrix = matrix.copy()
+        n,m = matrix.shape
+        if truncation >= m:
+            truncation = m-1
+
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
