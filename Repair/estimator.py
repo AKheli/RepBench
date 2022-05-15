@@ -9,20 +9,24 @@ class Estimator(ABC, BaseEstimator):
     def __init__(self, columns_to_repair):
         self.columns_to_repair = columns_to_repair
 
+
+
     # predict , fit and score for the sklearn parameter optizimiters
-    def score(self, X, y, columns=None):
+    def score(self, X, y):
         score_ = -RMSE(pd.DataFrame(self.predict(X, y)), pd.DataFrame(y), self.columns_to_repair)
         return score_
 
     def fit(self, X, y=None):
         raise NotImplementedError(self)
 
-    def predict(self, X, y=None):
+    def predict(self, X, y=None , labels=None):
         raise NotImplementedError(self)
 
 
     def get_params(self, deep= False):
-        "needed for training"
+        """
+        returns all attributes that are needed for the sk optimize library
+        """
         single_params = {"columns_to_repair": self.columns_to_repair}
         single_params.update(self.get_fitted_params())
         return single_params

@@ -29,7 +29,7 @@ class IMR_estimator(Estimator):
         self.is_fitted = True
         return self
 
-    def predict(self, X , y =None):
+    def predict(self, X , y =None , labels = None):
         # print(self.cols)
         # X.iloc[:,self.cols].plot()
         # plt.show()
@@ -49,50 +49,19 @@ class IMR_estimator(Estimator):
                     assert False ,"x and y_0 initialization are to close for a repair"
                 repair.iloc[:, col] = x
 
-            anom_start_labels = generate_anomaly_start_labels(x, truth,
-                                                              start_of_anomaly=True)
 
-            labels = generate_random_labels(x, label_ratio=0.2, first_labels=self.p + 3,
-                                                already_labeled=anom_start_labels)
+            col_labels = labels.iloc[:,col]
 
-            labels = np.arange(len(labels))[labels]
+            col_labels = np.arange(len(col_labels))[col_labels]
 
             y_0 = x.copy()
-            y_0[labels] = truth[labels]
-            # plt.plot(labels, y_0[labels], ls="", marker="x",color = "blue")
-            # plt.plot(X.iloc[:, self.cols],ls="",marker=".",ms=2,color="red")
-            #plt.plot(y_0)
+            y_0[col_labels] = truth[col_labels]
 
-            # plt.show()
-            #
-            # plt.plot(X.iloc[:, col].values-y_0)
-            # #y.iloc[:, self.cols].plot()
-            # plt.show()
             if  np.allclose(x, y_0):
                 pass
-                # plt.plot(x)
-                # plt.plot(truth)
-                # plt.show()
-                # plt.plot(y_0)
-                # plt.show()
 
-            # print("eeeeeeeeeee" ,self.tau)
-            # print(self.p)
-            # print(self.max_itr_n)
-            repair_results = imr2(x, y_0, labels, tau=self.tau, p=self.p, k=self.max_itr_n)
+            repair_results = imr2(x, y_0, col_labels, tau=self.tau, p=self.p, k=self.max_itr_n)
             col_repair = repair_results["repair"]
-
-            # print(sum(col_repair-x)-sum((col_repair-x)[labels]))
-            # print(sum(x-truth))
-            # plt.plot(col_repair)
-            # plt.show()
-            # plt.plot(x)
-            # plt.show()
-            # plt.plot(y_0)
-            # plt.show()
-            # plt.plot(labels)
-            # plt.show()
-            # print(labels)
             repair.iloc[:, col] = col_repair
 
 

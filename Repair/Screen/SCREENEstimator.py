@@ -40,9 +40,11 @@ class SCREEN_estimator(Estimator):
         self.is_fitted = True
         return self
 
-    def predict(self, X , y = None):
+    def predict(self, X , y = None,labels=None):
         repair = X.copy()
         for col in [c for c in self.columns_to_repair if c < X.shape[1]]:
+            print(col,self.columns_to_repair)
+            print("coool",col)
             x = np.array(X.iloc[:, col])
             repair_result = screen(x, self.t , self.smax , self.smin)
             repair.iloc[:, col] = repair_result

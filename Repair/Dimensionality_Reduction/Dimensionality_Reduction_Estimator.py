@@ -73,7 +73,7 @@ class DimensionalityReductionEstimator(Estimator):
         # def fitted_transform_(self,matrix):
 
 
-    def predict(self, matrix, y=None  , refit = True):
+    def predict(self, matrix, y=None  , refit = True , labels=None):
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 

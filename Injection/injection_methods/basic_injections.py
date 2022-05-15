@@ -1,6 +1,6 @@
 import numpy as np
 
-from Scenarios.Anomaly_Types import *
+from Scenarios.AnomalyConfig import *
 
 
 # def anomaly_size(data, indexes):

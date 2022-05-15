@@ -20,8 +20,6 @@ def display_data_folder():
 def get_df_from_file(filename , folder = "Data" ):
     set_path_to_MA()
     file_path = f"{folder}/{filename}"
-    print(os.listdir())
-    print(file_path)
     data = pd.read_csv(file_path, nrows=0, header=0, sep="," )
     header = None
     for i in data.columns:

@@ -125,14 +125,16 @@ class RepairAlgorithm:
         self.is_training = False
 
 
-    def repair(self,  injected, truth = None , **kwargs):
+    def repair(self,  injected, injected_columns ,truth = None , labels=None ):
+        self.estimator.columns_to_repair = injected_columns
         attributes_str = str(self.estimator.get_params())
 
         X, X_norn_inv = self.normalize(injected)
         y, _ = self.normalize(truth)
         timer = Timer()
         timer.start()
-        repair = self.estimator.predict(X, y)
+        assert labels is not None
+        repair = self.estimator.predict(X, y , labels=labels)
         repair = pd.DataFrame(repair) # *std_X+mean_X
         repair = X_norn_inv(repair)
 

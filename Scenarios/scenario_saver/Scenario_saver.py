@@ -26,10 +26,10 @@ def save_precision(repaired_scenario , path , repair_plot ):
 
 
 
-def save_scenario(repaired_scenario : BaseScenario ,repair_plot = False):
-    scenario_name = repaired_scenario.scenario_type
-    data_name = repaired_scenario.data_name
-    anomaly_type = repaired_scenario.anomaly_type
+def save_scenario(scenario ,repair_plot = False):
+    scenario_name = scenario.scen_name
+    data_name = scenario.data_name
+    anomaly_type = scenario.a_type
 
     path = f"{save_folder}/{scenario_name}/{anomaly_type}/{data_name}"
     try:
@@ -37,8 +37,8 @@ def save_scenario(repaired_scenario : BaseScenario ,repair_plot = False):
     except:
         pass
 
-    save_precision(repaired_scenario,path,repair_plot = repair_plot)
-    save_runtime(repaired_scenario,path)
+    save_precision(scenario,path,repair_plot = repair_plot)
+    save_runtime(scenario,path)
 
 
 
