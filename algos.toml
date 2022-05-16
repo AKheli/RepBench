@@ -12,6 +12,12 @@
     n_max_iter = 10
     repair_iter = 3
 
+[subcdrec]
+    classification_truncation = 2
+    repair_truncation = 4
+    threshold = 2
+    n_max_iter = 10
+    repair_iter = 3
 
 [imr]
      p = 5
@@ -23,7 +29,6 @@
      smax  = 0.1
 
 
-# alg list ["rpca","screen","cdrec","imr"
 
 # cd , rpca params :
 # classification_truncation

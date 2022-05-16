@@ -1,20 +1,20 @@
-IMR = "IMR"
-SCREEN = "SCREEN"
-RPCA = "RPCA"
+IMR = "imr"
+SCREEN = "screen"
+RPCA = "rpca"
 Robust_PCA = RPCA
-CDREC = "CDrec"
+CDREC = "cdrec"
+SUBCDREC = "subcdrec"
 
+#
+# ALGORITHM_PARAMETERS = {IMR : { "p" : 2 , "tau" : 0.1 , "max_itr_n":  1000,
+#                             "label_anom_start" : 3 ,"label_rate" : 0.2 },
+#                         SCREEN : { "smin" : -6 , "smax" : 6  , "T" : 1},
+#                         RPCA : {"threshold" : 2.2 , "n_components" :2},
+#                         }
 
-ALGORITHM_PARAMETERS = {IMR : { "p" : 2 , "tau" : 0.1 , "max_itr_n":  1000,
-                            "label_anom_start" : 3 ,"label_rate" : 0.2 },
-                        SCREEN : { "smin" : -6 , "smax" : 6  , "T" : 1},
-                        RPCA : {"threshold" : 2.2 , "n_components" :2},
-                        }
-
-ALGORITHM_COLORS = {IMR : "blue" , SCREEN : "purple" , RPCA : "green" , CDREC : "orange"}
-
-ALGORITHM_TYPES = ALGORITHM_PARAMETERS.keys()
-
+ALGORITHM_COLORS = {IMR : "blue" , SCREEN : "purple" , RPCA : "green" , CDREC : "orange" ,SUBCDREC :"yellow" }
+ALGORITHM_TYPES = list(ALGORITHM_COLORS.keys())
+#
 
 def parse_anomaly_name(type_name):
     type_name = type_name.lower()

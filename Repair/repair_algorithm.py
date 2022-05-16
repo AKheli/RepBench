@@ -24,17 +24,15 @@ class RepairAlgorithm:
 
         if estimator_name in (ac.IMR, "imr"):
             estimator = IMR_estimator(columns_to_repair=columns_to_repair, **kwargs)
-            self.alg_type = ac.IMR
         if estimator_name in (ac.SCREEN , "screen"):
             estimator = SCREEN_estimator(columns_to_repair=columns_to_repair, **kwargs)
-            self.alg_type = ac.SCREEN
         if estimator_name in (ac.RPCA , "rpca"):
             estimator = Robust_PCA_estimator(columns_to_repair=columns_to_repair, **kwargs)
-            self.alg_type = ac.RPCA
         if estimator_name in (ac.CDREC , "cdrec"):
             estimator = CD_Rec_estimator(columns_to_repair=columns_to_repair, **kwargs)
-            self.alg_type = ac.CDREC
-
+            assert not estimator.sub_set
+        if estimator_name == ac.SUBCDREC:
+            estimator = CD_Rec_estimator(columns_to_repair=columns_to_repair, sub_set = True, **kwargs)
         assert estimator is not None, f'{estimator_name} could not be parsed'
 
         self.estimator: Estimator = estimator
@@ -52,7 +50,6 @@ class RepairAlgorithm:
 
     @columns_to_repair.setter
     def columns_to_repair(self, val):
-        print(val)
         #assert isinstance(val,list) , "columns must be a list even when a single collumn is used"
         self.estimator.columns_to_repair = val
         self.columns_to_repair_ = val
@@ -141,7 +138,7 @@ class RepairAlgorithm:
         assert attributes_str == str(self.estimator.get_params()) , f'{attributes_str} \n {str(self.estimator.get_params())}'
         return {"repair": repair
             , "runtime": timer.get_time()
-            , "type": self.alg_type
+            , "type": self.estimator.alg_type
             , "name": str(self.estimator)
             , "params": self.estimator.get_fitted_params()
             }

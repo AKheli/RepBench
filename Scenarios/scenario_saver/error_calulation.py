@@ -55,7 +55,7 @@ def save_error(scenario, path ):
             if color not in cyclers:
                 cyclers[color] = cycle(lines)
             plt.plot(error_df[algo_name],marker='x',label = algo_name ,color=color,ls = next(cyclers[color]))
-        plt.xlabel(list(error_df.index))
+        plt.xlabel(error_df.index.name)
         plt.ylabel("error")
         lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         plt.savefig(f'{error_path}/{error_name}.png',bbox_extra_artists=(lgd,), bbox_inches='tight')

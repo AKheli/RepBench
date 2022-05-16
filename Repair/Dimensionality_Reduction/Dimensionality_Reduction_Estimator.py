@@ -14,6 +14,7 @@ class DimensionalityReductionEstimator(Estimator):
                  , n_max_iter=15
                  , repair_iter = 2
                  , interpolate_anomalies=True
+                 , sub_set = False
                  , **kwargs
                  ):
         self.threshold = threshold
@@ -24,6 +25,7 @@ class DimensionalityReductionEstimator(Estimator):
         self.eps = eps
         self.n_max_iter = n_max_iter
         self.repair_iter = repair_iter
+        self.sub_set = sub_set
         super().__init__(**kwargs)
 
     def get_fitted_params(self, deep=False):
@@ -31,7 +33,8 @@ class DimensionalityReductionEstimator(Estimator):
                 "repair_truncation": self.repair_truncation,
                 "threshold": self.threshold,
                 "repair_iter": self.repair_iter,
-                "n_max_iter": self.n_max_iter}
+                "n_max_iter": self.n_max_iter,
+                "sub_set": self.sub_set}
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
@@ -77,34 +80,49 @@ class DimensionalityReductionEstimator(Estimator):
         if isinstance(matrix, pd.DataFrame):
             matrix = matrix.values
 
+        matrix_to_repair = matrix.copy()
+        print("EYYYYYY",self.sub_set)
+        print(np.sum(np.abs(matrix_to_repair)))
+
+        print(np.sum(np.abs(matrix_to_repair)))
+
+        if (self.sub_set):
+            if len(self.columns_to_repair) == 1:
+                sorted_corr = np.argsort(-np.abs(np.corrcoef(matrix,rowvar=False)[self.columns_to_repair,:]))[0]
+                matrix_to_repair[:,sorted_corr[6:]] = 0
+                assert np.any(matrix_to_repair[:,self.columns_to_repair])
+        print(np.sum(np.abs(matrix_to_repair)))
+
         if not refit and self.is_fitted:
             fitted_transform_matrix = self.transform_matrix
             fitted_weighted_mean = self.weighted_mean
-            reduced = self.transform_(matrix)
+            reduced = self.transform_(matrix_to_repair)
         else:
-            reduced = self.reduce(matrix, self.classification_truncation)
+            reduced = self.reduce(matrix_to_repair, self.classification_truncation)
 
-        anomaly_matrix = self.classify(matrix, reduced=reduced)
+        anomaly_matrix = self.classify(matrix_to_repair, reduced=reduced)
 
-        assert matrix.shape == anomaly_matrix.shape
-        repair = matrix.copy()
-        matrix_to_interpolate = matrix.copy()
+        assert matrix_to_repair.shape == anomaly_matrix.shape
+
+        matrix_to_interpolate = matrix_to_repair.copy()
         matrix_to_interpolate[anomaly_matrix] = np.nan
         matrix_inter = interpolate(matrix_to_interpolate, anomaly_matrix)
         assert not np.isnan(matrix_inter).any(), "interpolation failed"
 
         reduced = matrix_inter
-
         for i in range(self.repair_iter):
             reduced = self.reduce(reduced, self.repair_truncation)
-            repair[anomaly_matrix] = reduced[anomaly_matrix]
-            reduced = repair.copy()
+            matrix_to_repair[anomaly_matrix] = reduced[anomaly_matrix]
+            reduced = matrix_to_repair.copy()
 
         if not refit and self.is_fitted:
             self.transform_matrix = fitted_transform_matrix
             self.weighted_mean = fitted_weighted_mean
 
-        return repair
+        print(np.sum(np.abs(matrix_to_repair)))
+        final = matrix.copy()
+        final[:,self.columns_to_repair] = matrix_to_repair[:,self.columns_to_repair]
+        return final
 
 
     def IRLS(self, matrix, truncation):
@@ -146,21 +164,7 @@ class DimensionalityReductionEstimator(Estimator):
         return anomaly_matrix
 
 
-## classification_methods
-# def min_max(self,x):
-#     x_abs = abs(x)  #todo check whitout training and abs or not
-#     if(self.is_training):
-#         self.train_min = min_ = min(x_abs)
-#         self.train_max = max_ =  max(x_abs)
-#     elif hasattr(self,"train_min") and hasattr(self,"train_max"):
-#         min_ = self.train_min
-#         max_ = self.train_max
-#     else:
-#         min_ = min(x)
-#         max_ = max(x)
-#
-#     x_normalized = (x_abs - min_) / (max_ - min_)
-#     return x_normalized > self.threshold
+
 
 def z_score(x, threshold):
     x_abs = np.abs(x)

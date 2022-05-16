@@ -85,12 +85,11 @@ class DataPart:
                 "injected_columns": self.injected_columns}
 
     def add_repair(self, repair_results, repair_name: str):
-        assert repair_name not in self.repairs
+        assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
         f"such a repair already exists:{repair_name}"
         self.repair_names.append(repair_name)
 
         repair = repair_results["repair"]
-        print(self.truth)
         assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape)
         ### compute errors
 
@@ -138,7 +137,6 @@ class DataPart:
             name = "repair_anomaly_rmse"
             original_name = "original_anomaly_rmse"
 
-        print("iiitems",self.repairs.items())
         return { k : v[name]  for k,v  in self.repairs.items()}
 
 

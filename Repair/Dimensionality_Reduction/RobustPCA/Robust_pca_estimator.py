@@ -4,6 +4,8 @@ import numpy as np
 from scipy import linalg
 from sklearn.decomposition import TruncatedSVD
 
+from Repair.algorithms_config import RPCA
+
 
 class Robust_PCA_estimator(DimensionalityReductionEstimator):
 
@@ -19,3 +21,8 @@ class Robust_PCA_estimator(DimensionalityReductionEstimator):
             U, S, V = linalg.svd(centered_weighted_x)
         biggest_eigen_vec = V[:n_components, :]
         return np.dot(biggest_eigen_vec.T,biggest_eigen_vec)
+
+    @property
+    def alg_type(self):
+        name = RPCA
+        return name

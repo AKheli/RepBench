@@ -2,6 +2,7 @@ import itertools
 import os.path
 
 import Scenarios.AnomalyConfig as at
+import Repair.algorithms_config as algc
 from Repair.repair_algorithm import RepairAlgorithm
 from Scenarios.Scenario import Scenario
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
@@ -9,13 +10,10 @@ import Scenarios.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
 from run_ressources.parse_toml import load_toml_file
 
-current_path = os.getcwd()
-folder = "MA"
-path = folder.join(current_path.split(folder)[:-1]) + folder
-os.chdir(path)
 
 
-repair_estimators = ["rpca","screen","cdrec","imr"]
+
+repair_estimators = algc.ALGORITHM_TYPES
 estimator_choices = repair_estimators + ["all"]
 
 scenarios = [sc.ANOMALY_SIZE, sc.CTS_NBR , sc.ANOMALY_RATE  , sc.TS_LENGTH,sc.TS_NBR]

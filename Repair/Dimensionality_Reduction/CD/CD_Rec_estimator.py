@@ -15,7 +15,12 @@ class CD_Rec_estimator(DimensionalityReductionEstimator):
 
     @property
     def alg_type(self):
-        return CDREC
+        name = CDREC
+        if self.n_max_iter > 1:
+            name = "weighted" + name
+        if self.sub_set:
+            name = "selection"+name
+        return name
 
     def __str__(self):
         if self.n_max_iter < 2:

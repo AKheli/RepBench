@@ -7,8 +7,8 @@ ANOMALY_FACTOR  = "anomaly_factor"
 TS_NBR ="ts_nbr"
 CTS_NBR = "cts_nbr"
 
-MAX_N_ROWS = 5000
-MAX_N_COLS = 10
+MAX_N_ROWS = 1000
+MAX_N_COLS = 100
 
 default_percentage = 5
 default_length = 10
