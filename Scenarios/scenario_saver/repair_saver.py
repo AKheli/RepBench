@@ -3,11 +3,10 @@ import os
 from matplotlib import pyplot as plt
 
 from Scenarios.scenario_saver.plotters import algo_plot, algo_plot_faster
-from Scenarios.scenario_types.BaseScenario import BaseScenario
 from Scenarios.senario_methods import scenario_algos_figs
 
 
-def save_repair(scenario : BaseScenario, path):
+def save_repair(scenario , path):
     path = f"{path}/repair"
     try:
         os.makedirs(path)

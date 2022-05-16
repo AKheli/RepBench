@@ -12,7 +12,7 @@ Implements repair of anomalies with different data sets and injection scenarios
 ```
 ## Execution
 ```bash
-$ python3 run.py [arguments]
+$ python3 TestingFramework.py [arguments]
 ```
 ## Arguments
 
@@ -41,22 +41,22 @@ The data argument expects the Data to be in the Data folder.
  Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
 </li>
 
-```bash
-python3 run.py -scen ts_nbr -data bafu5k -anom shift -alg cdrec
+```bashs
+python3 TestingFramework.py -scen ts_nbr -data bafu5k -anom shift -alg cdrec
 ```
  <li>
 Run two algorithms (cdrec, rpca) on two dataset (bafu5k,msd) using one scenario (a_rate) and two anomalies (shift,outlier)
 </li>
 
 ```bash
-python3 run.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -alg cdrec,rpca
+python3 TestingFramework.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -alg cdrec,rpca
 ```
  <li>
 Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies
 </li>
 
 ```bash
-python3 run.py -scen all -data all -anom all -alg all
+python3 TestingFramework.py -scen all -data all -anom all -alg all
 ```
 
 </ol>

@@ -4,54 +4,11 @@ from matplotlib.ticker import MaxNLocator
 import  run_ressources.Logger as log
 from Scenarios.scenario_saver.plotters import generate_truth_and_injected, generate_repair_plot, \
     generate_correlated_series_plot
-from Scenarios.scenario_types.BaseScenario import BaseScenario
 
 import os
 
-def generate_error_df_and_error_tables(scenario: BaseScenario, error_func):
-    df = pd.DataFrame()
-    repairs = scenario.repairs
-    columns = scenario.injected_columns
 
-    for scenario_part_name, v in scenario.scenarios.items():
-        truth = v.get("truth", None) if v.get("truth", None) is not None else v.get("original", None)
-        assert truth is not None
-        injected = v["injected"]
-
-
-        original_error = error_func(truth, injected, columns)
-        if original_error == 0:
-            original_error = -1
-            if log.do_log:
-                log.add_to_log( f"original error is 0 in {scenario.scenario_type}, {scenario_part_name} ,{scenario.data_name} ")
-                #continue # todo check this
-        #assert original_error != 0 , f"original error is 0 in  {scenario_part_name} ,{scenario.data_name} "
-        errors = {}#"original_error": (error_func(truth, injected, columns), "")}
-
-        for algo_name, algo_output in repairs[scenario_part_name].items():
-            error = error_func(truth, algo_output["repair"], columns, algo_output.get("labels", None))/original_error
-            errors[algo_output["type"]] = (error, algo_output["name"])
-
-        df = df.append(pd.Series(errors, name=scenario_part_name))
-    error_df = df.applymap(lambda x: x[0])
-
-    error_tables = {}
-    print(original_error)
-    print(error_df)
-
-
-    for alg_type in df.columns:
-        df_colum = df[alg_type]
-        error_tables[alg_type] = pd.DataFrame(df_colum.tolist(), index=df.index, columns=["error", "algorithm"])
-
-
-
-    #assert False , (error_df ,original_error)
-
-    return error_df, error_tables
-
-
-def scenario_algos_figs(scenario: BaseScenario, path ,rasterize=True):
+def scenario_algos_figs(scenario, path ,rasterize=True):
     algos = scenario.repair_names
     scenario_parts = scenario.scenarios
     plots_n = len(scenario_parts.keys())

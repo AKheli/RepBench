@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 
 from Scenarios.scenario_saver.error_calulation import save_error
 from Scenarios.scenario_saver.repair_saver import save_repair
-from Scenarios.scenario_saver.run_time import save_runtime
-from Scenarios.scenario_types.BaseScenario import BaseScenario
 
 save_folder = "Results"
 
@@ -38,7 +36,6 @@ def save_scenario(scenario ,repair_plot = False):
         pass
 
     save_precision(scenario,path,repair_plot = repair_plot)
-    save_runtime(scenario,path)
 
 
 

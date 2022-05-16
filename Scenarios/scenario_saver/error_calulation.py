@@ -1,12 +1,9 @@
-import numpy as np
 import pandas as pd
-from Scenarios.scenario_types.BaseScenario import BaseScenario
 from Repair.algorithms_config import ALGORITHM_COLORS
 from Scenarios.metrics import *
 from itertools import cycle
 import os
 
-from Scenarios.senario_methods import generate_error_df_and_error_tables
 
 
 def save_error(scenario, path ):
