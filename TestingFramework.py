@@ -77,7 +77,7 @@ def main(input = None):
                 test.add_repair(repair_out_put, repair_out_put["type"])
 
     #
-        save_scenario(scenario,repair_plot=False)
+        save_scenario(scenario,repair_plot=True)
     #
 
 if __name__ == '__main__':

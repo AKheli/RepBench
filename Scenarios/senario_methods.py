@@ -2,6 +2,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import  run_ressources.Logger as log
+from Scenarios.data_part import DataPart
 from Scenarios.scenario_saver.plotters import generate_truth_and_injected, generate_repair_plot, \
     generate_correlated_series_plot
 
@@ -10,13 +11,10 @@ import os
 
 def scenario_algos_figs(scenario, path ,rasterize=True):
     algos = scenario.repair_names
-    scenario_parts = scenario.scenarios
+    scenario_parts = scenario.part_scenarios
     plots_n = len(scenario_parts.keys())
     plot_height = 7
     total_height = plot_height * plots_n
-    cols = scenario.injected_columns
-
-    scenario_repairs = scenario.repairs
 
     for algo in algos:
         algo_path = f'{path}/{algo}'
@@ -24,23 +22,28 @@ def scenario_algos_figs(scenario, path ,rasterize=True):
             os.mkdir(algo_path)
         except:
             pass
-        print(algos)
         plt.close('all')
         #fig, axs = plt.subplots(plots_n, figsize=(20, total_height), constrained_layout=True)
         # if rasterize:
         #     for ax in axs:
         #         ax.set_rasterization_zorder(0)
 
-        part_list = list(scenario_parts.items())
-        for i, (scenario_part_name, scenario_part_data) in enumerate(list(scenario_parts.items())):
+        for  name ,_ , test  ,  in scenario.name_train_test_iter:
+            scenario_part : DataPart = test
             axis = plt.gca() #axs if plots_n == 1 else axs[i]
             axis.set_rasterization_zorder(0)
-            axis.set_title(scenario_part_name)
-            truth = scenario_part_data["original"]
-            injected = scenario_part_data["injected"]
-            class_ = scenario_part_data["class"]
-            repair_df = scenario_repairs[scenario_part_name][algo]["repair"]
-            algo_name = scenario_repairs[scenario_part_name][algo]["name"]
+            axis.set_title(name)
+
+            cols = scenario_part.injected_columns
+            truth = scenario_part.truth
+            injected = scenario_part.injected
+            class_ = scenario_part.klass
+
+            assert algo in scenario_part.repairs , f"{algo} not in {scenario_part.repairs.keys()}"
+            algo_part = scenario_part.repairs[algo]
+
+            repair_df = algo_part["repair"]
+            algo_name = algo_part["name"]
             axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
 
             line, = plt.plot(truth.iloc[:, cols[0]])
@@ -54,7 +57,7 @@ def scenario_algos_figs(scenario, path ,rasterize=True):
 
             #fig.suptitle(f'{scenario.data_name} ,{algo_name}' , size=22)
 
-            plt.savefig(f"{algo_path}/{scenario_part_name}.svg")
+            plt.savefig(f"{algo_path}/{name}.svg")
             plt.close('all')
 
 # def repair_scenario(injected_scenario : BaseScenario, repair_algos):

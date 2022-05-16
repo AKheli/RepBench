@@ -19,7 +19,7 @@ class DataPart:
             assert train.train is None
 
         self.repairs = {}
-
+        self.repair_names = []
     @property
     def truth(self):
         return self.original_
@@ -87,6 +87,7 @@ class DataPart:
     def add_repair(self, repair_results, repair_name: str):
         assert repair_name not in self.repairs
         f"such a repair already exists:{repair_name}"
+        self.repair_names.append(repair_name)
 
         repair = repair_results["repair"]
         print(self.truth)
@@ -100,7 +101,7 @@ class DataPart:
 
         repair_np = repair.values.flatten()
         injected_np = self.injected.values.flatten()
-        truth_np = self.injected.values.flatten()
+        truth_np = self.truth.values.flatten()
         assert sum(weights) != 0 ,self.injected.values
         original_rmse = sm.mean_squared_error(truth_np, injected_np, sample_weight=weights)
         repair_rmse = sm.mean_squared_error(truth_np, repair_np, sample_weight=weights)

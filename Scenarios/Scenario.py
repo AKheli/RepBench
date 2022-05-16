@@ -20,7 +20,7 @@ class Scenario:
 
     @property
     def name_train_test_iter(self):
-        return iter( [ (name , scen_part.train , scen_part )for name, scen_part in self.part_scenarios.items()])
+        return iter( [ (name , scen_part.train , scen_part ) for name, scen_part in self.part_scenarios.items()])
 
     def get_amount_of_part_scenarios(self):
         return len(self.part_scenarios)
@@ -29,14 +29,16 @@ class Scenario:
         d = {}
         for name , part in  self.part_scenarios.items():
             d[name] =  part.repairs
-            print(d[name])
 
         d = pd.DataFrame.from_dict(d, orient='index')
         d.index.name = self.scen_name
-        print("cooools" ,list(d))
 
         return d
 
+    @property
+    def repair_names(self):
+        print( self.part_scenarios)
+        return set(sum([p.repair_names for k,p in self.part_scenarios.items()],[]))
 
 
 

@@ -14,13 +14,13 @@
 
 
 [imr]
-     p = 3
-     tau = 0.01
+     p = 5
+     tau = 0.001
 
 [screen]
      t = 1
-     smin = -1
-     smax  = 1
+     smin = -0.1
+     smax  = 0.1
 
 
 # alg list ["rpca","screen","cdrec","imr"
