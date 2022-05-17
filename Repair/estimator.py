@@ -1,19 +1,25 @@
 from abc import ABC
-import pandas as pd
 from sklearn.base import BaseEstimator
-from Scenarios.metrics import RMSE
+import sklearn.metrics as sm
 
 
 class Estimator(ABC, BaseEstimator):
 
-    def __init__(self, columns_to_repair):
+    def __init__(self, columns_to_repair,train_call_back = None):
         self.columns_to_repair = columns_to_repair
+        self.train_call_back = train_call_back
 
 
+    def set_train_call_back(self,train_call_back):
+        self.train_call_back = train_call_back
 
     # predict , fit and score for the sklearn parameter optizimiters
     def score(self, X, y):
-        score_ = -RMSE(pd.DataFrame(self.predict(X, y)), pd.DataFrame(y), self.columns_to_repair)
+        weights = X.ne(y).values.flatten()
+        predicted  =self.predict(X, y)
+        flatten_predicted = predicted.values.flatten()
+        flatten_y =  y.values.flatten()
+        score_ = -sm.mean_squared_error( flatten_y,flatten_predicted , sample_weight=weights)
         return score_
 
     def fit(self, X, y=None):
@@ -27,16 +33,15 @@ class Estimator(ABC, BaseEstimator):
         """
         returns all attributes that are needed for the sk optimize library
         """
-        single_params = {"columns_to_repair": self.columns_to_repair}
-        single_params.update(self.get_fitted_params())
-        return single_params
+        fix_params = {
+            "columns_to_repair": self.columns_to_repair,
+            "train_call_back" : self.train_call_back
+        }
+        fix_params.update(self.get_fitted_params())
+        return fix_params
 
     def get_fitted_params(self, **args):
         raise NotImplementedError(self)
-
-
-
-
 
     def suggest_param_range(self, X):
         "parameter ranges used for training depending on data X"

@@ -34,7 +34,6 @@ def main(input = None):
 
     scen_params = args.scenario
     data_params = args.data
-    estim_params = args.alg
     anomaly_types_param = args.a_type
 
     # map scenario input
@@ -51,14 +50,30 @@ def main(input = None):
     #              a_type=at.AMPLITUDE_SHIFT)
 
     # map repair estimator input
-    param_dicts = load_toml_file()
-    repair_algos =  [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols , **param_dicts[rep_alg]) for rep_alg in estim_params] if "all" not in estim_params\
-        else [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols, **param_dicts[rep_alg]) for rep_alg in repair_estimators]
+    if args.alg is not None:
+        estim_params = args.alg
+        param_dicts = load_toml_file()
+        repair_algos =  [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols , **param_dicts[rep_alg]) for rep_alg in estim_params] if "all" not in estim_params\
+            else [RepairAlgorithm(estimator_name = rep_alg,columns_to_repair=cols, **param_dicts[rep_alg]) for rep_alg in repair_estimators]
+
+    if args.algx is not None:
+        filename = args.algx
+        param_dict = load_toml_file(filename)
+        repair_algos = []
+        for alg_typ , params in param_dict.items():
+            solo_params = { k:v  for k, v in params.items() if not isinstance(v,dict)}
+            if len(solo_params) >0:
+                alg = RepairAlgorithm(estimator_name=alg_typ, columns_to_repair=cols, **solo_params)
+                repair_algos.append(alg)
+            for name,inner_params in params.items():
+                if isinstance(inner_params, dict):
+                    inner_params["name"] = name
+                    alg = RepairAlgorithm(estimator_name=alg_typ, columns_to_repair=cols, **inner_params)
+                    repair_algos.append(alg)
 
     # map anomalies
     anomalies = [at.parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
-
 
     for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
         scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
@@ -66,12 +81,9 @@ def main(input = None):
         for estim in repair_algos:
              for name, train, test in scenario.name_train_test_iter:
 
-                 #estim.train(**train.get_repair_inputs)
-
+                train_score = estim.train(**train.repair_inputs)
                 repair_out_put = estim.repair(**test.repair_inputs)
-    #             #train_repair_output = estim.repair(train_injected, train_truth)
-    #
-    #             test.add_repair(name, train_repair_output, f'{repair_out_put["type"]}_train')
+                assert repair_out_put["type"] is not None
                 test.add_repair(repair_out_put, repair_out_put["type"])
 
     #

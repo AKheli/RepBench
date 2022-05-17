@@ -1,12 +1,16 @@
 # Anomaly Clearning Benchmark Tool
-Implements repair of anomalies with different data sets and injection scenarios
+Implements repair of anomalies with different data.
 
+- The Benchmark implements the follwing algorithms (in Python): SCREEN , IMR , CDrepair amd RobustPCA,
+- All aviable datasets can befound [here](Data/).
+- The list of different scenarios can be found here [here](Scenarios/README.md).
 
 ## Prerequisites
 - The given bash script works for ubuntu 18 or 20 
 - Clone this repository.
 
 ## Build
+- build Testing Benchmark 
 ```bash
     $ sh install.sh
 ```
@@ -61,42 +65,25 @@ python3 TestingFramework.py -scen all -data all -anom all -alg all
 
 </ol>
 
-[comment]: <> (### Additional experimental run)
 
-[comment]: <> (The file runc.py has an optional argument -cont where one can continue working on the same anomalies and -delete to delete an anomalie by index)
-
-[comment]: <> (#### Example)
-
-[comment]: <> (```bash)
-
-[comment]: <> ($ python3 runc.py -data Data/stock10k.data -col 2 -cont)
-
-[comment]: <> (-t a -l 10 )
-
-[comment]: <> (-t d   )
-
-[comment]: <> (-t g)
-
-[comment]: <> (-an )
-
-[comment]: <> (1 {'type': 'amplitude_shift', 'factor': 8, 'index_range': &#40;690, 699&#41;} )
-
-[comment]: <> (2 {'type': 'distortion', 'factor': 8, 'index_range': &#40;11270, 11279&#41;} )
-
-[comment]: <> (3 {'type': 'growth_change', 'factor': 8, 'index_range': &#40;5064, 5073&#41;} )
-
-[comment]: <> (-delete 2 )
-
-[comment]: <> (-an )
-
-[comment]: <> (1 {'type': 'amplitude_shift', 'factor': 8, 'index_range': &#40;690, 699&#41;} )
-
-[comment]: <> (3 {'type': 'growth_change', 'factor': 8, 'index_range': &#40;5064, 5073&#41;} )
-
-[comment]: <> (-save continiousoutput)
-
-[comment]: <> (exit)
-
-[comment]: <> (```)
+#### Parametrized Run
+  By defining a toml file (see algox.toml) one can run the Benchmark with different Parameters 
+  with named algorithms.
+ 
+  The following example runs the SCREEN algorithm algorithm with different parameters on the bafu5k data set:
+```bash
+python3 TestingFramework.py -scen ts_len -data bafu5k -anom all -algx algox
+```
+algox.toml:
+```tom
+ [screen.screen1]
+    t = 1
+    smin = -0.1
+    smax  = 0.1
 
 
+[screen.screen2]
+     t = 1
+     smin = -0.01
+     smax  = 0.01
+```

@@ -38,11 +38,11 @@ class DimensionalityReductionEstimator(Estimator):
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
-        return {"classification_truncation": list(range(1,min(n_cols,5))),
-                "repair_truncation": list(range(2,min(n_cols, max(4, int(n_cols / 2))))),
-                "threshold": np.linspace(1, 2.8, num=20),
-                "repair_iter" : np.arange(10),
-                "n_max_iter": (0,20)
+        return {"classification_truncation": [min(n_cols,i) for i in [2,3,4]],
+                "repair_truncation": [min(n_cols-1,i) for i in [3,4,5]],
+                "threshold": [1,1.2,1.5,1.8,2,2.2,2.5],
+                #"repair_iter" : [10],
+                #"n_max_iter": (0,20)
                 }
 
     def fit(self, X, y=None):

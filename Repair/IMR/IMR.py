@@ -75,13 +75,11 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
             phi =  np.zeros(len(xMat[0, :]))
 
         y_hat = xMat.dot(phi)
-
-
+        print(y_hat)
         #assert np.allclose(phi,ols_direct(yvec, xMat), atol=1e-04)
-
         elements = mod_range[(np.abs(y_hat - yvec) >= tau) * shifted_non_labelled]
         try:
-            index = elements[ np.argmin(np.abs( y_hat[elements] )) ]
+            index = elements[np.argmin(np.abs( y_hat[elements] )) ]
         except ValueError as e:
             print(f'terminated after {i} iterations')
             break
@@ -104,7 +102,7 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
 
     return { "repair" : modify , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
 #
-# def imr(x,y_k,labels,tau=0.1,p=1,k=2000):
+# def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
 #     z = np.array(y_k) - np.array(x)
 #     yvec = z[p:]
 #     xMat = np.zeros((len(x)-p,p))
@@ -116,7 +114,6 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
 #     for j in range(k):
 #         phi = ols(yvec,xMat)
 #         y_hat = xMat.dot(phi)
-#         #print("phi",phi)
 #         residuals = y_hat-yvec
 #         abs_res = np.abs(residuals)
 #         minA = 100000000000
@@ -150,7 +147,7 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
 #         if i not in labels:
 #             modify[i] =x[i]+ yvec[i-p]
 #
-#     return modify
+#     return { "repair" : modify }
 
 
 # def IMRsave(index,x,y_o,truth,labels,repair,name , arrows = True):
@@ -180,15 +177,15 @@ def imr3(x,y_k,labels,tau=0.1,p=1,k=2000):
         abs_res = np.abs(residuals)
         minA = 100000000000
         index = -1
-        for i in np.arange(len(x)-p):
-            if i +p in labels:
+        for u in np.arange(len(x)-p):
+            if u +p in labels:
                 continue
-            if abs_res[i] < tau:
+            if abs_res[u] < tau:
                 continue
-            y_hat_point = np.abs(y_hat[i])
+            y_hat_point = np.abs(y_hat[u])
             if(y_hat_point < minA):
                 minA = y_hat_point
-                index = i
+                index = u
         print(index)
         if index == -1:
             print(f'terminated after {i} iterations')

@@ -1,3 +1,4 @@
+import pandas as pd
 from matplotlib import pyplot as plt
 
 from Repair.algorithms_config import IMR
@@ -15,14 +16,14 @@ class IMR_estimator(Estimator):
         self.tau = tau
         self.alg_type = alg_type
         Estimator.__init__(self, **kwargs)
-        self.max_itr_n  = 1000
+        self.max_itr_n  = 100
 
     def get_fitted_params(self, **kwargs):
         return {"p": self.p , "tau" : self.tau}
 
 
     def suggest_param_range(self,X):
-        return {"p" : list(range(15))} # , "tau": list(np.arange(100)/100) }
+        return {"p" : list(range(15)) , "tau": [0.01,0.005,0.001,0.0005]}
 
 
     def fit(self, X, y=None): ## no fitting
@@ -30,12 +31,15 @@ class IMR_estimator(Estimator):
         return self
 
     def predict(self, X , y =None , labels = None):
-        # print(self.cols)
-        # X.iloc[:,self.cols].plot()
-        # plt.show()
-        # y.iloc[:,self.cols].plot()
-        # plt.show()
         assert y is not None , "IMR needs truth values to assign labels"
+        assert labels is not None  or self.train_call_back is not None, "IMR requires labels"
+
+
+        #in case of cv when labels are not aviable assign random labels
+        if labels is None and self.train_call_back.labels.shape != X.shape:
+            np.random.seed(100)
+            labels = pd.DataFrame(np.random.binomial(1,0.5,X.shape))
+
 
         injected = X.copy()
         truth_full = y.copy()

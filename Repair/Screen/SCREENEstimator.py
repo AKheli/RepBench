@@ -30,9 +30,8 @@ class SCREEN_estimator(Estimator):
     def suggest_param_range(self,X):
         differences = abs(np.diff(X.values))
         #todo smin and smax suggestion
-        return {"t" : [1,2,3,5,10,20] ,
-                "smax" : np.linspace(0.2,np.max(differences),num = 10),
-                "smin" : -np.linspace(0.2,np.max(differences),num = 10)}
+        return { "smax" : np.logspace(-3,0,num = 10),
+                "smin" : -np.logspace(-3,0,num = 10)}
 
 
 
@@ -43,8 +42,6 @@ class SCREEN_estimator(Estimator):
     def predict(self, X , y = None,labels=None):
         repair = X.copy()
         for col in [c for c in self.columns_to_repair if c < X.shape[1]]:
-            print(col,self.columns_to_repair)
-            print("coool",col)
             x = np.array(X.iloc[:, col])
             repair_result = screen(x, self.t , self.smax , self.smin)
             repair.iloc[:, col] = repair_result

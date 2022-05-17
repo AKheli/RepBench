@@ -82,7 +82,8 @@ class DataPart:
         return {"injected": self.injected,
                 "truth": self.truth,
                 "labels": self.labels,
-                "injected_columns": self.injected_columns}
+                "injected_columns": self.injected_columns,
+                "score_indices" : self.get_weights()}
 
     def add_repair(self, repair_results, repair_name: str):
         assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
@@ -90,7 +91,7 @@ class DataPart:
         self.repair_names.append(repair_name)
 
         repair = repair_results["repair"]
-        assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape)
+        assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape, self.injected.shape)
         ### compute errors
 
         weights = np.zeros_like(repair.values)
@@ -140,3 +141,9 @@ class DataPart:
         return { k : v[name]  for k,v  in self.repairs.items()}
 
 
+    def get_weights(self):
+        weights = np.zeros_like(self.injected_.values)
+        weights[:, self.injected_columns] = 1
+        weights[self.labels] = 0
+        weights = weights.flatten()
+        return weights

@@ -36,7 +36,9 @@ def save_error(scenario, path ):
 
         #save csv files
         df_selection = full_df.applymap(lambda x : (x[metric] , x["name"]))
+        print(df_selection)
         for col in df_selection:
+            print("col",col)
             new_df = pd.DataFrame(df_selection[col].to_list(), columns=[metric, 'name'])
 
             new_df.to_csv(f'{error_path}/{col}.txt')
@@ -63,6 +65,7 @@ def save_error(scenario, path ):
         plt.close()
 
 def get_alg_color(function_name):
+    print(function_name)
     for type , color in  ALGORITHM_COLORS.items():
         if type.lower() in function_name.lower():
             return color

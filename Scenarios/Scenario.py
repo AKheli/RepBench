@@ -1,6 +1,3 @@
-
-
-
 import pandas as pd
 
 import Scenarios.AnomalyConfig as ac
