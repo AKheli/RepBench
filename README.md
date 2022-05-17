@@ -40,7 +40,7 @@ $ python3 TestingFramework.py [arguments]
 
 ### Data
 
-- The data has to be in csv  format.
+- The data has to have a csv format.
 - The data argument expects the Data to be in the Data folder.
 
 
@@ -107,5 +107,8 @@ python3 TestingFramework.py -scen all -data all -anom all -alg all
 [comment]: <> (exit)
 
 [comment]: <> (```)
+
+
+# Anomaly Injection Tool
 
 
