@@ -2,7 +2,7 @@
 This benchmark implements five different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
 - The benchmark implements the following algorithms
-- All the datasets used in this benchmark can be found [here](https://github.com/eXascaleInfolab/bench-vldb20/tree/master/Datasets).
+- All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/Data).
 - The full list of recovery scenarios can be found [here](https://github.com/eXascaleInfolab/bench-vldb20/blob/master/TestingFramework/README.md).
 
 
