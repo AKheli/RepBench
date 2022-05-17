@@ -1,10 +1,3 @@
-# Anomaly Clearning Benchmark Tool
-Implements repair of anomalies with different data.
-
-- The Benchmark implements the follwing algorithms (in Python): SCREEN , IMR , CDrepair amd RobustPCA,
-- All aviable datasets can befound [here](Data/).
-- The list of different scenarios can be found here [here](Scenarios/README.md).
-=======
 # Anomaly Repair Benchmark 
 This benchmark implements five different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
@@ -15,7 +8,6 @@ This benchmark implements five different anomaly repair techniques in time serie
 
 [**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) 
 
-
 ___
 
 ## Prerequisites
@@ -25,7 +17,6 @@ ___
 ___
 
 ## Build
-- build Testing Benchmark 
 ```bash
     $ sh install.sh
 ```
@@ -46,6 +37,7 @@ $ python3 TestingFramework.py [arguments]
  | all       |all  | cts_nbr | all
  |            |  | all | 
 
+
 ### Data
 
 - The data has to have a csv format.
@@ -54,9 +46,6 @@ $ python3 TestingFramework.py [arguments]
 
 ### Results
 All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario and dataset to: `Results/.../.../error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of the repaired blocks will be added to the folder `Results/.../.../recovery/plots/`.
-
-
-
 
 
 ### Examples
@@ -76,15 +65,11 @@ python3 TestingFramework.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -a
 python3 TestingFramework.py -scen all -data all -anom all -alg all
 ```
 
-</ol>
-
-
-<<<<<<< HEAD
 #### Parametrized Run
   By defining a toml file (see algox.toml) one can run the Benchmark with different Parameters 
   with named algorithms.
  
-  The following example runs the SCREEN algorithm algorithm with different parameters on the bafu5k data set:
+  The following example runs the SCREEN  algorithm with different parameters on the bafu5k data set:
 ```bash
 python3 TestingFramework.py -scen ts_len -data bafu5k -anom all -algx algox
 ```
@@ -101,8 +86,3 @@ algox.toml:
      smin = -0.01
      smax  = 0.01
 ```
-=======
-# Anomaly Injection Tool
-
-
->>>>>>> e5ef8198b52e0e506f534f2c520a7e44d69f8272
