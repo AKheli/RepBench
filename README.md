@@ -1,4 +1,4 @@
-# Anomaly Clearning Benchmark Tool
+# Anomaly Repair Benchmark Tool
 Implements repair of anomalies with different data sets and injection scenarios
 
 ___
@@ -43,25 +43,18 @@ All results and plots will be added to `Results` folder. The accuracy results of
 
 
 
-### Examples:
-<ol>
-  <li>
- Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
-</li>
+### Examples
+1.  Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
 
-```bashs
+```bash
 python3 TestingFramework.py -scen ts_nbr -data bafu5k -anom shift -alg cdrec
 ```
- <li>
-Run two algorithms (cdrec, rpca) on two dataset (bafu5k,msd) using one scenario (a_rate) and two anomalies (shift,outlier)
-</li>
+2. Run two algorithms (cdrec, rpca) on two dataset (bafu5k,msd) using one scenario (a_rate) and two anomalies (shift,outlier)
 
 ```bash
 python3 TestingFramework.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -alg cdrec,rpca
 ```
- <li>
-Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies
-</li>
+ 3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies
 
 ```bash
 python3 TestingFramework.py -scen all -data all -anom all -alg all
