@@ -1,15 +1,19 @@
 # Anomaly Clearning Benchmark Tool
 Implements repair of anomalies with different data sets and injection scenarios
 
+___
 
 ## Prerequisites
 - Ubuntu 16 or Ubuntu 18 (including Ubuntu derivatives, e.g., Xubuntu).
 - Clone this repository.
 
+___
+
 ## Build
 ```bash
     $ sh install.sh
 ```
+___
 ## Execution
 ```bash
 $ python3 TestingFramework.py [arguments]
@@ -32,7 +36,7 @@ $ python3 TestingFramework.py [arguments]
 - The data argument expects the Data to be in the Data folder.
 
 
-### Data
+### Results
 All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario and dataset to: `Results/.../.../error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of the repaired blocks will be added to the folder `Results/.../.../recovery/plots/`.
 
 
