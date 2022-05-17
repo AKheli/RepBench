@@ -1,0 +1,46 @@
+[rpca]
+    threshold = 2
+    classification_truncation = 2
+    repair_truncation = 4
+    n_max_iter = 10
+    repair_iter = 1
+
+[cdrec]
+    classification_truncation = 2
+    repair_truncation = 4
+    threshold = 2
+    n_max_iter = 10
+    repair_iter = 3
+
+[subcdrec]
+    classification_truncation = 2
+    repair_truncation = 4
+    threshold = 2
+    n_max_iter = 10
+    repair_iter = 3
+
+[imr]
+     p = 5
+     tau = 0.001
+
+[screen]
+     t = 1
+     smin = -0.1
+     smax  = 0.1
+
+
+
+# cd , rpca params :
+# classification_truncation
+# repair_truncation
+# threshold
+# repair_iter
+# n_max_iter
+##
+# imr params;
+# p
+# tau
+# screen params;
+# t
+# smin
+# smax

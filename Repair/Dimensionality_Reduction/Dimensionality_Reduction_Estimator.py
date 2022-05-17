@@ -81,17 +81,12 @@ class DimensionalityReductionEstimator(Estimator):
             matrix = matrix.values
 
         matrix_to_repair = matrix.copy()
-        print("EYYYYYY",self.sub_set)
-        print(np.sum(np.abs(matrix_to_repair)))
-
-        print(np.sum(np.abs(matrix_to_repair)))
 
         if (self.sub_set):
             if len(self.columns_to_repair) == 1:
                 sorted_corr = np.argsort(-np.abs(np.corrcoef(matrix,rowvar=False)[self.columns_to_repair,:]))[0]
                 matrix_to_repair[:,sorted_corr[6:]] = 0
                 assert np.any(matrix_to_repair[:,self.columns_to_repair])
-        print(np.sum(np.abs(matrix_to_repair)))
 
         if not refit and self.is_fitted:
             fitted_transform_matrix = self.transform_matrix
@@ -119,7 +114,6 @@ class DimensionalityReductionEstimator(Estimator):
             self.transform_matrix = fitted_transform_matrix
             self.weighted_mean = fitted_weighted_mean
 
-        print(np.sum(np.abs(matrix_to_repair)))
         final = matrix.copy()
         final[:,self.columns_to_repair] = matrix_to_repair[:,self.columns_to_repair]
         return final

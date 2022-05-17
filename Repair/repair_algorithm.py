@@ -21,7 +21,14 @@ class RepairAlgorithm:
 
     def __init__(self, estimator_name, columns_to_repair, **kwargs):
         estimator = None
+        self.type = None
 
+        #checks if specian name is given to algorithm , for example with toml params
+        if "name" in kwargs:
+            self.type = kwargs["name"]
+            assert isinstance(self.type,str)
+
+        ### parse alg
         if estimator_name in (ac.IMR, "imr"):
             estimator = IMR_estimator(columns_to_repair=columns_to_repair, **kwargs)
         if estimator_name in (ac.SCREEN , "screen"):
@@ -138,7 +145,7 @@ class RepairAlgorithm:
         assert attributes_str == str(self.estimator.get_params()) , f'{attributes_str} \n {str(self.estimator.get_params())}'
         return {"repair": repair
             , "runtime": timer.get_time()
-            , "type": self.estimator.alg_type
+            , "type": self.type if type is not None else self.estimator.alg_type
             , "name": str(self.estimator)
             , "params": self.estimator.get_fitted_params()
             }
