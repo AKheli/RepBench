@@ -3,7 +3,7 @@ Implements repair of anomalies with different data sets and injection scenarios
 
 
 ## Prerequisites
-- The given bash script works for ubuntu 18 or 20 
+- Ubuntu 16 or Ubuntu 18 (including Ubuntu derivatives, e.g., Xubuntu).
 - Clone this repository.
 
 ## Build
@@ -14,7 +14,7 @@ Implements repair of anomalies with different data sets and injection scenarios
 ```bash
 $ python3 TestingFramework.py [arguments]
 ```
-## Arguments
+### Arguments
 
 
  | -d  | -a  | -scen | -algo | 
@@ -26,13 +26,17 @@ $ python3 TestingFramework.py [arguments]
  | all       |all  | cts_nbr | all
  |            |  | all | 
 
+### Data
+
+- The data has to be in csv  format.
+- The data argument expects the Data to be in the Data folder.
 
 
-### Remarks
-- Data\
-The data has to be in csv  format.
-The Results will be saved into the Results folder.
-The data argument expects the Data to be in the Data folder.
+### Data
+All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario and dataset to: `Results/.../.../error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of the repaired blocks will be added to the folder `Results/.../.../recovery/plots/`.
+
+
+
 
 
 ### Examples:
