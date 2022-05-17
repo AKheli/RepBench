@@ -1,4 +1,4 @@
-# Anomaly Repair Benchmark Tool
+# Anomaly Repair Benchmark 
 This benchmark implements five different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
 - The benchmark implements the following algorithms
