@@ -1,5 +1,13 @@
 # Anomaly Repair Benchmark Tool
-Implements repair of anomalies with different data sets and injection scenarios
+This benchmark implements five different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
+
+- The benchmark implements the following algorithms
+- All the datasets used in this benchmark can be found [here](https://github.com/eXascaleInfolab/bench-vldb20/tree/master/Datasets).
+- The full list of recovery scenarios can be found [here](https://github.com/eXascaleInfolab/bench-vldb20/blob/master/TestingFramework/README.md).
+
+
+[**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) 
+
 
 ___
 
