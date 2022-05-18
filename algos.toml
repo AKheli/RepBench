@@ -1,6 +1,6 @@
 [rpca]
     threshold = 2
-    classification_truncation = 2
+    classification_truncation = -20
     repair_truncation = 4
     n_max_iter = 10
     repair_iter = 1
@@ -10,14 +10,7 @@
     repair_truncation = 4
     threshold = 2
     n_max_iter = 10
-    repair_iter = 3
-
-[subcdrec]
-    classification_truncation = 2
-    repair_truncation = 4
-    threshold = 2
-    n_max_iter = 10
-    repair_iter = 3
+    repair_iter = 5
 
 [imr]
      p = 5

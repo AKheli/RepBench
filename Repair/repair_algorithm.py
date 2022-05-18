@@ -110,7 +110,6 @@ class RepairAlgorithm:
 
         if self.optimizer == "grid":
             weights = injected.ne(truth).values
-            weights[:, injected_columns] = 1
             weights[labels] = 0
             weights = weights.flatten()
             score = -100000

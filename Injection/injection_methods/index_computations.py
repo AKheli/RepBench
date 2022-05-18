@@ -24,8 +24,8 @@ def get_random_indices(array_or_size,a_size = 1, number_of_ranges=1, percentage 
     random_spaces = np.random.multinomial(random_space , probabilities)
     spaces = random_spaces+min_gap
 
-    assert sum(random_spaces) ==  random_space
-    assert sum(spaces) == free_space , f" {sum(spaces) } != {free_space} "
+    assert sum(random_spaces) ==  random_space , (sum(random_spaces),random_space)
+    assert sum(spaces) == free_space , f"{spaces} {sum(spaces) } != {free_space} "
 
     anom_ranges = [ np.arange(index+n*a_size,index+n*a_size+a_size)  for n ,index in enumerate(np.cumsum(spaces)[:-1])]
 

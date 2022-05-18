@@ -33,8 +33,6 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
         train = (train - train.mean()) / train.std()
         test = (test - test.mean()) / test.std()
 
-    print(train)
-    print(test)
     ## data generation
 
     result = {}
@@ -46,6 +44,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
     ## create trainings scenario
     a_length = base_spec["a_length"]
     a_perc = base_spec["a_percentage"]
+
     train_injected = train.copy()
     for col in cols_to_inject:
         train_injected.iloc[:, col], indices = inject_single(train_injected.iloc[:, col], a_type, a_length,
@@ -63,15 +62,15 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
             result[len(indices)] = DataPart(test_injected, test, train_part)
 
     if scen_name == sc.ANOMALY_SIZE:
-        print(scen_spec)
         a_lengths = scen_spec["a_lengths"]
-
+        l = a_lengths[5]
+        n_anomalies = int(a_perc/100*n/l)
         for a_length in a_lengths:
             test_injected = test.copy()
             a_indices = {}
             for col in cols_to_inject:
                 print(a_length)
-                test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col],a_type=  a_type,anomaly_length=a_length, percentage=a_perc)
+                test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col],a_type=  a_type,anomaly_amount=a_length, anomaly_length=n_anomalies)
                 a_indices[col] = indices
             result[a_length] = DataPart(test_injected, test,train_part)
 

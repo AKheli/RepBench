@@ -66,14 +66,13 @@ python3 TestingFramework.py -scen all -data all -anom all -alg all
 ```
 
 #### Parametrized Run
-  By defining a toml file (see algox.toml) one can run the Benchmark with different Parameters 
-  with named algorithms.
- 
-  The following example runs the SCREEN  algorithm with different parameters on the bafu5k data set:
+  By defining a toml file (see algox.toml) one can run the Benchmark on customized algorithms.
+  The following example runs the SCREEN algorithm with different parameters saved as screen1 and screen2
+  on the bafu5k data set:
 ```bash
-python3 TestingFramework.py -scen ts_len -data bafu5k -anom all -algx algox
+python3 TestingFramework.py -scen ts_len -data bafu5k -anom all -algx example_file
 ```
-algox.toml:
+example_file.toml:
 ```tom
  [screen.screen1]
     t = 1

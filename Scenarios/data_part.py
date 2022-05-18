@@ -45,7 +45,7 @@ class DataPart:
         if self.train is not None:
             cutted_train = self.get_cutted(columns)
 
-        return DataPart(self.injected.iloc[:, columns], self.injected.iloc[:, columns], cutted_train)
+        return DataPart(self.injected.iloc[:, columns], self.truth.iloc[:, columns], cutted_train)
 
     @staticmethod
     def get_anomaly_ranges(ts_class):
@@ -65,11 +65,14 @@ class DataPart:
 
     @staticmethod
     def generate_column_labels(class_collumn, label_ratio=0.2, label_anom_start=0.8):
+        state = np.random.get_state()
+        np.random.seed(100)
         starts = [min(r) for r in DataPart.get_anomaly_ranges(class_collumn) if len(r) > 1]
         m = len(class_collumn)
         r_number = np.random.uniform(size=m)
         r_number[starts] = r_number[starts] < label_anom_start
         r_number = r_number > 1 - label_ratio
+        np.random.set_state(state)
         return r_number.astype(bool)
 
     def generate_labels(self):
