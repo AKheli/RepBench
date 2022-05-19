@@ -75,8 +75,7 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
             phi =  np.zeros(len(xMat[0, :]))
 
         y_hat = xMat.dot(phi)
-        print(y_hat)
-        #assert np.allclose(phi,ols_direct(yvec, xMat), atol=1e-04)
+
         elements = mod_range[(np.abs(y_hat - yvec) >= tau) * shifted_non_labelled]
         try:
             index = elements[np.argmin(np.abs( y_hat[elements] )) ]

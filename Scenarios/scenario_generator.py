@@ -36,7 +36,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
     ## data generation
 
     result = {}
-    np.random.seed(100)
+    np.random.seed(10)
 
     scen_spec = sc.scenario_specifications[scen_name]
     base_spec = sc.scenario_specifications[sc.BASE_SCENARIO]
@@ -63,14 +63,14 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
     if scen_name == sc.ANOMALY_SIZE:
         a_lengths = scen_spec["a_lengths"]
-        l = a_lengths[5]
-        n_anomalies = int(a_perc/100*n/l)
+        n_anomalies = int(n/1000)
         for a_length in a_lengths:
             test_injected = test.copy()
             a_indices = {}
             for col in cols_to_inject:
-                print(a_length)
-                test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col],a_type=  a_type,anomaly_amount=a_length, anomaly_length=n_anomalies)
+                print("anomaly length" ,a_length)
+                test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col],a_type=  a_type,
+                                                                    anomaly_amount=n_anomalies, anomaly_length=a_length)
                 a_indices[col] = indices
             result[a_length] = DataPart(test_injected, test,train_part)
 
@@ -135,10 +135,10 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
 def inject_single(data, a_type, anomaly_length, anomaly_amount=None, percentage=None):
     assert percentage is not None or anomaly_amount is not None, "number of anomalies or anomalypercentage must be specified"
+
     if percentage is not None:
         if a_type == ac.POINT_OUTLIER:
             anomaly_length = 1
-
         index_ranges = get_random_indices(data, anomaly_length, percentage=percentage)
     else:
         if a_type == ac.POINT_OUTLIER:
@@ -150,6 +150,7 @@ def inject_single(data, a_type, anomaly_length, anomaly_amount=None, percentage=
     for range_ in index_ranges:
         assert len(range_) != 0
         assert max(range_) < len(data), (len(data), index_ranges)
+        assert a_type == ac.POINT_OUTLIER or len(range_) > 1
 
         data, _ = add_anomaly(anomaly_type=a_type, data=data, index_range=range_)
     return data, index_ranges

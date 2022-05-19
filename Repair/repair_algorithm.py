@@ -41,8 +41,6 @@ class RepairAlgorithm:
             estimator = Robust_PCA_estimator(columns_to_repair=columns_to_repair, **kwargs)
         if estimator_name in (ac.CDREC, "cdrec"):
             estimator = CD_Rec_estimator(columns_to_repair=columns_to_repair, **kwargs)
-        if estimator_name == ac.SUBCDREC:
-            estimator = CD_Rec_estimator(columns_to_repair=columns_to_repair, sub_set=True, **kwargs)
         assert estimator is not None, f'{estimator_name} could not be parsed'
 
         self.estimator: Estimator = estimator

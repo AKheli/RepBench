@@ -75,6 +75,12 @@ def main(input = None):
     anomalies = [at.parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
 
+    # initialize all scenarios first to check if the can be created
+    for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
+        scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
+
+
+
     for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
         scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
 

@@ -1,52 +1,50 @@
-[screen.screen1]
-    t = 1
-    smin = -0.1
-    smax  = 0.1
-
-
-[screen.screen01]
-     t = 1
-     smin = -0.01
-     smax  = 0.01
-
-[screen.screen02]
-    t = 1
-    smin = -0.3
-    smax  = 0.3
-
-[imr.imr01]
-    tau = 0.1
-    p = 5
-
-[imr]
-    tau = 0.01
-    p = 5
-
-[imr.imr2]
-    tau = 0.001
-    p = 5
-
 [rpca]
     threshold = 2
-    classification_truncation = 2
+    classification_truncation = -20
     repair_truncation = 4
     n_max_iter = 10
     repair_iter = 1
 
-[rpca.rpcat2]
-    threshold = 1
-    classification_truncation = 3
-    repair_truncation = 5
-    n_max_iter = 10
-    repair_iter = 4
-
-[rpca.rpcamcorr]
-    threshold = 1.5
+[cdrec]
     classification_truncation = 2
-    repair_truncation = 5
-    n_max_iter = 10
+    repair_truncation = 4
+    threshold = 2
+    n_max_iter = 1
     repair_iter = 1
-    sub_set = true
+
+[cdrec.weightedcd]
+    classification_truncation = 2
+    repair_truncation = 4
+    threshold = 2
+    n_max_iter = 3
+    repair_iter = 1
+
+[imr]
+     p = 5
+     tau = 0.001
+
+[screen]
+     t = 1
+     smin = -0.1
+     smax  = 0.1
+
+
+
+# cd , rpca params :
+# classification_truncation
+# repair_truncation
+# threshold
+# repair_iter
+# n_max_iter
+##
+# imr params;
+# p
+# tau
+# screen params;
+# t
+# smin
+# smax
+
 
 
 #[cdrec]

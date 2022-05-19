@@ -20,6 +20,11 @@ class DataPart:
 
         self.repairs = {}
         self.repair_names = []
+
+        self.check_original_rmse()
+
+
+
     @property
     def truth(self):
         return self.original_
@@ -63,8 +68,8 @@ class DataPart:
                     current_range = []
         return [np.array(range_) for range_ in ranges]
 
-    @staticmethod
-    def generate_column_labels(class_collumn, label_ratio=0.2, label_anom_start=0.8):
+
+    def generate_column_labels(self,class_collumn, column_index , label_ratio=0.2, label_anom_start=0.8):
         state = np.random.get_state()
         np.random.seed(100)
         starts = [min(r) for r in DataPart.get_anomaly_ranges(class_collumn) if len(r) > 1]
@@ -73,12 +78,19 @@ class DataPart:
         r_number[starts] = r_number[starts] < label_anom_start
         r_number = r_number > 1 - label_ratio
         np.random.set_state(state)
-        return r_number.astype(bool)
+        labels = r_number.astype(bool)
+
+        #check for non zero weights
+        if column_index in self.injected_columns:
+            assert np.any((class_collumn.astype(int) - labels)> 0 ) , "labeled all anomalies there will be no weights"
+        return labels
 
     def generate_labels(self):
         self.labels = self.class_.copy()
-        for column_name in self.labels:
-            self.labels[column_name] = DataPart.generate_column_labels(self.labels[column_name])
+        for  i, column_name in enumerate(self.labels):
+            self.labels[column_name] = self.generate_column_labels(self.labels[column_name],i)
+
+
 
     @property
     def repair_inputs(self):
@@ -97,15 +109,14 @@ class DataPart:
         assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape, self.injected.shape)
         ### compute errors
 
-        weights = np.zeros_like(repair.values)
-        weights[:, self.injected_columns] = 1
+        weights = self.class_.copy().values
         weights[self.labels] = 0
         weights = weights.flatten()
 
         repair_np = repair.values.flatten()
         injected_np = self.injected.values.flatten()
         truth_np = self.truth.values.flatten()
-        assert sum(weights) != 0 ,self.injected.values
+
         original_rmse = sm.mean_squared_error(truth_np, injected_np, sample_weight=weights)
         repair_rmse = sm.mean_squared_error(truth_np, repair_np, sample_weight=weights)
 
@@ -150,3 +161,20 @@ class DataPart:
         weights[self.labels] = 0
         weights = weights.flatten()
         return weights
+
+    def check_weights(self):
+        assert sum(self.get_weights()) != 0
+
+
+    def check_original_rmse(self):
+        assert np.any(self.class_.values)
+        weights = np.zeros_like(self.injected.values)
+        weights[self.class_] = 1
+        weights[self.labels] = 0
+        weights = weights.flatten()
+
+        assert np.any(weights)
+        injected_np = self.injected.values.flatten()
+        truth_np = self.truth.values.flatten()
+
+        original_rmse = sm.mean_squared_error(truth_np, injected_np, sample_weight=weights)

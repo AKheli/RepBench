@@ -3,18 +3,6 @@ import numpy as np
 from Scenarios.AnomalyConfig import *
 
 
-# def anomaly_size(data, indexes):
-#     start, stop = indexes[0] , indexes[-1]
-#     local_range = data[np.arange(max(0, start - len(indexes*2)), min(stop+len(indexes)*2, len(data) - 1))]
-#     global_range = data[np.arange(max(0, start - len(indexes*12)), min(stop+len(indexes)*12, len(data) - 1))]
-#     global_std = global_range.std()
-#     local_std = local_range.std()
-#     local_mean = local_range.mean()
-#     delta_local = max(local_range)-min(local_range)
-#     quants = np.quantile(data, [0.1,0.9])
-#     return (quants[1]-quants[0])
-
-
 def anomaly_size(data, indexes):
     start, stop = indexes[0] , indexes[-1]
     local_range = data[np.arange(max(0, start - len(indexes)*3), min(stop+len(indexes)*2, len(data) - 1))]
@@ -75,6 +63,7 @@ def inject_amplitude_shift(data, index_range, factor=1, directions=[1, -1], stdr
 
 
 def inject_distortion(data, index_range, factor=8):
+    assert len(index_range) > 1 , "distortion index range has to be greater than one"
     anom_type = DISTORTION
     # data_range = data[index_range]
     # median_  = data_range.median()
@@ -85,8 +74,9 @@ def inject_distortion(data, index_range, factor=8):
     size = anomaly_size(data, indexes=index_range)/2
     X = data[index_range]
     indices = np.arange(len(X))
-    s , intercept = np.polyfit(indices, X, 1)
-    line = indices * s + intercept
+    s  = 0 #, intercept = np.polyfit(indices, X, 1)
+    line = indices * s + np.mean(X)
     diff = np.sign(line-X)
+    assert np.any(diff != 0)  , "distortion could not be injected"
     data[index_range] += diff*size #(data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}
