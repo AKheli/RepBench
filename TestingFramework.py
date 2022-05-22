@@ -77,7 +77,7 @@ def main(input = None):
 
     # initialize all scenarios first to check if the can be created
     for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
-        print(f'running repair on{data_name} with scen type {scen_name}')
+        print(f'running repair on {data_name} with scen type {scen_name}')
         scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
         del scenario
 

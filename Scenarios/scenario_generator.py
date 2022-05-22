@@ -59,6 +59,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
             for col in cols_to_inject:
                 test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col], a_type, a_length,
                                                                     percentage=a_perc)
+            assert len(indices) != 0
             result[len(indices)] = DataPart(test_injected, test, train_part)
 
     if scen_name == sc.ANOMALY_SIZE:
