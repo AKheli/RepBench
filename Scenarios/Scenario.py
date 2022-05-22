@@ -1,7 +1,14 @@
+import os
+
 import pandas as pd
+from matplotlib.ticker import MaxNLocator
 
 import Scenarios.AnomalyConfig as ac
 from Scenarios.scenario_generator import generate_scenario_data
+import matplotlib.pyplot as plt
+
+from Scenarios.scenario_saver.plotters import generate_repair_plot, generate_truth_and_injected
+
 
 class Scenario:
     def __init__(self, scen_name , data , a_type
@@ -34,23 +41,50 @@ class Scenario:
 
     @property
     def repair_names(self):
-        print( self.part_scenarios)
         return set(sum([p.repair_names for k,p in self.part_scenarios.items()],[]))
 
 
 
+    def save_repair_plots(self,path, single_plot= False):
+        for repair_name in self.repair_names:
+            algo_path = f'{path}/{repair_name}'
+            try:
+                os.mkdir(algo_path)
+            except:
+                pass
+            plt.close('all')
+            for i,(part_scen_name,scenario_part)  in enumerate(self.part_scenarios.items()):
 
+                truth , injected = scenario_part.truth , scenario_part.injected
+                cols = scenario_part.injected_columns
+                if i >0 and self.scen_name == "cts_nbr":
+                    assert len(cols > 1)
+                print("CCCCCCCCCCCCCCCCCCCCCTSSSSSSSSSSSS" , cols)
+                klass = scenario_part.class_
+                algo_part = scenario_part.repairs[repair_name]
+                repair_df = algo_part["repair"]
+                algo_name = algo_part["name"]
 
+                axis = plt.gca()  # axs if plots_n == 1 else axs[i]
+                axis.set_rasterization_zorder(0)
+                axis.set_title(part_scen_name)
 
+                algo_part = scenario_part.repairs[repair_name]
 
+                repair_df = algo_part["repair"]
+                algo_name = algo_part["name"]
+                axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
 
+                line, = plt.plot(truth.iloc[:, cols[0]])
+                lw = plt.getp(line, 'linewidth')
+                axis.set_prop_cycle(None)
+                generate_repair_plot(repair_df, cols, repair_name, lw, axis)
+                generate_truth_and_injected(truth, injected, cols, klass, lw, axis , alpha = 0.5)
+                axis.xaxis.set_major_locator(MaxNLocator(integer=True))
+                plt.savefig(f"{algo_path}/{part_scen_name}.svg")
+                plt.close('all')
 
-
-
-
-
-
-    # def optimize(self, tuner, name, plt=None):
+# def optimize(self, tuner, name, plt=None):
     #     """
     #     Parameters
     #     ----------

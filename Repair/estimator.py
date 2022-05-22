@@ -13,10 +13,13 @@ class Estimator(ABC, BaseEstimator):
     def set_train_call_back(self,train_call_back):
         self.train_call_back = train_call_back
 
-    # predict , fit and score for the sklearn parameter optizimiters
-    def score(self, X, y):
-        weights = X.ne(y).values.flatten()
-        predicted  =self.predict(X, y)
+    def score(self, X, y , labels):
+        """ neg rmse (to maximize) """
+        predicted  =self.predict(X, y, labels)
+        weights = X.ne(y).values.astype(int)
+        weights = weights*3+1 #weights anomalies more
+        weights[labels] = 0
+        weights = weights.flatten()
         flatten_predicted = predicted.values.flatten()
         flatten_y =  y.values.flatten()
         score_ = -sm.mean_squared_error( flatten_y,flatten_predicted , sample_weight=weights)
@@ -26,6 +29,11 @@ class Estimator(ABC, BaseEstimator):
         raise NotImplementedError(self)
 
     def predict(self, X, y=None , labels=None):
+        """ injected dataframe X
+            truth data frame y
+            labeld points labels
+            returns  repaired dataframe
+        """
         raise NotImplementedError(self)
 
 

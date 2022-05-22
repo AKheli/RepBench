@@ -88,12 +88,13 @@ class DimensionalityReductionEstimator(Estimator):
                 matrix_to_repair[:,sorted_corr[6:]] = 0
                 assert np.any(matrix_to_repair[:,self.columns_to_repair])
 
-        if not refit and self.is_fitted:
-            fitted_transform_matrix = self.transform_matrix
-            fitted_weighted_mean = self.weighted_mean
-            reduced = self.transform_(matrix_to_repair)
-        else:
-            reduced = self.reduce(matrix_to_repair, self.classification_truncation)
+        # print(refit,self.is_fitted)
+        # if not refit and self.is_fitted:
+        #     fitted_transform_matrix = self.transform_matrix
+        #     fitted_weighted_mean = self.weighted_mean
+        #     reduced = self.transform_(matrix_to_repair)
+        # else:
+        reduced = self.reduce(matrix_to_repair, self.classification_truncation)
 
         anomaly_matrix = self.classify(matrix_to_repair, reduced=reduced)
 
@@ -110,13 +111,13 @@ class DimensionalityReductionEstimator(Estimator):
             matrix_to_repair[anomaly_matrix] = reduced[anomaly_matrix]
             reduced = matrix_to_repair.copy()
 
-        if not refit and self.is_fitted:
-            self.transform_matrix = fitted_transform_matrix
-            self.weighted_mean = fitted_weighted_mean
+        # if not refit and self.is_fitted:
+        #     self.transform_matrix = fitted_transform_matrix
+        #     self.weighted_mean = fitted_weighted_mean
 
         final = matrix.copy()
         final[:,self.columns_to_repair] = matrix_to_repair[:,self.columns_to_repair]
-        return final
+        return pd.DataFrame(final)
 
 
     def IRLS(self, matrix, truncation):

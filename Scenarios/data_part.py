@@ -6,7 +6,7 @@ class DataPart:
     def __init__(self, injected, original, train=None):
         assert injected.shape == original.shape
         assert injected.shape[0] > 100 , injected.shape
-        assert injected.shape[1] > 2
+        assert injected.shape[1] > 2 , injected
         self.original_ = original.reset_index(drop=True)
         self.injected_ = injected.reset_index(drop=True)
         self.class_ = self.original_.ne(self.injected_)  ## important to drop colums
@@ -69,20 +69,24 @@ class DataPart:
         return [np.array(range_) for range_ in ranges]
 
 
-    def generate_column_labels(self,class_collumn, column_index , label_ratio=0.2, label_anom_start=0.8):
-        state = np.random.get_state()
-        np.random.seed(100)
-        starts = [min(r) for r in DataPart.get_anomaly_ranges(class_collumn) if len(r) > 1]
-        m = len(class_collumn)
-        r_number = np.random.uniform(size=m)
-        r_number[starts] = r_number[starts] < label_anom_start
-        r_number = r_number > 1 - label_ratio
-        np.random.set_state(state)
-        labels = r_number.astype(bool)
+    def generate_column_labels(self,class_column, column_index , label_ratio=0.2, label_anom_start=0.8):
+
+        for i in range(100):
+            state = np.random.get_state()
+            np.random.seed(100)
+            starts = [min(r) for r in DataPart.get_anomaly_ranges(class_column) if len(r) > 1]
+            m = len(class_column)
+            r_number = np.random.uniform(size=m)
+            r_number[starts] = r_number[starts] < label_anom_start
+            r_number = r_number > 1 - label_ratio
+            np.random.set_state(state)
+            labels = r_number.astype(bool)
+            if np.any((class_column.astype(int) - labels)> 0 ): # make there are non labeled data points
+                continue
 
         #check for non zero weights
         if column_index in self.injected_columns:
-            assert np.any((class_collumn.astype(int) - labels)> 0 ) , "labeled all anomalies there will be no weights"
+            assert np.any((class_column.astype(int) - labels)> 0 ) , "labeled all anomalies there will be no weights"
         return labels
 
     def generate_labels(self):

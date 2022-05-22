@@ -158,7 +158,7 @@ def generate_correlated_series_plot(truth, cols, lw, ax=plt):
     plt.gca().set_prop_cycle(None)
 
 
-def generate_truth_and_injected(truth, injected, cols,class_, lw, ax=plt):
+def generate_truth_and_injected(truth, injected, cols,class_, lw, ax=plt , alpha = 1):
     class_ = np.array(class_)
     for i, column in enumerate(truth.columns):
         if i in cols:
@@ -169,7 +169,7 @@ def generate_truth_and_injected(truth, injected, cols,class_, lw, ax=plt):
             mask = np.ma.masked_where(np.invert(extended_class),injected[column])
             ax.plot(mask, color="red", lw=lw / 2, ls="dotted",marker=None, label="injected")
             #ax.scatter(injected[column], s=mask, marker='.',color="red")# , marker=".")
-            ax.plot(truth[column], color="black", lw=lw, label  ="truth")
+            ax.plot(truth[column], color="black", lw=lw, label  ="truth" , alpha=alpha)
 
 
 def generate_bouneries_plot(lower, upper, lw, ax=plt):

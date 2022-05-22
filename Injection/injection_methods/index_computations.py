@@ -6,7 +6,7 @@ def get_random_indices(array_or_size,a_size = 1, number_of_ranges=1, percentage 
     size = array_or_size if isinstance(array_or_size,int) else len(array_or_size)
 
     if percentage is not None:
-        print("percentage" , percentage, "asize" , a_size)
+        #print("percentage" , percentage, "asize" , a_size)
         number_of_ranges = math.ceil(size/100*percentage/a_size)
 
     free_space = size - number_of_ranges*a_size
@@ -18,7 +18,6 @@ def get_random_indices(array_or_size,a_size = 1, number_of_ranges=1, percentage 
 
     random_space = free_space-min_gap*n_gaps
 
-    print("r_gap",random_space)
     probabilities = np.random.uniform(size=n_gaps) # more variable outcomes
     probabilities = probabilities / sum(probabilities)
     random_spaces = np.random.multinomial(random_space , probabilities)

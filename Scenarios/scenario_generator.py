@@ -68,7 +68,6 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
             test_injected = test.copy()
             a_indices = {}
             for col in cols_to_inject:
-                print("anomaly length" ,a_length)
                 test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col],a_type=  a_type,
                                                                     anomaly_amount=n_anomalies, anomaly_length=a_length)
                 a_indices[col] = indices
@@ -120,14 +119,13 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
         ## inject all series
         test_injected = test.copy()
-        for col in cols_to_inject:
-            test_injected.iloc[:, col], anomaly_infos = inject_single(
-                np.array(test_injected.iloc[:, col]),a_type = a_type, anomaly_length=a_length, percentage=a_perc)
+        for col in [n for n in n_contaminated_series if n <= test_injected.shape[1]]:
+            test_injected.iloc[:, col-1], anomaly_infos = inject_single(
+                np.array(test_injected.iloc[:, col-1]),a_type = a_type, anomaly_length=a_length, percentage=a_perc)
 
         for cts_nbr in [n for n in n_contaminated_series if n <= test_injected.shape[1]]:
             injected_part = test.copy()
             injected_part.iloc[:,:cts_nbr] = test_injected.iloc[:,:cts_nbr]
-
             result[cts_nbr] = DataPart(injected_part, test, train_part)
 
     return result

@@ -77,6 +77,6 @@ def inject_distortion(data, index_range, factor=8):
     s  = 0 #, intercept = np.polyfit(indices, X, 1)
     line = indices * s + np.mean(X)
     diff = np.sign(line-X)
-    assert np.any(diff != 0)  , "distortion could not be injected"
+    assert np.any(diff != 0)  ,f"distortion could not be injected {X} ,{data}"
     data[index_range] += diff*size #(data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}

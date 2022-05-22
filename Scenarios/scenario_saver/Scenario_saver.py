@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 from Scenarios.scenario_saver.error_calulation import save_error
 from Scenarios.scenario_saver.repair_saver import save_repair
 
-save_folder = "Results"
-
-
 
 def save_precision(repaired_scenario , path , repair_plot ):
 
@@ -19,17 +16,26 @@ def save_precision(repaired_scenario , path , repair_plot ):
 
     save_error(repaired_scenario, path)
     if repair_plot:
-        save_repair(repaired_scenario,path )
+        repair_path = path + "repair"
+        try:
+            os.makedirs(repair_path)
+        except:
+            pass
+        repaired_scenario.save_repair_plots(repair_path)
 
 
 
-
-def save_scenario(scenario ,repair_plot = False):
+save_folder = "Results"
+def save_scenario(scenario ,repair_plot = False , res_name = None):
     scenario_name = scenario.scen_name
     data_name = scenario.data_name
     anomaly_type = scenario.a_type
 
-    path = f"{save_folder}/{scenario_name}/{anomaly_type}/{data_name}"
+    if res_name is not None:
+        path = f"{save_folder}/{res_name}/{scenario_name}/{anomaly_type}/{data_name}"
+    else:
+        path = f"{save_folder}/{scenario_name}/{anomaly_type}/{data_name}"
+
     try:
         os.makedirs(path)
     except:

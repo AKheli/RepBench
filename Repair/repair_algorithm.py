@@ -3,6 +3,9 @@ import itertools
 import numpy as np
 import pandas as pd
 import sklearn.metrics as sm
+from skopt import gp_minimize
+
+from Repair.estimator_optimizer import  EstimatorOptimizer
 import Repair.algorithms_config as ac
 from ParameterTuning.sklearn_bayesian import BayesianOptimization
 from Repair.Dimensionality_Reduction.CD.CD_Rec_estimator import CD_Rec_estimator
@@ -92,44 +95,24 @@ class RepairAlgorithm:
         self.estimator.set_train_call_back(train_call_back(labels, score_indices))
 
         X, inv = self.normalize(injected)
-        assert X.shape[1] >2
-        y, _ = self.normalize(truth)
-        print("training", self.get_type())
-        print("train size:", X.shape)
-        self.is_training = True
 
 
-        param_grid = self.estimator.suggest_param_range(X)
+        hash_ =hash((str(injected.values),str(truth.values),str(injected_columns),str(labels)))
+        if hash_ not in self.train_results:
+            assert X.shape[1] >2
 
-        if self.optimizer == "bayesian":
-            opt = BayesianOptimization(self,param_grid, n_jobs=1)
-            opt.fit(X, y)
-            self.estimator = opt.best_estimator_
+            y, _ = self.normalize(truth)
 
-        if self.optimizer == "grid":
-            weights = injected.ne(truth).values
-            weights[labels] = 0
-            weights = weights.flatten()
-            score = -100000
-            optimal_params = None
+            print("training", self.get_type())
+            print("train size:", X.shape)
 
-            for i,params in enumerate((dict(zip(param_grid.keys(), x)) for x in itertools.product(*param_grid.values()))):
-                self.estimator.__dict__.update(params)
-                repair = self.repair(injected,injected_columns,truth,labels)["repair"]
-                flatten_predicted = repair.values.flatten()
-                flatten_y = y.values.flatten()
-                score_ = -sm.mean_squared_error(flatten_y, flatten_predicted, sample_weight=weights)
-                if score_ > score:
-                    score = score_
-                    optimal_params = params.copy()
-            self.estimator.__dict__.update(optimal_params)
+            param_grid = self.estimator.suggest_param_range(X)
+            estimator_optimizer = EstimatorOptimizer(self.estimator,self.optimizer)
+            optimal_params = estimator_optimizer.find_optimal_params(X,y,labels,param_grid)
+            assert all([ k in param_grid.keys() for k in optimal_params.keys()])
+            self.train_results[hash_] = optimal_params
 
-
-
-
-        assert self.is_training
-
-        self.is_training = False
+        self.estimator.__dict__.update(self.train_results[hash_])
         return
 
     def repair(self, injected, injected_columns, truth, labels , **kwargs):
