@@ -20,7 +20,7 @@ import sklearn.model_selection as sk_ms
 
 
 class RepairAlgorithm:
-    optimizer = "grid"
+    optimizer = "bayesian"
 
     repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREEN_estimator, "cdrec": CD_Rec_estimator,
                          "imr": IMR_estimator}

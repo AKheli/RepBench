@@ -25,7 +25,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
     train = data.iloc[max(0, split - max_n_rows):split, : min(sc.MAX_N_COLS, m)]
     test = data.iloc[split:min(n, split + max_n_rows), : min(sc.MAX_N_COLS, m)]
-
+    n, m = test.shape
 
     del data
 
@@ -63,7 +63,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
     if scen_name == sc.ANOMALY_SIZE:
         a_lengths = scen_spec["a_lengths"]
-        n_anomalies = int(n/1000)
+        n_anomalies = math.ceil(n/1000)
         for a_length in a_lengths:
             test_injected = test.copy()
             a_indices = {}
