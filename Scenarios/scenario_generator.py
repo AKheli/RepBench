@@ -116,6 +116,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
         a_perc = scen_spec["a_percentage"]
         a_length = scen_spec["a_length"]
         n_contaminated_series = scen_spec["cts_nbrs"]
+        assert len(set(n_contaminated_series)) == len(n_contaminated_series)
 
         ## inject all series
         test_injected = test.copy()
@@ -126,8 +127,9 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
         for cts_nbr in [n for n in n_contaminated_series if n <= test_injected.shape[1]]:
             injected_part = test.copy()
             injected_part.iloc[:,:cts_nbr] = test_injected.iloc[:,:cts_nbr]
-            result[cts_nbr] = DataPart(injected_part, test, train_part)
-
+            data_part = DataPart(injected_part, test, train_part)
+            result[cts_nbr] = data_part
+            assert len(data_part.injected_columns) == cts_nbr
     return result
 
 
