@@ -74,9 +74,14 @@ def inject_distortion(data, index_range, factor=8):
     size = anomaly_size(data, indexes=index_range)/2
     X = data[index_range]
     indices = np.arange(len(X))
-    s  = 0 #, intercept = np.polyfit(indices, X, 1)
-    line = indices * s + np.mean(X)
+
+    line = np.mean(X)
     diff = np.sign(line-X)
+
+    for i,d in enumerate(diff): # make sur it goes in one direction
+        if d == 0:
+            diff[i] = i%2*2-1
+
     assert np.any(diff != 0)  ,f"distortion could not be injected {X} ,{data}"
     data[index_range] += diff*size #(data[index_range_extended[1::]] - data[index_range_extended[:-1:]]) * factor
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}
