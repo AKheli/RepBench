@@ -45,7 +45,7 @@ class Scenario:
 
 
 
-    def save_repair_plots(self,path, single_plot= False):
+    def save_repair_plots(self,path):
         for repair_name in self.repair_names:
             algo_path = f'{path}/{repair_name}'
             try:
@@ -54,25 +54,15 @@ class Scenario:
                 pass
             plt.close('all')
             for i,(part_scen_name,scenario_part)  in enumerate(self.part_scenarios.items()):
-
                 truth , injected = scenario_part.truth , scenario_part.injected
                 cols = scenario_part.injected_columns
-                if i >0 and self.scen_name == "cts_nbr":
-                    assert len(cols > 1)
-                print("CCCCCCCCCCCCCCCCCCCCCTSSSSSSSSSSSS" , cols)
                 klass = scenario_part.class_
-                algo_part = scenario_part.repairs[repair_name]
-                repair_df = algo_part["repair"]
-                algo_name = algo_part["name"]
-
-                axis = plt.gca()  # axs if plots_n == 1 else axs[i]
+                axis = plt.gca()
                 axis.set_rasterization_zorder(0)
                 axis.set_title(part_scen_name)
-
                 algo_part = scenario_part.repairs[repair_name]
 
                 repair_df = algo_part["repair"]
-                algo_name = algo_part["name"]
                 axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
 
                 line, = plt.plot(truth.iloc[:, cols[0]])

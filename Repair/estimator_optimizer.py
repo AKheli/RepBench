@@ -32,12 +32,16 @@ class EstimatorOptimizer():
 
         # convert list to ranges
         for k, params_list in param_grid.items():
-            try:
-                [float(i) for i in params_list]  # check if all items are numerical arguments
-                param_ranges[k] = (min(params_list), max(params_list))
-            except:
-                param_ranges[k] = params_list
+            if len(set(params_list)) == 1:
+                param_ranges[k] = [params_list[0]]
 
+            else:
+                try:
+                    [float(i) for i in params_list]  # check if all items are numerical arguments
+                    param_ranges[k] = (min(params_list), max(params_list))
+                except:
+                    param_ranges[k] = params_list
+        print(param_ranges)
         param_keys, param_values = param_ranges.keys(), param_ranges.values()
 
         def f(x):
