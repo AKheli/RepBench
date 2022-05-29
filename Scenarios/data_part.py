@@ -3,7 +3,8 @@ import sklearn.metrics as sm
 
 
 class DataPart:
-    def __init__(self, injected, original, train=None):
+    def __init__(self, injected, original,train, name , a_type ):
+        assert isinstance(a_type,str)
         assert injected.shape == original.shape
         assert injected.shape[0] > 100 , injected.shape
         assert injected.shape[1] > 2 , injected
@@ -23,6 +24,11 @@ class DataPart:
 
         self.check_original_rmse()
 
+        self.a_type = a_type
+        self.name = name
+
+    def __repr__(self):
+        return f"{self.name}_{self.a_type}"
 
 
     @property
@@ -50,7 +56,7 @@ class DataPart:
         if self.train is not None:
             cutted_train = self.get_cutted(columns)
 
-        return DataPart(self.injected.iloc[:, columns], self.truth.iloc[:, columns], cutted_train)
+        return DataPart(self.injected.iloc[:, columns], self.truth.iloc[:, columns], cutted_train , a_type=self.a_type,name=self.name)
 
     @staticmethod
     def get_anomaly_ranges(ts_class):
@@ -74,7 +80,7 @@ class DataPart:
         state = np.random.get_state()
         np.random.seed(100)
 
-        for i in range(100):
+        for i in range(1000):
             starts = [min(r) for r in DataPart.get_anomaly_ranges(class_column) if len(r) > 1]
             m = len(class_column)
             r_number = np.random.uniform(size=m)
@@ -104,7 +110,7 @@ class DataPart:
                 "injected_columns": self.injected_columns,
                 "score_indices" : self.get_weights()}
 
-    def add_repair(self, repair_results, repair_name: str):
+    def add_repair(self, repair_results, repair_name: str ):
         assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
         f"such a repair already exists:{repair_name}"
         self.repair_names.append(repair_name)
@@ -113,7 +119,7 @@ class DataPart:
         assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape, self.injected.shape)
         ### compute errors
 
-        weights = self.class_.copy().values
+        weights = np.ones_like(self.class_.values)
         weights[self.labels] = 0
         weights = weights.flatten()
 

@@ -28,10 +28,8 @@ class SCREEN_estimator(Estimator):
 
 
     def suggest_param_range(self,X):
-        differences = abs(np.diff(X.values))
-        #todo smin and smax suggestion
-        return { "smax" : np.logspace(-3,0,num = 10),
-                "smin" : -np.logspace(-3,0,num = 10)}
+        return { "smax" : np.logspace(-3,0,num = 30),
+                "smin" : -np.logspace(-3,0,num = 30)}
 
 
 

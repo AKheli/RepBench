@@ -1,6 +1,8 @@
 import itertools
 import os.path
 
+import toml
+
 import Scenarios.AnomalyConfig as at
 import Repair.algorithms_config as algc
 from Repair.repair_algorithm import RepairAlgorithm
@@ -11,8 +13,6 @@ from run_ressources.parser_init import init_parser
 from run_ressources.parse_toml import load_toml_file
 
 
-
-
 repair_estimators = algc.ALGORITHM_TYPES
 estimator_choices = repair_estimators + ["all"]
 
@@ -21,6 +21,8 @@ scenario_choices = scenarios + ["all"]
 
 all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER]
 anomaly_choices =all_anomalies+["all"]
+
+error_scores = ["rmse_full","rmse_partial","mae","mutual_info"]
 
 def main(input = None):
     """ input : args parameter when not run in console"""
@@ -34,7 +36,10 @@ def main(input = None):
 
     scen_params = args.scenario
     data_params = args.data
+    train_method = args.train
     anomaly_types_param = args.a_type
+    train_error = args.train_error
+
 
     # map scenario input
     cols = [0] #(args.col)
@@ -45,11 +50,6 @@ def main(input = None):
     data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
         else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
 
-    # for name in scen_names:
-    #     Scenario(name,data_files[0], cols_to_inject=cols,
-    #              a_type=at.AMPLITUDE_SHIFT)
-
-    # map repair estimator input
     if args.alg is not None:
         estim_params = args.alg
         param_dicts = load_toml_file()
@@ -61,9 +61,9 @@ def main(input = None):
         param_dict = load_toml_file(filename)
         repair_algos = []
         for alg_typ , params in param_dict.items():
-            solo_params = { k:v  for k, v in params.items() if not isinstance(v,dict)}
-            if len(solo_params) >0:
-                alg = RepairAlgorithm(estimator_name=alg_typ, columns_to_repair=cols, **solo_params)
+            direct_params = { k:v  for k, v in params.items() if not isinstance(v,dict)}
+            if len(direct_params) >0:
+                alg = RepairAlgorithm(estimator_name=alg_typ, columns_to_repair=cols, **direct_params)
                 repair_algos.append(alg)
             for name,inner_params in params.items():
                 if isinstance(inner_params, dict):
@@ -75,11 +75,11 @@ def main(input = None):
     anomalies = [at.parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
 
-    # initialize all scenarios first to check if the can be created
-    for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
-        print(f'running repair on {data_name} with scen type {scen_name}')
-        scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
-        del scenario
+    # # initialize all scenarios first to check if the can be created
+    # for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
+    #     print(f'running repair on {data_name} with scen type {scen_name}')
+    #     scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
+    #     del scenario
 
     for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomalies):
         try:
@@ -87,18 +87,63 @@ def main(input = None):
         except Exception as e:
             print(f'running repair on {data_name} with scen type {scen_name} failed')
             raise e
+        print(f'running repair on {data_name} with scen type {scen_name}')
 
         for estim in repair_algos:
-             for name, train, test in scenario.name_train_test_iter:
+             for name, train_part, test_part in scenario.name_train_test_iter:
+                params = estim.train(**train_part.repair_inputs, score=train_error, train_method=train_method)
 
-                train_score = estim.train(**train.repair_inputs)
-                repair_out_put = estim.repair(**test.repair_inputs)
+                #params = find_or_load_train(estim,error = train_error , train_part=train_part , data_name=data_name,train_method=train_method)
+                estim.set_params(params)
+                repair_out_put = estim.repair(**test_part.repair_inputs)
                 assert repair_out_put["type"] is not None
-                test.add_repair(repair_out_put, repair_out_put["type"])
+                test_part.add_repair(repair_out_put, repair_out_put["type"])
 
     #
-        save_scenario(scenario,repair_plot=True,  res_name=args.rn)
+        save_scenario(scenario, repair_plot=True,  res_name=args.rn)
     #
+
+from pathlib import Path
+def find_or_load_train(estimator,error,train_part,data_name,train_method = "grid"):
+    alg_type = estimator.alg_type
+    path = f"TrainResults/{alg_type}/{data_name}/"
+    file_name = "train_results.toml"
+    file_exists = True
+    try:
+        toml_dict = toml.load(f'{path}{file_name}')
+    except:
+        file_exists = False
+
+    Path(path).mkdir(parents=True, exist_ok=True)
+
+    part_repr = str(train_part)
+    # try to get parameters from file
+    try:
+        params = toml_dict[part_repr][error][train_method]
+        assert isinstance(params,dict)
+        return params
+    except:
+        pass
+
+    params = estimator.train(**train_part.repair_inputs, score=error , train_method = train_method)
+    #assert False , [isinstance(v,int) for v in params.values()] +[params]
+    if not file_exists:
+        toml_dict = {}
+
+    if part_repr not in toml_dict:
+        toml_dict[part_repr] = {error: {train_method : params}}
+    elif error not in toml_dict[part_repr]:
+        toml_dict[part_repr][error] = {train_method : params}
+    elif train_method not in toml_dict[part_repr][error]:
+        toml_dict[part_repr][error][train_method] = params
+
+
+
+
+    with open(f'{path}{file_name}', 'w') as f:
+        toml.dump(toml_dict,f,encoder=toml.TomlNumpyEncoder(preserve=True))
+
+    return params
 
 if __name__ == '__main__':
     main()

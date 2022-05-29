@@ -19,7 +19,6 @@ def add_data_arguments_to_parser(parser, data_choices):
 
 
 def add_injection_arguments_to_parser(parser ,scenario_choices ,anomaly_choices):
-    print(scenario_choices)
     parser.add_argument('-a_type','-anom' ,  type=type_convertion(choices=anomaly_choices, para_name="a_type"))
     parser.add_argument("-scenario", "-scen", type=type_convertion(choices=scenario_choices, para_name="scen"))
     parser.add_argument("-saveinjected",  action='store_true')
@@ -29,6 +28,9 @@ def add_repair_arguments_to_parser(parser,estimator_choices):
     parser.add_argument("-alg" , type=type_convertion(choices=estimator_choices, para_name="alg"))
     parser.add_argument("-algx", type=str)
     parser.add_argument("-rn", "-result_name" , type=str ,default=None)
+    parser.add_argument("-train", "-t" , type=str ,default="grid",choices=["grid", "bayesian"])
+    parser.add_argument("-train_error", "-e" , type=str ,default="full_rmse",choices=["mae", "full_rmse", "partial_rmse"])
+
 
     #parser.add_argument("-saverepair",  action='store_true')
 

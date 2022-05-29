@@ -48,8 +48,8 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
     train_injected = train.copy()
     for col in cols_to_inject:
         train_injected.iloc[:, col], indices = inject_single(train_injected.iloc[:, col], a_type, a_length,
-                                                             percentage=a_perc)
-    train_part = DataPart(train_injected, train)
+                                                             percentage=a_perc*2)
+    train_part = DataPart(train_injected,train,train=None,name = scen_name , a_type=a_type)
 
     ## create specified scenarios
     if scen_name == sc.ANOMALY_RATE:
@@ -60,7 +60,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
                 test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col], a_type, a_length,
                                                                     percentage=a_perc)
             assert len(indices) != 0
-            result[len(indices)] = DataPart(test_injected, test, train_part)
+            result[len(indices)] = DataPart(test_injected, test, train_part,name = scen_name , a_type=a_type)
 
     if scen_name == sc.ANOMALY_SIZE:
         a_lengths = scen_spec["a_lengths"]
@@ -72,7 +72,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
                 test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col],a_type=  a_type,
                                                                     anomaly_amount=n_anomalies, anomaly_length=a_length)
                 a_indices[col] = indices
-            result[a_length] = DataPart(test_injected, test,train_part)
+            result[a_length] = DataPart(test_injected, test,train_part,name = scen_name , a_type=a_type)
 
     if scen_name == sc.TS_LENGTH:
         ts_length_percentages = scen_spec["length_percentages"]
@@ -94,7 +94,8 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
             test_injected = test_injected.copy()
             n_half = math.ceil(perc / 100 / 2 * n,)
             start, stop = center - n_half+1, center + n_half
-            result[perc] = DataPart(test_injected.iloc[start:stop], test.iloc[start:stop],train=train_part)
+            result[perc] = DataPart(test_injected.iloc[start:stop], test.iloc[start:stop],train=train_part
+                                    ,name = scen_name , a_type=a_type)
 
     if scen_name == sc.TS_NBR:
         a_perc = scen_spec["a_percentage"]
@@ -111,7 +112,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
             original_part = test.iloc[:, :ts_nbr]
 
             result[ts_nbr] = DataPart(
-                injected_part, original_part, train_part.get_cutted(ts_nbr))
+                injected_part, original_part, train_part.get_cutted(ts_nbr),name = scen_name , a_type=a_type)
 
     if scen_name == sc.CTS_NBR:
         a_perc = scen_spec["a_percentage"]
@@ -128,7 +129,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
         for cts_nbr in [n for n in n_contaminated_series if n <= test_injected.shape[1]]:
             injected_part = test.copy()
             injected_part.iloc[:,:cts_nbr] = test_injected.iloc[:,:cts_nbr]
-            data_part = DataPart(injected_part, test, train_part)
+            data_part = DataPart(injected_part, test, train_part,name = scen_name , a_type=a_type)
             result[cts_nbr] = data_part
             assert len(data_part.injected_columns) == cts_nbr
     return result

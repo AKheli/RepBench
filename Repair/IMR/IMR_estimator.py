@@ -23,7 +23,7 @@ class IMR_estimator(Estimator):
 
 
     def suggest_param_range(self,X):
-        return {"p" : list(range(1,15)) , "tau": [0.01,0.005,0.001,0.0005]}
+        return {"p" : [1,2,3,5,16] , "tau": [0.0005,0.001,0.002,0.004,0.008,0.01,0.02,0.04,0.08,0.1,0.2,0.5]}
 
 
     def fit(self, X, y=None): ## no fitting

@@ -20,8 +20,6 @@ import sklearn.model_selection as sk_ms
 
 
 class RepairAlgorithm:
-    optimizer = "bayesian"
-
     repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREEN_estimator, "cdrec": CD_Rec_estimator,
                          "imr": IMR_estimator}
 
@@ -90,9 +88,9 @@ class RepairAlgorithm:
 
 
 
-    def train(self, injected, truth,injected_columns,labels, score_indices, **kwargs):
+    def train(self, injected, truth,injected_columns,labels, score_indices , score, train_method, **kwargs):
         self.estimator.columns_to_repair = injected_columns
-        self.estimator.set_train_call_back(train_call_back(labels, score_indices))
+        self.estimator.set_score_f(score)
 
         X, inv = self.normalize(injected)
 
@@ -107,13 +105,13 @@ class RepairAlgorithm:
             print("train size:", X.shape)
 
             param_grid = self.estimator.suggest_param_range(X)
-            estimator_optimizer = EstimatorOptimizer(self.estimator,self.optimizer)
+            estimator_optimizer = EstimatorOptimizer(self.estimator,train_method)
             optimal_params = estimator_optimizer.find_optimal_params(X,y,labels,param_grid)
             assert all([ k in param_grid.keys() for k in optimal_params.keys()])
             self.train_results[hash_] = optimal_params
 
         self.estimator.__dict__.update(self.train_results[hash_])
-        return
+        return self.train_results[hash_]
 
     def repair(self, injected, injected_columns, truth, labels , **kwargs):
         self.estimator.columns_to_repair = injected_columns
@@ -137,7 +135,16 @@ class RepairAlgorithm:
             , "params": self.estimator.get_fitted_params()
                 }
 
+
     def get_type(self):
         return self.type if self.type is not None else self.estimator.alg_type
+
+    @property
+    def alg_type(self):
+        return self.get_type()
+
     def __repr__(self):
         return self.estimator.__str__()
+
+    def set_params(self,params):
+        self.estimator.__dict__.update(params)
