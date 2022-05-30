@@ -81,10 +81,16 @@ class Estimator(ABC, BaseEstimator):
         raise NotImplementedError(self)
 
     def predict(self, X, y=None , labels=None):
-        """ injected dataframe X
-            truth data frame y
-            labeld points labels
-            returns  repaired dataframe
+        """
+        Parameters
+        ----------
+        X: anomaly matrix
+        y: truth values
+        labels: indexes assumed to be known
+
+        Returns
+        -------
+        repaired dataframe
         """
         raise NotImplementedError(self)
 
