@@ -134,7 +134,7 @@ class RepairAlgorithm:
 
     @property
     def alg_type(self):
-        return self.estimator.alg_type()
+        return self.estimator.alg_type
 
     def __repr__(self):
         return self.estimator.__str__()

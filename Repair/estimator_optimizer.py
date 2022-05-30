@@ -43,14 +43,16 @@ class EstimatorOptimizer():
                 except:
                     param_ranges[k] = params_list
         param_keys, param_values = param_ranges.keys(), param_ranges.values()
-
+        print(param_ranges)
         def f(x):
             estim = self.estim_change_copy(dict(zip(param_keys, x)))
-            return estim.scores(injected, truth, labels)[self.error_score]
+            score= estim.scores(injected, truth, labels)[self.error_score]
+            print(score,x)
+            return score
 
         x = gp_minimize(f, param_values, n_jobs=-1,
-                        n_calls=30,
-                        n_initial_points=20,
+                        n_calls=100,
+                        n_initial_points=30,
                         n_restarts_optimizer=2,
                         ).x
 
