@@ -1,20 +1,15 @@
 import pandas as pd
-from matplotlib import pyplot as plt
-
 from Repair.algorithms_config import IMR
 from Repair.IMR.IMR import imr2
-from Repair.IMR.label_generator import generate_anomaly_start_labels, generate_random_labels
 from Repair.estimator import Estimator
 import numpy as np
 import run_ressources.Logger as log
 
-alg_type = IMR
 class IMR_estimator(Estimator):
 
     def __init__(self, p=5,tau = 0.1, **kwargs):
         self.p = p
         self.tau = tau
-        self.alg_type = alg_type
         Estimator.__init__(self, **kwargs)
         self.max_itr_n  = 100
 
@@ -71,8 +66,9 @@ class IMR_estimator(Estimator):
 
         return repair
 
+    @property
     def alg_type(self):
-        return "IMR"
+        return IMR
 
     def __str__(self):
         return  f'IMR({self.p},{round(self.tau,2)})'

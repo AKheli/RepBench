@@ -7,9 +7,9 @@ from multiprocessing.pool import ThreadPool as Pool
 
 
 class EstimatorOptimizer():
-
-    def __init__(self, estim, type):
-        self.type = type
+    def __init__(self, estim, opt_method , error_score):
+        self.error_score = error_score
+        self.opt_method = opt_method
         self.estim: Estimator = estim
 
     def estim_change_copy(self, param_dict):
@@ -19,9 +19,11 @@ class EstimatorOptimizer():
         return estim_copy
 
     def find_optimal_params(self, injected, truth, labels, param_grid):
-        if self.type == "bayesian":
+        """ minimized the estimators repair score over the fiven parameter range"""
+
+        if self.opt_method == "bayesian":
             params = self.bayesian(injected, truth, labels, param_grid)
-        if self.type == "grid":
+        if self.opt_method == "grid":
             params = self.grid(injected, truth, labels, param_grid)
 
         return params
@@ -44,7 +46,7 @@ class EstimatorOptimizer():
 
         def f(x):
             estim = self.estim_change_copy(dict(zip(param_keys, x)))
-            return -estim.score(injected, truth, labels)
+            return estim.scores(injected, truth, labels)[self.error_score]
 
         x = gp_minimize(f, param_values, n_jobs=-1,
                         n_calls=30,
@@ -98,13 +100,12 @@ class EstimatorOptimizer():
         #    self.estim.set_score_f(score)
         def f(params):
             estim = self.estim_change_copy(params)
-            score_ = estim.score(truth, injected, labels)
+            score_ = estim.scores(truth, injected, labels)[self.error_score]
             return score_
 
         with Pool(8) as p:
             scores = np.array(p.map(f, param_combinations))
-            index = np.argmax(np.array(scores))
-
+            index = np.argmin(np.array(scores))
             optimal_params = param_combinations[index]
         # print(list(zip(param_combinations,scores)))
         # print(optimal_params, self.estim_change_copy(optimal_params).score(injected,truth,labels))

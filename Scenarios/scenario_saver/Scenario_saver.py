@@ -14,7 +14,7 @@ def save_precision(repaired_scenario , path , repair_plot ):
     except:
         pass
 
-    save_error(repaired_scenario, path)
+    repaired_scenario.save_error(path)
     if repair_plot:
         repair_path = path + "repair"
         try:

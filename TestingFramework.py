@@ -2,7 +2,6 @@ import itertools
 import os.path
 
 import toml
-
 import Scenarios.AnomalyConfig as at
 import Repair.algorithms_config as algc
 from Repair.repair_algorithm import RepairAlgorithm
@@ -91,15 +90,13 @@ def main(input = None):
 
         for estim in repair_algos:
              for name, train_part, test_part in scenario.name_train_test_iter:
-                params = estim.train(**train_part.repair_inputs, score=train_error, train_method=train_method)
-
-                #params = find_or_load_train(estim,error = train_error , train_part=train_part , data_name=data_name,train_method=train_method)
+                params = find_or_load_train(estim,train_error,train_part,data_name,train_method = train_method)
+                #params = estim.train(**train_part.repair_inputs, error_score=train_error, train_method=train_method)
                 estim.set_params(params)
                 repair_out_put = estim.repair(**test_part.repair_inputs)
                 assert repair_out_put["type"] is not None
                 test_part.add_repair(repair_out_put, repair_out_put["type"])
 
-    #
         save_scenario(scenario, repair_plot=True,  res_name=args.rn)
     #
 

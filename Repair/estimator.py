@@ -10,8 +10,6 @@ class Estimator(ABC, BaseEstimator):
     def __init__(self, columns_to_repair,train_call_back = None):
         self.columns_to_repair = columns_to_repair
         self.train_call_back = train_call_back
-        self.score_f = "full_rmse"
-
 
     def copy(self):
         copy_ =  type(self)(self.columns_to_repair)
@@ -26,24 +24,26 @@ class Estimator(ABC, BaseEstimator):
 
 
 
-    def score(self, X, y , labels):
-        """ error_to_maximize """
-        score_ = None
-        if self.score_f == "full_rmse":
-            score_ = -self.full_rmse(X,y,labels)
+    def scores(self, X, y , labels , predicted=None):
+        predicted = predicted if predicted is not None\
+            else self.predict(X, y, labels)
 
-        if self.score_f == "partial_rmse":
-            score_ = -self.partial_rmse(X, y, labels)
+        flatten_y = y.values.flatten()
+        flatten_predicted = predicted.values.flatten()
+        full_weights = np.ones_like(predicted.values).astype(bool)
+        full_weights[labels] = False
+        full_weights_flattened = full_weights.flatten()
 
-        if self.score_f == "mae":
-            score_ = -self.mae_score(X, y, labels)
+        scores_ = {}
+        scores_["mae"] = sm.mean_absolute_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened])
+        scores_["full_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened],squared=False)
 
-        # if self.score_f == "mutual_info":
-        #     score_ = sm.normalized_mutual_info_score( flatten_y,flatten_predicted)
-        #     print("mutual_info" ,score_)
+        partial_weights = np.invert(np.isclose(X.values, y.values))
+        partial_weights[labels] = False
+        partial_weights_flattened = partial_weights.flatten()
+        scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
 
-        assert score_ is not None , f"score_f must be: mutual_info, mae , partial_rmse or full_rmse"
-        return score_
+        return scores_
 
     def mae_score(self, X, y , labels):
         predicted = self.predict(X, y, labels)
@@ -113,7 +113,8 @@ class Estimator(ABC, BaseEstimator):
         "parameter ranges used for training depending on data X, data is normalited for training"
         raise NotImplementedError(self)
 
-    def get_alg_type(self):
+    @property
+    def alg_type(self):
         "e.g for colors in plot"
         raise NotImplementedError(self)
 

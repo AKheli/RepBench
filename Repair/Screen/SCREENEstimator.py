@@ -5,15 +5,12 @@ from Repair.algorithms_config import SCREEN
 from Repair.estimator import Estimator
 import numpy as np
 
-
-alg_type = SCREEN
 class SCREEN_estimator(Estimator):
 
     def __init__(self, t=3, smax=1, smin=-1, method="local",**kwargs):
         self.smin = smin
         self.smax = smax
         self.t = t
-        self.alg_type = alg_type
         self.method = method
         assert self.smin < 0 and self.smax > 0 and t >= 1 , f"invalid (smin<0,smax>0,t>=1): {(smin,smax,t)}"
 
@@ -46,8 +43,9 @@ class SCREEN_estimator(Estimator):
 
         return repair
 
+    @property
     def alg_type(self):
-        return "SCREEN"
+        return SCREEN
 
     def __str__(self):
         return  f'SCREEN({self.t},{round(self.smax,1)},{round(self.smin,1)})'

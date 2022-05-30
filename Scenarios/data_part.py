@@ -20,8 +20,8 @@ class DataPart:
             assert train.train is None
 
         self.repairs = {}
+        self.repair_metrics = {}
         self.repair_names = []
-
         self.check_original_rmse()
 
         self.a_type = a_type
@@ -100,8 +100,6 @@ class DataPart:
         for  i, column_name in enumerate(self.labels):
             self.labels[column_name] = self.generate_column_labels(self.labels[column_name],i)
 
-
-
     @property
     def repair_inputs(self):
         return {"injected": self.injected,
@@ -110,52 +108,27 @@ class DataPart:
                 "injected_columns": self.injected_columns,
                 "score_indices" : self.get_weights()}
 
-    def add_repair(self, repair_results, repair_name: str ):
+    def add_repair(self, repair_results, repair_name = None):
+        repair_name = repair_results["name"] if repair_name is None else repair_name
+        self.repair_names.append(repair_name)
         assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
         f"such a repair already exists:{repair_name}"
-        self.repair_names.append(repair_name)
 
         repair = repair_results["repair"]
         assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape, self.injected.shape)
-        ### compute errors
-
-        weights = np.ones_like(self.class_.values)
-        weights[self.labels] = 0
-        weights = weights.flatten()
-
-        repair_np = repair.values.flatten()
-        injected_np = self.injected.values.flatten()
-        truth_np = self.truth.values.flatten()
-
-        original_rmse = sm.mean_squared_error(truth_np, injected_np, sample_weight=weights)
-        repair_rmse = sm.mean_squared_error(truth_np, repair_np, sample_weight=weights)
-
-        original_mae = sm.mean_absolute_error(truth_np, injected_np, sample_weight=weights)
-        repair_mae = sm.mean_absolute_error(truth_np, repair_np, sample_weight=weights)
-
-
-        # on amomalies only
-        class_labels = self.klass.values
-        class_labels[self.labels] = False
-        class_labels = class_labels.flatten().astype(int)
-
-        original_anomaly_rmse = sm.mean_squared_error(truth_np, injected_np, sample_weight=class_labels)
-        repair_anomaly_rmse = sm.mean_squared_error(truth_np, repair_np, sample_weight=class_labels)
 
         repair_dict = {
             "repair": repair_results["repair"],
-            "name": repair_results["name"],
-            "original_rmse": original_rmse,
-            "repair_rmse": repair_rmse,
-            "original_mae": original_mae,
-            "repair_mae": repair_mae,
-            "original_anomaly_rmse": original_anomaly_rmse,
-            "repair_anomaly_rmse": repair_anomaly_rmse,
-            "runtime" : repair_results["runtime"]
+            "name": repair_name,
         }
 
-
         self.repairs[repair_name] = repair_dict
+
+        repair_metrics = repair_results["scores"]
+        repair_metrics["runtime"] = repair_results["runtime"]
+
+        self.repair_metrics[(repair_name, repair_results["type"])] = repair_metrics
+
 
     def get_errors(self,error_name = "rmse" ):
         if error_name == "rmse":

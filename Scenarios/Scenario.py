@@ -1,9 +1,11 @@
 import os
 
+import numpy as np
 import pandas as pd
 from matplotlib.ticker import MaxNLocator
 
 import Scenarios.AnomalyConfig as ac
+from Repair.algorithms_config import ALGORITHM_COLORS
 from Scenarios.scenario_generator import generate_scenario_data
 import matplotlib.pyplot as plt
 
@@ -29,21 +31,10 @@ class Scenario:
     def get_amount_of_part_scenarios(self):
         return len(self.part_scenarios)
 
-    def metrics_df(self):
-        d = {}
-        for name , part in  self.part_scenarios.items():
-            d[name] =  part.repairs
-
-        d = pd.DataFrame.from_dict(d, orient='index')
-        d.index.name = self.scen_name
-
-        return d
 
     @property
     def repair_names(self):
         return set(sum([p.repair_names for k,p in self.part_scenarios.items()],[]))
-
-
 
     def save_repair_plots(self,path):
         for repair_name in self.repair_names:
@@ -74,51 +65,68 @@ class Scenario:
                 plt.savefig(f"{algo_path}/{part_scen_name}.svg")
                 plt.close('all')
 
-# def optimize(self, tuner, name, plt=None):
-    #     """
-    #     Parameters
-    #     ----------
-    #     tuner e.g gridsearch CV with specified model and grid
-    #     plt or axs
-    #
-    #     Returns
-    #     -------
-    #     {"train_error" : overal_train_error ,
-    #             "train_time" : time ,
-    #             "params" : best_params,
-    #             "estimator"  : estimator ,
-    #             "scenario_errors" : dict of scenario scores}
-    #     """
-    #
-    #     train_X, train_y = self.train["injected"], self.train["original"]
-    #     timer = Timer()
-    #     timer.start()
-    #     tuner.fit(train_X, train_y)
-    #     time = timer.get_time()
-    #     estimator = tuner.best_estimator_
-    #
-    #     if hasattr(self, "last_estimator"):
-    #         assert id(estimator) != id(self.last_estimator), f'{id(estimator)} {id(self.last_estimator)}'
-    #     self.last_estimator = estimator
-    #
-    #     best_params = tuner.best_params_
-    #
-    #     overal_train_error = estimator.error(train_X, train_y, plt=plt, name="train")
-    #
-    #     scenario_scores = {}
-    #     for scenario_part_name, scenario_part in self.scenarios.items():
-    #         validation_X, validation_y = scenario_part["injected"], scenario_part["original"]
-    #         error = estimator.error(validation_X, validation_y)
-    #         scenario_scores[scenario_part_name] = error
-    #
-    #     results = {"train_error": overal_train_error,
-    #                "train_time": time,
-    #                "params": best_params,
-    #                "estimator": estimator,
-    #                "scenario_errors": scenario_scores}
-    #
-    #     if not hasattr(self, "opt_results"):
-    #         self.opt_results = {}
-    #     self.opt_results[name] = results
-    #
-    #     return results
+
+    def score_dfs(self):
+        used_scores = []
+        full_dict = {}
+        for part_name, part in self.part_scenarios.items():
+            full_dict[part_name] = {}
+            for (alg_name, alg_type) , scores in part.repair_metrics.items():
+                full_dict[part_name][(alg_name,alg_type)] = scores
+                used_scores += list(scores.keys())
+
+        full_df = pd.DataFrame.from_dict(full_dict,orient="index")
+        full_df.index.name = self.scen_name
+        retval = {score : full_df.applymap(lambda x: x.get(score,np.NAN)) for score in set(scores)}
+        return retval
+
+    def save_error(self,path):
+        from itertools import cycle
+
+        initial_path = path
+        lines = ["solid", "dashed", "dotted", "dashdot"]
+        # colors = ["red", "green", "green",  "green", "purple", "blue"]
+        path = f"{path}/error"
+        try:
+            os.makedirs(path)
+        except:
+            pass
+
+        plt.clf()
+        plt.close()
+
+        for metric , metric_df in self.score_dfs().items():
+            error_path = f'{path}/{metric}'
+
+            if "time" in metric:
+                error_path = f'{"/".join(initial_path.split("/")[:-2])}/runtime'
+
+            try:
+                os.makedirs(error_path)
+            except:
+                pass
+
+
+            # for name_type in metric_df.columns:
+            #     new_df = pd.DataFrame(metric_df[name_type].to_list(), columns=[metric])
+            #
+            #     new_df.to_csv(f'{error_path}/{col}.txt')
+
+
+
+            columns = list(metric_df.columns)
+            cyclers = {}
+            for name_type in columns:
+                color = ALGORITHM_COLORS[name_type[1]]
+                if color not in cyclers:
+                    cyclers[color] = cycle(lines)
+                plt.plot(metric_df[name_type], marker='x', label=name_type[0], color=color, ls=next(cyclers[color]))
+            plt.xlabel(metric_df.index.name)
+            plt.ylabel(metric)
+            lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+            plt.savefig(f'{error_path}/{metric}.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+            plt.clf()
+            plt.close()
+            metric_df.columns = [name for name,type in metric_df.columns]
+            metric_df.to_csv(f'{error_path}/{metric}.txt')
+

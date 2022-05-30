@@ -14,10 +14,7 @@ from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Repair.estimator import Estimator
 from Repair.res.timer import Timer
-from Repair.train_call_back import train_call_back
 from Scenarios.metrics import RMSE
-import sklearn.model_selection as sk_ms
-
 
 class RepairAlgorithm:
     repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREEN_estimator, "cdrec": CD_Rec_estimator,
@@ -25,7 +22,7 @@ class RepairAlgorithm:
 
     def __init__(self, estimator_name, columns_to_repair, **kwargs):
         estimator = None
-        self.type = None
+        self.estimator_name = None
 
         # checks if specian name is given to algorithm , for example with toml params
         if "name" in kwargs:
@@ -88,60 +85,56 @@ class RepairAlgorithm:
 
 
 
-    def train(self, injected, truth,injected_columns,labels, score_indices , score, train_method, **kwargs):
+    def train(self, injected, truth,injected_columns,labels , error_score, train_method, **kwargs):
         self.estimator.columns_to_repair = injected_columns
-        self.estimator.set_score_f(score)
 
         X, inv = self.normalize(injected)
+        y, _ = self.normalize(truth)
 
 
         hash_ =hash((str(injected.values),str(truth.values),str(injected_columns),str(labels)))
-        if hash_ not in self.train_results:
+        if True: # hash_ not in self.train_results:
             assert X.shape[1] >2
 
-            y, _ = self.normalize(truth)
-
-            print("training", self.get_type())
+            print("training", self.estimator.alg_type)
             print("train size:", X.shape)
 
             param_grid = self.estimator.suggest_param_range(X)
-            estimator_optimizer = EstimatorOptimizer(self.estimator,train_method)
+            estimator_optimizer = EstimatorOptimizer(self.estimator,train_method, error_score)
             optimal_params = estimator_optimizer.find_optimal_params(X,y,labels,param_grid)
             assert all([ k in param_grid.keys() for k in optimal_params.keys()])
-            self.train_results[hash_] = optimal_params
+            #self.train_results[hash_] = optimal_params
 
-        self.estimator.__dict__.update(self.train_results[hash_])
-        return self.train_results[hash_]
+        self.estimator.__dict__.update(optimal_params)
+        return optimal_params
 
     def repair(self, injected, injected_columns, truth, labels , **kwargs):
         self.estimator.columns_to_repair = injected_columns
         attributes_str = str(self.estimator.get_params())
-
-        X, X_norn_inv = self.normalize(injected)
+        X, X_norm_inv = self.normalize(injected)
         y, _ = self.normalize(truth)
         timer = Timer()
         timer.start()
-        assert labels is not None
         repair = self.estimator.predict(X, y, labels=labels)
-        repair = pd.DataFrame(repair)  # *std_X+mean_X
-        repair = X_norn_inv(repair)
+        scores = self.estimator.scores(X,y,labels=labels,predicted=repair)
+        repair = pd.DataFrame(repair)
+        repair = X_norm_inv(repair)
 
         assert attributes_str == str(
             self.estimator.get_params()), f'{attributes_str} \n {str(self.estimator.get_params())}'
-        return {"repair": repair
+
+        retval = {"repair": repair
             , "runtime": timer.get_time()
-            , "type": self.get_type()
-            , "name": str(self.estimator)
+            , "type": self.estimator.alg_type
+            , "name": str(self.estimator) if self.estimator_name is None else self.estimator_name
             , "params": self.estimator.get_fitted_params()
-                }
-
-
-    def get_type(self):
-        return self.type if self.type is not None else self.estimator.alg_type
+            , "scores" : scores
+            }
+        return retval
 
     @property
     def alg_type(self):
-        return self.get_type()
+        return self.estimator.alg_type()
 
     def __repr__(self):
         return self.estimator.__str__()
