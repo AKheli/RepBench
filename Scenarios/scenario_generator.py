@@ -23,7 +23,7 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
     max_n_rows = sc.MAX_N_ROWS if sc.MAX_N_ROWS is not None else split + 1
 
-    train = data.iloc[max(0, split - max_n_rows):split, : min(sc.MAX_N_COLS, m)]
+    train = data.iloc[max(0, split - 2000):split, : min(sc.MAX_N_COLS, m)]
     test = data.iloc[split:min(n, split + max_n_rows), : min(sc.MAX_N_COLS, m)]
     n, m = test.shape
 

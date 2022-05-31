@@ -87,8 +87,11 @@ class DataPart:
             r_number[starts] = r_number[starts] < label_anom_start
             r_number = r_number > 1 - label_ratio
             labels = r_number.astype(bool)
-            if np.any((class_column.astype(int) - labels)> 0 ): # make there are non labeled data points
-                continue
+            if column_index not in self.injected_columns:
+                break
+            if  np.any((class_column.astype(int) - labels)> 0 ): # make there are non labeled data points
+                break
+
         np.random.set_state(state)
         #check for non zero weights
         if column_index in self.injected_columns:

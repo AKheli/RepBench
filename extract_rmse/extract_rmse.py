@@ -2,14 +2,13 @@ import os
 
 import shutil
 
-error = "full_rmse"
+error = "mae"
 innerfolder = "full/"
 
 def is_error_path(path,error):
         return  path.split("/")[-1] == error
 
 for i in [ x for x in os.walk("../Results/"+innerfolder) if len(x[0]) > 0]:
-        print(i)
         if not is_error_path(i[0],error):
                 continue
         path = i[0]

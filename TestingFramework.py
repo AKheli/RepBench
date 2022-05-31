@@ -120,23 +120,21 @@ def find_or_load_train(estimator,error_score,train_part,data_name,train_method):
         assert isinstance(params,dict)
         return params
     except:
-        pass
+        params = estimator.train(**train_part.repair_inputs, error_score=error_score , train_method = train_method)
 
-    params = estimator.train(**train_part.repair_inputs, error_score=error_score , train_method = train_method)
+        if not file_exists:
+            toml_dict = {}
+        if part_repr not in toml_dict:
+            toml_dict[part_repr] = {error_score: {train_method : params}}
+        elif error_score not in toml_dict[part_repr]:
+            toml_dict[part_repr][error_score] = {train_method : params}
+        elif train_method not in toml_dict[part_repr][error_score]:
+            toml_dict[part_repr][error_score][train_method] = params
 
-    if not file_exists:
-        toml_dict = {}
-    if part_repr not in toml_dict:
-        toml_dict[part_repr] = {error_score: {train_method : params}}
-    elif error_score not in toml_dict[part_repr]:
-        toml_dict[part_repr][error_score] = {train_method : params}
-    elif train_method not in toml_dict[part_repr][error_score]:
-        toml_dict[part_repr][error_score][train_method] = params
+        with open(f'{path}{file_name}', 'w') as f:
+            toml.dump(toml_dict,f,encoder=toml.TomlNumpyEncoder(preserve=True))
 
-    with open(f'{path}{file_name}', 'w') as f:
-        toml.dump(toml_dict,f,encoder=toml.TomlNumpyEncoder(preserve=True))
-
-    return params
+        return params
 
 if __name__ == '__main__':
     main()

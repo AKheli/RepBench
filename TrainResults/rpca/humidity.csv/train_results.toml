@@ -1,6 +1,6 @@
 [a_size_shift.full_rmse.bayesian]
-classification_truncation = 1
-repair_truncation = 7
-threshold = 1.5059156523824548
+classification_truncation = 2
+repair_truncation = 3
+threshold = 1.4604219794790512
 repair_iter = 2
-n_max_iter = 7
+n_max_iter = 2

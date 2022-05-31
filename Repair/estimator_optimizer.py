@@ -51,8 +51,8 @@ class EstimatorOptimizer():
             return score
 
         x = gp_minimize(f, param_values, n_jobs=-1,
-                        n_calls=100,
-                        n_initial_points=30,
+                        n_calls=30,
+                        n_initial_points=20,
                         n_restarts_optimizer=2,
                         ).x
 

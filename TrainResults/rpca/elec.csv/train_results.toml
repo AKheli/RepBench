@@ -1,0 +1,20 @@
+[a_size_shift.full_rmse.bayesian]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.111467711840768
+repair_iter = 3
+n_max_iter = 7
+
+[a_size_distortion.full_rmse.bayesian]
+classification_truncation = 4
+repair_truncation = 8
+threshold = 2.41503160927556
+repair_iter = 1
+n_max_iter = 20
+
+[a_size_outlier.full_rmse.bayesian]
+classification_truncation = 3
+repair_truncation = 8
+threshold = 1.6770151791790129
+repair_iter = 1
+n_max_iter = 0

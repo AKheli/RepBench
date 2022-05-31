@@ -63,6 +63,7 @@ class IMR_estimator(Estimator):
             col_repair = repair_results["repair"]
             repair.iloc[:, col] = col_repair
 
+            min_label = min(labels)
 
         return repair
 

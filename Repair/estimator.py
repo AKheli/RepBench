@@ -1,6 +1,7 @@
 from abc import ABC
 
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator
 import sklearn.metrics as sm
 
@@ -25,8 +26,9 @@ class Estimator(ABC, BaseEstimator):
 
 
     def scores(self, X, y , labels , predicted=None):
-        predicted = predicted if predicted is not None\
-            else self.predict(X, y, labels)
+        predicted = predicted if predicted is not None else self.predict(X, y, labels)
+
+        labels = labels.values if isinstance(labels,pd.DataFrame) else labels
 
         flatten_y = y.values.flatten()
         flatten_predicted = predicted.values.flatten()

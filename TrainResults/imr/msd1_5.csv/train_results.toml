@@ -1,0 +1,15 @@
+[a_size_shift.full_rmse.bayesian]
+p = 16
+tau = 0.5
+
+[a_size_shift.mae.bayesian]
+p = 8
+tau = 0.37761631165774345
+
+[a_size_distortion.full_rmse.bayesian]
+p = 13
+tau = 0.060093062937735885
+
+[a_size_outlier.full_rmse.bayesian]
+p = 11
+tau = 0.05298636715982325
