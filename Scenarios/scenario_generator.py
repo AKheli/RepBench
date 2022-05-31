@@ -11,6 +11,20 @@ from Scenarios.data_part import DataPart
 
 from data_methods.Helper_methods import get_df_from_file
 
+def normalize_f(X):
+    """
+    Parameters: matrix X
+    Returns: normalized X , normalization_inverse function
+    """
+    mean_X, std_X = X.mean(), X.std()
+    assert (len(mean_X), len(std_X)) == (X.shape[1], X.shape[1])
+
+    def inv_func(X_norm):
+        X_norm.columns = X.columns
+        result = X_norm * std_X + mean_X
+        return result
+
+    return (X - mean_X) / std_X, inv_func
 
 def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_test_split=0.5,  normalize=True):
     assert scen_name in sc.SCENARIO_TYPES, f"scenario {scen_name} must be one of {sc.SCENARIO_TYPES}"
@@ -25,6 +39,10 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
 
     train = data.iloc[max(0, split - 2000):split, : min(sc.MAX_N_COLS, m)]
     test = data.iloc[split:min(n, split + max_n_rows), : min(sc.MAX_N_COLS, m)]
+
+    if normalize:
+        train , _ = normalize_f(train)
+        test , _ = normalize_f(test)
     n, m = test.shape
 
     del data

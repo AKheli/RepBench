@@ -4,3 +4,38 @@ repair_truncation = 3
 threshold = 1.4604219794790512
 repair_iter = 2
 n_max_iter = 2
+
+[a_size_shift.mae.bayesian]
+classification_truncation = 2
+repair_truncation = 3
+threshold = 1.4604219794790512
+repair_iter = 2
+n_max_iter = 2
+
+[a_size_shift.partial_rmse.bayesian]
+classification_truncation = 2
+repair_truncation = 3
+threshold = 1.4604219794790512
+repair_iter = 2
+n_max_iter = 2
+
+[a_rate_shift.mae.bayesian]
+classification_truncation = 2
+repair_truncation = 3
+threshold = 3.4730099331082656
+repair_iter = 2
+n_max_iter = 11
+
+[cts_nbr_shift.mae.bayesian]
+classification_truncation = 3
+repair_truncation = 7
+threshold = 2.4136543328516424
+repair_iter = 2
+n_max_iter = 4
+
+[ts_len_shift.mae.bayesian]
+classification_truncation = 2
+repair_truncation = 2
+threshold = 3.09330461348949
+repair_iter = 1
+n_max_iter = 0

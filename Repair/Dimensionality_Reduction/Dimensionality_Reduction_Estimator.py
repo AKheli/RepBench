@@ -40,7 +40,7 @@ class DimensionalityReductionEstimator(Estimator):
         n_cols = X.shape[1]
         return {"classification_truncation": [i for i in [1,2,3,4,5,6,7,8] if i < n_cols-1],
                 "repair_truncation": [i for i in [2,3,4,5,6,7,8] if i < n_cols-1],
-                "threshold": [0.1,1.5,2,2.5,3,5],
+                "threshold": [0.1,0.2,1.5,2,2.5,3,5],
                 "repair_iter" : [0,5],
                 "n_max_iter": [0,20]
                 }

@@ -25,16 +25,9 @@ class IMR_estimator(Estimator):
         self.is_fitted = True
         return self
 
-    def predict(self, X , y =None , labels = None):
+    def predict(self, X , y = None , labels = None):
         assert y is not None , "IMR needs truth values to assign labels"
-        assert labels is not None  or self.train_call_back is not None, "IMR requires labels"
-
-
-        #in case of cv when labels are not aviable assign random labels
-        if labels is None and self.train_call_back.labels.shape != X.shape:
-            np.random.seed(100)
-            labels = pd.DataFrame(np.random.binomial(1,0.5,X.shape))
-
+        assert labels is not None  ,  "IMR requires labels"
 
         injected = X.copy()
         truth_full = y.copy()
@@ -43,9 +36,7 @@ class IMR_estimator(Estimator):
             x = np.array(injected)[:, col]
             truth = np.array(truth_full)[:, col]
             if np.allclose(x,truth):
-                log.add_to_log("x and y_0 initialization are to close for a repair")
-                if not log.do_log:
-                    assert False ,"x and y_0 initialization are to close for a repair"
+                assert False ,(x,truth)
                 repair.iloc[:, col] = x
 
 

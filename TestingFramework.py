@@ -102,6 +102,11 @@ def main(input = None):
 
 from pathlib import Path
 def find_or_load_train(estimator,error_score,train_part,data_name,train_method):
+    hash_X = hash(str(train_part.injected))
+    params = estimator.train(**train_part.repair_inputs, error_score=error_score , train_method = train_method)
+    assert hash_X == hash(str(train_part.injected))
+    return params
+
     alg_type = estimator.alg_type
     path = f"TrainResults/{alg_type}/{data_name}/"
     file_name = "train_results.toml"

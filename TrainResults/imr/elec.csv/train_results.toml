@@ -2,6 +2,10 @@
 p = 8
 tau = 0.32148931938045083
 
+[a_size_shift.mae.bayesian]
+p = 3
+tau = 0.37720108492326376
+
 [a_size_distortion.full_rmse.bayesian]
 p = 1
 tau = 0.12213851141972107
@@ -9,3 +13,15 @@ tau = 0.12213851141972107
 [a_size_outlier.full_rmse.bayesian]
 p = 6
 tau = 0.030307688218304644
+
+[cts_nbr_shift.mae.bayesian]
+p = 8
+tau = 0.3605879188918878
+
+[a_rate_shift.mae.bayesian]
+p = 3
+tau = 0.361954986106787
+
+[ts_len_shift.mae.bayesian]
+p = 16
+tau = 0.33874252184680964

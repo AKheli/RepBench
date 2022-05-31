@@ -8,12 +8,29 @@ class DataPart:
         assert injected.shape == original.shape
         assert injected.shape[0] > 100 , injected.shape
         assert injected.shape[1] > 2 , injected
+
+
         self.original_ = original.reset_index(drop=True)
         self.injected_ = injected.reset_index(drop=True)
+        assert not np.allclose(injected.values,original.values)
+
         self.class_ = self.original_.ne(self.injected_)  ## important to drop colums
-        self.train_: DataPart = train
         injected_bool = self.class_.any()
         self.injected_columns = np.arange(len(injected_bool))[injected_bool]
+
+        for col in self.injected_columns:
+            assert np.any(self.class_.values[:, col]) , "AAAAA"
+
+        for col in self.injected_columns:
+            x = np.array(self.injected_)[:, col]
+            truth = np.array(self.original_)[:, col]
+            assert not np.allclose(x, truth)
+
+
+
+
+        first_col = self.class_.iloc[:,0].values
+        self.train_: DataPart = train
         self.generate_labels()
 
         if train is not None:
@@ -26,6 +43,8 @@ class DataPart:
 
         self.a_type = a_type
         self.name = name
+
+
 
     def __repr__(self):
         return f"{self.name}_{self.a_type}"
@@ -80,6 +99,7 @@ class DataPart:
         state = np.random.get_state()
         np.random.seed(100)
 
+        print("START")
         for i in range(1000):
             starts = [min(r) for r in DataPart.get_anomaly_ranges(class_column) if len(r) > 1]
             m = len(class_column)
@@ -89,11 +109,16 @@ class DataPart:
             labels = r_number.astype(bool)
             if column_index not in self.injected_columns:
                 break
-            if  np.any((class_column.astype(int) - labels)> 0 ): # make there are non labeled data points
+
+            print(np.any((class_column.astype(int) - labels) > 0))
+            if np.any((class_column.astype(int) - labels)> 0 ): # make there are non labeled data points
                 break
 
         np.random.set_state(state)
         #check for non zero weights
+
+
+
         if column_index in self.injected_columns:
             assert np.any((class_column.astype(int) - labels)> 0 ) , "labeled all anomalies there will be no weights"
         return labels

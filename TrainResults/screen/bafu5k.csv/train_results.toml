@@ -1,0 +1,15 @@
+[a_size_shift.mae.bayesian]
+smax = 0.5947942679960513
+smin = -0.09365239976488815
+
+[cts_nbr_shift.mae.bayesian]
+smax = 1.0
+smin = -0.1365643374184493
+
+[a_rate_shift.mae.bayesian]
+smax = 0.9424398368680142
+smin = -0.26865173171596346
+
+[ts_len_shift.mae.bayesian]
+smax = 0.9192314977328021
+smin = -0.1365353189001094

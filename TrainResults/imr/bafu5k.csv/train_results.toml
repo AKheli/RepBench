@@ -1,0 +1,15 @@
+[a_size_shift.mae.bayesian]
+p = 2
+tau = 0.1941323086084903
+
+[cts_nbr_shift.mae.bayesian]
+p = 12
+tau = 0.23855503166515682
+
+[a_rate_shift.mae.bayesian]
+p = 13
+tau = 0.24259761156961682
+
+[ts_len_shift.mae.bayesian]
+p = 2
+tau = 0.23907188164445164

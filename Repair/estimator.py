@@ -26,8 +26,9 @@ class Estimator(ABC, BaseEstimator):
 
 
     def scores(self, X, y , labels , predicted=None):
-        predicted = predicted if predicted is not None else self.predict(X, y, labels)
 
+        hash_X = hash(str(X))
+        predicted = predicted if predicted is not None else self.predict(X, y, labels)
         labels = labels.values if isinstance(labels,pd.DataFrame) else labels
 
         flatten_y = y.values.flatten()
@@ -42,9 +43,20 @@ class Estimator(ABC, BaseEstimator):
 
         partial_weights = np.invert(np.isclose(X.values, y.values))
         partial_weights[labels] = False
-        partial_weights_flattened = partial_weights.flatten()
+        partial_weights_flattened = partial_weights.flatten() # anomaly_weights
+
         scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
 
+
+        ### additional scores
+        partial_weights = np.invert(partial_weights)
+        partial_weights[labels] = False
+        partial_weights_flattened = partial_weights.flatten()
+        scores_["N_partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened],squared=False)
+
+        scores_["diff_rmse"] = scores_["full_rmse"] - scores_["partial_rmse"]
+
+        assert hash(str(X)) == hash_X
         return scores_
 
     def mae_score(self, X, y , labels):

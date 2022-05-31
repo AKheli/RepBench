@@ -5,6 +5,13 @@ threshold = 1.195450351750933
 repair_iter = 5
 n_max_iter = 1
 
+[a_size_shift.mae.bayesian]
+classification_truncation = 5
+repair_truncation = 6
+threshold = 1.2543430693310342
+repair_iter = 5
+n_max_iter = 0
+
 [a_size_distortion.full_rmse.bayesian]
 classification_truncation = 8
 repair_truncation = 2
@@ -18,3 +25,24 @@ repair_truncation = 8
 threshold = 0.795877986167517
 repair_iter = 3
 n_max_iter = 1
+
+[cts_nbr_shift.mae.bayesian]
+classification_truncation = 5
+repair_truncation = 5
+threshold = 1.670670728257038
+repair_iter = 2
+n_max_iter = 11
+
+[a_rate_shift.mae.bayesian]
+classification_truncation = 4
+repair_truncation = 3
+threshold = 2.1140910435178926
+repair_iter = 5
+n_max_iter = 20
+
+[ts_len_shift.mae.bayesian]
+classification_truncation = 5
+repair_truncation = 5
+threshold = 1.9653475515464314
+repair_iter = 4
+n_max_iter = 14

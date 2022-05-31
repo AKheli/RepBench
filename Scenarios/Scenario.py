@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+import random
 
 import numpy as np
 import pandas as pd
@@ -39,31 +41,53 @@ class Scenario:
     def save_repair_plots(self,path):
         for repair_name in self.repair_names:
             algo_path = f'{path}/{repair_name}'
-            try:
-                os.mkdir(algo_path)
-            except:
-                pass
+
+            Path(algo_path).mkdir(parents=True, exist_ok=True)
+
             plt.close('all')
             for i,(part_scen_name,scenario_part)  in enumerate(self.part_scenarios.items()):
-                truth , injected = scenario_part.truth , scenario_part.injected
+                full_truth , full_injected = scenario_part.truth , scenario_part.injected
                 cols = scenario_part.injected_columns
                 klass = scenario_part.class_
                 axis = plt.gca()
                 axis.set_rasterization_zorder(0)
-                axis.set_title(part_scen_name)
+                axis.set_title(f'{part_scen_name}')
                 algo_part = scenario_part.repairs[repair_name]
+                full_repair = algo_part["repair"]
 
-                repair_df = algo_part["repair"]
-                axis.set_xlim(truth.index[0] - 0.1, truth.index[-1] + 0.1)
+                for col in cols:
+                    col_nbr = col+1
+                    a_ranges = scenario_part.get_anomaly_ranges(klass.iloc[:,col])
+                    n_ranges = min(len(a_ranges),3)
+                    selected_ranges_i = np.random.choice(range(len(a_ranges)),size=n_ranges,replace=False)
+                    for a_index , range_index in enumerate(selected_ranges_i):
+                        range_ = a_ranges[range_index]
+                        start, end = max(0,min(range_)-20) , min(full_truth.shape[0],max(range_)+20)
+                        truth = full_truth.iloc[start:end,col]
+                        truth , index = truth.values , truth.index.values
+                        injected = full_injected.iloc[start:end,col].values
+                        repair = full_repair.iloc[start:end,col].values
+                        axis.set_xlim(index[0] - 0.1, index[-1] + 0.1)
+                        line, = plt.plot(index,truth)
+                        lw = plt.getp(line, 'linewidth')
 
-                line, = plt.plot(truth.iloc[:, cols[0]])
-                lw = plt.getp(line, 'linewidth')
-                axis.set_prop_cycle(None)
-                generate_repair_plot(repair_df, cols, repair_name, lw, axis)
-                generate_truth_and_injected(truth, injected, cols, klass, lw, axis , alpha = 0.5)
-                axis.xaxis.set_major_locator(MaxNLocator(integer=True))
-                plt.savefig(f"{algo_path}/{part_scen_name}.svg")
-                plt.close('all')
+                        axis.set_prop_cycle(None)
+                        ### repair plot
+
+                        ###
+                        mask = (injected !=truth).astype(int)
+                        mask[1:] += mask[:-1]
+                        mask[:-1] += mask[1:]
+                        mask = np.invert(mask.astype(bool))
+                        masked_injected =  np.ma.masked_where(mask, injected)
+                        plt.plot(index,masked_injected, color="red", ls='--', marker="." ,label="injected")
+                        plt.plot(index,repair, lw=lw/2 , label= "repair" , color="blue")
+
+                        plt.plot(index,truth, color="black", lw=lw, label="truth")
+                        plt.legend()
+                        axis.xaxis.set_major_locator(MaxNLocator(integer=True))
+                        plt.savefig(f"{algo_path}/{self.scen_name}_{part_scen_name}_TS{col_nbr}_{a_index}.svg")
+                        plt.close('all')
 
 
     def score_dfs(self):

@@ -1,0 +1,34 @@
+[a_size_shift.mae.bayesian]
+classification_truncation = 2
+repair_truncation = 4
+threshold = 3.765676119829279
+repair_iter = 1
+n_max_iter = 19
+
+[a_size_shift.partial_rmse.bayesian]
+classification_truncation = 3
+repair_truncation = 7
+threshold = 2.4311874593707676
+repair_iter = 1
+n_max_iter = 20
+
+[cts_nbr_shift.mae.bayesian]
+classification_truncation = 2
+repair_truncation = 7
+threshold = 3.486785938848609
+repair_iter = 3
+n_max_iter = 17
+
+[a_rate_shift.mae.bayesian]
+classification_truncation = 2
+repair_truncation = 6
+threshold = 3.0775690350161806
+repair_iter = 2
+n_max_iter = 14
+
+[ts_len_shift.mae.bayesian]
+classification_truncation = 3
+repair_truncation = 6
+threshold = 3.1768159085917222
+repair_iter = 1
+n_max_iter = 16

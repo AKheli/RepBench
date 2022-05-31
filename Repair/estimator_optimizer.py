@@ -19,6 +19,8 @@ class EstimatorOptimizer():
         return estim_copy
 
     def find_optimal_params(self, injected, truth, labels, param_grid):
+        assert not np.allclose(injected.values[:, self.estim.columns_to_repair], truth.values[:, self.estim.columns_to_repair])
+
         """ minimized the estimators repair score over the fiven parameter range"""
 
         if self.opt_method == "bayesian":
@@ -29,6 +31,7 @@ class EstimatorOptimizer():
         return params
 
     def bayesian(self, injected, truth, labels, param_grid):
+
         param_ranges = {}
 
         # convert list to ranges
@@ -43,11 +46,12 @@ class EstimatorOptimizer():
                 except:
                     param_ranges[k] = params_list
         param_keys, param_values = param_ranges.keys(), param_ranges.values()
-        print(param_ranges)
         def f(x):
             estim = self.estim_change_copy(dict(zip(param_keys, x)))
+
+            assert not np.allclose(injected.values[:,estim.columns_to_repair],truth.values[:,estim.columns_to_repair])
+
             score= estim.scores(injected, truth, labels)[self.error_score]
-            print(score,x)
             return score
 
         x = gp_minimize(f, param_values, n_jobs=-1,
@@ -98,11 +102,9 @@ class EstimatorOptimizer():
         param_combinations = list(dict(zip(param_grid.keys(), x)) for x in itertools.product(*param_grid.values()))
         print("params:", param_combinations)
 
-        # for score in ["full_rmse","mae","partial_rmse"]:
-        #    self.estim.set_score_f(score)
         def f(params):
             estim = self.estim_change_copy(params)
-            score_ = estim.scores(truth, injected, labels)[self.error_score]
+            score_ = estim.scores(injected, truth, labels)[self.error_score]
             return score_
 
         with Pool(8) as p:

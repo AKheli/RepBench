@@ -68,57 +68,37 @@ class RepairAlgorithm:
         return {"original_error": original_error, "error": predicted_error,
                 "ratio": predicted_error / original_error}
 
-    def normalize(self, X):
-        """
-        Parameters: matrix X
-        Returns: normalized X , normalization_inverse function
-        """
-        mean_X, std_X = X.mean(), X.std()
-        assert (len(mean_X), len(std_X)) == (X.shape[1], X.shape[1])
 
-        def inv_func(X_norm):
-            X_norm.columns = X.columns
-            result = X_norm * std_X + mean_X
-            return result
+    def train(self, * ,injected, truth,injected_columns,labels , error_score, train_method, **kwargs):
 
-        return (X - mean_X) / std_X, inv_func
-
-
-
-    def train(self, injected, truth,injected_columns,labels , error_score, train_method, **kwargs):
         self.estimator.columns_to_repair = injected_columns
-
-        X, inv = self.normalize(injected)
-        y, _ = self.normalize(truth)
-
-
-        hash_ =hash((str(injected.values),str(truth.values),str(injected_columns),str(labels)))
         if True: # hash_ not in self.train_results:
-            assert X.shape[1] >2
+            assert injected.shape[1] >2
 
             print("training", self.estimator.alg_type)
-            print("train size:", X.shape)
+            print("train size:", injected.shape)
 
-            param_grid = self.estimator.suggest_param_range(X)
+            param_grid = self.estimator.suggest_param_range(injected)
             estimator_optimizer = EstimatorOptimizer(self.estimator,train_method, error_score)
-            optimal_params = estimator_optimizer.find_optimal_params(X,y,labels,param_grid)
+
+
+
+            optimal_params = estimator_optimizer.find_optimal_params(injected,truth,labels,param_grid)
             assert all([ k in param_grid.keys() for k in optimal_params.keys()])
             #self.train_results[hash_] = optimal_params
 
         self.estimator.__dict__.update(optimal_params)
+
         return optimal_params
 
     def repair(self, injected, injected_columns, truth, labels , **kwargs):
         self.estimator.columns_to_repair = injected_columns
         attributes_str = str(self.estimator.get_params())
-        X, X_norm_inv = self.normalize(injected)
-        y, _ = self.normalize(truth)
         timer = Timer()
         timer.start()
-        repair = self.estimator.predict(X, y, labels=labels)
-        scores = self.estimator.scores(X,y,labels=labels,predicted=repair)
+        repair = self.estimator.predict(injected, truth, labels=labels)
+        scores = self.estimator.scores(injected,truth,labels=labels,predicted=repair)
         repair = pd.DataFrame(repair)
-        repair = X_norm_inv(repair)
 
         assert attributes_str == str(
             self.estimator.get_params()), f'{attributes_str} \n {str(self.estimator.get_params())}'

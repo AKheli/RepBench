@@ -1,3 +1,23 @@
 [a_size_shift.full_rmse.bayesian]
 p = 13
 tau = 0.29617672244789467
+
+[a_size_shift.mae.bayesian]
+p = 4
+tau = 0.2920920142794041
+
+[a_size_shift.partial_rmse.bayesian]
+p = 3
+tau = 0.30256071693805403
+
+[a_rate_shift.mae.bayesian]
+p = 1
+tau = 0.2477314130516594
+
+[cts_nbr_shift.mae.bayesian]
+p = 12
+tau = 0.2981989703318655
+
+[ts_len_shift.mae.bayesian]
+p = 1
+tau = 0.1959999649335792

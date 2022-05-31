@@ -30,12 +30,12 @@ $ python3 TestingFramework.py [arguments]
 
  | -d  | -a  | -scen | -algo | 
  | -------- | -------- | -------- | -------- | 
- | bafu5k     | shift |ts_len| rpca
- | humidity    |distortion |  a_size | scree
- | msd1_5          | growth | a_rate | imr
- | msd_hc     | outlier | ts_nbr | cdrec
- | all       |all  | cts_nbr | all
- |            |  | all | 
+ | bafu5k     | shift   |ts_len     | rpca
+ | humidity   |distortion  |  a_size | scree
+ | msd1_5     | outlier    | a_rate | imr
+ | msd_hc     | all        | ts_nbr | cdrec
+ |  elec      |            |  cts_nbr | all
+ |   all      |             | all |      
 
 
 ### Data
@@ -45,7 +45,7 @@ $ python3 TestingFramework.py [arguments]
 
 
 ### Results
-All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario and dataset to: `Results/.../.../error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of the repaired blocks will be added to the folder `Results/.../.../recovery/plots/`.
+All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario and dataset to: `Results/.../.../error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of the repaired blocks will be added to the folder `Results/.../precision/repair/`.
 
 
 ### Examples
