@@ -99,7 +99,6 @@ class DataPart:
         state = np.random.get_state()
         np.random.seed(100)
 
-        print("START")
         for i in range(1000):
             starts = [min(r) for r in DataPart.get_anomaly_ranges(class_column) if len(r) > 1]
             m = len(class_column)
@@ -110,7 +109,6 @@ class DataPart:
             if column_index not in self.injected_columns:
                 break
 
-            print(np.any((class_column.astype(int) - labels) > 0))
             if np.any((class_column.astype(int) - labels)> 0 ): # make there are non labeled data points
                 break
 

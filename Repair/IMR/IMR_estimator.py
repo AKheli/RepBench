@@ -11,14 +11,14 @@ class IMR_estimator(Estimator):
         self.p = p
         self.tau = tau
         Estimator.__init__(self, **kwargs)
-        self.max_itr_n  = 100
+        self.max_itr_n  = 1000
 
     def get_fitted_params(self, **kwargs):
         return {"p": self.p , "tau" : self.tau}
 
 
     def suggest_param_range(self,X):
-        return {"p" : [1,2,3,5,16] , "tau": [0.0005,0.001,0.002,0.004,0.008,0.01,0.02,0.04,0.08,0.1,0.2,0.5]}
+        return {"p" : [1,2,3,5,16] , "tau": [0.0005,0.001,0.002,0.004,0.008,0.01,0.02,0.04,0.08]}
 
 
     def fit(self, X, y=None): ## no fitting

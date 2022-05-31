@@ -11,7 +11,6 @@ from Repair.algorithms_config import ALGORITHM_COLORS
 from Scenarios.scenario_generator import generate_scenario_data
 import matplotlib.pyplot as plt
 
-from Scenarios.scenario_saver.plotters import generate_repair_plot, generate_truth_and_injected
 
 
 class Scenario:

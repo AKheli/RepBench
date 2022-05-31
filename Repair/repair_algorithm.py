@@ -14,7 +14,6 @@ from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.SCREENEstimator import SCREEN_estimator
 from Repair.estimator import Estimator
 from Repair.res.timer import Timer
-from Scenarios.metrics import RMSE
 
 class RepairAlgorithm:
     repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREEN_estimator, "cdrec": CD_Rec_estimator,
@@ -60,13 +59,13 @@ class RepairAlgorithm:
         self.estimator.columns_to_repair = val
         self.columns_to_repair_ = val
 
-    ##evaluation functions
-    def error(self, X, y):
-        predicted = pd.DataFrame(self.estimator.predict(X))
-        original_error = RMSE(X, y, self.columns_to_repair)
-        predicted_error = RMSE(predicted, y, self.columns_to_repair)
-        return {"original_error": original_error, "error": predicted_error,
-                "ratio": predicted_error / original_error}
+    # ##evaluation functions
+    # def error(self, X, y):
+    #     predicted = pd.DataFrame(self.estimator.predict(X))
+    #     original_error = RMSE(X, y, self.columns_to_repair)
+    #     predicted_error = RMSE(predicted, y, self.columns_to_repair)
+    #     return {"original_error": original_error, "error": predicted_error,
+    #             "ratio": predicted_error / original_error}
 
 
     def train(self, * ,injected, truth,injected_columns,labels , error_score, train_method, **kwargs):
