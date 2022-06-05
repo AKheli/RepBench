@@ -1,0 +1,119 @@
+["-2936934492606255097_a_size_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.12631013411375075
+smin = -0.1933165297364834
+
+["-6873329107343405244_a_size_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.12631013411375075
+smin = -0.1933165297364834
+
+["2772177107633845425_a_size_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.7323966764154762
+smin = -0.9441674081441774
+
+["-2761032925636305918_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 1.0
+smin = -0.9727712715526465
+
+["-6373102276175370470_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 1.0
+smin = -0.9555340448053989
+
+["-7449768854077025503_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.11231506521197955
+smin = -0.27964408682920283
+
+["-8581231982243173792_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.07743800185614655
+smin = -0.14432139876023375
+
+["-8077930085981111270_cts_nbr_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 1.0
+smin = -1.0
+
+["3670846550473294504_cts_nbr_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.1924389098366611
+smin = -0.0897943847171544
+
+["-7886820327948977732_a_rate_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.62488765464008
+smin = -0.6819752286513314
+
+["-7241848184920819220_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.09872059739081239
+smin = -0.17539439842910076
+
+["7029009517541157568_a_size_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.7211596186078515
+smin = -1.0
+
+["6274276458638875786_a_size_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.7211596186078515
+smin = -1.0
+
+["-148634596512278418_a_size_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.7211596186078515
+smin = -1.0
+
+["-1170016997078493339_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 1.0
+smin = -1.0
+
+["-8109834095551003722_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 1.0
+smin = -1.0
+
+["1902206178221775954_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.11519817119863454
+smin = -0.6311026873695087
+
+["-7173168170304848400_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.11519817119863454
+smin = -0.6311026873695087
+
+["4604525114758985588_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 1.0
+smin = -1.0
+
+["-3094100352032021345_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.18319299702073086
+smin = -0.18838771763483497
+
+["-5192681429533675757_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.18319299702073086
+smin = -0.18838771763483497
+
+["-4410319774165747470_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.11519817119863454
+smin = -0.6311026873695087
+
+["-3132276781295662678_cts_nbr_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 0.9359437055979298
+smin = -0.7335905892730932
+
+["7399970232874991160_cts_nbr_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 0.9359437055979298
+smin = -0.7335905892730932
+
+["7243407928673640780_cts_nbr_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.2956274214978271
+smin = -0.14541521827801052
+
+["2365678202852426335_cts_nbr_outlier_humidity.csv_bayesian_full_rmse"]
+smax = 0.2956274214978271
+smin = -0.14541521827801052
+
+["6353524680448123551_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.18319299702073086
+smin = -0.18838771763483497
+
+["1075932553111115239_a_rate_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.18507332970616677
+smin = -0.26068212414627634
+
+["-8721289578145764560_a_rate_shift_humidity.csv_bayesian_full_rmse"]
+smax = 0.18507332970616677
+smin = -0.26068212414627634
+
+["9160216759602356039_a_rate_distortion_humidity.csv_bayesian_full_rmse"]
+smax = 0.9894494794923291
+smin = -0.7308301224343138

@@ -13,24 +13,25 @@ class EstimatorOptimizer():
         self.estim: Estimator = estim
 
     def estim_change_copy(self, param_dict):
-        estim_copy = type(self.estim)(columns_to_repair=self.estim.columns_to_repair)
+        estim_copy = type(self.estim)()
         estim_copy.__dict__.update(self.estim.__dict__)
         estim_copy.__dict__.update(param_dict)
         return estim_copy
 
-    def find_optimal_params(self, injected, truth, labels, param_grid):
-        assert not np.allclose(injected.values[:, self.estim.columns_to_repair], truth.values[:, self.estim.columns_to_repair])
+    def find_optimal_params(self,repair_inputs, param_grid):
+        columns_to_repair = repair_inputs["columns_to_repair"]
+        assert not np.allclose(repair_inputs["injected"].values[:, columns_to_repair], repair_inputs["truth"].values[:,columns_to_repair])
 
         """ minimized the estimators repair score over the fiven parameter range"""
 
         if self.opt_method == "bayesian":
-            params = self.bayesian(injected, truth, labels, param_grid)
+            params = self.bayesian(repair_inputs, param_grid)
         if self.opt_method == "grid":
-            params = self.grid(injected, truth, labels, param_grid)
+            params = self.grid(repair_inputs, param_grid)
 
         return params
 
-    def bayesian(self, injected, truth, labels, param_grid):
+    def bayesian(self, repair_inputs,  param_grid):
 
         param_ranges = {}
 
@@ -46,12 +47,10 @@ class EstimatorOptimizer():
                 except:
                     param_ranges[k] = params_list
         param_keys, param_values = param_ranges.keys(), param_ranges.values()
+
         def f(x):
             estim = self.estim_change_copy(dict(zip(param_keys, x)))
-
-            assert not np.allclose(injected.values[:,estim.columns_to_repair],truth.values[:,estim.columns_to_repair])
-
-            score= estim.scores(injected, truth, labels)[self.error_score]
+            score= estim.scores(**repair_inputs)[self.error_score]
             return score
 
         x = gp_minimize(f, param_values, n_jobs=-1,
@@ -98,13 +97,15 @@ class EstimatorOptimizer():
 
         return optimal_params
 
-    def grid(self, injected, truth, labels, param_grid):
+    def grid(self, repair_inputs, param_grid):
         param_combinations = list(dict(zip(param_grid.keys(), x)) for x in itertools.product(*param_grid.values()))
         print("params:", param_combinations)
 
+
+
         def f(params):
             estim = self.estim_change_copy(params)
-            score_ = estim.scores(injected, truth, labels)[self.error_score]
+            score_ = estim.scores(**repair_inputs)[self.error_score]
             return score_
 
         with Pool(8) as p:

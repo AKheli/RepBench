@@ -59,14 +59,6 @@ class RepairAlgorithm:
         self.estimator.columns_to_repair = val
         self.columns_to_repair_ = val
 
-    # ##evaluation functions
-    # def error(self, X, y):
-    #     predicted = pd.DataFrame(self.estimator.predict(X))
-    #     original_error = RMSE(X, y, self.columns_to_repair)
-    #     predicted_error = RMSE(predicted, y, self.columns_to_repair)
-    #     return {"original_error": original_error, "error": predicted_error,
-    #             "ratio": predicted_error / original_error}
-
 
     def train(self, * ,injected, truth,injected_columns,labels , error_score, train_method, **kwargs):
 

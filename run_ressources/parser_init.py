@@ -2,30 +2,30 @@ import argparse
 import sys
 
 
-def type_convertion(choices, para_name):
+def name_check(choices, para_name):
     def f(str):
         result = []
         for s in str.split(","):
             if s not in choices:
                 sys.tracebacklimit = 0
-                raise SystemExit(f'{s} not in possible {para_name} inputs:{choices}')
+                raise SystemExit(f'{s} not a possible {para_name} inputs:{choices}')
             result.append(s)
         return result
     return f
 
 def add_data_arguments_to_parser(parser, data_choices):
-    parser.add_argument("-data", "-d", type= type_convertion(choices=data_choices, para_name="d"))
+    parser.add_argument("-data", "-d", type= name_check(choices=data_choices, para_name="d"))
     parser.add_argument("-col", "-ts", type=str, default= "0")
 
 
 def add_injection_arguments_to_parser(parser ,scenario_choices ,anomaly_choices):
-    parser.add_argument('-a_type','-anom' ,  type=type_convertion(choices=anomaly_choices, para_name="a_type"))
-    parser.add_argument("-scenario", "-scen", type=type_convertion(choices=scenario_choices, para_name="scen"))
+    parser.add_argument('-a_type','-anom', type=name_check(choices=anomaly_choices, para_name="a_type"))
+    parser.add_argument("-scenario", "-scen", type=name_check(choices=scenario_choices, para_name="scen"))
     parser.add_argument("-saveinjected",  action='store_true')
 
 
 def add_repair_arguments_to_parser(parser,estimator_choices):
-    parser.add_argument("-alg" , type=type_convertion(choices=estimator_choices, para_name="alg"))
+    parser.add_argument("-alg", type=name_check(choices=estimator_choices, para_name="alg"))
     parser.add_argument("-algx", type=str)
     parser.add_argument("-rn", "-result_name" , type=str ,default=None)
     parser.add_argument("-train", "-t" , type=str ,default="grid",choices=["grid", "bayesian"])

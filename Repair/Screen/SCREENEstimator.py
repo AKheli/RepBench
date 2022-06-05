@@ -14,8 +14,6 @@ class SCREEN_estimator(Estimator):
         self.method = method
         assert self.smin < 0 and self.smax > 0 and t >= 1 , f"invalid (smin<0,smax>0,t>=1): {(smin,smax,t)}"
 
-        Estimator.__init__(self,**kwargs)
-
     def get_fitted_params(self, **args):
         return {"t": self.t
             , "smin": self.smin
@@ -29,18 +27,12 @@ class SCREEN_estimator(Estimator):
                 "smin" : -np.logspace(-3,0,num = 30)}
 
 
-
-    def fit(self, X, y=None): ## no fitting
-        self.is_fitted = True
-        return self
-
-    def predict(self, X , y = None,labels=None):
-        repair = X.copy()
-        for col in [c for c in self.columns_to_repair if c < X.shape[1]]:
-            x = np.array(X.iloc[:, col])
+    def repair(self,injected,truth, columns_to_repair , labels=None):
+        repair = injected.copy()
+        for col in [c for c in columns_to_repair if c < injected.shape[1]]:
+            x = np.array(injected.iloc[:, col])
             repair_result = screen(x, self.t , self.smax , self.smin)
             repair.iloc[:, col] = repair_result
-
         return repair
 
     @property

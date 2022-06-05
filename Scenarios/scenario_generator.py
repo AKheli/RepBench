@@ -70,6 +70,17 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
     train_part = DataPart(train_injected,train,train=None,name = scen_name , a_type=a_type)
 
     ## create specified scenarios
+
+
+    if scen_name == sc.BASE_SCENARIO:
+        a_length = scen_spec["a_length"]
+        a_perc =  scen_spec["a_percentage"]
+        test_injected = test.copy()
+        for col in cols_to_inject:
+            test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col], a_type, a_length,percentage=a_perc)
+        result[len(indices)] = DataPart(test_injected, test, train_part, name=scen_name, a_type=a_type)
+
+
     if scen_name == sc.ANOMALY_RATE:
         a_length = scen_spec["a_length"]
         for a_perc in scen_spec["a_percentages"]:

@@ -87,7 +87,7 @@ def weighted_centroid_decomposition(matrix, truncation=0, weights = None , SV=No
 #   Z being locally optimal means: for all Z' sign vectors s.t. Z' is one sign flip away from Z at some index j,
 #   we have that ||X^T * Z|| >= ||X^T * Z'||
 def local_sign_vector(matrix, Z):
-    return local_sign_vector_init_speed_up(matrix,Z)
+    return local_sign_vector_speed_up(matrix,Z)
 
     ### loop implementation
     n = len(matrix)
@@ -152,7 +152,7 @@ def local_sign_vector_speed_up(matrix, Z):
         flipped = False
         Z_2_M  = Z[:, None]*2*matrix
         for i, row in enumerate(Z_2_M):
-            gradFlip = np.sum((direction-row)**2)
+            gradFlip = sum((direction-row)**2)
             if gradFlip > lastNorm:
                 flipped = True
                 Z[i] = Z[i] * -1
@@ -162,14 +162,16 @@ def local_sign_vector_speed_up(matrix, Z):
 # end function
 
 
+
+
 def local_sign_vector_init_speed_up(matrix, Z):
     Z = Z.copy()
     direction = matrix[0].copy()
     for i, row in enumerate(matrix):
         if i == 0:
             continue
-        gradPlus = np.sum((direction+row)**2)
-        gradMinus = np.sum((direction-row)**2)
+        gradPlus = sum((direction+row)**2)
+        gradMinus = sum((direction-row)**2)
 
         if gradMinus > gradPlus:
             Z[i] = -1

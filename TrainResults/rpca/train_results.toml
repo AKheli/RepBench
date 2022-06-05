@@ -1,0 +1,209 @@
+["-2936934492606255097_a_size_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.8654590328796568
+repair_iter = 3
+n_max_iter = 10
+
+["-6873329107343405244_a_size_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 7
+threshold = 1.8822410764379836
+repair_iter = 5
+n_max_iter = 14
+
+["2772177107633845425_a_size_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 6
+threshold = 0.9178548857895661
+repair_iter = 2
+n_max_iter = 2
+
+["-2761032925636305918_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 3.653324802454292
+repair_iter = 5
+n_max_iter = 0
+
+["-6373102276175370470_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 5
+repair_truncation = 2
+threshold = 4.1518416885796245
+repair_iter = 3
+n_max_iter = 17
+
+["-7449768854077025503_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 6
+threshold = 3.013066915096554
+repair_iter = 1
+n_max_iter = 4
+
+["-8581231982243173792_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.828000639298503
+repair_iter = 3
+n_max_iter = 5
+
+["-8077930085981111270_cts_nbr_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 3
+repair_truncation = 8
+threshold = 3.2367104957327446
+repair_iter = 3
+n_max_iter = 17
+
+["3670846550473294504_cts_nbr_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 3
+repair_truncation = 8
+threshold = 2.680471429040158
+repair_iter = 3
+n_max_iter = 2
+
+["-7886820327948977732_a_rate_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 7
+threshold = 2.9402394665720117
+repair_iter = 4
+n_max_iter = 11
+
+["-7241848184920819220_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 3
+repair_truncation = 8
+threshold = 2.06397283615088
+repair_iter = 4
+n_max_iter = 12
+
+["7029009517541157568_a_size_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 8
+threshold = 1.2832260960123483
+repair_iter = 4
+n_max_iter = 4
+
+["6274276458638875786_a_size_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 8
+threshold = 1.2832260960123483
+repair_iter = 4
+n_max_iter = 4
+
+["-1170016997078493339_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 8
+threshold = 2.793850148080204
+repair_iter = 1
+n_max_iter = 1
+
+["-148634596512278418_a_size_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 8
+threshold = 1.2832260960123483
+repair_iter = 4
+n_max_iter = 4
+
+["-8109834095551003722_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 8
+threshold = 2.793850148080204
+repair_iter = 1
+n_max_iter = 1
+
+["1902206178221775954_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 3
+repair_truncation = 7
+threshold = 2.535777493312557
+repair_iter = 4
+n_max_iter = 13
+
+["-7173168170304848400_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 3
+repair_truncation = 7
+threshold = 2.535777493312557
+repair_iter = 4
+n_max_iter = 13
+
+["4604525114758985588_a_size_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 8
+threshold = 2.793850148080204
+repair_iter = 1
+n_max_iter = 1
+
+["-3094100352032021345_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.3281070025148782
+repair_iter = 1
+n_max_iter = 18
+
+["-5192681429533675757_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.3281070025148782
+repair_iter = 1
+n_max_iter = 18
+
+["-3132276781295662678_cts_nbr_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 5
+repair_truncation = 8
+threshold = 3.213843059513014
+repair_iter = 5
+n_max_iter = 20
+
+["-4410319774165747470_a_size_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 3
+repair_truncation = 7
+threshold = 2.535777493312557
+repair_iter = 4
+n_max_iter = 13
+
+["7399970232874991160_cts_nbr_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 5
+repair_truncation = 8
+threshold = 3.213843059513014
+repair_iter = 5
+n_max_iter = 20
+
+["7243407928673640780_cts_nbr_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 2
+threshold = 2.51073500559498
+repair_iter = 1
+n_max_iter = 19
+
+["2365678202852426335_cts_nbr_outlier_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 2
+threshold = 2.51073500559498
+repair_iter = 1
+n_max_iter = 19
+
+["6353524680448123551_cts_nbr_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.3281070025148782
+repair_iter = 1
+n_max_iter = 18
+
+["1075932553111115239_a_rate_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.646624995126935
+repair_iter = 3
+n_max_iter = 15
+
+["-8721289578145764560_a_rate_shift_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 2
+repair_truncation = 8
+threshold = 1.646624995126935
+repair_iter = 3
+n_max_iter = 15
+
+["9160216759602356039_a_rate_distortion_humidity.csv_bayesian_full_rmse"]
+classification_truncation = 1
+repair_truncation = 7
+threshold = 3.735187248680956
+repair_iter = 1
+n_max_iter = 12

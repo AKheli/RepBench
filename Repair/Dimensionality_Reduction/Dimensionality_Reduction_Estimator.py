@@ -38,8 +38,8 @@ class DimensionalityReductionEstimator(Estimator):
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
-        return {"classification_truncation": [i for i in [1,2,3,4,5,6,7,8] if i < n_cols-1],
-                "repair_truncation": [i for i in [2,3,4,5,6,7,8] if i < n_cols-1],
+        return {"classification_truncation": [i for i in [1,2,3,4,5] if i < n_cols],
+                "repair_truncation": [i for i in [1,2,3,4,5,6,7,8] if i < n_cols],
                 "threshold": [0.1,0.2,1.5,2,2.5,3,5],
                 "repair_iter" : [0,5],
                 "n_max_iter": [0,20]
@@ -76,17 +76,18 @@ class DimensionalityReductionEstimator(Estimator):
         # def fitted_transform_(self,matrix):
 
 
-    def predict(self, matrix, y=None  , refit = True , labels=None):
-        if isinstance(matrix, pd.DataFrame):
-            matrix = matrix.values
+    def repair(self,injected,truth, columns_to_repair , labels=None):
+        self.columns_to_repair = columns_to_repair
+        if isinstance(injected, pd.DataFrame):
+            matrix = injected.values
 
         matrix_to_repair = matrix.copy()
 
         if (self.sub_set):
-            if len(self.columns_to_repair) == 1:
-                sorted_corr = np.argsort(-np.abs(np.corrcoef(matrix,rowvar=False)[self.columns_to_repair,:]))[0]
+            if len(columns_to_repair) == 1:
+                sorted_corr = np.argsort(-np.abs(np.corrcoef(matrix,rowvar=False)[columns_to_repair,:]))[0]
                 matrix_to_repair[:,sorted_corr[6:]] = 0
-                assert np.any(matrix_to_repair[:,self.columns_to_repair])
+                assert np.any(matrix_to_repair[:,columns_to_repair])
 
         reduced = self.reduce(matrix_to_repair, self.classification_truncation)
 
@@ -107,7 +108,7 @@ class DimensionalityReductionEstimator(Estimator):
 
 
         final = matrix.copy()
-        final[:,self.columns_to_repair] = matrix_to_repair[:,self.columns_to_repair]
+        final[:,columns_to_repair] = matrix_to_repair[:,columns_to_repair]
         return pd.DataFrame(final)
 
 

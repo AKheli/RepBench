@@ -6,7 +6,6 @@ import numpy as np
 import run_ressources.Logger as log
 
 class IMR_estimator(Estimator):
-
     def __init__(self, p=5,tau = 0.1, **kwargs):
         self.p = p
         self.tau = tau
@@ -25,20 +24,19 @@ class IMR_estimator(Estimator):
         self.is_fitted = True
         return self
 
-    def predict(self, X , y = None , labels = None):
-        assert y is not None , "IMR needs truth values to assign labels"
+    def repair(self,injected,truth, columns_to_repair , labels=None):
+        assert truth is not None , "IMR needs truth values to assign labels"
         assert labels is not None  ,  "IMR requires labels"
 
-        injected = X.copy()
-        truth_full = y.copy()
+        injected = injected.copy()
+        truth_full = truth.copy()
         repair = injected.copy()
-        for col in self.columns_to_repair:
+        for col in columns_to_repair:
             x = np.array(injected)[:, col]
             truth = np.array(truth_full)[:, col]
             if np.allclose(x,truth):
                 assert False ,(x,truth)
                 repair.iloc[:, col] = x
-
 
             col_labels = labels.iloc[:,col]
 
@@ -53,8 +51,6 @@ class IMR_estimator(Estimator):
             repair_results = imr2(x, y_0, col_labels, tau=self.tau, p=self.p, k=self.max_itr_n)
             col_repair = repair_results["repair"]
             repair.iloc[:, col] = col_repair
-
-            min_label = min(labels)
 
         return repair
 

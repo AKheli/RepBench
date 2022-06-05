@@ -131,11 +131,11 @@ class DataPart:
         return {"injected": self.injected,
                 "truth": self.truth,
                 "labels": self.labels,
-                "injected_columns": self.injected_columns,
-                "score_indices" : self.get_weights()}
+                "columns_to_repair": self.injected_columns,
+                }#"score_indices" : self.get_weights()}
 
-    def add_repair(self, repair_results, repair_name = None):
-        repair_name = repair_results["name"] if repair_name is None else repair_name
+    def add_repair(self, repair_results, repair_type, repair_name = None):
+        repair_name = repair_type if repair_name is None else repair_name
         self.repair_names.append(repair_name)
         assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
         f"such a repair already exists:{repair_name}"
@@ -153,7 +153,7 @@ class DataPart:
         repair_metrics = repair_results["scores"]
         repair_metrics["runtime"] = repair_results["runtime"]
 
-        self.repair_metrics[(repair_name, repair_results["type"])] = repair_metrics
+        self.repair_metrics[(repair_name, repair_type)] = repair_metrics
 
 
     def get_errors(self,error_name = "rmse" ):

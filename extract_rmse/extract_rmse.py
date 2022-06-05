@@ -2,8 +2,8 @@ import os
 
 import shutil
 
-error = "mae"
-innerfolder = "full/"
+error = "full_rmse"
+innerfolder = "full_rmse/"
 
 def is_error_path(path,error):
         return  path.split("/")[-1] == error

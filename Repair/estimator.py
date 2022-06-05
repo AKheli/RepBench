@@ -7,13 +7,8 @@ import sklearn.metrics as sm
 
 
 class Estimator(ABC, BaseEstimator):
-
-    def __init__(self, columns_to_repair,train_call_back = None):
-        self.columns_to_repair = columns_to_repair
-        self.train_call_back = train_call_back
-
     def copy(self):
-        copy_ =  type(self)(self.columns_to_repair)
+        copy_ =  type(self)
         copy_.score_f = self.score_f
         return copy_
 
@@ -25,15 +20,17 @@ class Estimator(ABC, BaseEstimator):
 
 
 
-    def scores(self, X, y , labels , predicted=None):
-
+    def scores(self, injected, truth , columns_to_repair, labels , predicted=None):
+        X = injected
+        y = truth
         hash_X = hash(str(X))
-        predicted = predicted if predicted is not None else self.predict(X, y, labels)
+        predicted = predicted if predicted is not None else self.repair(X, y,columns_to_repair,labels)
         labels = labels.values if isinstance(labels,pd.DataFrame) else labels
 
         flatten_y = y.values.flatten()
         flatten_predicted = predicted.values.flatten()
-        full_weights = np.ones_like(predicted.values).astype(bool)
+        full_weights = np.zeros_like(predicted.values).astype(bool)
+        full_weights[:,columns_to_repair] = True
         full_weights[labels] = False
         full_weights_flattened = full_weights.flatten()
 
@@ -41,20 +38,17 @@ class Estimator(ABC, BaseEstimator):
         scores_["mae"] = sm.mean_absolute_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened])
         scores_["full_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened],squared=False)
 
+        scores_["original_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], injected.values.flatten()[full_weights_flattened], squared=False)
+
         partial_weights = np.invert(np.isclose(X.values, y.values))
         partial_weights[labels] = False
         partial_weights_flattened = partial_weights.flatten() # anomaly_weights
 
         scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
 
-
-        ### additional scores
-        partial_weights = np.invert(partial_weights)
-        partial_weights[labels] = False
-        partial_weights_flattened = partial_weights.flatten()
-        scores_["N_partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened],squared=False)
-
-        scores_["diff_rmse"] = scores_["full_rmse"] - scores_["partial_rmse"]
+        from sklearn.feature_selection import mutual_info_regression as mi
+        scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+        scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
 
         assert hash(str(X)) == hash_X
         return scores_
@@ -94,31 +88,12 @@ class Estimator(ABC, BaseEstimator):
     def fit(self, X, y=None):
         raise NotImplementedError(self)
 
-    def predict(self, X, y=None , labels=None):
-        """
-        Parameters
-        ----------
-        X: anomaly matrix
-        y: truth values
-        labels: indexes assumed to be known
 
-        Returns
-        -------
-        repaired dataframe
-        """
+    def repair(self,injected,truth, columns_to_repair , labels=None):
         raise NotImplementedError(self)
 
-
     def get_params(self, deep= False):
-        """
-        returns all attributes that are needed for the sk optimize library
-        """
-        fix_params = {
-            "columns_to_repair": self.columns_to_repair,
-            "train_call_back" : self.train_call_back,
-        }
-        fix_params.update(self.get_fitted_params())
-        return fix_params
+        return  self.get_fitted_params()
 
     def get_fitted_params(self, **args):
         raise NotImplementedError(self)
@@ -135,5 +110,3 @@ class Estimator(ABC, BaseEstimator):
     def algo_name(self):
         raise NotImplementedError(self)
 
-    def __main__(self):
-        return self
