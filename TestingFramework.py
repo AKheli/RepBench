@@ -38,11 +38,9 @@ def main(input = None):
 
                 try:
                     params = alg_runner.load_train(repair_type,store_name)
-                    print("EYYYYYYYYYYYYYYYYY STUFF FOUND")
                 except:
                     params = alg_runner.find_params(repair_type , metric = train_metric , train_method=train_method , repair_inputs=train_part.repair_inputs , store=store_name)
 
-                print("params")
                 repair_output = alg_runner.run_repair(repair_type,params, **test_part.repair_inputs)
                 test_part.add_repair(repair_output,repair_type)
 

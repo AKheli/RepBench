@@ -21,11 +21,12 @@ for error in error_metrics:
         train_scores = alg_runner.run_repair(alg,params,**train_part.repair_inputs)["scores"]
         test_scores =  alg_runner.run_repair(alg,params,**test_part.repair_inputs)["scores"]
         train_scores["params"] = params
-        train[error ] = train_scores
-        test[error ]  = test_scores
+        train[error] = train_scores
+        test[error]  = test_scores
 
 train_df = pd.DataFrame.from_dict(train).T
 test_df = pd.DataFrame.from_dict(test).T
 
 print(train_df.to_string())
 print(test_df.to_string())
+

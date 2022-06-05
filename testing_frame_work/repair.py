@@ -27,7 +27,7 @@ def run_repair(alg_type, params = "default" , * ,columns_to_repair, injected , t
     """
     Parameters
     ----------
-    alg_dict : str
+    alg_type : str
     injected :  anomalous df
     truth : truth df
     labels : boolean labels used for IMR
@@ -78,7 +78,6 @@ def save_train(alg_type,name, params):
     path = f"TrainResults/{alg_type}"
     file_name = "train_results.toml"
 
-    toml_dict = toml.load(f'{path}/{file_name}')
     try:
         toml_dict = toml.load(f'{path}/{file_name}')
     except :
