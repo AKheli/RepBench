@@ -26,7 +26,6 @@ class DimensionalityReductionEstimator(Estimator):
         self.n_max_iter = n_max_iter
         self.repair_iter = repair_iter
         self.sub_set = sub_set
-        super().__init__(**kwargs)
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
@@ -39,10 +38,10 @@ class DimensionalityReductionEstimator(Estimator):
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
         return {"classification_truncation": [i for i in [1,2,3,4,5] if i < n_cols],
-                "repair_truncation": [i for i in [1,2,3,4,5,6,7,8] if i < n_cols],
-                "threshold": [0.1,0.2,1.5,2,2.5,3,5],
-                "repair_iter" : [0,5],
-                "n_max_iter": [0,20]
+                "repair_truncation": [i for i in [2,3,4,5] if i < n_cols],
+                "threshold": [1,1.2,1.5,2,2.5,3],
+                "repair_iter" : [1,10],
+                "n_max_iter": [1,20] # reweighting
                 }
 
     def fit(self, X, y=None):
@@ -73,8 +72,6 @@ class DimensionalityReductionEstimator(Estimator):
     def transform_(self, matrix):
         return np.dot(matrix - self.weighted_mean, self.transform_matrix) + self.weighted_mean
 
-        # def fitted_transform_(self,matrix):
-
 
     def repair(self,injected,truth, columns_to_repair , labels=None):
         self.columns_to_repair = columns_to_repair
@@ -89,21 +86,24 @@ class DimensionalityReductionEstimator(Estimator):
                 matrix_to_repair[:,sorted_corr[6:]] = 0
                 assert np.any(matrix_to_repair[:,columns_to_repair])
 
+        ## Reduce the matrix
         reduced = self.reduce(matrix_to_repair, self.classification_truncation)
+        self.reduced = reduced
 
-        anomaly_matrix = self.classify(matrix_to_repair, reduced=reduced)
+        ## classify anomalies
+        self.anomaly_matrix = self.classify(matrix_to_repair, reduced=reduced)
 
-        assert matrix_to_repair.shape == anomaly_matrix.shape
+        assert matrix_to_repair.shape == self.anomaly_matrix.shape
 
         matrix_to_interpolate = matrix_to_repair.copy()
-        matrix_to_interpolate[anomaly_matrix] = np.nan
-        matrix_inter = interpolate(matrix_to_interpolate, anomaly_matrix)
+        matrix_to_interpolate[self.anomaly_matrix] = np.nan
+        matrix_inter = interpolate(matrix_to_interpolate, self.anomaly_matrix)
         assert not np.isnan(matrix_inter).any(), "interpolation failed"
 
         reduced = matrix_inter
         for i in range(self.repair_iter):
             reduced = self.reduce(reduced, self.repair_truncation)
-            matrix_to_repair[anomaly_matrix] = reduced[anomaly_matrix]
+            matrix_to_repair[self.anomaly_matrix] = reduced[self.anomaly_matrix]
             reduced = matrix_to_repair.copy()
 
 
@@ -130,7 +130,6 @@ class DimensionalityReductionEstimator(Estimator):
             errors_raw = np.linalg.norm(diff, axis=1)
             self.errors_raw = errors_raw
             errors_loss = compute_loss(errors_raw, self.delta)
-            total_error = errors_loss.sum()
 
             weights = compute_weights(errors_raw, self.delta)
 

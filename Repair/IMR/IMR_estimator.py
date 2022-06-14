@@ -1,23 +1,20 @@
-import pandas as pd
 from Repair.algorithms_config import IMR
-from Repair.IMR.IMR import imr2
+from Repair.IMR.IMR import imr
 from Repair.estimator import Estimator
 import numpy as np
-import run_ressources.Logger as log
 
 class IMR_estimator(Estimator):
-    def __init__(self, p=5,tau = 0.1, **kwargs):
+    def __init__(self, p=2,tau = 0.037 ,n_max_itr=10000, **kwargs):
         self.p = p
         self.tau = tau
-        Estimator.__init__(self, **kwargs)
-        self.max_itr_n  = 1000
+        self.max_itr_n  = n_max_itr
 
     def get_fitted_params(self, **kwargs):
         return {"p": self.p , "tau" : self.tau}
 
 
     def suggest_param_range(self,X):
-        return {"p" : [1,2,3,5,16] , "tau": [0.0005,0.001,0.002,0.004,0.008,0.01,0.02,0.04,0.08]}
+        return {"p" : [1,2,3] , "tau": [0.0005,0.001,0.002,0.004,0.008,0.01,0.02,0.04,0.08]}
 
 
     def fit(self, X, y=None): ## no fitting
@@ -48,7 +45,7 @@ class IMR_estimator(Estimator):
             if  np.allclose(x, y_0):
                 pass
 
-            repair_results = imr2(x, y_0, col_labels, tau=self.tau, p=self.p, k=self.max_itr_n)
+            repair_results = imr(x, y_0, col_labels, tau=self.tau, p=self.p, k=self.max_itr_n)
             col_repair = repair_results["repair"]
             repair.iloc[:, col] = col_repair
 

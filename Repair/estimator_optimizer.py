@@ -48,7 +48,11 @@ class EstimatorOptimizer():
                     param_ranges[k] = params_list
         param_keys, param_values = param_ranges.keys(), param_ranges.values()
 
+        self.counter = 0
+        import sys
         def f(x):
+            self.counter += 1
+            sys.stdout.write(f"\rbayesian opt search {self.counter / 30 * 100:.1f} %", )
             estim = self.estim_change_copy(dict(zip(param_keys, x)))
             score= estim.scores(**repair_inputs)[self.error_score]
             return score
@@ -100,10 +104,11 @@ class EstimatorOptimizer():
     def grid(self, repair_inputs, param_grid):
         param_combinations = list(dict(zip(param_grid.keys(), x)) for x in itertools.product(*param_grid.values()))
         print("params:", param_combinations)
-
-
-
+        self.counter = 0
+        import sys
         def f(params):
+            self.counter+=1
+            sys.stdout.write(f"\rgrid search {self.counter/ len(param_combinations) * 100:.1f} %",)
             estim = self.estim_change_copy(params)
             score_ = estim.scores(**repair_inputs)[self.error_score]
             return score_
@@ -112,7 +117,5 @@ class EstimatorOptimizer():
             scores = np.array(p.map(f, param_combinations))
             index = np.argmin(np.array(scores))
             optimal_params = param_combinations[index]
-        # print(list(zip(param_combinations,scores)))
-        # print(optimal_params, self.estim_change_copy(optimal_params).score(injected,truth,labels))
-        # print(optimal_params)
+
         return optimal_params

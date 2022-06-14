@@ -8,15 +8,15 @@ from skopt import gp_minimize
 from Repair.estimator_optimizer import  EstimatorOptimizer
 import Repair.algorithms_config as ac
 from ParameterTuning.sklearn_bayesian import BayesianOptimization
-from Repair.Dimensionality_Reduction.CD.CD_Rec_estimator import CD_Rec_estimator
+from Repair.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.IMR.IMR_estimator import IMR_estimator
-from Repair.Screen.SCREENEstimator import SCREEN_estimator
+from Repair.Screen.screen_estimator import SCREENEstimator
 from Repair.estimator import Estimator
 from Repair.res.timer import Timer
 
 class RepairAlgorithm:
-    repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREEN_estimator, "cdrec": CD_Rec_estimator,
+    repair_estimators = {"rpca": Robust_PCA_estimator, "screen": SCREENEstimator, "cdrec": CDRecEstimator,
                          "imr": IMR_estimator}
 
     def __init__(self, estimator_name, columns_to_repair, **kwargs):
@@ -33,11 +33,11 @@ class RepairAlgorithm:
         if estimator_name in (ac.IMR, "imr"):
             estimator = IMR_estimator(columns_to_repair=columns_to_repair, **kwargs)
         if estimator_name in (ac.SCREEN, "screen"):
-            estimator = SCREEN_estimator(columns_to_repair=columns_to_repair, **kwargs)
+            estimator = SCREENEstimator(columns_to_repair=columns_to_repair, **kwargs)
         if estimator_name in (ac.RPCA, "rpca"):
             estimator = Robust_PCA_estimator(columns_to_repair=columns_to_repair, **kwargs)
         if estimator_name in (ac.CDREC, "cdrec"):
-            estimator = CD_Rec_estimator(columns_to_repair=columns_to_repair, **kwargs)
+            estimator = CDRecEstimator(columns_to_repair=columns_to_repair, **kwargs)
         assert estimator is not None, f'{estimator_name} could not be parsed'
 
         self.estimator: Estimator = estimator

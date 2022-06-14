@@ -1,56 +1,8 @@
-
 import numpy as np
 from numpy.linalg import LinAlgError
-import matplotlib.pyplot as plt
-
-def paramestimation(x,y_k,p=1):
-    return ols(y_k - x, y_k - x,p)
-
-def candidategeneration(x,y_k,phi):
-    y_hat = np.zeros(len(x.copy()))
-    phi = np.array(phi,ndmin=1)
-    for i in range(1,len(phi)+1):
-        y_hat[i:] += phi[i-1]*(y_k-x)[:-i]
-    return y_hat
-
-def candidates(y_k,y_hat,labels,tau):
-    diff = abs(y_k-y_hat)
-    diff[labels] = 0
-    return y_hat[diff>tau] , np.arange(len(y_hat))[diff>tau]
-
-def repair_value_index(y_hat,x,indices):
-    #print(indices)
-    #print(np.argmin(abs(y_hat-x)[indices]))
-    argm = indices[np.argmin(abs(y_hat-x)[indices])]
-    return y_hat[argm] ,argm
-
-##iterative
 
 
-
-
-def ols(yvec,xMat):
-    nonzeros = np.unique(np.nonzero(xMat)[0])
-    return np.linalg.lstsq(xMat[nonzeros,:],yvec[nonzeros],rcond=-1)[0]
-
-
-
-
-
-def ols_direct(yvec, xMat):
-    try:
-        return np.dot(np.linalg.inv(np.dot(xMat.T, xMat)), np.dot(xMat.T, yvec))
-    except:
-        return np.zeros(len(xMat[0,:]))
-
-def ols_direct_2(yvec, xMat):
-    try:
-        return np.linalg.inv(xMat.T.dot(xMat)).dot(xMat.T.dot(yvec))
-    except:
-        return np.zeros(len(xMat[0, :]))
-
-
-def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
+def imr(x, y_k, labels, tau=0.1, p=1, k=2000):
     z = np.array(y_k,dtype=np.single) - np.array(x,dtype=np.single)
     yvec = z[p:]
 
@@ -80,7 +32,7 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
         try:
             index = elements[np.argmin(np.abs( y_hat[elements] )) ]
         except ValueError as e:
-            print(f'terminated after {i} iterations')
+            #print(f'terminated after {i} iterations')
             break
         val = y_hat[index]
         yvec[index] = val
@@ -100,114 +52,6 @@ def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
             modify[i] = x[i] + yvec[i - p]
 
     return { "repair" : modify , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
-#
-# def imr2(x,y_k,labels,tau=0.1,p=1,k=2000):
-#     z = np.array(y_k) - np.array(x)
-#     yvec = z[p:]
-#     xMat = np.zeros((len(x)-p,p))
-#
-#     for i in range(len(x)-p):
-#         for j in range(p):
-#             xMat[i,j] = z[p + i - j - 1]
-#
-#     for j in range(k):
-#         phi = ols(yvec,xMat)
-#         y_hat = xMat.dot(phi)
-#         residuals = y_hat-yvec
-#         abs_res = np.abs(residuals)
-#         minA = 100000000000
-#         index = -1
-#         for i in np.arange(len(x)-p):
-#             if i +p in labels:
-#                 continue
-#             if abs_res[i] < tau:
-#                 continue
-#             y_hat_point = np.abs(y_hat[i])
-#             if(y_hat_point < minA):
-#                 minA = y_hat_point
-#                 index = i
-#         #print(index)
-#         if index == -1:
-#             print(f'terminated after {j} iterations')
-#             break
-#         #print(index)
-#         val = y_hat[index]
-#         yvec[index] = val
-#         for j in range(p):
-#             if index +1+j >= len(x)-p:
-#                 break
-#             if index +1+j < 0:
-#                 continue
-#             xMat[index +1+j, j] = val
-#
-#     modify = x.copy()
-#     modify[labels] = y_k[labels]
-#     for i in range(len(modify)):
-#         if i not in labels:
-#             modify[i] =x[i]+ yvec[i-p]
-#
-#     return { "repair" : modify }
-
-
-# def IMRsave(index,x,y_o,truth,labels,repair,name , arrows = True):
-#     frame = pd.DataFrame(x)
-#     frame["y_o"] = y_o
-#     frame["truth"] = truth
-#     frame ["labels"] = [i in labels for i in range(len(x))]
-#     frame["repair"] = repair
-#     #print(frame)
-#     frame.to_csv("Data/IRMSAVE/"+name)
-
-
-def imr3(x,y_k,labels,tau=0.1,p=1,k=2000):
-    z = np.array(y_k) - np.array(x)
-    yvec = z[p:]
-    xMat = np.zeros((len(x)-p,p))
-
-    for i in range(len(x)-p):
-        for j in range(p):
-            xMat[i,j] = z[p + i - j - 1]
-
-    for i in range(k):
-        phi = ols(yvec,xMat)
-        y_hat = xMat.dot(phi)
-        #print("phi",phi)
-        residuals = y_hat-yvec
-        abs_res = np.abs(residuals)
-        minA = 100000000000
-        index = -1
-        for u in np.arange(len(x)-p):
-            if u +p in labels:
-                continue
-            if abs_res[u] < tau:
-                continue
-            y_hat_point = np.abs(y_hat[u])
-            if(y_hat_point < minA):
-                minA = y_hat_point
-                index = u
-        print(index)
-        if index == -1:
-            print(f'terminated after {i} iterations')
-            break
-        #print(index)
-        val = y_hat[index]
-        yvec[index] = val
-        for j in range(p):
-            if index +1+j >= len(x)-p:
-                break
-            if index +1+j < 0:
-                continue
-            xMat[index +1+j, j] = val
-
-    modify = x.copy()
-    modify[labels] = y_k[labels]
-    for i in range(len(modify)):
-        if i not in labels:
-            modify[i] =x[i]+ yvec[i-p]
-    #print("AAAAA")
-    #print("suum",sum(modify - imr2(x,y_k,labels,tau=tau,p=p,k=k)))
-    return modify
-
 
 # labels = [0, 1, 2, 5,8,11,22] #in the paper add +1
 # x = np.array([6, 10, 9.6, 8.3, 7.7, 5.4, 5.6, 5.9,  6.3, 6.8, 7.5, 8.5,6, 10, 9.6, 8.3, 7.7, 5.4, 5.6, 5.9,  6.3, 6.8, 7.5, 8.5])

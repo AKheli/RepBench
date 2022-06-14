@@ -46,8 +46,21 @@ class Estimator(ABC, BaseEstimator):
         scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
 
         from sklearn.feature_selection import mutual_info_regression as mi
-        scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-        scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+        try:
+            scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+            scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+        except:
+            try:
+                scores_["partial_mutual_info"] = - \
+                mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1), flatten_y[partial_weights_flattened],
+                   discrete_features=False)[0]
+                scores_["full_mutual_info"] = - \
+                mi(flatten_predicted[full_weights_flattened].reshape(-1, 1), flatten_y[full_weights_flattened],
+                   discrete_features=False)[0]
+            except:
+                pass
+            pass
+
 
         assert hash(str(X)) == hash_X
         return scores_

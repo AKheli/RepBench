@@ -62,6 +62,5 @@ def init_parser(input = None , estimator_choices = None ,scenario_choices = None
     else:
         args = parser.parse_args()
 
-    print(args)
     assert args.alg is not None or args.algx is not None, f"alg or algx needs to be defined"
     return args

@@ -129,14 +129,6 @@ class Scenario:
             except:
                 pass
 
-
-            # for name_type in metric_df.columns:
-            #     new_df = pd.DataFrame(metric_df[name_type].to_list(), columns=[metric])
-            #
-            #     new_df.to_csv(f'{error_path}/{col}.txt')
-
-
-
             columns = list(metric_df.columns)
             cyclers = {}
             for name_type in columns:
