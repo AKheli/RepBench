@@ -1392,3 +1392,13 @@ names = [ "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
 p = 1
 tau = 0.07697519807681928
 names = [ "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
+
+[df4578cfc79e96e06440716388942acf]
+p = 1
+tau = 0.04
+names = [ "cts_nbr_shift_msd1_5.csv_halving_full_rmse",]
+
+[7dd3c9ac690a3cf4c52d1a263c4564b6]
+p = 1
+tau = 0.04
+names = [ "cts_nbr_shift_elec.csv_halving_full_rmse",]

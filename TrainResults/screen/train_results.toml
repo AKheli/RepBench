@@ -1392,3 +1392,13 @@ names = [ "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
 smax = 2.0
 smin = -2.0
 names = [ "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
+
+[df4578cfc79e96e06440716388942acf]
+smax = 2.0
+smin = -2.0
+names = [ "cts_nbr_shift_msd1_5.csv_halving_full_rmse",]
+
+[7dd3c9ac690a3cf4c52d1a263c4564b6]
+smax = 0.9748484848484849
+smin = -0.01
+names = [ "cts_nbr_shift_elec.csv_halving_full_rmse",]

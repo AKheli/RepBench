@@ -7,11 +7,34 @@ import time
 import matplotlib.pyplot as plt
 data = "bafu5k.csv"
 a_type = "outlier"
-error_metrics = [ "mae" , "full_rmse","partial_rmse",  "partial_mutual_info" ,"full_mutual_info"]
-train_method = "grid"
+error_metrics = [ "mae" , "full_rmse","partial_rmse"]#,  "partial_mutual_info" ,"full_mutual_info"]
 
-algs = [ ac.RPCA , ac.CDREC , ac.SCREEN ,ac.IMR ]
+algs = [ac.IMR, ac.SCREEN  ,ac.RPCA , ac.CDREC ]
 scenario = Scenario("base",data,a_type=a_type)
+
+file_object = open('score_method.txt', 'r+')
+file_object.truncate()
+file_object.close()
+
+
+for error in error_metrics:
+    for alg in algs:
+        for train_method in ["halving", "bayesian", "grid"]:
+            start = time.time()
+            for name, train_part, test_part in scenario.name_train_test_iter:
+                params = alg_runner.find_params(alg, metric=error, train_method=train_method,
+                                        repair_inputs=train_part.repair_inputs)
+                train_scores = alg_runner.run_repair(alg,params,**train_part.repair_inputs)["scores"]
+                test_scores =  alg_runner.run_repair(alg,params,**test_part.repair_inputs)["scores"]
+
+            file_object = open('score_method.txt', 'a')
+            file_object.write(f"{error},{alg},{train_method}\n")
+            file_object.write(f"{time.time() - start}\n")
+            file_object.write(f"{train_scores}\n")
+            file_object.write(f"{test_scores}\n")
+            file_object.close()
+
+
 
 print(list(scenario.name_train_test_iter))
 for error in error_metrics:
@@ -30,7 +53,6 @@ for error in error_metrics:
             test[alg]  = {k:abs(v) for k,v in test_scores.items()}
             time_dict[alg] = [time.time()  - start]
             param_dict[alg] = params
-
 
     param_df =   pd.DataFrame.from_dict(param_dict)
     time_df =    pd.DataFrame.from_dict(time_dict)

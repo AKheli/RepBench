@@ -19,10 +19,10 @@ class Estimator(ABC, BaseEstimator):
 
 
 
-    def scores(self, injected, truth , columns_to_repair, labels , predicted=None):
+    def scores(self, injected, truth , columns_to_repair, labels , predicted=None , score = None):
+
         X = injected
         y = truth
-        hash_X = hash(str(X))
         predicted = predicted if predicted is not None else self.repair(X, y,columns_to_repair,labels)
         labels = labels.values if isinstance(labels,pd.DataFrame) else labels
 
@@ -34,35 +34,40 @@ class Estimator(ABC, BaseEstimator):
         full_weights_flattened = full_weights.flatten()
 
         scores_ = {}
-        scores_["mae"] = sm.mean_absolute_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened])
-        scores_["full_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened],squared=False)
 
-        scores_["original_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], injected.values.flatten()[full_weights_flattened], squared=False)
+        if score is None or score == "mae":
+            scores_["mae"] = sm.mean_absolute_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened])
+        if score is None or score == "full_rmse":
+            scores_["full_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened],squared=False)
+            scores_["original_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], injected.values.flatten()[full_weights_flattened], squared=False)
+
 
         partial_weights = np.invert(np.isclose(X.values, y.values))
         partial_weights[labels] = False
         partial_weights_flattened = partial_weights.flatten() # anomaly_weights
 
-        scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
+        if score is None or score == "partial_rmse":
+            scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
 
         from sklearn.feature_selection import mutual_info_regression as mi
-        try:
-            scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-            scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-        except:
+
+        if score is None or score in ["partial_mutual_info","full_mutual_info"]:
+
             try:
-                scores_["partial_mutual_info"] = - \
-                mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1), flatten_y[partial_weights_flattened],
-                   discrete_features=False)[0]
-                scores_["full_mutual_info"] = - \
-                mi(flatten_predicted[full_weights_flattened].reshape(-1, 1), flatten_y[full_weights_flattened],
-                   discrete_features=False)[0]
+                scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+                scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
             except:
+                try:
+                    scores_["partial_mutual_info"] = - \
+                    mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1), flatten_y[partial_weights_flattened],
+                       discrete_features=False)[0]
+                    scores_["full_mutual_info"] = - \
+                    mi(flatten_predicted[full_weights_flattened].reshape(-1, 1), flatten_y[full_weights_flattened],
+                       discrete_features=False)[0]
+                except:
+                    pass
                 pass
-            pass
 
-
-        assert hash(str(X)) == hash_X
         return scores_
 
     def mae_score(self, X, y , labels):

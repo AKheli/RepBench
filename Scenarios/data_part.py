@@ -96,7 +96,6 @@ class DataPart:
 
         repair_metrics = repair_results["scores"]
         repair_metrics["runtime"] = repair_results["runtime"]
-
         self.repair_metrics[(repair_name, repair_type)] = repair_metrics
 
     def check_original_rmse(self):

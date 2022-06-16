@@ -2221,3 +2221,11 @@ threshold = 2.332243879429849
 repair_iter = 4
 n_max_iter = 18
 names = [ "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
+
+[7dd3c9ac690a3cf4c52d1a263c4564b6]
+classification_truncation = 5
+repair_truncation = 4
+threshold = 1
+repair_iter = 10
+n_max_iter = 1
+names = [ "cts_nbr_shift_elec.csv_halving_full_rmse",]

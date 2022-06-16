@@ -7,7 +7,7 @@ ANOMALY_FACTOR  = "anomaly_factor"
 TS_NBR ="ts_nbr"
 CTS_NBR = "cts_nbr"
 
-MAX_N_ROWS = 10000
+MAX_N_ROWS = 20000
 MAX_N_COLS = 10
 
 default_percentage = 5
@@ -21,7 +21,5 @@ scenario_specifications = {
     TS_NBR : {"a_percentage": default_percentage,"a_length" : default_length , "ts_nbrs": [3,4,5,6,7,8,9,10]},
     CTS_NBR : {"a_percentage" : default_percentage ,"a_length": default_length ,"cts_nbrs": [1,2,3,4,5,6,7,8,9,10]}
 }
-scenario_specifications[ANOMALY_POSITION] = scenario_specifications[BASE_SCENARIO].copy()
-
 
 SCENARIO_TYPES = list(scenario_specifications.keys())

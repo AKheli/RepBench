@@ -28,7 +28,7 @@ def add_repair_arguments_to_parser(parser,estimator_choices):
     parser.add_argument("-alg", type=name_check(choices=estimator_choices, para_name="alg"))
     parser.add_argument("-algx", type=str)
     parser.add_argument("-rn", "-result_name" , type=str ,default=None)
-    parser.add_argument("-train", "-t" , type=str ,default="grid",choices=["grid", "bayesian"])
+    parser.add_argument("-train", "-t" , type=str ,default="grid",choices=["grid", "bayesian" , "halving"])
     parser.add_argument("-train_error", "-e" , type=str ,default="full_rmse",choices=["mae", "full_rmse", "partial_rmse"])
 
 
