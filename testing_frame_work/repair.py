@@ -1,5 +1,4 @@
 import time
-from timeit import Timer
 
 import toml
 
@@ -9,7 +8,13 @@ from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robus
 from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.screen_estimator import SCREENEstimator
 from Repair.estimator import Estimator
-from Repair.estimator_optimizer import EstimatorOptimizer
+from parameter_search.estimator_optimizer import EstimatorOptimizer
+from parameter_search.succesivehalving_search import SuccessiveHalvingOptimizer
+from parameter_search.bayesian_optimization import BayesianOptimizer
+
+optim_methods = { "grid" : EstimatorOptimizer,
+                  "halving": SuccessiveHalvingOptimizer,
+                  "bayesian" : BayesianOptimizer}
 
 def init_estimator_from_type(alg_type, params):
     params = {} if params is None else params
@@ -65,14 +70,14 @@ def find_params(alg_type, metric, train_method,repair_inputs , store = False , i
     print("train size:", repair_inputs["injected"].shape)
 
     param_grid = estimator.suggest_param_range(repair_inputs["injected"])
-    estimator_optimizer = EstimatorOptimizer(estimator, train_method, metric)
+    estimator_optimizer = optim_methods[train_method](estimator, metric)
 
-    optimal_params = estimator_optimizer.find_optimal_params(repair_inputs, param_grid)
+    optimal_params , search_time = estimator_optimizer.find_optimal_params(repair_inputs, param_grid)
 
     if store:
         assert isinstance(store,str)
         save_train(alg_type,store,optimal_params,id =id)
-    return optimal_params
+    return optimal_params, search_time
 
 
 

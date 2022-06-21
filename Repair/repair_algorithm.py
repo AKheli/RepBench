@@ -1,13 +1,7 @@
-import itertools
-
-import numpy as np
 import pandas as pd
-import sklearn.metrics as sm
-from skopt import gp_minimize
 
-from Repair.estimator_optimizer import  EstimatorOptimizer
+from parameter_search.estimator_optimizer import  EstimatorOptimizer
 import Repair.algorithms_config as ac
-from ParameterTuning.sklearn_bayesian import BayesianOptimization
 from Repair.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
 from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 from Repair.IMR.IMR_estimator import IMR_estimator

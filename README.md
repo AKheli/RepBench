@@ -28,7 +28,7 @@ $ python3 TestingFramework.py [arguments]
 ### Arguments
 
 
- | -d  | -a  | -scen | -algo | 
+ | -d  | -a  | -scen | -alg | 
  | -------- | -------- | -------- | -------- | 
  | bafu5k     | shift   |ts_len     | rpca
  | humidity   |distortion  |  a_size | scree

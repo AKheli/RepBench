@@ -116,3 +116,9 @@ class DataPart:
         m.update(additional_input.encode())
         result = m.hexdigest()
         return result #str(hashlib.md5((str(self.truth)+str(self.injected)+str(self.labels)+str(additional_input)).encode()).hexdigest())
+
+
+    @property
+    def original_scores(self):
+        from Repair.estimator import Estimator
+        return Estimator().scores(self.injected,self.truth,self.injected_columns,self.labels,predicted=self.injected)

@@ -7,12 +7,12 @@ import time
 import matplotlib.pyplot as plt
 data = "bafu5k.csv"
 a_type = "outlier"
-error_metrics = [ "mae" , "full_rmse","partial_rmse"]#,  "partial_mutual_info" ,"full_mutual_info"]
+error_metrics = ["full_rmse","partial_rmse"]#,  "partial_mutual_info" ,"full_mutual_info"]
 
-algs = [ac.IMR, ac.SCREEN  ,ac.RPCA , ac.CDREC ]
+algs = [ ac.RPCA , ac.CDREC ] #ac.IMR, ac.SCREEN
 scenario = Scenario("base",data,a_type=a_type)
 
-file_object = open('score_method.txt', 'r+')
+file_object = open('score_method_mae_full_rmse.txt', 'r+')
 file_object.truncate()
 file_object.close()
 
@@ -27,7 +27,7 @@ for error in error_metrics:
                 train_scores = alg_runner.run_repair(alg,params,**train_part.repair_inputs)["scores"]
                 test_scores =  alg_runner.run_repair(alg,params,**test_part.repair_inputs)["scores"]
 
-            file_object = open('score_method.txt', 'a')
+            file_object = open('score_method_mae_full_rmse.txt', 'a')
             file_object.write(f"{error},{alg},{train_method}\n")
             file_object.write(f"{time.time() - start}\n")
             file_object.write(f"{train_scores}\n")

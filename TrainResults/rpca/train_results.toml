@@ -2229,3 +2229,11 @@ threshold = 1
 repair_iter = 10
 n_max_iter = 1
 names = [ "cts_nbr_shift_elec.csv_halving_full_rmse",]
+
+[df4578cfc79e96e06440716388942acf]
+classification_truncation = 1
+repair_truncation = 5
+threshold = 1.2
+repair_iter = 10
+n_max_iter = 20
+names = [ "cts_nbr_shift_msd1_5.csv_halving_full_rmse",]
