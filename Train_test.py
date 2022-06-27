@@ -1,9 +1,9 @@
 import pandas as pd
-
 from Scenarios.Scenario import Scenario
 import Repair.algorithms_config as ac
 import testing_frame_work.repair  as alg_runner
 import time
+
 import matplotlib.pyplot as plt
 data = "bafu5k.csv"
 a_type = "outlier"
@@ -22,7 +22,7 @@ for error in error_metrics:
         for train_method in ["halving", "bayesian", "grid"]:
             start = time.time()
             for name, train_part, test_part in scenario.name_train_test_iter:
-                params = alg_runner.find_params(alg, metric=error, train_method=train_method,
+                params , _ = alg_runner.find_params(alg, metric=error, train_method=train_method,
                                         repair_inputs=train_part.repair_inputs)
                 train_scores = alg_runner.run_repair(alg,params,**train_part.repair_inputs)["scores"]
                 test_scores =  alg_runner.run_repair(alg,params,**test_part.repair_inputs)["scores"]

@@ -10,8 +10,8 @@ names = [ "a_size_distortion_humidity.csv_bayesian_full_rmse", "cts_nbr_distorti
 
 [587d6a19a1cb8f2a9ee1f2c0e93ac98c]
 p = 3
-tau = 0.02937728852967197
-names = [ "a_size_shift_msd1_5.csv_bayesian_full_rmse", "cts_nbr_shift_msd1_5.csv_bayesian_full_rmse", "a_rate_shift_msd1_5.csv_bayesian_full_rmse", "ts_len_shift_msd1_5.csv_bayesian_full_rmse", "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
+tau = 0.04233161583652342
+names = [ "ts_len_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [478d59dee0d77869835b0ca281592f25]
 p = 3

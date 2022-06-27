@@ -11,7 +11,7 @@ names = [ "a_size_distortion_humidity.csv_bayesian_full_rmse", "cts_nbr_distorti
 [587d6a19a1cb8f2a9ee1f2c0e93ac98c]
 smax = 2.0
 smin = -2.0
-names = [ "a_size_shift_msd1_5.csv_bayesian_full_rmse", "cts_nbr_shift_msd1_5.csv_bayesian_full_rmse", "a_rate_shift_msd1_5.csv_bayesian_full_rmse", "ts_len_shift_msd1_5.csv_bayesian_full_rmse", "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
+names = [ "ts_len_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [478d59dee0d77869835b0ca281592f25]
 smax = 2.0

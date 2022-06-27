@@ -25,44 +25,49 @@ def normalize_f(X):
     return (X - mean_X) / std_X, inv_func
 
 def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_test_split=0.5,  normalize=True):
-    print("anomlaly_type" , a_type)
     assert scen_name in sc.SCENARIO_TYPES, f"scenario {scen_name} must be one of {sc.SCENARIO_TYPES}"
 
     data = data if isinstance(data, pd.DataFrame) else get_df_from_file(data)[0]
     cols_to_inject = cols_to_inject if cols_to_inject is not None else [0]
 
     n, m = data.shape
-    split = int(n * train_test_split)
 
-    max_n_rows = sc.MAX_N_ROWS if sc.MAX_N_ROWS is not None else split + 1
-
-    train = data.iloc[max(0, split - 2000):split, : min(sc.MAX_N_COLS, m)]
-    test = data.iloc[split:min(n, split + max_n_rows), : min(sc.MAX_N_COLS, m)]
-
-    if normalize:
-        train = (train - train.mean()) / train.std()
-        test = (test - test.mean()) / test.std()
-
-
-    result = {}
     np.random.seed(10)
-
     scen_spec = sc.scenario_specifications[scen_name]
     base_spec = sc.scenario_specifications[sc.BASE_SCENARIO]
-
-    ## create trainings scenario
     a_length = base_spec["a_length"]
     a_perc = base_spec["a_percentage"]
 
-    train_injected = train.copy()
-    for col in cols_to_inject:
-        train_injected.iloc[:, col], indices = inject_single(train_injected.iloc[:, col], a_type, a_length,
-                                                             percentage=a_perc*2)
-    train_part = pg.generate_data_part(train_injected,train,train=None,name = scen_name , a_type=a_type)
+    requires_train = True
+    result = {}
+
+    if train_test_split is not None:
+        split = int(n * train_test_split)
+
+        max_n_rows = sc.MAX_N_ROWS if sc.MAX_N_ROWS is not None else split + 1
+
+        train = data.iloc[max(0, split - 2000):split, : min(sc.MAX_N_COLS, m)]
+        test = data.iloc[split:min(n, split + max_n_rows), : min(sc.MAX_N_COLS, m)]
+
+        if normalize:
+            train = (train - train.mean()) / train.std()
+            test = (test - test.mean()) / test.std()
+
+
+        ## create trainings scenario
+        train_injected = train.copy()
+        for col in cols_to_inject:
+            train_injected.iloc[:, col], indices = inject_single(train_injected.iloc[:, col], a_type, a_length,
+                                                                 percentage=a_perc*2)
+        train_part = pg.generate_data_part(train_injected,train,train=None,name = scen_name , a_type=a_type)
+
+    else:
+        requires_train = False
+        train_part = None
+        max_n_rows = sc.MAX_N_ROWS
+        test = data.iloc[0:min(n, max_n_rows), : min(sc.MAX_N_COLS, m)]
 
     ## create specified scenarios
-
-
     if scen_name == sc.BASE_SCENARIO:
         a_length = scen_spec["a_length"]
         a_perc =  scen_spec["a_percentage"]

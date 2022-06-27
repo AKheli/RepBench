@@ -4,66 +4,73 @@ from Scenarios.Scenario import Scenario
 import testing_frame_work.argument_parsers as arg_parser
 import testing_frame_work.repair  as alg_runner
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
+from testing_frame_work.parameterization import load_params_from_toml, params_from_training_set
 
 
 def main(input = None):
     args = arg_parser.init_checked_parser(input)
 
+
+    train_method , train_metric = arg_parser.parse_training_arguments(args)
+    train_argument = args.train
+
+    use_training_set = True
+    if train_argument == "off":
+        use_training_set = False
+
     algx = False
     if args.alg is not None:
-        algorithms = arg_parser.parse_repair_algorithms(args)
+        algorithms : str = arg_parser.parse_repair_algorithms(args)
 
     elif args.algx is not None:
         algorithms = arg_parser.parse_repair_algorithms_x(args)
         algx = True
+        train = False
     else:
-        assert False, "algx or alg as to be given a parameter"
+        assert False, "algx or alg has to be given as a parameter"
 
 
     scen_names = arg_parser.parse_scen_names(args)
     data_files = arg_parser.parse_data_files(args)
     anomaly_types = arg_parser.parse_anomaly_types(args)
-    train_method , train_metric = arg_parser.parse_training_arguments(args)
-
+    runtime_n = args.run_time_n
     cols = [0]
 
+    if not use_training_set:
+        for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomaly_types):
+            try:
+                scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type ,train_test_split = None)
+            except Exception as e:
+                print(f'running repair on {data_name} with scen type {scen_name} failed')
+                raise e
+            print(f'running repair on {data_name} with scen type {scen_name}')
+            for repair_type in algorithms:
+                for name, train_part, test_part in scenario.name_train_test_iter:
+                    params = load_params_from_toml(repair_type)
+                    print("repair with ",repair_type,"params:", params)
+                    repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs,runtime_measurements=runtime_n)
+                    test_part.add_repair(repair_output,repair_type)
 
+            save_scenario(scenario, repair_plot=False,  res_name=args.rn)
 
+    else:
+        for (scen_name, data_name, anomaly_type) in itertools.product(scen_names, data_files, anomaly_types):
+            try:
+                scenario: Scenario = Scenario(scen_name, data_name, cols_to_inject=cols, a_type=anomaly_type)
+            except Exception as e:
+                print(f'running repair on {data_name} with scen type {scen_name} failed')
+                raise e
+            print(f'running repair on {data_name} with scen type {scen_name}')
+            for repair_type in algorithms:
+                for name, train_part, test_part in scenario.name_train_test_iter:
+                    params = params_from_training_set(scen_name, anomaly_type, data_name, train_method,
+                                                          train_metric, train_part, repair_type)
+                    print("repair with ", repair_type, "params:", params)
+                    repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs,
+                                                          runtime_measurements=runtime_n)
+                    test_part.add_repair(repair_output, repair_type)
 
-
-    for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomaly_types):
-        try:
-            scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type)
-        except Exception as e:
-            print(f'running repair on {data_name} with scen type {scen_name} failed')
-            raise e
-        print(f'running repair on {data_name} with scen type {scen_name}')
-        for repair_type in algorithms:
-            for name, train_part, test_part in scenario.name_train_test_iter:
-                store_name = f"{scen_name}_{anomaly_type}_{data_name}_{train_method}_{train_metric}"
-                train_hash = train_part.hash(train_method+train_metric)
-                params = "default"
-                import matplotlib.pyplot as plt
-                # train_part.injected.iloc[:, 0].plot()
-                # plt.show()
-                try:
-                    #check if params are already computed for this dataset and eror
-                    params = alg_runner.load_train(repair_type,store_name,id=train_hash)
-                    raise NotImplementedError
-                except:
-                    params,train_time = alg_runner.find_params(repair_type , metric = train_metric , train_method=train_method , repair_inputs=train_part.repair_inputs , store=store_name,id = train_hash)
-
-                print("repair with ",repair_type,"params:", params)
-                total_runtime =  0.0
-                run_time_measurements = 10
-                for i in range(run_time_measurements):
-                    repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs)
-                    total_runtime +=  repair_output["runtime"]
-                    print(total_runtime)
-                repair_output["runtime"] = total_runtime/run_time_measurements
-                test_part.add_repair(repair_output,repair_type)
-
-        save_scenario(scenario, repair_plot=False,  res_name=args.rn)
+            save_scenario(scenario, repair_plot=False, res_name=args.rn)
 
 if __name__ == '__main__':
     main()
