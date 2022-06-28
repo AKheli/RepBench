@@ -3,9 +3,15 @@ import Scenarios.ScenarioConfig as sc
 # cts_nbr,ts_nbr,ts_len
 import timeit
 
-sc.MAX_N_ROWS  = 20001
-input = "-scen all -data humidity -rn default -anom shift -alg all -e full_rmse"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+#sc.MAX_N_ROWS  = 10000
+input = "-scen all -data all -rn default_full -anom all -alg all -e full_rmse"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 run.main(input)
+
+# sc.MAX_N_ROWS  = 1000
+# input = "-scen all -data humidity -rn default -anom shift -alg all -e full_rmse"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# run.main(input)
+
+
 
 # sc.MAX_N_ROWS  = 10001
 # start = timeit.timeit()

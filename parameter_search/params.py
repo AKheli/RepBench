@@ -25,14 +25,13 @@ error_metrics = ["full_rmse", "partial_rmse", "mae"]
 
 param_list_dict = {"imr": [{"p": 1, "tau": tau} for tau in np.linspace(0, 0.5, 100)][1:],
                    "screen" : [{"smin": -s, "smax": s} for s in np.linspace(0, 2, 100)],
-
-                   "rpca" : [{"threshold": 1.2, "classification_truncation": s} for s in [1,2,3,4,5,6,6,7,8]]
+                   "rpca" : [{"threshold": t, "classification_truncation": 2} for t in np.linspace(0, 3, 100)[1:]]
                    }
 
-main_param_dict = {"imr": "tau" , "screen" : "smax" , "rpca" : "classification_truncation"}
+main_param_dict = {"imr": "tau" , "screen" : "smax" , "rpca" : "threshold" } #"classification_truncation"}
 estimator_dict = {"imr": IMR_estimator, "screen" : SCREENEstimator , "rpca" : Robust_PCA_estimator }
 
-alg_type = "imr"
+alg_type = "rpca"
 
 pdf = matplotlib.backends.backend_pdf.PdfPages(f"{alg_type}.pdf")
 

@@ -1,10 +1,10 @@
 [a375d5f92974d1b5f1a3f35d567017c6]
-classification_truncation = 1
+classification_truncation = 2
 repair_truncation = 5
-threshold = 3.0
+threshold = 3
 repair_iter = 1
-n_max_iter = 16
-names = [ "a_size_shift_humidity.csv_bayesian_full_rmse", "cts_nbr_shift_humidity.csv_bayesian_full_rmse", "a_rate_shift_humidity.csv_bayesian_full_rmse", "ts_len_shift_humidity.csv_bayesian_full_rmse", "ts_nbr_shift_humidity.csv_bayesian_full_rmse",]
+n_max_iter = 20
+names = [ "cts_nbr_shift_humidity.csv_bayesian_full_rmse",]
 
 [478d59dee0d77869835b0ca281592f25]
 classification_truncation = 1

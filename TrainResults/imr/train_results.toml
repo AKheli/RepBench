@@ -1,7 +1,7 @@
 [a375d5f92974d1b5f1a3f35d567017c6]
 p = 1
 tau = 0.08
-names = [ "a_size_shift_humidity.csv_bayesian_full_rmse", "cts_nbr_shift_humidity.csv_bayesian_full_rmse", "a_rate_shift_humidity.csv_bayesian_full_rmse", "ts_len_shift_humidity.csv_bayesian_full_rmse", "ts_nbr_shift_humidity.csv_bayesian_full_rmse",]
+names = [ "cts_nbr_shift_humidity.csv_bayesian_full_rmse",]
 
 [0ef47316d7bd7233b1f2826e1520c3f5]
 p = 2

@@ -120,7 +120,6 @@ class Scenario:
 
         for metric , metric_df in self.score_dfs().items():
             error_path = f'{path}/{metric}'
-            print("AAAAAAAAAAAAAAAA")
             if "time" in metric:
                 error_path = f'{"/".join(initial_path.split("/")[:-2])}/runtime'
                 print(metric_df)

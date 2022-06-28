@@ -70,7 +70,7 @@ def main(input = None):
                                                           runtime_measurements=runtime_n)
                     test_part.add_repair(repair_output, repair_type)
 
-            save_scenario(scenario, repair_plot=False, res_name=args.rn)
+            save_scenario(scenario, repair_plot=True, res_name=args.rn)
 
 if __name__ == '__main__':
     main()

@@ -1,7 +1,7 @@
 [a375d5f92974d1b5f1a3f35d567017c6]
-smax = 0.671625603713606
-smin = -0.777408556887214
-names = [ "a_size_shift_humidity.csv_bayesian_full_rmse", "cts_nbr_shift_humidity.csv_bayesian_full_rmse", "a_rate_shift_humidity.csv_bayesian_full_rmse", "ts_len_shift_humidity.csv_bayesian_full_rmse", "ts_nbr_shift_humidity.csv_bayesian_full_rmse",]
+smax = 0.16049795239472042
+smin = -0.3097538115688572
+names = [ "cts_nbr_shift_humidity.csv_bayesian_full_rmse",]
 
 [0ef47316d7bd7233b1f2826e1520c3f5]
 smax = 0.8168428268996304
