@@ -4,11 +4,6 @@ from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robus
 from Repair.IMR.IMR_estimator import IMR_estimator
 from Repair.Screen.screen_estimator import SCREENEstimator
 
-from parameter_search.estimator_optimizer import EstimatorOptimizer
-from parameter_search.succesivehalving_search import SuccessiveHalvingOptimizer
-from parameter_search.bayesian_optimization import BayesianOptimizer
-
-
 def init_estimator_from_type(alg_type, params):
     params = {} if params is None else params
     estimator = None

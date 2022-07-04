@@ -51,6 +51,17 @@ def inject_growth_change(data, index_range, factor=1 ,directions=[1, -1]):
     return data, {"type": anom_type, "factor": int(factor), "index_range": [int(index) for index in index_range]}
 
 
+
+def anomaly_size(data, indexes):
+    start, stop = indexes[0] , indexes[-1]
+    local_range = data[np.arange(max(0, start - len(indexes)*3), min(stop+len(indexes)*2, len(data) - 1))]
+    global_std = data.std()
+    local_std = local_range.std()
+    s = (global_std + 3*local_std)/4
+    # print("global" ,global_std)
+    # print("local" , local_std)
+    return s*2.5
+
 def inject_amplitude_shift(data, index_range, factor=1, directions=[1, -1], stdrange=(-100, 100)):
     anom_type = AMPLITUDE_SHIFT
 

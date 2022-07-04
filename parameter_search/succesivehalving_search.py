@@ -1,6 +1,4 @@
 import itertools
-from multiprocessing import Pool
-
 import numpy as np
 
 from parameter_search.estimator_optimizer import EstimatorOptimizer

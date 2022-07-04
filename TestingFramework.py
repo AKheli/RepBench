@@ -5,9 +5,10 @@ import testing_frame_work.argument_parsers as arg_parser
 import testing_frame_work.repair  as alg_runner
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from testing_frame_work.parameterization import load_params_from_toml, params_from_training_set
-
+import numpy as np
 
 def main(input = None):
+
     args = arg_parser.init_checked_parser(input)
 
 
@@ -51,7 +52,7 @@ def main(input = None):
                     repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs,runtime_measurements=runtime_n)
                     test_part.add_repair(repair_output,repair_type)
 
-            save_scenario(scenario, repair_plot=False,  res_name=args.rn)
+            save_scenario(scenario, repair_plot=True,  res_name=args.rn)
 
     else:
         for (scen_name, data_name, anomaly_type) in itertools.product(scen_names, data_files, anomaly_types):

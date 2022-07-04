@@ -1,0 +1,129 @@
+full_rmse
+outlier
+bafu5k.csv
+diff percentile[-1.08788172  1.07843543]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-2.76632392  2.64694573]
+optimal found 1.7241379310344827
+elec.csv
+diff percentile[-1.95506855  2.04428455]
+optimal found 0.48275862068965514
+humidity.csv
+diff percentile[-1.63393867  1.65237885]
+optimal found 0.13793103448275862
+median min, full_rmse outlier 0.413793
+shift
+bafu5k.csv
+diff percentile[-0.04732079  0.06624911]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-1.91088894  2.13491508]
+optimal found 2.0
+elec.csv
+diff percentile[-0.84612781  1.36764911]
+optimal found 0.27586206896551724
+humidity.csv
+diff percentile[-0.96094475  0.82366693]
+optimal found 0.13793103448275862
+median min, full_rmse shift 0.275862
+distortion
+bafu5k.csv
+diff percentile[-0.19097144  0.08517743]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-1.83757397  1.91093594]
+optimal found 2.0
+elec.csv
+diff percentile[-0.93514043  1.3059755 ]
+optimal found 1.1724137931034482
+humidity.csv
+diff percentile[-0.95876869  0.82366693]
+optimal found 0.6896551724137931
+median min, full_rmse distortion 1.034483
+partial_rmse
+outlier
+bafu5k.csv
+diff percentile[-0.7300882   0.76281218]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-3.00509931  2.71410346]
+optimal found 0.20689655172413793
+elec.csv
+diff percentile[-1.86492099  1.83437122]
+optimal found 0.27586206896551724
+humidity.csv
+diff percentile[-1.42870876  1.47050261]
+optimal found 0.13793103448275862
+median min, partial_rmse outlier 0.275862
+shift
+bafu5k.csv
+diff percentile[-0.04732079  0.06624911]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-1.91088894  2.13088085]
+optimal found 0.13793103448275862
+elec.csv
+diff percentile[-0.86320949  1.38472899]
+optimal found 0.13793103448275862
+humidity.csv
+diff percentile[-0.96094475  0.82366693]
+optimal found 0.13793103448275862
+median min, partial_rmse shift 0.137931
+distortion
+bafu5k.csv
+diff percentile[-0.18928317  0.08517743]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-1.83757397  1.98420391]
+optimal found 0.27586206896551724
+elec.csv
+diff percentile[-1.04304215  1.47465416]
+optimal found 0.27586206896551724
+humidity.csv
+diff percentile[-0.96094475  0.94583932]
+optimal found 0.27586206896551724
+median min, partial_rmse distortion 0.275862
+mae
+outlier
+bafu5k.csv
+diff percentile[-0.93833126  1.08817765]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-2.80509226  2.92980152]
+optimal found 2.0
+elec.csv
+diff percentile[-1.93759554  2.05083571]
+optimal found 2.0
+humidity.csv
+diff percentile[-1.50045843  1.57336137]
+optimal found 1.2413793103448276
+median min, mae outlier 2.000000
+shift
+bafu5k.csv
+diff percentile[-0.04732079  0.06624911]
+optimal found 0.6896551724137931
+msd1_5.csv
+diff percentile[-1.91088894  2.13543954]
+optimal found 2.0
+elec.csv
+diff percentile[-0.84522678  1.36764911]
+optimal found 2.0
+humidity.csv
+diff percentile[-0.96094475  0.82366693]
+optimal found 1.6551724137931034
+median min, mae shift 2.000000
+distortion
+bafu5k.csv
+diff percentile[-0.16231032  0.09464158]
+optimal found 0.13793103448275862
+msd1_5.csv
+diff percentile[-1.91088894  1.98665813]
+optimal found 2.0
+elec.csv
+diff percentile[-0.89917648  1.26197853]
+optimal found 1.4482758620689655
+humidity.csv
+diff percentile[-0.84642011  0.84642011]
+optimal found 1.103448275862069
+median min, mae distortion 1.655172

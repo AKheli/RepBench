@@ -7,12 +7,11 @@ import numpy as np
 
 class SCREENEstimator(Estimator):
 
-    def __init__(self, t=3, smax=1, smin=-1, method="local",**kwargs):
+    def __init__(self, t=3, smax=None, smin=None, method="local",**kwargs):
         self.smin = smin
         self.smax = smax
         self.t = t
         self.method = method
-        assert self.smin < 0 and self.smax > 0 and t >= 1 , f"invalid (smin<0,smax>0,t>=1): {(smin,smax,t)}"
 
     def get_fitted_params(self, **args):
         return {"t": self.t
@@ -31,7 +30,14 @@ class SCREENEstimator(Estimator):
         repair = injected.copy()
         for col in [c for c in columns_to_repair if c < injected.shape[1]]:
             x = np.array(injected.iloc[:, col])
-            repair_result = screen(x, self.t , self.smax , self.smin)
+
+            perc = np.percentile(sorted(np.diff(x)), [2.5, 97.5])
+            if self.smax is None:
+                smax = perc[1]
+                smin = perc[0]
+            else:
+                smin , smax = self.smin , self.smax
+            repair_result = screen(x, self.t , smax, smin)
             repair.iloc[:, col] = repair_result
         return repair
 

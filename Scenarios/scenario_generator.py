@@ -26,13 +26,14 @@ def normalize_f(X):
 
 def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_test_split=0.5,  normalize=True):
     assert scen_name in sc.SCENARIO_TYPES, f"scenario {scen_name} must be one of {sc.SCENARIO_TYPES}"
+    np.random.seed(10)
+
 
     data = data if isinstance(data, pd.DataFrame) else get_df_from_file(data)[0]
     cols_to_inject = cols_to_inject if cols_to_inject is not None else [0]
 
     n, m = data.shape
 
-    np.random.seed(10)
     scen_spec = sc.scenario_specifications[scen_name]
     base_spec = sc.scenario_specifications[sc.BASE_SCENARIO]
     a_length = base_spec["a_length"]
@@ -67,6 +68,9 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
         max_n_rows = sc.MAX_N_ROWS
         test = data.iloc[0:min(n, max_n_rows), : min(sc.MAX_N_COLS, m)]
 
+        if normalize:
+            test = (test - test.mean()) / test.std()
+
     ## create specified scenarios
     if scen_name == sc.BASE_SCENARIO:
         a_length = scen_spec["a_length"]
@@ -82,6 +86,8 @@ def generate_scenario_data(scen_name, data, a_type,cols_to_inject=None, train_te
         for a_perc in scen_spec["a_percentages"]:
             test_injected = test.copy()
             for col in cols_to_inject:
+                column_to_inject= np.array(test_injected.iloc[:, col])
+                std = column_to_inject.std()
                 test_injected.iloc[:, col], indices = inject_single(test_injected.iloc[:, col], a_type, a_length,
                                                                     percentage=a_perc)
             assert len(indices) != 0
