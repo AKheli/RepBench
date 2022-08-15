@@ -11,7 +11,6 @@ def main(input = None):
 
     args = arg_parser.init_checked_parser(input)
 
-
     train_method , train_metric = arg_parser.parse_training_arguments(args)
     train_argument = args.train
 
@@ -44,11 +43,11 @@ def main(input = None):
             except Exception as e:
                 print(f'running repair on {data_name} with scen type {scen_name} failed')
                 raise e
-            print(f'running repair on {data_name} with scen type {scen_name}')
+            #print(f'running repair on {data_name} with scen type {scen_name}')
             for repair_type in algorithms:
                 for name, train_part, test_part in scenario.name_train_test_iter:
                     params = load_params_from_toml(repair_type)
-                    print("repair with ",repair_type,"params:", params)
+                    #print("repair with ",repair_type,"params:", params)
                     repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs,runtime_measurements=runtime_n)
                     test_part.add_repair(repair_output,repair_type)
 
@@ -61,12 +60,12 @@ def main(input = None):
             except Exception as e:
                 print(f'running repair on {data_name} with scen type {scen_name} failed')
                 raise e
-            print(f'running repair on {data_name} with scen type {scen_name}')
+            #print(f'running repair on {data_name} with scen type {scen_name}')
             for repair_type in algorithms:
                 for name, train_part, test_part in scenario.name_train_test_iter:
                     params = params_from_training_set(scen_name, anomaly_type, data_name, train_method,
                                                           train_metric, train_part, repair_type)
-                    print("repair with ", repair_type, "params:", params)
+                    #print("repair with ", repair_type, "params:", params)
                     repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs,
                                                           runtime_measurements=runtime_n)
                     test_part.add_repair(repair_output, repair_type)
