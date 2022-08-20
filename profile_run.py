@@ -2,6 +2,10 @@ import TestingFramework as run
 import Scenarios.ScenarioConfig as scen_config
 # cts_nbr,ts_nbr,ts_len
 import timeit
+from Scenarios.data_part import DataPart
+print(DataPart)
+import os
+
 
 scen_config.MAX_N_COLS = 10
 input = "-scen  all -data elec,msd1_5 -rn test -anom shift -alg screen -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "

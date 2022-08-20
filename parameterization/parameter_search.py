@@ -1,3 +1,6 @@
+import sys ,os
+print(sys.path)
+sys.path.append(os.getcwd())
 from Scenarios.data_part import DataPart
 from Scenarios.scenario_generator import build_scenario
 from parameterization.bayesian_optimization import BayesianOptimizer
