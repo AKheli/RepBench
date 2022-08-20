@@ -1,6 +1,5 @@
 
 import numpy as np
-
 from Scenarios.data_part import DataPart
 
 

@@ -1,9 +1,0 @@
-# by default used for -alg
-# ! indicates the paremeters that are given in repair_algos file followed by
-#the name of the algorithm
-
-! imr p tau k
-1 0.2  10000
-
-! screen t s
-1 6

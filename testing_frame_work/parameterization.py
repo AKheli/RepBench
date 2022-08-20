@@ -1,6 +1,6 @@
-from parameter_search.estimator_optimizer import EstimatorOptimizer
-from parameter_search.succesivehalving_search import SuccessiveHalvingOptimizer
-from parameter_search.bayesian_optimization import BayesianOptimizer
+from parameterization.estimator_optimizer import EstimatorOptimizer
+from parameterization.succesivehalving_search import SuccessiveHalvingOptimizer
+from parameterization.bayesian_optimization import BayesianOptimizer
 from testing_frame_work.estimator_init import init_estimator_from_type
 import toml
 

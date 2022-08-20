@@ -2,7 +2,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.stattools import acf
-from data_methods.Helper_methods import get_df_from_file
+from data_methods.data_reader import get_df_from_file
 
 
 class DataAnalizer:

@@ -2,7 +2,7 @@ import os
 from run_ressources.parse_toml import load_toml_file
 import Scenarios.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
-import Repair.algorithms_config as algc
+import repair.algorithms_config as algc
 import Scenarios.AnomalyConfig as at
 
 

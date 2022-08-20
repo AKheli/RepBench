@@ -120,5 +120,5 @@ class DataPart:
 
     @property
     def original_scores(self):
-        from Repair.estimator import Estimator
+        from repair.estimator import Estimator
         return Estimator().scores(self.injected,self.truth,self.injected_columns,self.labels,predicted=self.injected)

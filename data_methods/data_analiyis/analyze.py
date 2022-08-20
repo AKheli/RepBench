@@ -1,7 +1,7 @@
 import os
 
 
-from data_methods.Helper_methods import get_df_from_file
+from data_methods.data_reader import get_df_from_file
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf
 

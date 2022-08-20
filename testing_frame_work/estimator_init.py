@@ -1,8 +1,8 @@
-import Repair.algorithms_config as ac
-from Repair.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
-from Repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
-from Repair.IMR.IMR_estimator import IMR_estimator
-from Repair.Screen.screen_estimator import SCREENEstimator
+import repair.algorithms_config as ac
+from repair.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
+from repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
+from repair.IMR.IMR_estimator import IMR_estimator
+from repair.Screen.screen_estimator import SCREENEstimator
 
 def init_estimator_from_type(alg_type, params):
     params = {} if params is None else params

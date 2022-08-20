@@ -1,0 +1,107 @@
+[bafu.shift.full_rmse]
+score = "0.2716875355059644"
+time = 8.057926177978516
+test_score = "0.6064682638626506"
+
+[bafu.shift.partial_rmse]
+score = "0.5848524733659308"
+time = 5.631319761276245
+test_score = "1.5981242647211393"
+
+[bafu.distortion.full_rmse]
+score = "0.2716875355059644"
+time = 6.5992255210876465
+test_score = "0.6064682638626506"
+
+[bafu.distortion.partial_rmse]
+score = "0.5848524733659308"
+time = 5.5392115116119385
+test_score = "1.5981242647211393"
+
+[bafu.point.full_rmse]
+score = "0.2716875355059644"
+time = 6.782703876495361
+test_score = "0.6064682638626506"
+
+[bafu.point.partial_rmse]
+score = "0.5848524733659308"
+time = 4.831376314163208
+test_score = "1.5981242647211393"
+
+[msd1_5.shift.full_rmse]
+score = "0.7379561800819687"
+time = 6.479652404785156
+test_score = "0.5964337545800069"
+
+[msd1_5.shift.partial_rmse]
+score = "1.1430002582685606"
+time = 5.9126198291778564
+test_score = "1.0118460813861136"
+
+[msd1_5.distortion.full_rmse]
+score = "0.7379561800819687"
+time = 6.068068027496338
+test_score = "0.5964337545800069"
+
+[msd1_5.distortion.partial_rmse]
+score = "1.1430002582685606"
+time = 6.005910634994507
+test_score = "1.0118460813861136"
+
+[msd1_5.point.full_rmse]
+score = "0.7379561800819687"
+time = 6.595181703567505
+test_score = "0.5964337545800069"
+
+[msd1_5.point.partial_rmse]
+score = "1.1430002582685606"
+time = 5.8545777797698975
+test_score = "1.0118460813861136"
+
+[bafu.shift.full_rmse.opt_params]
+smax = 0.6797671608933302
+smin = -0.09454421856217676
+
+[bafu.shift.partial_rmse.opt_params]
+smax = 0.02365233685765325
+smin = -0.016524814576245328
+
+[bafu.distortion.full_rmse.opt_params]
+smax = 0.6797671608933302
+smin = -0.09454421856217676
+
+[bafu.distortion.partial_rmse.opt_params]
+smax = 0.02365233685765325
+smin = -0.016524814576245328
+
+[bafu.point.full_rmse.opt_params]
+smax = 0.6797671608933302
+smin = -0.09454421856217676
+
+[bafu.point.partial_rmse.opt_params]
+smax = 0.02365233685765325
+smin = -0.016524814576245328
+
+[msd1_5.shift.full_rmse.opt_params]
+smax = 1.6697901555914576
+smin = -2.0
+
+[msd1_5.shift.partial_rmse.opt_params]
+smax = 0.01
+smin = -0.010000000000000009
+
+[msd1_5.distortion.full_rmse.opt_params]
+smax = 1.6697901555914576
+smin = -2.0
+
+[msd1_5.distortion.partial_rmse.opt_params]
+smax = 0.01
+smin = -0.010000000000000009
+
+[msd1_5.point.full_rmse.opt_params]
+smax = 1.6697901555914576
+smin = -2.0
+
+[msd1_5.point.partial_rmse.opt_params]
+smax = 0.01
+smin = -0.010000000000000009

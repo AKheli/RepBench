@@ -1,8 +1,9 @@
 import itertools
 
-from Scenarios.Scenario import Scenario
+from Scenarios.scenario import Scenario
 import testing_frame_work.argument_parsers as arg_parser
 import testing_frame_work.repair  as alg_runner
+from Scenarios.scenario_generator import build_scenario
 from Scenarios.scenario_saver.Scenario_saver import save_scenario
 from testing_frame_work.parameterization import load_params_from_toml, params_from_training_set
 import numpy as np
@@ -39,7 +40,7 @@ def main(input = None):
     if not use_training_set:
         for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_files , anomaly_types):
             try:
-                scenario: Scenario = Scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type ,train_test_split = None)
+                scenario: Scenario = build_scenario(scen_name,data_name, cols_to_inject=cols,a_type=anomaly_type ,train_test_split = None)
             except Exception as e:
                 print(f'running repair on {data_name} with scen type {scen_name} failed')
                 raise e
