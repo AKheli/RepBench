@@ -11,7 +11,6 @@ optimizers_constr = {"grid": EstimatorOptimizer,
                     "bayesian": BayesianOptimizer}
 
 alg_type = "rpca"
-data_set = "bafu5k"
 search_type = "grid"
 
 def try_params(alg_type, metric,train_method,repair_inputs, param_grid=None):
@@ -25,8 +24,9 @@ def try_params(alg_type, metric,train_method,repair_inputs, param_grid=None):
 
 
 
+
 data = {}
-for data_set in ["bafu","msd1_5"]:
+for data_set in ["bafu","msd1_5","elec","humidity"]:
     data[data_set] = {}
     for a_type in ["shift", "distortion", "point"]:
         data[data_set][a_type] = {}
