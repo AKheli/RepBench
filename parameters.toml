@@ -16,7 +16,7 @@
      p = 1
      tau = 0.001
 
-[screen] # use percentile approach when not set
+[screen] # use percentile approach when smin and smax are not set
      t = 1
 
 
