@@ -13,6 +13,8 @@ import os
 
 scen_config.MAX_N_COLS = 10
 input = "-scen  ts_nbr -data all -rn fin -anom shift -alg screen "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+
+input = "-alg all -data all -scen ts_len  -e full_rmse"
 run.main(input)
 
 # input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
