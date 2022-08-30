@@ -1,9 +1,9 @@
 # Anomaly Repair Benchmark 
 This benchmark implements five different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
-- The benchmark implements the following algorithms
+- The benchmark implements the following algorithms: [IMR](https://www.vldb.org/pvldb/vol10/p1046-song.pdf), [SCREEN](https://dl.acm.org/doi/pdf/10.1145/2723372.2723730), Robust PCA and CDrep.
 - All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/Data).
-- The full list of recovery scenarios can be found [here](https://github.com/eXascaleInfolab/bench-vldb20/blob/master/TestingFramework/README.md).
+- The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/blob/master/Scenarios/README.md).
 
 
 [**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) 
@@ -31,7 +31,7 @@ $ python3 TestingFramework.py [arguments]
  | -d  | -a  | -scen | -alg | 
  | -------- | -------- | -------- | -------- | 
  | bafu5k     | shift   |ts_len     | rpca
- | humidity   |distortion  |  a_size | scree
+ | humidity   |distortion  |  a_size | screen
  | msd1_5     | outlier    | a_rate | imr
  | msd_hc     | all        | ts_nbr | cdrec
  |  elec      |            |  cts_nbr | all
