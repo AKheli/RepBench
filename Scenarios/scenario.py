@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.ticker import MaxNLocator
 import Scenarios.AnomalyConfig as ac
-from repair.algorithms_config import ALGORITHM_COLORS
+from algorithms.algorithms_config import ALGORITHM_COLORS
 import matplotlib.pyplot as plt
 
 class Scenario:
@@ -96,6 +96,17 @@ class Scenario:
         full_df.index.name = self.scen_name
         retval = {score : full_df.applymap(lambda x: x.get(score,np.NAN)) for score in set(scores)}
         return retval
+
+    def save_params(self, path):
+        full_dict = {}
+        for part_name, part in self.part_scenarios.items():
+            full_dict[part_name] = {}
+            for repair_name , repair_dict in part.repairs.items():
+                params = repair_dict["parameters"]
+                full_dict[part_name][repair_name] = params
+
+        res_df = pd.DataFrame(full_dict).T.applymap(lambda d: ",".join([f"{k}:{v}" for k, v in d.items()]))
+        res_df.to_csv(f'{path}/params.txt')
 
     def save_error(self,path):
         from itertools import cycle

@@ -7,16 +7,20 @@ print(DataPart)
 import os
 
 
+# scen_config.MAX_N_COLS = 10
+# input = "-scen  ts_nbr -data elec,msd1_5 -rn withparams -anom shift -alg screen,rpca,cdrec,imr -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# run.main(input)
+
 scen_config.MAX_N_COLS = 10
-input = "-scen  all -data elec,msd1_5 -rn test -anom shift -alg screen -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = "-scen  ts_nbr -data all -rn fin -anom shift -alg screen "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 run.main(input)
 
-input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-run.main(input)
-
-input = "-scen  ts_nbr  -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse  -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-run.main(input)
-
+# input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# run.main(input)
+#
+# input = "-scen  ts_nbr  -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse  -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# run.main(input)
+#
 
 
 # sc.MAX_N_ROWS  = 1000

@@ -1,9 +1,9 @@
 import numpy as np
-from repair.IMR.IMR_estimator import IMR_estimator
-from repair.Screen.screen_estimator import SCREENEstimator
+from algorithms.IMR.IMR_estimator import IMR_estimator
+from algorithms.Screen.screen_estimator import SCREENEstimator
 from Scenarios.scenario import Scenario
 from Scenarios.data_part import DataPart
-from parameterization.estimator_optimizer import EstimatorOptimizer
+from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
 import matplotlib.pyplot as plt
 
 
@@ -74,7 +74,7 @@ with open(f'parameterization_{a_type}_partial_screen.txt', 'w') as fp:
         # write each item on a new line
         fp.write(f"{param},{score},{time}\n")
 ### rpca
-from repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
+from algorithms.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 rpca = Robust_PCA_estimator()
 range = rpca.suggest_param_range(repair_inputs["injected"])
 
@@ -102,7 +102,7 @@ with open(f'parameterization_{a_type}_partial_rpca.txt', 'w') as fp:
         fp.write(f"{param},{score},{time}\n")
 
 # ### cd
-from repair.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
+from algorithms.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
 rpca = CDRecEstimator()
 range = rpca.suggest_param_range(repair_inputs["injected"])
 

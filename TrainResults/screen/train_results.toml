@@ -11,7 +11,7 @@ names = [ "a_size_distortion_humidity.csv_bayesian_full_rmse", "cts_nbr_distorti
 [587d6a19a1cb8f2a9ee1f2c0e93ac98c]
 smax = 2.0
 smin = -2.0
-names = [ "ts_len_shift_msd1_5.csv_bayesian_full_rmse",]
+names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [478d59dee0d77869835b0ca281592f25]
 smax = 2.0
@@ -44,9 +44,9 @@ smin = -0.971403141747097
 names = [ "a_size_outlier_humidity.csv_bayesian_full_rmse", "cts_nbr_outlier_humidity.csv_bayesian_full_rmse", "a_rate_outlier_humidity.csv_bayesian_full_rmse", "ts_len_outlier_humidity.csv_bayesian_full_rmse", "ts_nbr_outlier_humidity.csv_bayesian_full_rmse",]
 
 [9b853fb2b2212b1f3b52193d9490e85a]
-smax = 0.8758434770932547
-smin = -1.0202230814764288
-names = [ "a_size_shift_elec.csv_bayesian_full_rmse", "cts_nbr_shift_elec.csv_bayesian_full_rmse", "a_rate_shift_elec.csv_bayesian_full_rmse", "ts_len_shift_elec.csv_bayesian_full_rmse", "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
+smax = 0.9272890892971049
+smin = -0.3972668926406573
+names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [a71e227ae865a39eac64d07fd9848542]
 smax = 0.01
@@ -179,38 +179,38 @@ smin = -2.0
 names = [ "a_size_outlier_msd1_5.csv_bayesian_mae", "cts_nbr_outlier_msd1_5.csv_bayesian_mae", "a_rate_outlier_msd1_5.csv_bayesian_mae", "ts_len_outlier_msd1_5.csv_bayesian_mae", "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
 
 [6824bb086e1b79f11f8f40ba3d790d20]
-smax = 1.0129235780098689
-smin = -0.48722522415977987
+smax = 1.2324206730940361
+smin = -0.468086111972589
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [668d596bc51415fa6cbd9d2d643d7655]
-smax = 1.1256160014675904
-smin = -0.46917528789722884
+smax = 0.8992157886570689
+smin = -0.3516733494144899
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [7211a7b697e2daf6009b49db4e63caea]
-smax = 0.8190999178454846
-smin = -0.3912934589201793
+smax = 1.3448669711078103
+smin = -0.42584380308039504
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [f08ac5af4694ae312c1e4aad0852ee5b]
-smax = 0.8022206390654952
-smin = -0.43488247433156335
+smax = 0.4107794673521393
+smin = -0.3397714794990927
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [014ad3897e187de3d7f8b3251714afd3]
-smax = 1.3773051141624562
-smin = -0.4118201683983316
+smax = 1.188833298085746
+smin = -0.38521764235613043
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [55406836313c1183460e93fabb8bf9b7]
-smax = 1.5996675075552849
-smin = -0.42366289566908133
+smax = 1.197731705837606
+smin = -0.4535193354585707
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [f871936e9ff73d0b4e2497a71fccdf3c]
-smax = 1.0305130553868036
-smin = -0.43430332541183314
+smax = 0.7452575019638564
+smin = -0.3750041500706871
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [211052aced296c4aba85e52b261502c1]

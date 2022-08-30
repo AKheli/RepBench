@@ -35,6 +35,8 @@ def save_scenario(scenario ,repair_plot = False , res_name = None):
     except:
         pass
 
+    ## save parameters
+    scenario.save_params(path)
     save_precision(scenario,path,repair_plot = repair_plot)
 
 

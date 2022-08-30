@@ -1,26 +1,25 @@
 import os
 import pandas as pd
 
-default_data_folder = "Data"
+default_data_folder = "data"
 
 
-def read_data(data_name , folder = default_data_folder ):
+def read_data(data_name, folder=default_data_folder):
     files_in_folder = [f for f in os.listdir(folder) if os.path.isfile(f"{folder}/{f}")]
 
-    assert len(files_in_folder) >0 , os.listdir(folder)
+    assert len(files_in_folder) > 0, os.listdir(folder)
     possible_files = [f for f in files_in_folder if f.startswith(data_name)]
 
-    assert len(possible_files) == 1 , f"{data_name} could not be from possible files {files_in_folder} in {folder}"
+    assert len(possible_files) == 1, f"{data_name} could not be from possible files {files_in_folder} in {folder}"
 
     file_path = f"{folder}/{possible_files[0]}"
 
-
     ## check if first row are headrs or numerical values belongin to the dataset
     first_row = pd.read_csv(file_path, nrows=1, header=None, sep=",")
-    float_in_first_row = any([isinstance(x,float) for x in first_row.values])
+    float_in_first_row = any([isinstance(x, float) for x in first_row.values])
     header = None if float_in_first_row else 0
 
-    data_df  =pd.read_csv(file_path, header=header, sep=",")
+    data_df = pd.read_csv(file_path, header=header, sep=",")
 
     return data_df
 
@@ -41,12 +40,11 @@ def normalize_f(X):
     return (X - mean_X) / std_X, inv_func
 
 
-
-def train_test_read(data_name , max_n_rows = None, max_n_cols = None , folder = default_data_folder  , normalize = True , split = 0.5):
-    data = read_data(data_name , folder = folder)
+def train_test_read(data_name, max_n_rows=None, max_n_cols=None, folder=default_data_folder, normalize=True, split=0.5):
+    data = read_data(data_name, folder=folder)
     n, m = data.shape
-    if max_n_rows is None : max_n_rows = n
-    if max_n_cols is None : max_n_cols = m
+    if max_n_rows is None: max_n_rows = n
+    if max_n_cols is None: max_n_cols = m
 
     if split is not None:
         split = int(n * split)
@@ -60,6 +58,8 @@ def train_test_read(data_name , max_n_rows = None, max_n_cols = None , folder = 
     return train, test
 
 
-
-
+def data_sets(folder="data"):
+    data_dir = os.listdir("data")
+    data_files = [f for f in data_dir if os.path.isfile(f"{folder}/{f}") and not f.endswith(".md")]
+    return data_files
 

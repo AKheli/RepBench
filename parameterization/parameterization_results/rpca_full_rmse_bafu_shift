@@ -1,0 +1,7 @@
+paramgrid: 
+{'classification_truncation': [1, 2, 3, 4, 5], 'repair_truncation': [2, 3, 4, 5], 'threshold': [1, 1.2, 1.5, 2, 2.5, 3], 'repair_iter': [1, 10], 'n_max_iter': [1, 20]}
+optimizer,parameters,score,time
+bayesian20,"{'classification_truncation': 3, 'repair_truncation': 5, 'threshold': 1.47728173409305, 'repair_iter': 2, 'n_max_iter': 17}",0.16373835892480038,7.109659194946289
+bayesian50,"{'classification_truncation': 2, 'repair_truncation': 5, 'threshold': 1.2834919571350951, 'repair_iter': 1, 'n_max_iter': 1}",0.14981216418599097,23.672069787979126
+grid,"{'classification_truncation': 3, 'repair_truncation': 5, 'threshold': 1.2, 'repair_iter': 1, 'n_max_iter': 20}",0.15067568407579487,337.71331667900085
+succesive,"{'classification_truncation': 1, 'repair_truncation': 3, 'threshold': 1, 'repair_iter': 1, 'n_max_iter': 20}",0.2541869011559755,130.9626624584198

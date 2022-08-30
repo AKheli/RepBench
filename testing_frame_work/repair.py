@@ -1,6 +1,6 @@
 import time
 import toml
-from repair.estimator import Estimator
+from algorithms.estimator import Estimator
 from testing_frame_work.estimator_init import init_estimator_from_type
 
 

@@ -2,7 +2,7 @@ import os
 from run_ressources.parse_toml import load_toml_file
 import Scenarios.ScenarioConfig as sc
 from run_ressources.parser_init import init_parser
-import repair.algorithms_config as algc
+import algorithms.algorithms_config as algc
 import Scenarios.AnomalyConfig as at
 
 
@@ -19,7 +19,7 @@ error_scores = ["rmse_full","rmse_partial","mae","mutual_info"]
 
 
 def init_checked_parser(input):
-    data_dir = os.listdir("Data")
+    data_dir = os.listdir("data")
     data_dir_trim = [txt.split(".")[0] for txt in data_dir]
     args = init_parser(input=input,
                        estimator_choices=estimator_choices,
@@ -58,11 +58,12 @@ def parse_repair_algorithms_x(args):
 
 def parse_data_files(args):
 
-    data_dir = os.listdir("Data")
-
+    data_dir = os.listdir("data")
+    print(data_dir)
     data_params = args.data
+    print(data_params)
     data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
-        else [d for d in data_dir if os.path.isfile(f"Data/{d}")]
+        else [d for d in data_dir if os.path.isfile(f"data/{d}")]
     return data_files
 
 

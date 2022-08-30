@@ -1,0 +1,4 @@
+paramgrid: 
+{'classification_truncation': [1, 2, 3, 4, 5], 'repair_truncation': [2, 3, 4, 5], 'threshold': [1, 1.2, 1.5, 2, 2.5, 3], 'repair_iter': [1, 10], 'n_max_iter': [1, 20]}
+optimizer,parameters,score,time
+bayesian20,"{'classification_truncation': 2, 'repair_truncation': 2, 'threshold': 2.172044801066443, 'repair_iter': 2, 'n_max_iter': 7}",0.37227120883984954,2.638610601425171

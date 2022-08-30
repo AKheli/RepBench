@@ -2,7 +2,7 @@ import os
 import shutil
 
 error = "full_rmse"
-innerfolder = "full_rmse/"
+innerfolder = "withparams2/"
 
 def is_error_path(path,error):
         return  path.split("/")[-1] == error
@@ -32,5 +32,5 @@ for i in [ x for x in os.walk("../Results/"+innerfolder) if len(x[0]) > 0]:
         except:
                 pass
 
-        shutil.copyfile(path+file_name,f"{scenario}_{a_type}/{data}_{error}.txt" )
+        shutil.copyfile(path+file_name,f"{scenario}_{a_type}_{data}_{error}.txt" )
        #for file in os.listdir(directory):

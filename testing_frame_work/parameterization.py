@@ -1,12 +1,12 @@
-from parameterization.estimator_optimizer import EstimatorOptimizer
-from parameterization.succesivehalving_search import SuccessiveHalvingOptimizer
-from parameterization.bayesian_optimization import BayesianOptimizer
+from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
+from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
+from parameterization.optimizers.bayesian_optimization import BayesianOptimizer
 from testing_frame_work.estimator_init import init_estimator_from_type
 import toml
 
 
 ### Parameters from toml file
-file_name = "default_params.toml"
+file_name = "parameters.toml"
 def load_params_from_toml(alg_type):
     param_dict = toml.load(file_name)
     assert alg_type in param_dict , f"{alg_type} not in {param_dict.keys()}"

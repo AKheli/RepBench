@@ -17,10 +17,10 @@ names = [ "a_size_distortion_humidity.csv_bayesian_full_rmse", "cts_nbr_distorti
 [587d6a19a1cb8f2a9ee1f2c0e93ac98c]
 classification_truncation = 5
 repair_truncation = 2
-threshold = 1.2
+threshold = 1
 repair_iter = 1
-n_max_iter = 15
-names = [ "a_size_shift_msd1_5.csv_bayesian_full_rmse", "cts_nbr_shift_msd1_5.csv_bayesian_full_rmse", "a_rate_shift_msd1_5.csv_bayesian_full_rmse", "ts_len_shift_msd1_5.csv_bayesian_full_rmse", "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
+n_max_iter = 16
+names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [478d59dee0d77869835b0ca281592f25]
 classification_truncation = 5
@@ -73,10 +73,10 @@ names = [ "a_size_outlier_humidity.csv_bayesian_full_rmse", "cts_nbr_outlier_hum
 [9b853fb2b2212b1f3b52193d9490e85a]
 classification_truncation = 2
 repair_truncation = 5
-threshold = 1.2
-repair_iter = 6
-n_max_iter = 0
-names = [ "a_size_shift_elec.csv_bayesian_full_rmse", "cts_nbr_shift_elec.csv_bayesian_full_rmse", "a_rate_shift_elec.csv_bayesian_full_rmse", "ts_len_shift_elec.csv_bayesian_full_rmse", "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
+threshold = 1
+repair_iter = 1
+n_max_iter = 20
+names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [a71e227ae865a39eac64d07fd9848542]
 classification_truncation = 2
@@ -287,59 +287,59 @@ n_max_iter = 4
 names = [ "a_size_outlier_msd1_5.csv_bayesian_mae", "cts_nbr_outlier_msd1_5.csv_bayesian_mae", "a_rate_outlier_msd1_5.csv_bayesian_mae", "ts_len_outlier_msd1_5.csv_bayesian_mae", "ts_nbr_outlier_msd1_5.csv_bayesian_mae",]
 
 [6824bb086e1b79f11f8f40ba3d790d20]
-classification_truncation = 2
+classification_truncation = 1
 repair_truncation = 2
-threshold = 1.423155936755526
+threshold = 2
 repair_iter = 1
-n_max_iter = 9
+n_max_iter = 1
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [668d596bc51415fa6cbd9d2d643d7655]
-classification_truncation = 3
-repair_truncation = 2
-threshold = 1.2
-repair_iter = 7
-n_max_iter = 20
+classification_truncation = 1
+repair_truncation = 3
+threshold = 1
+repair_iter = 10
+n_max_iter = 13
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [7211a7b697e2daf6009b49db4e63caea]
 classification_truncation = 1
 repair_truncation = 4
-threshold = 1.2
-repair_iter = 10
+threshold = 1
+repair_iter = 6
 n_max_iter = 20
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [f08ac5af4694ae312c1e4aad0852ee5b]
-classification_truncation = 2
+classification_truncation = 3
 repair_truncation = 4
-threshold = 1.2733225918032742
-repair_iter = 4
-n_max_iter = 13
+threshold = 1
+repair_iter = 5
+n_max_iter = 11
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [014ad3897e187de3d7f8b3251714afd3]
-classification_truncation = 1
-repair_truncation = 5
-threshold = 1.2
-repair_iter = 1
-n_max_iter = 20
+classification_truncation = 2
+repair_truncation = 4
+threshold = 1
+repair_iter = 2
+n_max_iter = 8
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [55406836313c1183460e93fabb8bf9b7]
-classification_truncation = 2
-repair_truncation = 5
-threshold = 1.2
+classification_truncation = 3
+repair_truncation = 4
+threshold = 1
 repair_iter = 8
-n_max_iter = 20
+n_max_iter = 10
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [f871936e9ff73d0b4e2497a71fccdf3c]
 classification_truncation = 3
 repair_truncation = 5
-threshold = 1.2
-repair_iter = 8
-n_max_iter = 16
+threshold = 1
+repair_iter = 1
+n_max_iter = 7
 names = [ "ts_nbr_shift_elec.csv_bayesian_full_rmse",]
 
 [211052aced296c4aba85e52b261502c1]
@@ -1369,9 +1369,9 @@ names = [ "ts_nbr_outlier_bafu5k.csv_bayesian_partial_rmse",]
 [f5282d222998d8c70d6f2e39868aeffc]
 classification_truncation = 1
 repair_truncation = 2
-threshold = 1.2131830700433939
+threshold = 1
 repair_iter = 10
-n_max_iter = 18
+n_max_iter = 20
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [b147a326ccd864aa11408a2a1d28491b]
@@ -1385,9 +1385,9 @@ names = [ "ts_nbr_outlier_bafu5k.csv_bayesian_partial_rmse",]
 [01d44cf26f2afbcc40f4b4f21b0d701e]
 classification_truncation = 1
 repair_truncation = 3
-threshold = 1.2
-repair_iter = 10
-n_max_iter = 14
+threshold = 1
+repair_iter = 1
+n_max_iter = 20
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [2324168f8dcf2aecddb7b025489aac75]
@@ -1409,25 +1409,25 @@ names = [ "ts_nbr_outlier_bafu5k.csv_bayesian_partial_rmse",]
 [75619b38acc4896048644d26ff4952b5]
 classification_truncation = 1
 repair_truncation = 4
-threshold = 1.2
+threshold = 1
 repair_iter = 10
-n_max_iter = 11
+n_max_iter = 20
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [8d3773858da1070a4ad5661e8531888d]
 classification_truncation = 1
-repair_truncation = 3
-threshold = 1.304213513577021
-repair_iter = 3
-n_max_iter = 3
+repair_truncation = 5
+threshold = 1
+repair_iter = 10
+n_max_iter = 20
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [b6b2373a20a9fe56b0aaba68b549ead2]
-classification_truncation = 1
+classification_truncation = 2
 repair_truncation = 3
-threshold = 1.3133303064818016
+threshold = 1
 repair_iter = 1
-n_max_iter = 18
+n_max_iter = 6
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [f97e558a1df3774a2bfb4a5f9d390d51]
@@ -1439,11 +1439,11 @@ n_max_iter = 0
 names = [ "ts_nbr_outlier_bafu5k.csv_bayesian_partial_rmse",]
 
 [96398f338b2d9aee08634d1f50d6983b]
-classification_truncation = 1
+classification_truncation = 2
 repair_truncation = 5
-threshold = 1.2583393054434033
+threshold = 1
 repair_iter = 1
-n_max_iter = 5
+n_max_iter = 6
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 
 [1595d4f03224704b8ce87544a7b87d8d]
@@ -1455,10 +1455,10 @@ n_max_iter = 0
 names = [ "ts_nbr_outlier_bafu5k.csv_bayesian_partial_rmse",]
 
 [21e89b630908482a9241adf858bef729]
-classification_truncation = 1
+classification_truncation = 2
 repair_truncation = 5
-threshold = 1.2
-repair_iter = 1
+threshold = 1
+repair_iter = 2
 n_max_iter = 20
 names = [ "ts_nbr_shift_msd1_5.csv_bayesian_full_rmse",]
 

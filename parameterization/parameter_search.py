@@ -3,9 +3,9 @@ print(sys.path)
 sys.path.append(os.getcwd())
 from Scenarios.data_part import DataPart
 from Scenarios.scenario_generator import build_scenario
-from parameterization.bayesian_optimization import BayesianOptimizer
-from parameterization.estimator_optimizer import EstimatorOptimizer
-from parameterization.succesivehalving_search import SuccessiveHalvingOptimizer
+from parameterization.optimizers.bayesian_optimization import BayesianOptimizer
+from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
+from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
 from testing_frame_work.estimator_init import init_estimator_from_type
 
 TRAIN_METHODS = ["grid","bayesian" , "halving"]

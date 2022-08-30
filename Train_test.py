@@ -1,6 +1,6 @@
 import pandas as pd
 from Scenarios.scenario import Scenario
-import repair.algorithms_config as ac
+import algorithms.algorithms_config as ac
 import testing_frame_work.repair  as alg_runner
 import time
 
