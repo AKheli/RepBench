@@ -1,12 +1,12 @@
 # Anomaly Repair Benchmark 
-This benchmark implements five different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
+This benchmark implements four different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
 - The benchmark implements the following algorithms: [IMR](https://www.vldb.org/pvldb/vol10/p1046-song.pdf), [SCREEN](https://dl.acm.org/doi/pdf/10.1145/2723372.2723730), Robust PCA and CDrep.
 - All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/Data).
 - The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/blob/master/Scenarios/README.md).
 
 
-[**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) 
+[**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) | [**Examples**](#examples)
 
 ___
 
@@ -27,7 +27,6 @@ $ python3 TestingFramework.py [arguments]
 ```
 ### Arguments
 
-
  | -d  | -a  | -scen | -alg | 
  | -------- | -------- | -------- | -------- | 
  | bafu5k     | shift   |ts_len     | rpca
@@ -41,7 +40,7 @@ $ python3 TestingFramework.py [arguments]
 ### Data
 
 - The data has to have a csv format.
-- The data argument expects the Data to be in the Data folder.
+- The data argument expects the Data to be in the data folder.
 
 
 ### Results
@@ -65,23 +64,6 @@ python3 TestingFramework.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -a
 python3 TestingFramework.py -scen all -data all -anom all -alg all
 ```
 
-#### Parametrized Run
-  By defining a toml file (see algox.toml) one can run the Benchmark on customized algorithms.
-  The following example runs the SCREEN algorithm with different parameters saved as screen1 and screen2
-  on the bafu5k data set:
-```bash
-python3 TestingFramework.py -scen ts_len -data bafu5k -anom all -algx example_file
-```
-example_file.toml:
-```tom
- [screen.screen1]
-    t = 1
-    smin = -0.1
-    smax  = 0.1
-
-
-[screen.screen2]
-     t = 1
-     smin = -0.01
-     smax  = 0.01
-```
+#### Parameters
+The Parameters of the algorithms can be modified in [here](https://github.com/althausLuca/RepairBenchmark/blob/master/parameters.toml)
+ 
