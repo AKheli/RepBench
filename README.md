@@ -44,7 +44,7 @@ $ python3 TestingFramework.py [arguments]
 
 
 ### Results
-All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario and dataset to: `Results/.../.../error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of the repaired blocks will be added to the folder `Results/.../precision/repair/`.
+All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario, dataset and anomaly type to: `Results/.../.../precision/error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of some anomaylous parts of the time series together with its repair will be added to the folder `Results/.../precision/repair/`.
 
 
 ### Examples
