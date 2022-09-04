@@ -1,4 +1,6 @@
 paramgrid: 
-{'classification_truncation': [1, 2, 3, 4, 5], 'repair_truncation': [2, 3, 4, 5], 'threshold': [1, 1.2, 1.5, 2, 2.5, 3], 'repair_iter': [1, 10], 'n_max_iter': [1, 20]}
+{'classification_truncation': [1, 2, 3, 4, 5], 'repair_truncation': [2, 3, 4, 5], 'threshold': [1, 1.2, 1.5, 2, 2.5, 3], 'repair_iter': [1, 10], 'n_max_iter': [1, 20], 'windows': (True, False)}
 optimizer,parameters,score,time
-bayesian20,"{'classification_truncation': 2, 'repair_truncation': 2, 'threshold': 2.172044801066443, 'repair_iter': 2, 'n_max_iter': 7}",0.37227120883984954,2.638610601425171
+bayesian20,"{'classification_truncation': 1, 'repair_truncation': 5, 'threshold': 1.4361213882075852, 'repair_iter': 8, 'n_max_iter': 12, 'windows': True}",0.36416084457525183,4.655996799468994
+bayesian50,"{'classification_truncation': 1, 'repair_truncation': 3, 'threshold': 1.0666697383624426, 'repair_iter': 8, 'n_max_iter': 20, 'windows': True}",0.2895867139288045,32.4182870388031
+grid,"{'classification_truncation': 1, 'repair_truncation': 3, 'threshold': 1, 'repair_iter': 10, 'n_max_iter': 20, 'windows': True}",0.2914288539394179,339.95294857025146

@@ -5,6 +5,13 @@
     n_max_iter = 50
     repair_iter = 1
 
+[wrpca]
+    threshold = 1.2
+    classification_truncation = 2
+    repair_truncation = 4
+    n_max_iter = 50
+    repair_iter = 1
+
 [cdrec]
     classification_truncation = 2
     repair_truncation = 4

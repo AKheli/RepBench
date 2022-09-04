@@ -3,7 +3,6 @@ import Scenarios.ScenarioConfig as scen_config
 # cts_nbr,ts_nbr,ts_len
 import timeit
 from Scenarios.data_part import DataPart
-print(DataPart)
 import os
 
 
@@ -12,14 +11,13 @@ import os
 # run.main(input)
 
 scen_config.MAX_N_COLS = 10
-input = "-scen  ts_nbr -data all -rn fin -anom shift -alg screen "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-
-input = "-alg all -data all -scen ts_len  -e full_rmse"
+input = "-scen  ts_len -data all -rn tslentst -anom all -alg screen,rpca,imr "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = " -alg cdrec -data all -a_type all -scen ts_len"
 run.main(input)
 
 # input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # run.main(input)
-#
+#![](Results/col3/ts_len/outlier/bafu5k/precision/error/partial_mutual_info/partial_mutual_info.png)
 # input = "-scen  ts_nbr  -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse  -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # run.main(input)
 #

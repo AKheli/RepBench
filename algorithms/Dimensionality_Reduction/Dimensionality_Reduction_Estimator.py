@@ -14,7 +14,7 @@ class DimensionalityReductionEstimator(Estimator):
                  , n_max_iter=15
                  , repair_iter = 2
                  , interpolate_anomalies=True
-                 , sub_set = False
+                 , windows = False
                  , **kwargs
                  ):
         self.threshold = threshold
@@ -25,7 +25,9 @@ class DimensionalityReductionEstimator(Estimator):
         self.eps = eps
         self.n_max_iter = n_max_iter
         self.repair_iter = repair_iter
-        self.sub_set = sub_set
+        self.sub_set = False
+        self.reduced_ = None
+        self.windows = windows
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
@@ -33,7 +35,7 @@ class DimensionalityReductionEstimator(Estimator):
                 "threshold": self.threshold,
                 "repair_iter": self.repair_iter,
                 "n_max_iter": self.n_max_iter,
-                "sub_set": self.sub_set}
+                }
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
@@ -41,7 +43,8 @@ class DimensionalityReductionEstimator(Estimator):
                 "repair_truncation": [i for i in [2,3,4,5] if i < n_cols],
                 "threshold": [1,1.2,1.5,2,2.5,3],
                 "repair_iter" : [1,10],
-                "n_max_iter": [1,20] # reweighting
+                "n_max_iter": [1,20], # reweighting
+                "windows" :  (True,False)
                 }
 
     def fit(self, X, y=None):
@@ -74,6 +77,13 @@ class DimensionalityReductionEstimator(Estimator):
 
 
     def repair(self,injected,truth, columns_to_repair , labels=None):
+        if  self.windows:
+            self.windows = False
+            n , _ = injected.shape
+            result =  pd.concat([ self.repair(injected.iloc[indices ,:],None,columns_to_repair) for indices in np.array_split(np.arange(n), max(1,np.floor(n/500))) ],ignore_index=True)
+            self.windows = True
+            return result
+
         self.columns_to_repair = columns_to_repair
         if isinstance(injected, pd.DataFrame):
             matrix = injected.values
@@ -105,11 +115,14 @@ class DimensionalityReductionEstimator(Estimator):
             reduced = self.reduce(reduced, self.repair_truncation)
             matrix_to_repair[self.anomaly_matrix] = reduced[self.anomaly_matrix]
             reduced = matrix_to_repair.copy()
-
+        self.reduced_ = reduced
 
         final = matrix.copy()
         final[:,columns_to_repair] = matrix_to_repair[:,columns_to_repair]
-        return pd.DataFrame(final)
+
+        result = pd.DataFrame(final)
+        assert injected.shape == result.shape
+        return result
 
 
     def IRLS(self, matrix, truncation):
@@ -149,13 +162,15 @@ class DimensionalityReductionEstimator(Estimator):
         anomaly_matrix = difference_classify(diff, self.columns_to_repair, self.threshold)
         return anomaly_matrix
 
-
+    def addiotnal_plotting_args(self):
+        return {"reduced" : self.reduced_ , }
 
 
 def z_score(x, threshold):
     x_abs = np.abs(x)
 
     x_normalized = (x_abs - np.mean(x_abs)) / np.std(x_abs)
+
     return x_normalized > threshold
 
 

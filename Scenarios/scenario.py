@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.ticker import MaxNLocator
 import Scenarios.AnomalyConfig as ac
+from Scenarios.plotting.plotters import plot_data_part
 from algorithms.algorithms_config import ALGORITHM_COLORS
 import matplotlib.pyplot as plt
 
@@ -32,13 +33,18 @@ class Scenario:
         return set(sum([p.repair_names for k,p in self.part_scenarios.items()],[]))
 
     def save_repair_plots(self,path):
+        plt.close('all')
+        for part_scen_name,part_scen in self.part_scenarios.items():
+            plot_data_part(part_scen,path=path , file_name= f"{part_scen_name}.svg")
+        plt.close('all')
+
         for repair_name in self.repair_names:
             algo_path = f'{path}/{repair_name}'
 
             Path(algo_path).mkdir(parents=True, exist_ok=True)
 
             plt.close('all')
-            for i,(part_scen_name,scenario_part)  in enumerate(self.part_scenarios.items()):
+            for i,(part_scen_name,scenario_part) in enumerate(self.part_scenarios.items()):
                 full_truth , full_injected = scenario_part.truth , scenario_part.injected
                 cols = scenario_part.injected_columns
                 klass = scenario_part.class_

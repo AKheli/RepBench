@@ -4,13 +4,12 @@ import pandas as pd
 default_data_folder = "data"
 
 
+
 def read_data(data_name, folder=default_data_folder):
     files_in_folder = [f for f in os.listdir(folder) if os.path.isfile(f"{folder}/{f}")]
-
     assert len(files_in_folder) > 0, os.listdir(folder)
     possible_files = [f for f in files_in_folder if f.startswith(data_name)]
-
-    assert len(possible_files) == 1, f"{data_name} could not be from possible files {files_in_folder} in {folder}"
+    assert len(possible_files) == 1, f"{data_name} could not be from possible files {files_in_folder} in {folder} , got {possible_files}"
 
     file_path = f"{folder}/{possible_files[0]}"
 

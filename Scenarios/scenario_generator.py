@@ -89,13 +89,18 @@ def build_scenario(scen_name, data, a_type,cols_to_inject=None, train_test_split
             test_injected.iloc[start:stop, col], indices = inject_single(
                 test_injected.iloc[start:stop, col], a_type = a_type,anomaly_length=a_length, percentage=a_perc)
 
+        class_ = test.ne(test_injected)
+        labels = class_.copy()
+        for i, column_name in enumerate(labels):
+            labels[column_name] = pg.generate_column_labels(class_[column_name], label_rate=0.2)
+
         #add values to the right and the left of the series
         for perc in ts_length_percentages:
             test_injected = test_injected.copy()
             n_half = math.ceil(perc/100 / 2 * n,)
             start, stop = center - n_half+1, center + n_half
             data_part = pg.generate_data_part(test_injected.iloc[start:stop], test.iloc[start:stop],train=train_part
-                                    ,name = scen_name , a_type=a_type)
+                                    ,name = scen_name , a_type=a_type , labels= labels .iloc[start:stop])
 
             scenario.add_part_scenario(data_part,stop-start)
 

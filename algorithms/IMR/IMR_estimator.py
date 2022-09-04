@@ -45,7 +45,7 @@ class IMR_estimator(Estimator):
             y_0[col_labels] = truth[col_labels]
 
             if  np.allclose(x, y_0):
-                pass
+                print("Warning: IMR has not enought labeled anomalies")
 
             repair_results = imr(x, y_0, col_labels, tau=self.tau, p=self.p, k=self.max_itr_n)
             col_repair = repair_results["repair"]

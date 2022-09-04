@@ -3,7 +3,7 @@ import numpy as np
 from Scenarios.data_part import DataPart
 
 
-def generate_data_part( injected,truth, * , train=None , label_rate = 0.2, name  = None, a_type =None  , data_check = True):
+def generate_data_part( injected,truth, * ,labels=None , train=None , name  = None, a_type =None  , data_check = True):
     assert injected.shape == truth.shape
 
     if data_check:
@@ -22,13 +22,12 @@ def generate_data_part( injected,truth, * , train=None , label_rate = 0.2, name 
         assert not np.allclose(x, y)
 
     ## generate Labels
-    if label_rate is not None:
+    if labels is None:
         labels = class_.copy()
         for i, column_name in enumerate(labels):
-            labels[column_name] = generate_column_labels(labels[column_name],label_rate)
-    else:
-        labels = class_.copy()
+            labels[column_name] = generate_column_labels(labels[column_name],label_rate =0.2)
 
+    assert labels.shape == injected.shape
     return DataPart(injected=injected,truth=truth ,class_=class_, labels=labels ,  train=train , name=name, a_type=a_type)
 
 

@@ -1,7 +1,8 @@
 import time
 import toml
+
+from algorithms.algorithm_mapper import algo_mapper
 from algorithms.estimator import Estimator
-from testing_frame_work.estimator_init import init_estimator_from_type
 
 
 
@@ -23,7 +24,7 @@ def run_repair(alg_type, params = "default" , * ,columns_to_repair, injected , t
         params = {}
     assert isinstance(params,dict) , f"params must be a dictionary or 'default', was {params}"
 
-    estimator : Estimator = init_estimator_from_type(alg_type,params)
+    estimator : Estimator = algo_mapper[alg_type](**params)
 
     start = time.time()
     for rm in range(runtime_measurements):

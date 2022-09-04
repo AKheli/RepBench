@@ -15,7 +15,7 @@ default_length = 10
 
 scenario_specifications = {
     BASE_SCENARIO: {"a_percentage": default_percentage, "a_length": default_length},
-    TS_LENGTH: {"a_percentage": default_percentage, "a_length": default_length,"length_percentages": [30,40,50,60,70,80,90,100]},
+    TS_LENGTH: {"a_percentage": default_percentage*2, "a_length": default_length,"length_percentages": [30,40,50,60,70,80,90,100]},
     ANOMALY_SIZE: {"a_percentage": default_percentage/2, "a_lengths": [5,10,20,40,60,80,100,200]  },
     ANOMALY_RATE: {"a_percentages":[0.25,0.5,1,2,5,10,15,20], "a_length": default_length},
     TS_NBR : {"a_percentage": default_percentage,"a_length" : default_length , "ts_nbrs": [3,4,5,6,7,8,9,10]},

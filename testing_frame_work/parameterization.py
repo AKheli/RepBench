@@ -1,7 +1,7 @@
+from algorithms import algo_mapper
 from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
 from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
 from parameterization.optimizers.bayesian_optimization import BayesianOptimizer
-from testing_frame_work.estimator_init import init_estimator_from_type
 import toml
 
 
@@ -33,7 +33,7 @@ def params_from_training_set(scen_name,anomaly_type,data_name,train_method,train
     return params
 
 def find_params(alg_type, metric, train_method,repair_inputs , store = False , id =None):
-    estimator = init_estimator_from_type(alg_type,params= None)
+    estimator = algo_mapper[alg_type]
 
     print("training", alg_type)
     print("train size:", repair_inputs["injected"].shape)

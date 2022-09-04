@@ -24,7 +24,6 @@ def init_checked_parser(input):
     args = init_parser(input=input,
                        estimator_choices=estimator_choices,
                        scenario_choices=scenario_choices,
-                       data_choices=data_dir_trim + ["all"],
                        anomaly_choices=anomaly_choices)
 
     return args
@@ -57,12 +56,10 @@ def parse_repair_algorithms_x(args):
         return repair_algos
 
 def parse_data_files(args):
-
     data_dir = os.listdir("data")
-    print(data_dir)
     data_params = args.data
     print(data_params)
-    data_files = [f'{data_param}.csv' for data_param in data_params] if "all" not in data_params \
+    data_files = [f'{data_param}' for data_param in data_params] if "all" not in data_params \
         else [d for d in data_dir if os.path.isfile(f"data/{d}")]
     return data_files
 

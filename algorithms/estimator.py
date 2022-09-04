@@ -45,6 +45,7 @@ class Estimator(ABC, BaseEstimator):
 
         if score is None or score == "partial_rmse":
             scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
+            scores_["original_partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], injected.values.flatten()[partial_weights_flattened], squared=False)
 
         from sklearn.feature_selection import mutual_info_regression as mi
 
@@ -125,4 +126,9 @@ class Estimator(ABC, BaseEstimator):
 
     def algo_name(self):
         raise NotImplementedError(self)
+
+
+    def addiotnal_plotting_args(self) -> dict:
+        return {}
+
 

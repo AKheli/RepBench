@@ -1,4 +1,7 @@
 import sys ,os
+
+from algorithms import algo_mapper
+
 print(sys.path)
 sys.path.append(os.getcwd())
 from Scenarios.data_part import DataPart
@@ -6,7 +9,6 @@ from Scenarios.scenario_generator import build_scenario
 from parameterization.optimizers.bayesian_optimization import BayesianOptimizer
 from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
 from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
-from testing_frame_work.estimator_init import init_estimator_from_type
 
 TRAIN_METHODS = ["grid","bayesian" , "halving"]
 optimizers_constr = {"grid": EstimatorOptimizer,
@@ -17,7 +19,7 @@ alg_type = "rpca"
 search_type = "grid"
 
 def try_params(alg_type, metric,train_method,repair_inputs, param_grid=None):
-    estimator = init_estimator_from_type(alg_type,params= None)
+    estimator = algo_mapper[alg_type]()
     if param_grid is None:
         param_grid = estimator.suggest_param_range(repair_inputs["injected"])
     estimator_optimizer = optimizers_constr[train_method](estimator, metric)
@@ -39,7 +41,8 @@ for data_set in ["bafu","msd1_5","elec","humidity"]:
             train_part : DataPart = test_part.train
 
         #print(test_part.injected)
-        estimator = init_estimator_from_type(alg_type, params=None)
+        estimator = algo_mapper[alg_type]()
+
         param_grid = estimator.suggest_param_range(train_part.repair_inputs["injected"])
 
         for error_score in ["full_rmse","partial_rmse"]:

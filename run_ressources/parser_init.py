@@ -6,15 +6,15 @@ def name_check(choices, para_name):
     def f(str):
         result = []
         for s in str.split(","):
-            if s not in choices:
-                sys.tracebacklimit = 0
+            if choices is not None and s not in choices:
+                sys.tracebacklimit = 3
                 raise SystemExit(f'{s} not a possible {para_name} inputs:{choices}')
             result.append(s)
         return result
     return f
 
 def add_data_arguments_to_parser(parser, data_choices):
-    parser.add_argument("-data", "-d", type= name_check(choices=data_choices, para_name="d"))
+    parser.add_argument("-data", "-d", type= name_check(data_choices , "data set"))
     parser.add_argument("-col", "-ts", type=str, default= "0")
 
 

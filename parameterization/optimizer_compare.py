@@ -35,14 +35,13 @@ a_type = "shift"
 error_score = "full_rmse"
 
 c = 50
-for data_set in ["bafu"]: # , "humidity" , "elec"]:
-    for estim_name in ["rpca" ]: # , "screen" , "imr" , "cdrec"]:
+for data_set in ["bafu" , "humidity" , "elec"]:
+    for estim_name in ["rpca"]: # , "screen" , "imr" , "cdrec"]:
         estimator: Estimator = algorithms.algo_mapper[estim_name]()
-        optimizers = { i : opt
-            for i,opt in enumerate([BayesianOptimizer(estimator, error_score, n_calls=20)]*c +
-            [BayesianOptimizer(estimator, error_score, n_calls=50)]*c
-            +[EstimatorOptimizer(estimator, error_score)])
-                    # "succesive" : SuccessiveHalvingOptimizer(estimator, error_score)
+        optimizers = {
+            "bayesian20" :BayesianOptimizer(estimator, error_score, n_calls=20),
+            "bayesian50" : BayesianOptimizer(estimator, error_score, n_calls=50),
+            "grid" : EstimatorOptimizer(estimator, error_score)
         }
         ret = run_saved_optimization(optimizers, estimator, a_type, data_set, error_score=error_score)
         grid_score = ret[-1][1]
