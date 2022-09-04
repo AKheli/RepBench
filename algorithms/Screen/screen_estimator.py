@@ -1,5 +1,6 @@
 import pandas as pd
 
+from algorithms.Screen.globallp import LPconstrainedAE
 from algorithms.Screen.screen import screen
 from algorithms.algorithms_config import SCREEN
 from algorithms.estimator import Estimator
@@ -40,7 +41,10 @@ class SCREENEstimator(Estimator):
                 self.smin = smin
             else:
                 smin , smax = self.smin , self.smax
-            repair_result = screen(x, self.t , smax, smin)
+            if self.method == "local":
+                repair_result = screen(x, self.t , smax, smin)
+            if self.method == "global":
+                repair_result = LPconstrainedAE(x, smax, -smin,w=self.t)
             repair.iloc[:, col] = repair_result
         return repair
 

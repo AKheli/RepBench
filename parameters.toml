@@ -27,6 +27,8 @@
      t = 1
 
 
+[screenglobal] # use percentile approach when smin and smax are not set
+     t = 1
 
 # cd , rpca params :
 # classification_truncation

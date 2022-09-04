@@ -12,7 +12,7 @@ import os
 
 scen_config.MAX_N_COLS = 10
 input = "-scen  ts_len -data all -rn tslentst -anom all -alg screen,rpca,imr "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-input = " -alg cdrec -data all -a_type all -scen ts_len"
+input = " -alg screen,screenglobal -data bafu -a_type all -scen a_size"
 run.main(input)
 
 # input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
