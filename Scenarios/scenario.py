@@ -133,7 +133,6 @@ class Scenario:
             error_path = f'{path}/{metric}'
             if "time" in metric:
                 error_path = f'{"/".join(initial_path.split("/")[:-2])}/runtime'
-                #print(metric_df)
 
             try:
                 os.makedirs(error_path)

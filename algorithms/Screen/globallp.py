@@ -58,7 +58,7 @@ def LPconstrainedAE(x, min=2, max=2, time=None, w=1, second=True , truth = None)
     x_prime = x + uv[:int(len(uv) / 2)] - uv[int(len(uv) / 2):]
 
     return x_prime
-print(LPconstrainedAE(np.arange(500),max=0.5))
+#print(LPconstrainedAE(np.arange(500),max=0.5))
 # example form the paper
 # x = np.array([12, 12.5, 13, 10, 15, 15.5])
 # t = np.array([1, 2, 3, 5, 7, 8])

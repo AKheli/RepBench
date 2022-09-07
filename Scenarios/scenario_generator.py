@@ -144,7 +144,6 @@ def build_scenario(scen_name, data, a_type,cols_to_inject=None, train_test_split
 
     assert len(scenario.part_scenarios) > 0
 
-    print(scenario.part_scenarios)
     return  scenario
 
 
