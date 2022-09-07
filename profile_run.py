@@ -11,8 +11,21 @@ import os
 # run.main(input)
 
 scen_config.MAX_N_COLS = 10
-input = "-scen  ts_len -data all -rn tslentst -anom all -alg screen,rpca,imr "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-input = " -alg screen,screenglobal -data bafu -a_type all -scen a_size"
+
+
+# scen_config.labelrate = 0.2
+# scen_config.anomstartlabelrate = 0.5
+# input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp1"
+# run.main(input)
+#
+# scen_config.labelrate = 0.2
+# scen_config.anomstartlabelrate = 0.2
+# input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp2"
+# run.main(input)
+
+scen_config.label_rate = 0.1
+scen_config.anomstartlabelrate = 0.1
+input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp3"
 run.main(input)
 
 # input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "

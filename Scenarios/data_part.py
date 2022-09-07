@@ -50,7 +50,9 @@ class DataPart:
     def labels(self):
         return self.labels_
 
-
+    @property
+    def labels_rate(self):
+        return self.labels_.iloc[:,self.injected_columns].mean().mean()
 
     @staticmethod
     def get_anomaly_ranges(ts_class):

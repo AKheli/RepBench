@@ -1,21 +1,20 @@
 import os
 import shutil
 
-error = "full_rmse"
-innerfolder = "withparams2/"
+error = "partial_rmse"
 
 def is_error_path(path,error):
         return  path.split("/")[-1] == error
 
-for i in [ x for x in os.walk("../Results/"+innerfolder) if len(x[0]) > 0]:
+for i in [ x for x in os.walk("../Results/") if len(x[0]) > 0]:
         if not is_error_path(i[0],error):
                 continue
         path = i[0]
         file_name = f"/{error}.txt"
 
-        scenario =i[0].split("/")[3]
-        a_type  = i[0].split("/")[4]
-        data = i[0].split("/")[5]
+        scenario =i[0].split("/")[2]
+        a_type  = i[0].split("/")[3]
+        data = i[0].split("/")[4]
 
         data_trim = ""
         for c in data:

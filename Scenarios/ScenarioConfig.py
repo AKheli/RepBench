@@ -10,6 +10,12 @@ CTS_NBR = "cts_nbr"
 MAX_N_ROWS = 20000
 MAX_N_COLS = 10
 
+
+### imr labels
+label_seed = 100
+label_rate = 0.2
+anomstartlabelrate = 0.5
+
 default_percentage = 5
 default_length = 10
 

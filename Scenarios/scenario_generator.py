@@ -92,7 +92,7 @@ def build_scenario(scen_name, data, a_type,cols_to_inject=None, train_test_split
         class_ = test.ne(test_injected)
         labels = class_.copy()
         for i, column_name in enumerate(labels):
-            labels[column_name] = pg.generate_column_labels(class_[column_name], label_rate=0.2)
+            labels[column_name] = pg.generate_column_labels(class_[column_name])
 
         #add values to the right and the left of the series
         for perc in ts_length_percentages:

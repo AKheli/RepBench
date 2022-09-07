@@ -1,7 +1,7 @@
 
 import numpy as np
 from Scenarios.data_part import DataPart
-
+import Scenarios.ScenarioConfig as sc
 
 def generate_data_part( injected,truth, * ,labels=None , train=None , name  = None, a_type =None  , data_check = True):
     assert injected.shape == truth.shape
@@ -25,22 +25,24 @@ def generate_data_part( injected,truth, * ,labels=None , train=None , name  = No
     if labels is None:
         labels = class_.copy()
         for i, column_name in enumerate(labels):
-            labels[column_name] = generate_column_labels(labels[column_name],label_rate =0.2)
+            labels[column_name] = generate_column_labels(labels[column_name])
 
     assert labels.shape == injected.shape
     return DataPart(injected=injected,truth=truth ,class_=class_, labels=labels ,  train=train , name=name, a_type=a_type)
 
 
-def generate_column_labels(class_column, label_rate=0.2, label_anom_start=0.8):
+def generate_column_labels(class_column):
+    label_rate =  sc.label_rate
+    label_anom_start = sc.anomstartlabelrate
     state = np.random.get_state()
-    np.random.seed(100)
+    np.random.seed(sc.label_seed)
     labels = None
     for i in range(1000):
         starts = [min(r) for r in DataPart.get_anomaly_ranges(class_column) if len(r) > 1]
         m = len(class_column)
         r_number = np.random.uniform(size=m)
         r_number[starts] = r_number[starts] < label_anom_start
-        r_number = r_number > 1 - label_rate
+        r_number = r_number < label_rate
         labels = r_number.astype(bool)
 
         if np.any((class_column.astype(int) - labels) > 0) or not np.any(

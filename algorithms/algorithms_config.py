@@ -9,7 +9,7 @@ WindowRPCA = "wrpca"
 SCREEN_GLOBAL = "screenglobal"
 
 
-ALGORITHM_TYPES = [IMR,SCREEN,RPCA,CDREC,WindowRPCA,SCREEN_GLOBAL]
+ALGORITHM_TYPES = [IMR,SCREEN,RPCA,CDREC]#,WindowRPCA,SCREEN_GLOBAL]
 
 #black is used for the truth, and red for anomalies
 ALGORITHM_COLORS = {IMR : "blue" , SCREEN : "purple" , RPCA : "green" , CDREC : "orange",}
