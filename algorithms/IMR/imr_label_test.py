@@ -1,3 +1,6 @@
+import math
+
+import matplotlib
 from matplotlib import pyplot as plt
 
 import Scenarios.ScenarioConfig as sc
@@ -24,11 +27,11 @@ for data_name in data_names:
     for label_rate in [0.01,0.02,0.05,0.1,0.2,0.3]:
         out_put[data_name][label_rate] = []
         sc.label_rate = label_rate
-        for i in range(10):
+        for i in range(100):
             seed_counter += 1
             sc.label_seed = seed_counter
             sc.anomstartlabelrate = 0
-            train , test = full_train_test(data_name,a_type, max_n_rows = 5000)
+            train , test = full_train_test(data_name,a_type, max_n_rows = 50000)
             if i == 0:
                 rpca_scores = pca_estimator.scores(**train.repair_inputs)
                 rpca_rmse = rpca_scores["full_rmse"]
@@ -40,8 +43,13 @@ for data_name in data_names:
 
     labels , data = [*zip(*out_put[data_name].items())]
     d_ = out_put[data_name]
-    print(data_name, "{"+ f"{[f'({key},{x})' for key,l_ in d_.items() for x in l_ ]}"[1:-1].replace("'","")+"}")
+    print(data_name)
+    print("{"+ f"{[f'({key} u {x})' for key,l_ in d_.items() for x in l_ ]}"[1:-1].replace("'","").replace(",","").replace("u",",")+"}")
+    print( ((k ,sum(x)/len(x)) for k,x in d_.items()))
     plt.plot(data, lw = 0 , marker = "x" , color = "black")
     #plt.hlines(rpca_rmse,xmin=0,xmax=len(data))
     plt.xticks(range(0, len(labels) ), labels)
+    fig = plt.gcf()
+    #matplotlib.use('pgf')
+    #fig.savefig('norm.pgf', format='pgf')
     plt.show()

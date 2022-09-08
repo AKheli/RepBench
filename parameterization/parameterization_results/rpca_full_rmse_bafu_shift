@@ -1,6 +1,0 @@
-paramgrid: 
-{'classification_truncation': [1, 2, 3, 4, 5], 'repair_truncation': [2, 3, 4, 5], 'threshold': [1, 1.2, 1.5, 2, 2.5, 3], 'repair_iter': [1, 10], 'n_max_iter': [1, 20], 'windows': (True, False)}
-optimizer,parameters,score,time
-bayesian20,"{'classification_truncation': 2, 'repair_truncation': 4, 'threshold': 1.14118225733274, 'repair_iter': 2, 'n_max_iter': 9, 'windows': True}",0.16061878804625054,66.07152128219604
-bayesian50,"{'classification_truncation': 1, 'repair_truncation': 4, 'threshold': 1.0, 'repair_iter': 1, 'n_max_iter': 8, 'windows': True}",0.11493034207168419,158.20158743858337
-grid,"{'classification_truncation': 1, 'repair_truncation': 4, 'threshold': 1, 'repair_iter': 1, 'n_max_iter': 20, 'windows': True}",0.1148909440018809,770.6564295291901

@@ -13,7 +13,7 @@ from optimizers import (
 from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
 
 
-def run_saved_optimization( optimizers : dict , estimator , a_type , data_set  ,error_score ,save_folder = "parameterization/parameterization_results"):
+def run_saved_optimization(optimizers : dict , estimator : Estimator , a_type , data_set  ,error_score ,save_folder = "parameterization/parameterization_results"):
     file_name = f"{estimator.alg_type}_{error_score}_{data_set}_{a_type}"
     train_data : DataPart = full_train_test(data_set=data_set , a_type=a_type)[0]
     param_grid =  estimator.suggest_param_range(train_data.injected)
@@ -36,20 +36,15 @@ error_score = "full_rmse"
 
 c = 50
 for data_set in ["bafu" , "humidity" , "elec"]:
-    for estim_name in ["rpca"]: # , "screen" , "imr" , "cdrec"]:
+    for estim_name in ["screen_global" , "screen"]: # , "screen" , "imr" , "cdrec"]:
         estimator: Estimator = algorithms.algo_mapper[estim_name]()
         optimizers = {
             "bayesian20" :BayesianOptimizer(estimator, error_score, n_calls=20),
-            "bayesian50" : BayesianOptimizer(estimator, error_score, n_calls=50),
-            "grid" : EstimatorOptimizer(estimator, error_score)
+            # "bayesian50" : BayesianOptimizer(estimator, error_score, n_calls=50),
+            # "grid" : EstimatorOptimizer(estimator, error_score)
         }
         ret = run_saved_optimization(optimizers, estimator, a_type, data_set, error_score=error_score)
         grid_score = ret[-1][1]
         twenty_min = min([x[1] for x in ret[:c]])
         opt_fail = sum([x[1] > grid_score  for x in ret[c:-1]])
         bayesian_fail = sum([x[1] > twenty_min  for x in ret[c:-1]])
-        print("ret")
-        print(ret)
-        print(grid_score)
-        print(opt_fail)
-        print(bayesian_fail)

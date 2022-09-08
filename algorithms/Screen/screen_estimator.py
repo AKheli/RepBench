@@ -2,7 +2,7 @@ import pandas as pd
 
 from algorithms.Screen.globallp import LPconstrainedAE
 from algorithms.Screen.screen import screen
-from algorithms.algorithms_config import SCREEN
+from algorithms.algorithms_config import SCREEN , SCREEN_GLOBAL
 from algorithms.estimator import Estimator
 import numpy as np
 
@@ -50,7 +50,7 @@ class SCREENEstimator(Estimator):
 
     @property
     def alg_type(self):
-        return SCREEN
+        return SCREEN_GLOBAL if self.method == "global" else SCREEN
 
     def __str__(self):
         return  f'SCREEN({self.t},{round(self.smax,1)},{round(self.smin,1)})'

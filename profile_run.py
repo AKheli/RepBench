@@ -7,10 +7,11 @@ import os
 
 
 # scen_config.MAX_N_COLS = 10
-# input = "-scen  ts_nbr -data elec,msd1_5 -rn withparams -anom shift -alg screen,rpca,cdrec,imr -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # run.main(input)
 
+input = "-scen  a_rate -data all  -anom outlier,shift -alg all -e full_rmse -rn fuchs "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 scen_config.MAX_N_COLS = 10
+run.main(input)
 
 
 # scen_config.labelrate = 0.2
@@ -22,11 +23,10 @@ scen_config.MAX_N_COLS = 10
 # scen_config.anomstartlabelrate = 0.2
 # input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp2"
 # run.main(input)
-
-scen_config.label_rate = 0.1
-scen_config.anomstartlabelrate = 0.1
-input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp3"
-run.main(input)
+#
+# scen_config.label_rate = 0.1
+# scen_config.anomstartlabelrate = 0.1
+# input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp3"
 
 # input = "-scen  cts_nbr -data elec,msd1_5 -rn run_time -anom shift -alg all -e full_rmse -rtn 10"  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # run.main(input)
