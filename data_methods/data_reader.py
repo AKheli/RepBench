@@ -3,8 +3,6 @@ import pandas as pd
 
 default_data_folder = "data"
 
-
-
 def read_data(data_name, folder=default_data_folder):
     files_in_folder = [f for f in os.listdir(folder) if os.path.isfile(f"{folder}/{f}")]
     assert len(files_in_folder) > 0, os.listdir(folder)
@@ -54,7 +52,7 @@ def train_test_read(data_name, max_n_rows=None, max_n_cols=None, folder=default_
             train = (train - train.mean()) / train.std()
             test = (test - test.mean()) / test.std()
 
-    return train, test
+    return train.reset_index(drop=True), test.reset_index(drop=True)
 
 
 def data_sets(folder="data"):

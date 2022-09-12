@@ -1,7 +1,8 @@
 import numpy as np
-import sklearn.metrics as sm
 
 import hashlib
+
+
 
 class DataPart:
     def __init__(self, injected, truth, class_,labels , train, name , a_type ):
@@ -24,6 +25,7 @@ class DataPart:
 
         self.a_type = a_type
         self.name = name
+        self.relabeled = 0
 
 
     def __repr__(self):
@@ -100,16 +102,15 @@ class DataPart:
         repair_metrics["runtime"] = repair_results["runtime"]
         self.repair_metrics[(repair_name, repair_type)] = repair_metrics
 
-    def check_original_rmse(self):
+    def check_original_rmse(self,check_labels = True):
         assert np.any(self.class_.values)
         weights = np.zeros_like(self.injected.values)
         weights[self.class_] = 1
-        weights[self.labels] = 0
+        if check_labels:
+            weights[self.labels] = 0
         weights = weights.flatten()
-
         assert np.any(weights)
-        injected_np = self.injected.values.flatten()
-        truth_np = self.truth.values.flatten()
+
 
 
     def hash(self, additional_input=""):
@@ -124,3 +125,9 @@ class DataPart:
     def original_scores(self):
         from algorithms.estimator import Estimator
         return Estimator().scores(self.injected,self.truth,self.injected_columns,self.labels,predicted=self.injected)
+
+
+    def randomize_labels(self):
+        self.relabeled +=1
+        from Scenarios.data_part_generator import generate_column_labels
+        self.labels_ = generate_column_labels(self.class_, seed=self.relabeled)

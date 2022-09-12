@@ -31,11 +31,11 @@ def generate_data_part( injected,truth, * ,labels=None , train=None , name  = No
     return DataPart(injected=injected,truth=truth ,class_=class_, labels=labels ,  train=train , name=name, a_type=a_type)
 
 
-def generate_column_labels(class_column):
+def generate_column_labels(class_column , seed=None):
     label_rate =  sc.label_rate
     label_anom_start = sc.anomstartlabelrate
     state = np.random.get_state()
-    np.random.seed(sc.label_seed)
+    np.random.seed(sc.label_seed + (seed if seed is not None else 0))
     labels = None
     for i in range(1000):
         starts = [min(r) for r in DataPart.get_anomaly_ranges(class_column) if len(r) > 1]

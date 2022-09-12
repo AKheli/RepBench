@@ -35,7 +35,6 @@ def main(input = None):
     data_files = arg_parser.parse_data_files(args)
 
     anomaly_types = arg_parser.parse_anomaly_types(args)
-    runtime_n = args.run_time_n
     cols = [0]
 
     print( scen_names, data_files , anomaly_types)
@@ -46,13 +45,12 @@ def main(input = None):
             except Exception as e:
                 print(f'running repair on {data_name} with scen type {scen_name} failed')
                 raise e
-            #print(f'running repair on {data_name} with scen type {scen_name}')
+
+            repairer = alg_runner.AnomalyRepairer(1, 10)
             for repair_type in algorithms:
                 for name, train_part, test_part in scenario.name_train_test_iter:
                     params = load_params_from_toml(repair_type)
-                    #print("repair with ",repair_type,"params:", params)
-                    repair_output = alg_runner.run_repair(repair_type, params, **test_part.repair_inputs,runtime_measurements=runtime_n)
-                    test_part.add_repair(repair_output,repair_type)
+                    repairer.repair_data_part(repair_type, test_part,params)
 
             save_scenario(scenario, repair_plot=True,  res_name=args.rn)
 
