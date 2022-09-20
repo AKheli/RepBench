@@ -3,7 +3,7 @@ import time
 import numpy as np
 from pandas import DataFrame
 
-from Scenarios.data_part import DataPart
+from Injection.injected_data_part import InjectedDataContainer
 from algorithms.algorithm_mapper import algo_mapper
 from algorithms.estimator import Estimator
 
@@ -62,6 +62,7 @@ class AnomalyRepairer():
         avg_scores = {}
         for k, v in scores.items():
             avg_scores[k] = sum([d[k] for d in score_list]) / len(score_list)
+
         retval = {"repair": repair
             , "runtime": runtime
             , "scores": avg_scores
@@ -69,7 +70,11 @@ class AnomalyRepairer():
                   }
         return retval
 
-    def repair_data_part(self, alg_type, data_part: DataPart, params="default" , add_repair = True):
-        retval = self.repair(alg_type, params=params, **data_part.repair_inputs)
+    def repair_data_part(self, alg_type, data_part: InjectedDataContainer, params="default" , add_repair = True):
+        try:
+            retval = self.repair(alg_type, params=params, **data_part.repair_inputs)
+        except:
+            print(alg_type +" on "+ str(data_part))
+            raise
         data_part.add_repair(retval, alg_type)
         return retval

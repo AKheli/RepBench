@@ -2,11 +2,12 @@ import math
 
 import numpy as np
 
+
+
 def get_random_indices(array_or_size,a_size = 1, number_of_ranges=1, percentage = None):
     size = array_or_size if isinstance(array_or_size,int) else len(array_or_size)
 
     if percentage is not None:
-        #print("percentage" , percentage, "asize" , a_size)
         number_of_ranges = math.ceil(size/100*percentage/a_size)
 
     free_space = size - number_of_ranges*a_size
@@ -32,7 +33,6 @@ def get_random_indices(array_or_size,a_size = 1, number_of_ranges=1, percentage 
     assert max(anom_ranges[-1]) < size
     return anom_ranges
 
-x = np.arange(1000)
 
 
 

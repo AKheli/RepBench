@@ -1,5 +1,5 @@
 import TestingFramework as run
-import Scenarios.ScenarioConfig as sc
+import Injection.Scenarios.ScenarioConfig as sc
 # cts_nbr,ts_nbr,ts_len
 import timeit
 
@@ -11,8 +11,8 @@ end = timeit.timeit()
 print(end-start)
 start = timeit.timeit()
 
-sc.MAX_N_ROWS  = 10000
-sc.MAX_N_COLS  = 20
+sc.MAX_N_ROWS = 10000
+sc.MAX_N_COLS = 20
 
 start = timeit.timeit()
 input = "-scen ts_nbr,cts_nbr -data all -rn runtime -anom shift -alg all -e full_rmse -rtn 20"

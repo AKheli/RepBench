@@ -1,44 +1,35 @@
 import numpy as np
 
+from Injection.label_generator import generate_column_labels
 import hashlib
+import pandas as pd
 
 
-
-class DataPart:
-    def __init__(self, injected, truth, class_,labels , train, name , a_type ):
+class InjectedDataContainer:
+    def __init__(self, injected ,truth, *,class_df , labels , name):
+        self.truth_ = truth  #contains the Original Series
         self.injected_ = injected
-        self.truth_ = truth
-        self.class_ = class_
-
-        injected_bool = self.class_.any()
-        self.injected_columns = np.arange(len(injected_bool))[injected_bool]
-        self.train_: DataPart = train
         self.labels_ = labels
-
-        if train is not None:
-            assert train.train is None
-
         self.repairs = {}
         self.repair_metrics = {}
         self.repair_names = []
-        self.check_original_rmse()
-
-        self.a_type = a_type
         self.name = name
         self.relabeled = 0
 
+        if class_df is None:
+            class_df = pd.DataFrame(np.invert(np.isclose(injected, truth))).reindex_like(truth)
+        self.class_df = class_df
+        self.injected_columns = [i for i,v in enumerate(class_df.any(axis=0).values) if v]
+        assert injected.shape == truth.shape
+        self.check_original_rmse()
+
 
     def __repr__(self):
-        return f"{self.name}_{self.a_type}"
+        return f"{self.name}"
 
     @property
     def truth(self):
         return self.truth_
-
-    @property
-    def train(self):
-        assert isinstance(self.train_, DataPart) or self.train_ is None
-        return self.train_
 
     @property
     def injected(self):
@@ -46,7 +37,7 @@ class DataPart:
 
     @property
     def klass(self):
-        return self.class_
+        return self.class_df
 
     @property
     def labels(self):
@@ -55,22 +46,6 @@ class DataPart:
     @property
     def labels_rate(self):
         return self.labels_.iloc[:,self.injected_columns].mean().mean()
-
-    @staticmethod
-    def get_anomaly_ranges(ts_class):
-        in_anomaly = False
-        ranges = []
-        current_range = []
-        for i, v in enumerate(ts_class):
-            if v:
-                in_anomaly = True
-                current_range.append(i)
-            if not v:
-                if in_anomaly:
-                    in_anomaly = False
-                    ranges.append(current_range)
-                    current_range = []
-        return [np.array(range_) for range_ in ranges]
 
     @property
     def repair_inputs(self):
@@ -103,9 +78,9 @@ class DataPart:
         self.repair_metrics[(repair_name, repair_type)] = repair_metrics
 
     def check_original_rmse(self,check_labels = True):
-        assert np.any(self.class_.values)
+        assert np.any(self.klass.values)
         weights = np.zeros_like(self.injected.values)
-        weights[self.class_] = 1
+        weights[self.klass] = 1
         if check_labels:
             weights[self.labels] = 0
         weights = weights.flatten()
@@ -129,5 +104,4 @@ class DataPart:
 
     def randomize_labels(self):
         self.relabeled +=1
-        from Scenarios.data_part_generator import generate_column_labels
         self.labels_ = generate_column_labels(self.class_, seed=self.relabeled)

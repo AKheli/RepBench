@@ -6,3 +6,11 @@ logs/
 Results/
 Data_hidden/
 /Data_hidden/
+bin
+lib
+lib64
+build
+share
+etc
+include
+web/mysite/db.sqlite3

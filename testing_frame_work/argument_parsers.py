@@ -1,15 +1,15 @@
 import os
 from run_ressources.parse_toml import load_toml_file
-import Scenarios.ScenarioConfig as sc
+import Injection.injection_config as ic
 from run_ressources.parser_init import init_parser
 import algorithms.algorithms_config as algc
-import Scenarios.AnomalyConfig as at
+import Injection.injection_config as at
 
 
 repair_estimators = algc.ALGORITHM_TYPES
 estimator_choices = repair_estimators + ["all"]
 
-scenarios = [sc.ANOMALY_SIZE, sc.CTS_NBR , sc.ANOMALY_RATE,sc.TS_LENGTH,sc.TS_NBR]
+scenarios = [ic.ANOMALY_SIZE, ic.CTS_NBR , ic.ANOMALY_RATE, ic.TS_LENGTH, ic.TS_NBR]
 scenario_choices = scenarios + ["all"]
 
 all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER]
@@ -55,13 +55,7 @@ def parse_repair_algorithms_x(args):
 
         return repair_algos
 
-def parse_data_files(args):
-    data_dir = os.listdir("data")
-    data_params = args.data
-    print(data_params)
-    data_files = [f'{data_param}' for data_param in data_params] if "all" not in data_params \
-        else [d for d in data_dir if os.path.isfile(f"data/{d}")]
-    return data_files
+
 
 
 def parse_anomaly_types(args):

@@ -1,16 +1,13 @@
 import csv
 
 import algorithms
-from Scenarios.data_generation import full_train_test
-from Scenarios.data_part import DataPart
+from Injection.Scenarios.data_generation import full_train_test
+from Injection.Scenarios import DataPart
 from algorithms.estimator import Estimator
-import numpy as np
 
 from optimizers import (
-    EstimatorOptimizer,
     BayesianOptimizer
 )
-from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
 
 
 def run_saved_optimization(optimizers : dict , estimator : Estimator , a_type , data_set  ,error_score ,save_folder = "parameterization/parameterization_results"):

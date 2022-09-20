@@ -1,8 +1,8 @@
 import numpy as np
 from algorithms.IMR.IMR_estimator import IMR_estimator
 from algorithms.Screen.screen_estimator import SCREENEstimator
-from Scenarios.scenario import Scenario
-from Scenarios.data_part import DataPart
+from Injection.Scenarios import Scenario
+from Injection.Scenarios import DataPart
 from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
 import matplotlib.pyplot as plt
 

@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from testing_frame_work.repair import run_repair
 
 df = pd.read_csv("screen_data" , header=None)
 
@@ -12,8 +11,6 @@ except:
 
 
 injected = df.iloc[:,1]
-
-
 mean = np.mean(truth)
 std = np.std(truth)
 
@@ -21,7 +18,6 @@ norm_truth = (truth-mean)/std
 norm_injected = (injected-mean)/std
 
 anoms = np.invert(np.isclose(injected,truth))
-
 norm_truth[anoms]-norm_injected[anoms]
 
 

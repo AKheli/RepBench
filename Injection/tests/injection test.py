@@ -2,10 +2,10 @@ import numpy as np
 
 from Injection.injection_methods.basic_injections import anomaly_size
 from data_methods.data_reader import train_test_read
-from Scenarios.AnomalyConfig import AMPLITUDE_SHIFT
+from Injection.injection_config import AMPLITUDE_SHIFT
 
 import os
-os.chdir("../")
+os.chdir("../../")
 train,test = train_test_read("bafu", normalize=True)
 
 

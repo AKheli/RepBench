@@ -1,10 +1,9 @@
 import pandas as pd
-from Scenarios.scenario import Scenario
+from Injection.Scenarios import Scenario
 import algorithms.algorithms_config as ac
 import testing_frame_work.repair  as alg_runner
 import time
 
-import matplotlib.pyplot as plt
 data = "bafu5k.csv"
 a_type = "outlier"
 error_metrics = ["full_rmse","partial_rmse"]#,  "partial_mutual_info" ,"full_mutual_info"]

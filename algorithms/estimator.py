@@ -8,6 +8,7 @@ import sklearn.metrics as sm
 class Estimator(ABC, BaseEstimator):
 
     uses_labels = False
+
     def copy(self):
         copy_ = type(self)
         copy_.score_f = self.score_f
@@ -49,22 +50,22 @@ class Estimator(ABC, BaseEstimator):
 
         from sklearn.feature_selection import mutual_info_regression as mi
 
-        if score is None or score in ["partial_mutual_info","full_mutual_info"]:
-
-            try:
-                scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-                scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-            except:
-                try:
-                    scores_["partial_mutual_info"] = - \
-                    mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1), flatten_y[partial_weights_flattened],
-                       discrete_features=False)[0]
-                    scores_["full_mutual_info"] = - \
-                    mi(flatten_predicted[full_weights_flattened].reshape(-1, 1), flatten_y[full_weights_flattened],
-                       discrete_features=False)[0]
-                except:
-                    pass
-                pass
+        # if score is None or score in ["partial_mutual_info","full_mutual_info"]:
+        #
+        #     try:
+        #         scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+        #         scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
+        #     except:
+        #         try:
+        #             scores_["partial_mutual_info"] = - \
+        #             mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1), flatten_y[partial_weights_flattened],
+        #                discrete_features=False)[0]
+        #             scores_["full_mutual_info"] = - \
+        #             mi(flatten_predicted[full_weights_flattened].reshape(-1, 1), flatten_y[full_weights_flattened],
+        #                discrete_features=False)[0]
+        #         except:
+        #             pass
+        #         pass
 
         return scores_
 
@@ -107,6 +108,11 @@ class Estimator(ABC, BaseEstimator):
     def repair(self,injected, truth, columns_to_repair , labels=None):
         raise NotImplementedError(self)
 
+    def laybeled_repair(self):
+        raise NotImplementedError(self)
+
+    def runt_time_repair(self):
+        raise NotImplementedError(self)
 
     def get_params(self, deep= False):
         return  self.get_fitted_params()

@@ -1,15 +1,12 @@
-import math
-
-import matplotlib
 from matplotlib import pyplot as plt
 
-import Scenarios.ScenarioConfig as sc
+import Injection.Scenarios.ScenarioConfig as sc
 
 #vary
 # sc.label_seed
 # sc.label_rate
 # sc.anomstartlabelrate
-from Scenarios.data_generation import full_train_test
+from Injection.Scenarios.data_generation import full_train_test
 from algorithms import IMR_estimator, Robust_PCA_estimator
 
 scen = "base"

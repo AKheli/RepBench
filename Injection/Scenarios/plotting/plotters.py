@@ -1,13 +1,11 @@
-from pathlib import Path
-
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
-
-from Scenarios.data_part import DataPart
 from algorithms import algorithms_config as ac
+from Injection.injected_data_part import InjectedDataContainer
 
-def plot_data_part(data_part : DataPart, path , file_name , injected_only = True , full_rows = True ,best_worst = True):
+
+def plot_data_part(data_part : InjectedDataContainer, path , file_name , injected_only = True , full_rows = True ,best_worst = True):
     injected_cols = data_part.injected_columns
     full_truth, full_injected = data_part.truth, data_part.injected
     axis = plt.gca()

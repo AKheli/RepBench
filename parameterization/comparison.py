@@ -3,11 +3,11 @@ import pandas as pd
 from algorithms.IMR.IMR_estimator import IMR_estimator
 from algorithms.Screen.screen_estimator import SCREENEstimator
 from algorithms.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
-from Scenarios.scenario import Scenario
-from Scenarios.data_part import DataPart
+from Injection.Scenarios import Scenario
+from Injection.Scenarios import DataPart
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf
-import Scenarios.ScenarioConfig as sc
+import Injection.Scenarios.ScenarioConfig as sc
 import testing_frame_work.repair as repair_r
 sc.MAX_N_ROWS = 5000
 

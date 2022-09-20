@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
-
+from Injection.label_generator import get_anomaly_ranges
 import numpy as np
 import pandas as pd
 from matplotlib.ticker import MaxNLocator
-import Scenarios.AnomalyConfig as ac
-from Scenarios.plotting.plotters import plot_data_part
+import Injection.injection_config as ac
+from Injection.Scenarios.plotting.plotters import plot_data_part
+from Injection.injected_data_part import InjectedDataContainer
 from algorithms.algorithms_config import ALGORITHM_COLORS
 import matplotlib.pyplot as plt
 
@@ -21,8 +22,8 @@ class Scenario:
         self.part_scenarios[part_key] = data_part
 
     @property
-    def name_train_test_iter(self):
-        return iter( [ (name , scen_part.train , scen_part ) for name, scen_part in self.part_scenarios.items()])
+    def name_container_iter(self):
+        return iter( [ (name , scen_part ) for name, scen_part in self.part_scenarios.items()])
 
     def get_amount_of_part_scenarios(self):
         return len(self.part_scenarios)
@@ -44,10 +45,11 @@ class Scenario:
             Path(algo_path).mkdir(parents=True, exist_ok=True)
 
             plt.close('all')
+            scenario_part : InjectedDataContainer
             for i,(part_scen_name,scenario_part) in enumerate(self.part_scenarios.items()):
                 full_truth , full_injected = scenario_part.truth , scenario_part.injected
                 cols = scenario_part.injected_columns
-                klass = scenario_part.class_
+                klass = scenario_part.klass
                 axis = plt.gca()
                 axis.set_rasterization_zorder(0)
                 axis.set_title(f'{part_scen_name}')
@@ -56,7 +58,7 @@ class Scenario:
 
                 for col in cols:
                     col_nbr = col+1
-                    a_ranges = scenario_part.get_anomaly_ranges(klass.iloc[:,col])
+                    a_ranges = get_anomaly_ranges(klass.iloc[:,col])
                     n_ranges = min(len(a_ranges),3)
                     selected_ranges_i = np.random.choice(range(len(a_ranges)),size=n_ranges,replace=False)
                     for a_index , range_index in enumerate(selected_ranges_i):

@@ -1,8 +1,8 @@
 ### run from top level directory
 from algorithms.Dimensionality_Reduction.CD.CDRecEstimator import CDRecEstimator
 from algorithms.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
-from Scenarios.scenario import Scenario
-from Scenarios.data_part import DataPart
+from Injection.Scenarios import Scenario
+from Injection.Scenarios import DataPart
 import matplotlib.pyplot as plt
 import pandas as pd
 

@@ -1,5 +1,4 @@
 import toml
-import os
 
 def load_toml_file(filename="algos.toml"):
     if not filename.endswith("toml"):

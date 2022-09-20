@@ -1,16 +1,10 @@
 import TestingFramework as run
-import Scenarios.ScenarioConfig as scen_config
-# cts_nbr,ts_nbr,ts_len
-import timeit
-from Scenarios.data_part import DataPart
-import os
+import Injection.injection_config as ic
 
 
-# scen_config.MAX_N_COLS = 10
-# run.main(input)
 
-input = "-scen a_rate -data bafu  -rn test -anom shift -alg screen,imr  -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-scen_config.MAX_N_COLS = 10
+input = "-scen all -data elec,msd,bafu  -rn after_recactor -anom all  -alg all  -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+ic.MAX_N_COLS = 10
 run.main(input)
 
 

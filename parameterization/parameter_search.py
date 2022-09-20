@@ -4,8 +4,8 @@ from algorithms import algo_mapper
 
 print(sys.path)
 sys.path.append(os.getcwd())
-from Scenarios.data_part import DataPart
-from Scenarios.scenario_generator import build_scenario
+from Injection.Scenarios import DataPart
+from Injection.Scenarios import build_scenario
 from parameterization.optimizers.bayesian_optimization import BayesianOptimizer
 from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
 from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
