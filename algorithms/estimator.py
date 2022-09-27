@@ -45,9 +45,12 @@ class Estimator(ABC, BaseEstimator):
         partial_weights_flattened = partial_weights.flatten() # anomaly_weights
 
         if score is None or score == "partial_rmse":
-            scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
-            scores_["original_partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], injected.values.flatten()[partial_weights_flattened], squared=False)
-
+            try:
+                scores_["partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], flatten_predicted[partial_weights_flattened], squared=False)
+                scores_["original_partial_rmse"] = sm.mean_squared_error(flatten_y[partial_weights_flattened], injected.values.flatten()[partial_weights_flattened], squared=False)
+            except:
+                scores_["partial_rmse"] =  -1
+                scores_["original_partial_rmse"] = -1
         from sklearn.feature_selection import mutual_info_regression as mi
 
         # if score is None or score in ["partial_mutual_info","full_mutual_info"]:

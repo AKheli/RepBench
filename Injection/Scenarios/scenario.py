@@ -10,6 +10,9 @@ from Injection.injected_data_part import InjectedDataContainer
 from algorithms.algorithms_config import ALGORITHM_COLORS
 import matplotlib.pyplot as plt
 
+
+
+
 class Scenario:
     def __init__(self, scen_name , data , a_type):
         assert a_type in ac.ANOMALY_TYPES

@@ -1,13 +1,22 @@
 import TestingFramework as run
 import Injection.injection_config as ic
 
+ic.MAX_N_ROWS = 100000
 
-
-input = "-scen all -data elec,msd,bafu  -rn after_recactor -anom all  -alg all  -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = "-scen all -data all  -rn ar -anom all  -alg screen -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 ic.MAX_N_COLS = 10
+ic.label_seed = 20
 run.main(input)
 
+# input = "-scen all -data all  -rn imr_vs_rpca -anom all  -alg imr,rpca  -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# ic.MAX_N_COLS = 10
+# ic.label_seed = 50
+# run.main(input)
 
+# input = "-scen all -data alla  -rn imr_vs_rpca -anom all  -alg imr,rpca  -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# ic.MAX_N_COLS = 10
+# ic.label_seed = 20
+# run.main(input)
 # scen_config.labelrate = 0.2
 # scen_config.anomstartlabelrate = 0.5
 # input = " -alg imr,rpca -data all -a_type shift -scen ts_len -rn imrcomp1"

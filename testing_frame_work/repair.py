@@ -53,7 +53,7 @@ class AnomalyRepairer():
             score_list.append(scores)
             if i >= self.runtime_measurements-1 and not used_labels:
                 break
-            labels = shuffle_labels(labels)
+            #labels = shuffle_labels(labels)
 
         end = time.time()
 
@@ -73,8 +73,8 @@ class AnomalyRepairer():
     def repair_data_part(self, alg_type, data_part: InjectedDataContainer, params="default" , add_repair = True):
         try:
             retval = self.repair(alg_type, params=params, **data_part.repair_inputs)
-        except:
+        except Exception as e:
             print(alg_type +" on "+ str(data_part))
-            raise
+            raise e
         data_part.add_repair(retval, alg_type)
         return retval

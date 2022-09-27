@@ -7,6 +7,7 @@ import testing_frame_work.repair as alg_runner
 from Injection.Scenarios.scenario_saver.Scenario_saver import save_scenario
 from testing_frame_work.parameterization import load_params_from_toml
 from data_methods.data_class import infer_data_file
+import Injection.injection_config as ic
 
 def main(input = None):
 
@@ -52,17 +53,20 @@ def main(input = None):
     cols = [0]
 
     for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_set_names , anomaly_types):
+        if scen_name == ic.ANOMALY_SIZE and anomaly_type == ic.POINT_OUTLIER:
+            print("skipping anomaly_lenght outlier scenario")
+            continue
         try:
             scenario: Scenario = build_scenario(scen_name,data_name,a_type=anomaly_type, data_type="test")
         except Exception as e:
-            print(f'running repair on {data_name} with scen type {scen_name} failed')
+            print(f'Buidling {scen_name} on {data_name} with {anomaly_type} anomalies  failed')
             raise e
-
+        continue
         repairer = alg_runner.AnomalyRepairer(1, 10)
         for repair_type in algorithms:
             for name, test_part in scenario.name_container_iter:
                 params = load_params_from_toml(repair_type)
-                repairer.repair_data_part(repair_type, test_part,params)
+                repair_info = repairer.repair_data_part(repair_type, test_part,params)
 
         save_scenario(scenario, repair_plot=True,  res_name=args.rn)
 

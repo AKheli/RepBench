@@ -9,7 +9,7 @@ import Injection.injection_config as at
 repair_estimators = algc.ALGORITHM_TYPES
 estimator_choices = repair_estimators + ["all"]
 
-scenarios = [ic.ANOMALY_SIZE, ic.CTS_NBR , ic.ANOMALY_RATE, ic.TS_LENGTH, ic.TS_NBR]
+scenarios = [ic.ANOMALY_SIZE, ic.CTS_NBR , ic.ANOMALY_RATE, ic.TS_LENGTH, ic.TS_NBR , ic.ANOMALY_FACTOR]
 scenario_choices = scenarios + ["all"]
 
 all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER]

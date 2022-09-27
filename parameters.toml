@@ -30,6 +30,9 @@
 [screenglobal] # use percentile approach when smin and smax are not set
      t = 1
 
+[ar]
+
+
 # cd , rpca params :
 # classification_truncation
 # repair_truncation

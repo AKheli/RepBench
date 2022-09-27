@@ -1,6 +1,7 @@
 import numpy as np
 
-from Injection.label_generator import generate_column_labels
+from Injection.injection_checks import anomaly_check, anomaly_label_check, index_check
+from Injection.label_generator import generate_column_labels, generate_df_labels
 import hashlib
 import pandas as pd
 
@@ -9,7 +10,7 @@ class InjectedDataContainer:
     def __init__(self, injected ,truth, *,class_df , labels , name):
         self.truth_ = truth  #contains the Original Series
         self.injected_ = injected
-        self.labels_ = labels
+        self._labels_ = labels
         self.repairs = {}
         self.repair_metrics = {}
         self.repair_names = []
@@ -24,12 +25,21 @@ class InjectedDataContainer:
         self.check_original_rmse()
 
 
+        self.check()
+
+    def check(self):
+        index_check(self.klass,self.injected,self.truth,self._labels_)
+        anomaly_check(self.klass,self.injected,self.truth)
+        anomaly_label_check(class_df=self.class_df,label_df=self._labels_)
+
+
     def __repr__(self):
         return f"{self.name}"
 
     @property
     def truth(self):
-        return self.truth_
+        return self.truth_.copy()
+
 
     @property
     def injected(self):
@@ -37,25 +47,28 @@ class InjectedDataContainer:
 
     @property
     def klass(self):
-        return self.class_df
+        return self.class_df.copy()
 
     @property
     def labels(self):
-        return self.labels_
+        self.check()
+        return self._labels_.copy()
 
     @property
     def labels_rate(self):
-        return self.labels_.iloc[:,self.injected_columns].mean().mean()
+        return self._labels_.iloc[:,self.injected_columns].mean().mean()
 
     @property
     def repair_inputs(self):
+        self.check()
         return {"injected": self.injected,
                 "truth": self.truth,
                 "labels": self.labels,
-                "columns_to_repair": self.injected_columns,
+                "columns_to_repair": self.injected_columns.copy(),
                 }#"score_indices" : self.get_weights()}
 
     def add_repair(self, repair_results, repair_type, repair_name = None):
+        self.check()
         repair_name = repair_type if repair_name is None else repair_name
         self.repair_names.append(repair_name)
         assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
@@ -103,5 +116,10 @@ class InjectedDataContainer:
 
 
     def randomize_labels(self):
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        self.check()
         self.relabeled +=1
-        self.labels_ = generate_column_labels(self.class_, seed=self.relabeled)
+        self._labels_ = generate_df_labels(self.class_, seed=self.relabeled)
+        self.check()
+
+    

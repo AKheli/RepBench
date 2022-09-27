@@ -5,7 +5,7 @@ from algorithms import algorithms_config as ac
 from Injection.injected_data_part import InjectedDataContainer
 
 
-def plot_data_part(data_part : InjectedDataContainer, path , file_name , injected_only = True , full_rows = True ,best_worst = True):
+def plot_data_part(data_part : InjectedDataContainer, path , file_name):
     injected_cols = data_part.injected_columns
     full_truth, full_injected = data_part.truth, data_part.injected
     axis = plt.gca()
@@ -56,9 +56,8 @@ def plot_data_part(data_part : InjectedDataContainer, path , file_name , injecte
         l = lines.pop(0)
         l.remove()
 
-
-    #Path(path).mkdir(parents=True, exist_ok=True)
-
-    #plt.savefig(path+"/" +file_name)
+    from pathlib import Path
+    Path(path).mkdir(parents=True, exist_ok=True)
+    plt.savefig(path+"/" +file_name)
     plt.close('all')
 

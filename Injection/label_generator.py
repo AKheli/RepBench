@@ -1,6 +1,8 @@
 import Injection.injection_config as ic
 import numpy as np
 
+from Injection.injection_checks import anomaly_label_check
+
 
 def get_anomaly_ranges(ts_class):
     in_anomaly = False
@@ -18,34 +20,54 @@ def get_anomaly_ranges(ts_class):
     return [np.array(range_) for range_ in ranges]
 
 
+def generate_df_labels(class_df, seed=None):
 
-def generate_df_labels(class_df, seed= None):
     label_df = class_df.copy()
 
-    for (i,column) in enumerate(label_df):
-        label_df[column] = generate_column_labels(class_df[column], seed=i+(0 if seed is None else seed))
+    for (i, column) in enumerate(label_df):
+        label_df[column] = generate_column_labels(class_df[column], seed=i + (0 if seed is None else seed))
 
+    anomaly_label_check(label_df=label_df,class_df=class_df)
     return label_df
 
-def generate_column_labels(class_column , seed=None):
-    label_rate =  ic.label_rate
+
+def generate_column_labels(class_column, seed=None):
+    label_rate = ic.label_rate
     label_anom_start = ic.anomstartlabelrate
     state = np.random.get_state()
     np.random.seed(ic.label_seed + (seed if seed is not None else 0))
     labels = None
-    for i in range(1000):
-        starts = [min(r) for r in get_anomaly_ranges(class_column) if len(r) > 1]
+
+    max_iter = 10000
+    for i in range(max_iter):
+        #starts = [min(r) for r in get_anomaly_ranges(class_column) if len(r) > 1]
         m = len(class_column)
         r_number = np.random.uniform(size=m)
-        r_number[starts] = r_number[starts] < label_anom_start
+        #r_number[starts] = r_number[starts] < label_anom_start
         r_number = r_number < label_rate
         labels = r_number.astype(bool)
-        if np.any((class_column.astype(int) - labels) > 0) or not np.any(
-                class_column.astype(int)):  # make there are non labeled data points
+
+        if np.any(class_column.astype(int)):
+            # print("amoulaous column")
+            # print(np.sum(class_column))
+            # print(np.sum(labels))
+            # print("length:", len(labels), len(class_column))
+            ## check labeled anomalies
+            # for row in arr:
+            #     if row[2]:
+            #         print(row)
+            labels_in_anomalies = labels[class_column]
+            labeled_anoms = np.any(np.invert(labels_in_anomalies))
+            non_labeled_anoms=  np.any(labels_in_anomalies)
+
+            if (labeled_anoms and non_labeled_anoms):
+                break
+        else:
+            #print("non anomalous column")
             break
+
+    if  i >  max_iter - 2:
+        raise ValueError(f" imr labeling failed {class_column}, anoms : {class_column.sum()} ")
 
     np.random.set_state(state)
     return labels
-
-
-

@@ -4,7 +4,9 @@ from Injection.injection_methods.basic_injections import add_anomalies
 
 
 def inject_data_df(data_df, *, a_type, cols=None, offset=10, factor = None
-                   , n_anomalies_or_percentage = BASE_ANOMALY_SETTINGS["a_percentage"], a_len = BASE_ANOMALY_SETTINGS["a_length"]):
+                   , n_anomalies_or_percentage = BASE_ANOMALY_SETTINGS["a_percentage"],
+                   a_len = BASE_ANOMALY_SETTINGS["a_length"],
+                   ignore_warnings = False):
     assert a_type in ANOMALY_TYPES
     assert n_anomalies_or_percentage > 0
     if factor is None :
@@ -22,7 +24,6 @@ def inject_data_df(data_df, *, a_type, cols=None, offset=10, factor = None
     injected_df = data_df.copy()
     col_ranges_mapper = {}
     for col in columns_to_inject:
-        injected_df.iloc[:, col]
         injected_df.iloc[:, col] , index_ranges = add_anomalies(injected_df.iloc[:, col], a_type, offset=offset, a_factor=factor,
                                                  n_anomalies=n_anomalies , a_len=a_len)
         col_ranges_mapper[col] = index_ranges

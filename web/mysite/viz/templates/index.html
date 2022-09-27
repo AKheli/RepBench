@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <title>Big Analytics</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/boost.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+</head>
+<body>
+<!-- Top Bar -->
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Big Analytics</a>
+    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="#">Sign out</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Highcharts display -->
+<!-- Chartjs libraries -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+<div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+
+
+<!-- Table data -->
+<h2 class="pt-4">Section Details</h2>
+<p class="text-danger">This table will be upated by Django objects, hence leaving it as it is.</p>
+<div class="table-responsive">
+</div>
+</main>
+</div>
+</div>
+
+
+
+<h1>bla</h1>
+<form id= "datasetform" action="#">
+    {% csrf_token %}
+    {{ form }}
+</form>
+<button id ="datasetformapply" >This</button>
+
+
+
+<script src="{% static  'js/highchartsInit.js' %} " fetchurl = '{% url "get_data" %}'  token = '{{ csrf_token }}' type="text/javascript"></script>
+</body>
+</html>

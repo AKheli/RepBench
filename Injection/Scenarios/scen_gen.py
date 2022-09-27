@@ -50,6 +50,7 @@ def gen_a_rate_data(df, a_type, cols):
                              for col, index_list in col_range_mapper.items()}
 
     n, _ = df.shape
+    print("a_rate" , descending_ratios)
     for ratio in descending_ratios[1:]:
         temp_df = injected_df.copy()
         for col in cols:
@@ -60,16 +61,18 @@ def gen_a_rate_data(df, a_type, cols):
             ranges_to_replace = column_ranges[:counter]
             for range in ranges_to_replace:
                 temp_df.iloc[range, col] = df.iloc[range, col]
-        ret_val.append((max_perc, temp_df, df))
+        ret_val.append((ratio, temp_df, df))
 
     return ret_val[::-1]  # starting with the lowest ratio
 
 
 def gen_a_size_data(df, a_type, cols):
+    assert a_type != "outlier"
     a_lengths = ic.scenario_specifications[ic.ANOMALY_SIZE]["a_length"]
     max_length = max(a_lengths)
 
     n_anomalies = math.ceil(df.shape[0] / 1000)
+
     injected_df = df.copy()
     injected_df, col_range_mapper = inject_data_df(injected_df, a_type=a_type,
                                                    n_anomalies_or_percentage=n_anomalies, a_len=max_length)
@@ -82,9 +85,9 @@ def gen_a_size_data(df, a_type, cols):
                 temp_df.iloc[index_range[a_length:]] = df.iloc[index_range[a_length:]]
 
         ret_val.append((a_length, temp_df, df))
-        plt.plot(temp_df.iloc[:, cols])
-        # plt.title(f"{counter},{n*ratio},{sum([len(arr) for arr in column_ranges[counter:]])}")
-        plt.show()
+        # plt.plot(temp_df.iloc[:, cols])
+        # # plt.title(f"{counter},{n*ratio},{sum([len(arr) for arr in column_ranges[counter:]])}")
+        # plt.show()
     ret_val.append((max_length, injected_df, df))
     return ret_val
 
@@ -101,7 +104,8 @@ def gen_ts_len_data(df, a_type, cols):
     for ratio in ts_lengths_ratios[:-1]:
         off_set = int((n-n*ratio)/2)
         temp_df = injected_df.copy().iloc[off_set:-off_set,:]
-        ret_val.append((ratio, temp_df, df))
+        part_true_df = df.copy().iloc[off_set:-off_set,:]
+        ret_val.append((ratio, temp_df, part_true_df))
     ret_val.append((1, injected_df, df))
     return ret_val
 
@@ -114,9 +118,19 @@ def gen_ts_nbr_data(df, a_type, cols):
 
     for n in n_ts:
         temp_df = injected_df.iloc[:,:n].copy()
-        ret_val.append((n, temp_df, df))
+        ret_val.append((n, temp_df, df.iloc[:,:n].copy()))
     return ret_val
 
+def gen_a_factor_data(df, a_type, cols):
+    a_factors = ic.scenario_specifications[ic.ANOMALY_FACTOR]["a_factors"]
+    injected_df = df.copy()
+    injected_df, col_range_mapper = inject_data_df(injected_df,cols=[0], a_type=a_type)
+    ret_val = []
+
+    for f in a_factors:
+        injected_df, col_range_mapper = inject_data_df(injected_df, cols=[0], a_type=a_type , factor = f)
+        ret_val.append((f, injected_df,df ))
+    return ret_val
 
 def gen_cts_nbr_data(df, a_type, cols):
     n_cts = ic.scenario_specifications[ic.CTS_NBR]["cts_nbr"]
@@ -124,15 +138,16 @@ def gen_cts_nbr_data(df, a_type, cols):
     full_injected_df = df.copy()
     full_injected_df, col_range_mapper = inject_data_df(full_injected_df,cols=list(range(m)), a_type=a_type)
     ret_val = []
-
-    for m_c in n_cts:
+    print(n_cts)
+    for m_c in sorted(n_cts):
         if m_c >= m:
             break
         temp_df = df.copy()
         temp_df.iloc[:,:m_c] = full_injected_df.iloc[:,:m_c]
-        plt.plot(temp_df)
-        plt.show()
-        ret_val.append((n, temp_df, df))
+        # plt.plot(temp_df)
+        # plt.show()
+        print(m_c)
+        ret_val.append((m_c, temp_df, df))
 
     return ret_val
 
@@ -142,7 +157,8 @@ scen_generator_map = {
     ic.ANOMALY_SIZE : gen_a_size_data,
     ic.ANOMALY_RATE : gen_a_rate_data,
     ic.CTS_NBR :  gen_cts_nbr_data,
-    ic.TS_LENGTH : gen_ts_len_data
+    ic.TS_LENGTH : gen_ts_len_data,
+    ic.ANOMALY_FACTOR : gen_a_factor_data
 }
 
 def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max_n_cols=None , cols = None):
@@ -159,21 +175,28 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
     scenario = Scenario(scen_name,file_name,a_type)
 
     for (name,injected_df,data_df) in scen_data:
-        class_df = pd.DataFrame(np.invert(np.isclose(data_df.values, injected_df.values)),
-                                columns=data_df.columns).reindex_like(injected_df)
-        label_df: DataFrame = generate_df_labels(class_df)
+        try:
+            assert injected_df.index.equals(data_df.index), f"{injected_df.index},{data_df.index}"
+            assert injected_df.shape == data_df.shape , f"{injected_df},{data_df}"
 
-        plt.plot(injected_df.iloc[:,cols_to_inject])
-        plt.show()
-        ##todo remove this once tested
-        assert injected_df.index.equals(data_df.index), f"{injected_df.index},{data_df.index}"
-        assert class_df.index.equals(data_df.index)
-        assert label_df.index.equals(data_df.index)
+            class_df = pd.DataFrame(np.invert(np.isclose(data_df.values, injected_df.values))
+                                    ,index=injected_df.index ,columns=injected_df.columns)
 
-        assert injected_df.shape == data_df.shape
-        injdected_container = InjectedDataContainer(injected_df,data_df, class_df=class_df,
-                                     name=data_container.title,
-                                     labels=label_df)
-        scenario.add_part_scenario(injdected_container,name)
+            assert class_df.isnull().sum().sum() == 0 , (data_df, )
 
+            label_df: DataFrame = generate_df_labels(class_df)
+
+            # plt.plot(injected_df.iloc[:,cols_to_inject])
+            # plt.show()
+            ##todo remove this once tested
+            assert class_df.index.equals(data_df.index)
+            assert label_df.index.equals(data_df.index)
+
+            assert injected_df.shape == data_df.shape
+            injdected_container = InjectedDataContainer(injected_df,data_df, class_df=class_df,
+                                         name=data_container.title,
+                                         labels=label_df)
+            scenario.add_part_scenario(injdected_container,name)
+        except Exception as e:
+            raise type(e)(str(e) + f'scen part: {name}')
     return  scenario

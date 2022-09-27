@@ -8,5 +8,5 @@ algo_mapper = {
     ac.SCREEN: algs.SCREENEstimator,
     ac.IMR: algs.IMR_estimator,
     ac.WindowRPCA: functools.partial(algs.Robust_PCA_estimator,windows = True),
-    ac.SCREEN_GLOBAL : functools.partial(algs.SCREENEstimator,method = "global")
+    ac.SCREEN_GLOBAL : functools.partial(algs.SCREENEstimator,method = "global"),
 }

@@ -9,12 +9,12 @@ ANOMALY_TYPES = (AMPLITUDE_SHIFT,
                  GROWTH_CHANGE,
                  POINT_OUTLIER)
 
-BASE_FACTORS = {AMPLITUDE_SHIFT: 1.5,
-                DISTORTION: 1.5,
+BASE_FACTORS = {AMPLITUDE_SHIFT: 2,
+                DISTORTION: 2,
                 POINT_OUTLIER: 2}
 
 DEFAULT_PERCENTAGE = 5
-DEFAULT_LENGTH = 50  # ignored by pointoutliers
+DEFAULT_LENGTH = 30  # ignored by pointoutliers
 
 BASE_ANOMALY_SETTINGS = {"a_percentage": DEFAULT_PERCENTAGE,
                          "a_length": DEFAULT_LENGTH}
@@ -24,10 +24,11 @@ BASE_SCENARIO = "base"
 TS_LENGTH = "ts_len"
 ANOMALY_SIZE = "a_size"
 ANOMALY_RATE = "a_rate"
-ANOMALY_POSITION = "anomaly_position"
-ANOMALY_FACTOR = "anomaly_factor"
+#ANOMALY_POSITION = "a_position"
+ANOMALY_FACTOR = "a_factor"
 TS_NBR = "ts_nbr"
 CTS_NBR = "cts_nbr"
+
 
 MAX_N_ROWS = 20000
 MAX_N_COLS = 10
@@ -40,7 +41,8 @@ scenario_specifications = {
     ANOMALY_RATE: {"a_percentage": [0.0025, 0.005, 0.01, 0.02, 0.05, 0.10, 0.15, 0.2], "a_length": DEFAULT_LENGTH},
     TS_NBR: {"a_percentage": DEFAULT_PERCENTAGE, "a_length": DEFAULT_LENGTH, "ts_nbr": [3, 4, 5, 6, 7, 8, 9, 10]},
     CTS_NBR: {"a_percentage": DEFAULT_PERCENTAGE, "a_length": DEFAULT_LENGTH,
-              "cts_nbr": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+              "cts_nbr": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
+    ANOMALY_FACTOR : { "a_factors" : [0.5,1,2,3,4,5,10,20], "a_length": DEFAULT_LENGTH , "a_percentage": DEFAULT_PERCENTAGE}
 }
 
 SCENARIO_TYPES = list(scenario_specifications.keys())
