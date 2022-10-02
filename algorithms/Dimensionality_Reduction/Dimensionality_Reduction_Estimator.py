@@ -39,12 +39,12 @@ class DimensionalityReductionEstimator(Estimator):
 
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
-        return {"classification_truncation": [i for i in [1,2,3,4,5] if i < n_cols],
-                "repair_truncation": [i for i in [2,3,4,5] if i < n_cols],
+        return {"classification_truncation": [i for i in [1,2,3,4,5] if i < n_cols-1],
+                "repair_truncation": [i for i in [2,3,4,5] if i < n_cols-1],
                 "threshold": [1,1.2,1.5,2,2.5,3],
                 "repair_iter" : [1,10],
                 "n_max_iter": [1,20], # reweighting
-                "windows" :  (True,False)
+                "windows" :  (False)
                 }
 
     def fit(self, X, y=None):

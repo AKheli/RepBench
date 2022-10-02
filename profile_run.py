@@ -9,7 +9,7 @@ ic.MAX_N_ROWS = 10000
 # run.main(input)
 
 
-input = "-scen ts_len,cts_nbr,ts_nbr -data all   -rn try -anom outlier,shift  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = "-scen a_rate,a_size -data all   -rn try -anom outlier,shift  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 ic.MAX_N_COLS = 10
 ic.label_seed = 20
 run.main(input)

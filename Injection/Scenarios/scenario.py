@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 
 
 
-
 class Scenario:
     def __init__(self, scen_name , data , a_type , data_container):
         assert a_type in ac.ANOMALY_TYPES
@@ -110,6 +109,7 @@ class Scenario:
         return retval
 
     def save_params(self, path):
+        os.makedirs(path, exist_ok=True)
         full_dict = {}
         for part_name, part in self.part_scenarios.items():
             full_dict[part_name] = {}
