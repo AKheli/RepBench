@@ -44,7 +44,6 @@ class DimensionalityReductionEstimator(Estimator):
                 "threshold": [1,1.2,1.5,2,2.5,3],
                 "repair_iter" : [1,10],
                 "n_max_iter": [1,20], # reweighting
-                "windows" :  (False)
                 }
 
     def fit(self, X, y=None):
