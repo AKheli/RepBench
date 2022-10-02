@@ -33,7 +33,7 @@ for a_type,error_score,estim_name in list(product(a_types,error_scores,estim_nam
             results = optimizer.param_map(train_container.repair_inputs,param_grid)
 
             optimizer =  BayesianOptimizer(estimator, error_score)
-            bayesian_opt_scores =   optimizer.find_optimal_params()
+            bayesian_opt_scores =   optimizer.find_optimal_params(train_container.repair_inputs,param_grid)
             total_results[file_name] = [{"bayesian_opt_scores":bayesian_opt_scores }]+results+[{"param_grid":{k:list(v) for k,v in param_grid.items()}}]
 
 
