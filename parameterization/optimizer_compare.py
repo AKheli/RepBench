@@ -1,47 +1,42 @@
 import csv
 
 import algorithms
-from Injection.Scenarios.data_generation import full_train_test
-from Injection.Scenarios import DataPart
+from Injection.Scenarios.scen_gen import create_injected_DataContainer
 from algorithms.estimator import Estimator
 
-from optimizers import (
-    BayesianOptimizer
-)
+from parameterization.optimizers import EstimatorOptimizer, BayesianOptimizer
+import algorithms.algorithms_config  as ac
 
 
-def run_saved_optimization(optimizers : dict , estimator : Estimator , a_type , data_set  ,error_score ,save_folder = "parameterization/parameterization_results"):
-    file_name = f"{estimator.alg_type}_{error_score}_{data_set}_{a_type}"
-    train_data : DataPart = full_train_test(data_set=data_set , a_type=a_type)[0]
-    param_grid =  estimator.suggest_param_range(train_data.injected)
 
-    ret = []
-    with open(f"{save_folder}/{file_name}" , 'w') as f:
-        f.write("paramgrid: \n" + str(param_grid))
-        f.write("\n")
-        fieldnames = ['optimizer', 'parameters' , 'score' , 'time']
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for optimier_name , optimizer in optimizers.items():
-            params , time, score = optimizer.find_optimal_params(train_data.repair_inputs , param_grid)
-            writer.writerow({'optimizer': optimier_name, 'parameters': params, 'score' : score , 'time' : time})
-            ret.append((optimier_name,score))
+def run_saved_optimization(estimator: Estimator, train_data,*,optimizer = None , param_grid = "infer",
+                      save_folder="parameterization/parameterization_results",
+                        ):
 
-    return ret
+    if param_grid == "infer":
+        param_grid = estimator.suggest_param_range(train_data.injected)
+
+    optimizers = {
+        "bayesian20": BayesianOptimizer(estimator, error_score, n_calls=20),
+        "bayesian50": BayesianOptimizer(estimator, error_score, n_calls=50),
+        "grid": EstimatorOptimizer(estimator, error_score)
+    }
+
+    result = {}
+    for optimizer_name, optimizer in optimizers.items():
+        result[optimizer_name] = optimizer.find_optimal_params(train_data.repair_inputs, param_grid)
+
+    return result
+
 a_type = "shift"
 error_score = "full_rmse"
 
-c = 50
-for data_set in ["bafu" , "humidity" , "elec"]:
-    for estim_name in ["screen_global" , "screen"]: # , "screen" , "imr" , "cdrec"]:
+
+total_results = {}
+for file_name in ["bafu", "humidity", "elec"]:
+    total_results[file_name] = {}
+    for estim_name in [ac.IMR]:  # , "screen" , "imr" , "cdrec"]:
         estimator: Estimator = algorithms.algo_mapper[estim_name]()
-        optimizers = {
-            "bayesian20" :BayesianOptimizer(estimator, error_score, n_calls=20),
-            # "bayesian50" : BayesianOptimizer(estimator, error_score, n_calls=50),
-            # "grid" : EstimatorOptimizer(estimator, error_score)
-        }
-        ret = run_saved_optimization(optimizers, estimator, a_type, data_set, error_score=error_score)
-        grid_score = ret[-1][1]
-        twenty_min = min([x[1] for x in ret[:c]])
-        opt_fail = sum([x[1] > grid_score  for x in ret[c:-1]])
-        bayesian_fail = sum([x[1] > twenty_min  for x in ret[c:-1]])
+        train_container = create_injected_DataContainer(file_name, "train", a_type=a_type)
+        optim_result = run_saved_optimization(estimator,train_container)
+        total_results[estim_name] = optim_result

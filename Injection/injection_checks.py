@@ -12,9 +12,9 @@ def anomaly_check(class_df,injected_df,truth_df):
     for column in truth_df:
         ### labeled differ
         class_col = class_df[column]
-        c = np.isclose(injected_df[column][class_col] ,  truth_df[column][class_col],rtol=0.01)
-        if np.any(c):
-            assert False , "as injected labeled values are to close to be considered an anomaly"
+        c = np.isclose(injected_df[column][class_col] ,  truth_df[column][class_col],rtol=0.001)
+
+        assert not np.any(c) , "as injected labeled values are to close to be considered an anomaly"
         ### non labeled do not differ
         all_close = np.allclose(injected_df[column][np.invert(class_col)] ,  truth_df[column][np.invert(class_col)])
         assert all_close , "non marked entries do differ"

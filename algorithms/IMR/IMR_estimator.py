@@ -15,6 +15,7 @@ class IMR_estimator(Estimator):
         return {"p": self.p , "tau" : self.tau}
 
 
+
     def suggest_param_range(self,X):
         return {"p" : [1,2,3] , "tau": [0.0005,0.001,0.002,0.004,0.008,0.01,0.02,0.04,0.08]}
 

@@ -45,7 +45,6 @@ const chart = Highcharts.chart(document.getElementById('container'), {
 });
 
 const formData = new FormData();
-formData.append('name', "uuuuu");
 formData.append('csrfmiddlewaretoken', token);
 
 fetch(fetch_url, {
@@ -73,35 +72,56 @@ fetch(fetch_url, {
 
 })
 
-var test_button = document.getElementById("datasetformapply")
-console.log(test_button)
-//test_button.addEventListener("click",
-document.getElementById("datasetform").addEventListener("change",e => {
-    console.log("eventx")
-    let form = document.getElementById("datasetform")
+// var test_button = document.getElementById("datasetformapply")
+// console.log(test_button)
+// //test_button.addEventListener("click",
+// document.getElementById("datasetform").addEventListener("change",e => {
+//     console.log("eventx")
+//     let form = document.getElementById("datasetform")
+//     const formDatatest = new FormData(form);
+//     formDatatest.append('csrfmiddlewaretoken', token);
+//     formDatatest.append("set", "set");
+//
+//     fetch(fetch_url, {
+//         method: 'POST',
+//         body: formDatatest,
+//
+//     }).then(response =>
+//         response.json().then(responseJson => {
+//                 var seriesLength = chart.series.length;
+//         for (var i = seriesLength - 1; i > -1; i--) {
+//             chart.series[i].remove();
+//         }
+//
+//         let data = responseJson.series
+//         console.log("loading data in promise")
+//         console.log("loading")
+//
+//         console.log(data)
+//         data.forEach(x => chart.addSeries(x))
+//             chart.xAxis[0].setExtremes() // reset the zoom
+//             }
+//         ))
+// })
+
+
+let create_form = function(form_id,token){
+    let form = document.getElementById(form_id)
     const formDatatest = new FormData(form);
     formDatatest.append('csrfmiddlewaretoken', token);
-    formDatatest.append("set", "set");
+    return formDatatest
+}
 
-    fetch(fetch_url, {
+
+let inject  = (form_id, token , fetch_url) =>  fetch(fetch_url, {
         method: 'POST',
-        body: formDatatest,
-
-    }).then(response =>
-        response.json().then(responseJson => {
-                var seriesLength = chart.series.length;
-        for (var i = seriesLength - 1; i > -1; i--) {
-            chart.series[i].remove();
-        }
-
-        let data = responseJson.series
-        console.log("loading data in promise")
-        console.log("loading")
-
-        console.log(data)
-        data.forEach(x => chart.addSeries(x))
-            chart.xAxis[0].setExtremes() // reset the zoom
-            }
-        ))
-})
-
+        body: create_form(form_id,token),
+    }).then(response =>  response.json()).then(responseJson => {
+    //delete old series
+    let s = responseJson.series
+    let rmse = responseJson.rmse
+    console.log(s)
+    if(chart.get(s["id"])) chart.get(s["id"]).remove();
+    chart.addSeries(s)
+    document.getElementById("rmse_display").innerHTML = "RMSE :" + responseJson.rmse ;
+    })

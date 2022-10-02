@@ -14,7 +14,13 @@
     <script src="https://code.highcharts.com/modules/boost.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.3/js/bootstrap.js"></script>
 </head>
 <body>
 <!-- Top Bar -->
@@ -37,7 +43,6 @@
 <div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 
-
 <!-- Table data -->
 <h2 class="pt-4">Section Details</h2>
 <p class="text-danger">This table will be upated by Django objects, hence leaving it as it is.</p>
@@ -48,16 +53,125 @@
 </div>
 
 
-
-<h1>bla</h1>
-<form id= "datasetform" action="#">
-    {% csrf_token %}
-    {{ form }}
-</form>
-<button id ="datasetformapply" >This</button>
+You can use the following markup to achieve that.
 
 
+<div id="group">
+    <div class="container">
+        <div class="btn-group mx-auto">
+            {% for key, form in forms.items %}
+                <button class="btn" type="button" data-parent="#group" data-toggle="collapse" data-target="#{{ key }}"
+                        aria-expanded="false">
+                    {{ key }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% for key, form in forms.items %}
+        <div class="panel">
+            <div class="collapse" id="{{ key }}">
+                <form id="{{ key }}">
+                    {% csrf_token %}
+                    {{ form }}
+                    <button>
+                        Apply {{ key }}
+                    </button>
+                </form>
 
-<script src="{% static  'js/highchartsInit.js' %} " fetchurl = '{% url "get_data" %}'  token = '{{ csrf_token }}' type="text/javascript"></script>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+
+
+
+<div class="panel">
+    <form id="injection_form">
+        {% csrf_token %}
+        {{ injection_form }}
+
+        <div>
+            <button id = "injection_button">
+            Inject
+        </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<div id="rmse_display">
+</div>
+
+
+
+{#<script type="text/javascript">#}
+{#    document.getElementById("injection_form").addEventListener("submit", function(e){#}
+{#    e.preventDefault();#}
+{#    console.log("EYYYYYYYYYYYYYYYYYYYYYYY")#}
+{##}
+{#    name = document.getElementById("name").value;#}
+{#    email = document.getElementById("email").value#}
+{#    subject = document.getElementById("subject").value#}
+{##}
+{#  const formData = new FormData();#}
+{#  //console.log(name);#}
+{#  formData.append('name', name);#}
+{#  formData.append('email', email);#}
+{#  formData.append('subject', subject);#}
+{#  formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');#}
+{#  console.log(formData);#}
+{#  fetch('{% url "contact" %}', {#}
+{#    method: 'POST',#}
+{#    body: formData#}
+{#  })#}
+{#  .then(response => response.json())#}
+{#  .then(data => {#}
+{#    console.log('Success:', data);#}
+{#  })#}
+{#  .catch(error => {#}
+{#    console.error('Error:', error);#}
+{#  });#}
+{#</script>#}
+
+
+
+
+
+<script>function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+</script>
+
+<script src="{% static  'js/highchartsInit.js' %} " fetchurl='{% url "get_data" %}' token='{{ csrf_token }}'
+        type="text/javascript"></script>
+
+<script type="text/javascript">
+        let selectionButton = document.getElementById("injection_button")
+        selectionButton.prev
+        let injection_url = "{% url 'inject' %}"
+        selectionButton.addEventListener("click",e => {e.preventDefault()
+            inject("injection_form",csrftoken,injection_url)} )
+
+</script>
+
+
+
 </body>
 </html>

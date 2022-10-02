@@ -1,23 +1,21 @@
 import math
-
-import matplotlib.pyplot as plt
 from pandas import DataFrame
 import pandas as pd
 
 from Injection.Scenarios.scenario import Scenario
-from Injection.inject_single import inject_data_df
 from Injection.injected_data_part import InjectedDataContainer
 import Injection.injection_config as ic
+from Injection.injection_methods.injection import inject_data_df
 from Injection.label_generator import generate_df_labels
 from data_methods.data_class import DataContainer
 import numpy as np
 
 
-def create_InjectedDataContainer(file_name, data_type, *, a_type, cols=None):
+def create_injected_DataContainer(file_name, data_type, *, a_type, cols=None):
     """
     Parameters:
     file_name : str
-    data_type: test or train
+    data_type: str "test" or "train"
     Returns InjectedDataContainer containing the injected dataframe every thing is normalized
     -------
     """
@@ -74,7 +72,7 @@ def gen_a_size_data(df, a_type, cols):
     n_anomalies = math.ceil(df.shape[0] / 1000)
 
     injected_df = df.copy()
-    injected_df, col_range_mapper = inject_data_df(injected_df, a_type=a_type,
+    injected_df, col_range_mapper = inject_data_df(injected_df, a_type=a_type,cols=cols,
                                                    n_anomalies_or_percentage=n_anomalies, a_len=max_length)
 
     ret_val = []
@@ -123,13 +121,17 @@ def gen_ts_nbr_data(df, a_type, cols):
 
 def gen_a_factor_data(df, a_type, cols):
     a_factors = ic.scenario_specifications[ic.ANOMALY_FACTOR]["a_factors"]
-    injected_df = df.copy()
-    injected_df, col_range_mapper = inject_data_df(injected_df,cols=[0], a_type=a_type)
+    a_factors = sorted(a_factors)
     ret_val = []
+    minimal_factor = a_factors[0]
 
-    for f in a_factors:
-        injected_df, col_range_mapper = inject_data_df(injected_df, cols=[0], a_type=a_type , factor = f)
-        ret_val.append((f, injected_df,df ))
+    seed = np.random.randint(1000)
+
+    injected_df, col_range_mapper = inject_data_df(df.copy(), cols=cols, a_type=a_type, factor=minimal_factor,seed=seed)
+    ret_val.append((minimal_factor, injected_df, df))
+    for f in a_factors[1:]:
+        temp_df , _  = inject_data_df(df.copy(), cols=cols, a_type=a_type , factor = f ,seed=seed)
+        ret_val.append((f, temp_df ,df ))
     return ret_val
 
 def gen_cts_nbr_data(df, a_type, cols):
@@ -163,19 +165,21 @@ scen_generator_map = {
 
 def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max_n_cols=None , cols = None):
     assert scen_name in ic.SCENARIO_TYPES, f"scenario {scen_name} must be one of {ic.SCENARIO_TYPES}"
-    data_container: DataContainer = DataContainer(file_name, data_type)
-    np.random.seed(10)
     if max_n_rows is None:  max_n_rows = ic.MAX_N_ROWS
     if max_n_cols is None: max_n_cols = ic.MAX_N_COLS
 
-    data_frame = data_container.norm_data.iloc[:max_n_rows, :max_n_cols]
+    data_container: DataContainer = DataContainer(file_name, data_type , max_n_rows , max_n_cols)
+    np.random.seed(10)
 
-    cols_to_inject = [0]
+
+    data_frame = data_container.norm_data
+
+    cols_to_inject = cols if cols is not None else [0]
     scen_data = scen_generator_map[scen_name](data_frame,a_type,cols_to_inject)
-    scenario = Scenario(scen_name,file_name,a_type)
+    scenario = Scenario(scen_name,file_name,a_type , data_container= data_container )
 
     for (name,injected_df,data_df) in scen_data:
-        try:
+        #try:
             assert injected_df.index.equals(data_df.index), f"{injected_df.index},{data_df.index}"
             assert injected_df.shape == data_df.shape , f"{injected_df},{data_df}"
 
@@ -197,6 +201,6 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
                                          name=data_container.title,
                                          labels=label_df)
             scenario.add_part_scenario(injdected_container,name)
-        except Exception as e:
-            raise type(e)(str(e) + f'scen part: {name}')
+        #except Exception as e:
+            #raise type(e)(str(e) + f'scen part: {name}')
     return  scenario

@@ -45,9 +45,16 @@ def read_data(data_name, folder):
 
 
 class DataContainer():
-    def __init__(self, file_name, type="train"):
+    def __init__(self, file_name, type="train" , max_n_rows = None , max_n_cols = None):
         assert type in ["train", "test"]
         data_df = read_data(file_name,folder="data/"+type)
+
+        n,m = data_df.shape
+        if max_n_rows is None : max_n_rows = n
+        if max_n_cols is None : max_n_cols = m
+
+        data_df = data_df.iloc[:max_n_rows, :max_n_cols]
+
         self.original_data = data_df
         self.type = type
         self.title = file_name

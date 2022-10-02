@@ -14,12 +14,13 @@ import matplotlib.pyplot as plt
 
 
 class Scenario:
-    def __init__(self, scen_name , data , a_type):
+    def __init__(self, scen_name , data , a_type , data_container):
         assert a_type in ac.ANOMALY_TYPES
         self.a_type = a_type
         self.scen_name  = scen_name
         self.data_name = data.split(".")[0]
         self.part_scenarios = {}
+        self.data_container = data_container
 
     def add_part_scenario(self,data_part, part_key):
         self.part_scenarios[part_key] = data_part
