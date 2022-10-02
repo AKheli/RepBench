@@ -1,3 +1,4 @@
+import os
 from itertools import product
 
 import algorithms
@@ -16,6 +17,10 @@ a_type = "shift"
 total_results = {}
 estim_name = ac.SCREEN
 
+try:
+    os.mkdir("parameterization/parameterization_results")
+except:
+    pass
 
 for a_type,error_score,estim_name in list(product(a_types,error_scores,estim_names)):
     store_file_name = f"{estim_name}_{a_type}_{error_score}"
@@ -27,11 +32,11 @@ for a_type,error_score,estim_name in list(product(a_types,error_scores,estim_nam
             optimizer = EstimatorOptimizer(estimator, error_score)
             results = optimizer.param_map(train_container.repair_inputs,param_grid)
 
-            optimizer = BayesianOptimizer(estimator, error_score)
+            optimizer =  BayesianOptimizer(estimator, error_score)
             bayesian_opt_scores =   optimizer.find_optimal_params()
             total_results[file_name] = [{"bayesian_opt_scores":bayesian_opt_scores }]+results+[{"param_grid":{k:list(v) for k,v in param_grid.items()}}]
 
 
-    with open(f"parameterization_results/{store_file_name}.json", "w") as outfile:
+    with open(f"parameterization/parameterization_results/{store_file_name}.json", "w") as outfile:
         print(total_results)
         json.dump(total_results, outfile)
