@@ -11,7 +11,7 @@ ANOMALY_TYPES = (AMPLITUDE_SHIFT,
 
 BASE_FACTORS = {AMPLITUDE_SHIFT: 2,
                 DISTORTION: 2,
-                POINT_OUTLIER: 2}
+                POINT_OUTLIER: 3}
 
 DEFAULT_PERCENTAGE = 5
 DEFAULT_LENGTH = 30  # ignored by pointoutliers

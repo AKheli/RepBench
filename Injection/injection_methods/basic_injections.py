@@ -1,11 +1,10 @@
 import numpy as np
 from Injection.injection_config import *
 from Injection.injection_methods.index_computations import get_random_indices
-
 def inject_point_outlier(data, indexes, factor, directions=(1, -1)):
     data = np.array(data, dtype=np.float64)
     for index in indexes:
-        data[index] += np.random.choice(directions) * factor
+        data[index] += np.random.choice(directions) * np.random.normal(factor, scale=0.1)
 
     return data
 # def inject_growth_change(data, index_range, factor ,directions=[1, -1]):

@@ -35,33 +35,40 @@ def create_injected_DataContainer(file_name, data_type, *, a_type, cols=None):
                                  labels=label_df)
 
 
+from itertools import accumulate
 def gen_a_rate_data(df, a_type, cols):
     a_ratios = ic.scenario_specifications[ic.ANOMALY_RATE]["a_percentage"]
     max_perc = max(a_ratios)
-    descending_ratios = sorted(a_ratios)[::-1]
+    a_ratios = sorted(a_ratios)
     injected_df, col_range_mapper = inject_data_df(df, a_type=a_type, cols=cols, n_anomalies_or_percentage=max_perc)
+    n, _ = df.shape
+
     ret_val = []  # (name,injected,truth)
-    ret_val.append((max_perc, injected_df, df))
 
     ### remove until anomaly ratio is lover than threshold
     col_range_mapper_rand = {col: np.random.permutation(index_list)
                              for col, index_list in col_range_mapper.items()}
 
-    n, _ = df.shape
-    print("a_rate" , descending_ratios)
-    for ratio in descending_ratios[1:]:
-        temp_df = injected_df.copy()
-        for col in cols:
-            counter = 1
-            column_ranges = col_range_mapper_rand[col]
-            while n * ratio < sum([len(arr) for arr in column_ranges[counter:-1]]):
-                counter += 1
-            ranges_to_replace = column_ranges[:counter]
+    for col in cols:
+        column_ranges = col_range_mapper_rand[col]
+        list_ratios = [0.0] + list(accumulate(column_ranges, lambda b, a: b + len(a)/n, initial=0))
+        list_ratios = np.array(list_ratios)
+        last_index = 0.0
+        for ratio in a_ratios:
+            temp_df = df.copy()
+            idx = np.abs(list_ratios - ratio).argmin() # find closest ratio
+            print(idx)
+            if last_index == idx:
+                print("SKIIIIP")
+                continue
+            print("after" , idx)
+            last_index = idx
+            ranges_to_replace = column_ranges[:idx] #select all ranges under this ratio
             for range in ranges_to_replace:
-                temp_df.iloc[range, col] = df.iloc[range, col]
-        ret_val.append((ratio, temp_df, df))
+                temp_df.iloc[range, col] = injected_df.iloc[range, col]
+            ret_val.append((ratio, temp_df, df))
 
-    return ret_val[::-1]  # starting with the lowest ratio
+    return ret_val  # starting with the lowest ratio
 
 
 def gen_a_size_data(df, a_type, cols):

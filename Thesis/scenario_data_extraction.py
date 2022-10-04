@@ -2,15 +2,21 @@ import pandas
 import pandas as pd
 from matplotlib import pyplot as plt
 
+
+"""
+humidity distortion length 300, -1
+bafu 
+msd outliers a_rate 10,2500
+"""
 from Injection.Scenarios.scen_gen import build_scenario
 import numpy as np
-scen_name  ="a_size"
-file_name = "humidity"
-scenario  = build_scenario(scen_name, file_name, "test", "distortion", cols = [3])
+scen_name  ="a_rate"
+file_name = "elec"
+scenario  = build_scenario(scen_name, file_name, "test", "outlier", cols = [0])
 
 
 dfs = []
-start,stop = 300 , -1
+start,stop = 200 , 400
 for name, injected_container in scenario.name_container_iter:
     injected,truth = injected_container.injected.iloc[start:stop,:] , injected_container.truth.iloc[start:stop,:]
     anoms = np.invert(np.isclose(truth.values,injected.values))
@@ -29,10 +35,12 @@ for name, injected_container in scenario.name_container_iter:
     injected.iloc[np.invert(extended)] = np.nan
     plt.plot(truth.iloc[:, inj_cols])
     plt.plot(injected.iloc[:, inj_cols] , color="red")
+    data = injected.iloc[:, inj_cols].values.ravel()
+    plt.title( np.count_nonzero(~np.isnan(data))/len(data))
     plt.show()
     df = pd.DataFrame(np.array([truth.iloc[:, inj_cols].values.ravel(), injected.iloc[:, inj_cols].values.ravel()]).T, columns=[f"truth{name}",f"injected{name}"])
     dfs.append(df)
 
 df = pandas.concat(dfs,axis=1)
 df.index.name = 't'
-df.to_csv(f"{scen_name}.txt")
+df.to_csv(f"{scen_name}.txt",na_rep='nan')

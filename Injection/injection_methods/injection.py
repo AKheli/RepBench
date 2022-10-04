@@ -1,10 +1,13 @@
-from Injection.injection_config import ANOMALY_TYPES, BASE_FACTORS, BASE_ANOMALY_SETTINGS
+from Injection.injection_config import ANOMALY_TYPES, BASE_FACTORS, BASE_ANOMALY_SETTINGS , POINT_OUTLIER
 from Injection.injection_methods.basic_injections import add_anomalies
 
 
 def inject_data_df(data_df, *, a_type, cols=None, offset=10, factor=None
                    , n_anomalies_or_percentage=BASE_ANOMALY_SETTINGS["a_percentage"],
-                   a_len=BASE_ANOMALY_SETTINGS["a_length"], index_range_col_mapper=None,seed=None):
+                   a_len= BASE_ANOMALY_SETTINGS["a_length"], index_range_col_mapper=None,seed=None):
+
+    if a_type == POINT_OUTLIER:
+        a_len = 1
 
     assert a_type in ANOMALY_TYPES
     assert n_anomalies_or_percentage > 0
