@@ -3,17 +3,31 @@ import Injection.injection_config as ic
 
 ic.MAX_N_ROWS = 10000
 
-# input = "-scen all -data all  -rn del -anom all  -alg screen -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+import matplotlib
+matplotlib.use('TKAgg')
+
+input = "-scen all -data humidity,elec  -rn scen_test -anom all  -alg screen -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+ic.MAX_N_COLS = 10
+ic.label_seed = 20
+run.main(input)
+
+
+# input = "-scen a_factor  -data all   -rn f -anom all  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# ic.MAX_N_COLS = 10
+# ic.label_seed = 20
+# run.main(input)
+#
+#
+# input = "-scen ts_len,a_size  -data all   -rn f -anom all  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # ic.MAX_N_COLS = 10
 # ic.label_seed = 20
 # run.main(input)
 
 
-input = "-scen ts_len,a_factor,cts_nbr,ts_nbr  -data all   -rn a_rate -anom outlier,shift  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
-ic.MAX_N_COLS = 10
-ic.label_seed = 20
-run.main(input)
-
+# input = "-scen a_rate  -data all   -rn f -anom all  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+# ic.MAX_N_COLS = 10
+# ic.label_seed = 20
+# run.main(input)
 # input = "-scen all -data all  -rn imr_vs_rpca -anom all  -alg imr,rpca  -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # ic.MAX_N_COLS = 10
 # ic.label_seed = 50

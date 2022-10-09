@@ -61,8 +61,9 @@ def main(input = None):
         except Exception as e:
             print(f'Buidling {scen_name} on {data_name} with {anomaly_type} anomalies  failed')
             raise e
-        repairer = alg_runner.AnomalyRepairer(1, 10)
+        repairer = alg_runner.AnomalyRepairer(1, 1)
         for repair_type in algorithms:
+            print(f"running repair on {data_name} , {scen_name} with {repair_type}")
             for name, test_part in scenario.name_container_iter:
                 params = load_params_from_toml(repair_type)
                 repair_info = repairer.repair_data_part(repair_type, test_part,params)

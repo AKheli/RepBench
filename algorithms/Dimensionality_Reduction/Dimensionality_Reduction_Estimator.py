@@ -28,6 +28,7 @@ class DimensionalityReductionEstimator(Estimator):
         self.sub_set = False
         self.reduced_ = None
         self.windows = windows
+        self.additional_plotting_args = {}
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,

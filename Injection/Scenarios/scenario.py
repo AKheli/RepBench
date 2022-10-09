@@ -63,10 +63,14 @@ class Scenario:
                     col_nbr = col+1
                     a_ranges = get_anomaly_ranges(klass.iloc[:,col])
                     n_ranges = min(len(a_ranges),3)
-                    selected_ranges_i = np.random.choice(range(len(a_ranges)),size=n_ranges,replace=False)
-                    for a_index , range_index in enumerate(selected_ranges_i):
-                        range_ = a_ranges[range_index]
-                        start, end = max(0,min(range_)-20) , min(full_truth.shape[0],max(range_)+20)
+                    selected_ranges_i = list(np.random.choice(range(len(a_ranges)),size=n_ranges,replace=False))
+                    for a_index , range_index in enumerate(["full_range"] + selected_ranges_i):
+                        if a_index == 0:
+                            a_index = "fullrange"
+                            start , end = 0,full_truth.shape[0]-1
+                        else:
+                            range_ = a_ranges[range_index]
+                            start, end = max(0,min(range_)-20) , min(full_truth.shape[0]-1,max(range_)+20)
                         truth = full_truth.iloc[start:end,col]
                         truth , index = truth.values , truth.index.values
                         injected = full_injected.iloc[start:end,col].values
@@ -111,13 +115,17 @@ class Scenario:
     def save_params(self, path):
         os.makedirs(path, exist_ok=True)
         full_dict = {}
+        anomaly_percents= []
+        part: InjectedDataContainer
         for part_name, part in self.part_scenarios.items():
             full_dict[part_name] = {}
+            anomaly_percents.append(part.a_perc)
             for repair_name , repair_dict in part.repairs.items():
                 params = repair_dict["parameters"]
                 full_dict[part_name][repair_name] = params
 
         res_df = pd.DataFrame(full_dict).T.applymap(lambda d: ",".join([f"{k}:{v}" for k, v in d.items()]))
+        res_df.insert(0, "perc", anomaly_percents, True)
         res_df.to_csv(f'{path}/params.txt')
 
     def save_error(self,path):
@@ -132,8 +140,11 @@ class Scenario:
         except:
             pass
 
-        plt.clf()
-        plt.close()
+        try:
+            plt.clf()
+            plt.close()
+        except:
+            pass
 
         for metric , metric_df in self.score_dfs().items():
             error_path = f'{path}/{metric}'

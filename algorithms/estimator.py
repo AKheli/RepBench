@@ -51,25 +51,6 @@ class Estimator(ABC, BaseEstimator):
             except:
                 scores_["partial_rmse"] =  -1
                 scores_["original_partial_rmse"] = -1
-        from sklearn.feature_selection import mutual_info_regression as mi
-
-        # if score is None or score in ["partial_mutual_info","full_mutual_info"]:
-        #
-        #     try:
-        #         scores_["partial_mutual_info"] = -mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1),flatten_y[partial_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-        #         scores_["full_mutual_info"] = -mi(flatten_predicted[full_weights_flattened].reshape(-1, 1),flatten_y[full_weights_flattened],discrete_features=False,n_neighbors=20)[0]
-        #     except:
-        #         try:
-        #             scores_["partial_mutual_info"] = - \
-        #             mi(flatten_predicted[partial_weights_flattened].reshape(-1, 1), flatten_y[partial_weights_flattened],
-        #                discrete_features=False)[0]
-        #             scores_["full_mutual_info"] = - \
-        #             mi(flatten_predicted[full_weights_flattened].reshape(-1, 1), flatten_y[full_weights_flattened],
-        #                discrete_features=False)[0]
-        #         except:
-        #             pass
-        #         pass
-
         return scores_
 
     def mae_score(self, X, y , labels):
@@ -114,9 +95,6 @@ class Estimator(ABC, BaseEstimator):
     def laybeled_repair(self):
         raise NotImplementedError(self)
 
-    def runt_time_repair(self):
-        raise NotImplementedError(self)
-
     def get_params(self, deep= False):
         return  self.get_fitted_params()
 
@@ -130,14 +108,17 @@ class Estimator(ABC, BaseEstimator):
 
     @property
     def alg_type(self):
-        "e.g for colors in plot"
+        "e.g. for colors in plot"
         raise NotImplementedError(self)
 
     def algo_name(self):
         raise NotImplementedError(self)
 
 
+
     def addiotnal_plotting_args(self) -> dict:
+        # col_index :  kwargs for plt.plot()
         return {}
+
 
 

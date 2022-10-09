@@ -20,17 +20,17 @@
     repair_iter = 10
 
 [imr]
-     p = 1
+     p = 3
      tau = 0.001
+     n_max_itr=100000
 
-[screen] # use percentile approach when smin and smax are not set
+[screen] # use confidence intervall approach when smin and smax are not set
      t = 1
 
 
 [screenglobal] # use percentile approach when smin and smax are not set
      t = 1
 
-[ar]
 
 
 # cd , rpca params :

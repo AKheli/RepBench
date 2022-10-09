@@ -67,6 +67,10 @@ class InjectedDataContainer:
                 "columns_to_repair": self.injected_columns.copy(),
                 }#"score_indices" : self.get_weights()}
 
+    @property
+    def a_perc(self):
+        return np.mean(self.klass.iloc[:,self.injected_columns].values)
+
     def add_repair(self, repair_results, repair_type, repair_name = None):
         self.check()
         repair_name = repair_type if repair_name is None else repair_name
@@ -106,7 +110,7 @@ class InjectedDataContainer:
         m.update(self.labels.values.flatten())
         m.update(additional_input.encode())
         result = m.hexdigest()
-        return result #str(hashlib.md5((str(self.truth)+str(self.injected)+str(self.labels)+str(additional_input)).encode()).hexdigest())
+        return result
 
 
     @property
@@ -116,10 +120,8 @@ class InjectedDataContainer:
 
 
     def randomize_labels(self):
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         self.check()
         self.relabeled +=1
         self._labels_ = generate_df_labels(self.class_, seed=self.relabeled)
         self.check()
 
-    

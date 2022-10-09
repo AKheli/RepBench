@@ -9,13 +9,13 @@ import numpy as np
 
 class SCREENEstimator(Estimator):
 
-
-    def __init__(self, t:int=3, smax: float = None, smin :float =None, method : str ="local", **kwargs):
+    def __init__(self, t:int=3, smax: float = None, smin :float =None, method : str ="local", ci=(2.5, 97.5) ,**kwargs):
         self.infer_s_ = smax is None and smin is None
         self.smin = smin
         self.smax = smax
         self.t = t
         self.method = method
+        self.ci = ci
 
     def get_fitted_params(self, **args):
         return {"t": self.t
@@ -33,7 +33,7 @@ class SCREENEstimator(Estimator):
         for col in [c for c in columns_to_repair if c < injected.shape[1]]:
             x = np.array(injected.iloc[:, col])
 
-            perc = np.percentile(sorted(np.diff(x)), [2.5, 97.5])
+            perc = np.percentile(sorted(np.diff(x)), self.ci)
             if self.infer_s_:
                 smax = perc[1]
                 smin = perc[0]

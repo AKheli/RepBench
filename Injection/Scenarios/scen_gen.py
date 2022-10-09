@@ -40,7 +40,7 @@ def gen_a_rate_data(df, a_type, cols):
     a_ratios = ic.scenario_specifications[ic.ANOMALY_RATE]["a_percentage"]
     max_perc = max(a_ratios)
     a_ratios = sorted(a_ratios)
-    injected_df, col_range_mapper = inject_data_df(df, a_type=a_type, cols=cols, n_anomalies_or_percentage=max_perc)
+    injected_df, col_range_mapper = inject_data_df(df, a_type=a_type, cols=cols, a_percent=max_perc)
     n, _ = df.shape
 
     ret_val = []  # (name,injected,truth)
@@ -57,30 +57,27 @@ def gen_a_rate_data(df, a_type, cols):
         for ratio in a_ratios:
             temp_df = df.copy()
             idx = np.abs(list_ratios - ratio).argmin() # find closest ratio
-            print(idx)
             if last_index == idx:
-                print("SKIIIIP")
                 continue
-            print("after" , idx)
             last_index = idx
             ranges_to_replace = column_ranges[:idx] #select all ranges under this ratio
             for range in ranges_to_replace:
                 temp_df.iloc[range, col] = injected_df.iloc[range, col]
-            ret_val.append((ratio, temp_df, df))
+            ret_val.append((ratio*100, temp_df, df))#store in percent
 
     return ret_val  # starting with the lowest ratio
 
 
 def gen_a_size_data(df, a_type, cols):
     assert a_type != "outlier"
-    a_lengths = ic.scenario_specifications[ic.ANOMALY_SIZE]["a_length"]
+    a_lengths = ic.scenario_specifications["a_lengths"]
     max_length = max(a_lengths)
 
     n_anomalies = math.ceil(df.shape[0] / 1000)
 
     injected_df = df.copy()
     injected_df, col_range_mapper = inject_data_df(injected_df, a_type=a_type,cols=cols,
-                                                   n_anomalies_or_percentage=n_anomalies, a_len=max_length)
+                                                   n_anomalies=n_anomalies, a_len=max_length)
 
     ret_val = []
     for a_length in a_lengths[:-1]:
@@ -98,7 +95,7 @@ def gen_a_size_data(df, a_type, cols):
 
 
 def gen_ts_len_data(df, a_type, cols):
-    ts_lengths_ratios = ic.scenario_specifications[ic.TS_LENGTH]["length_ratio"]
+    ts_lengths_ratios = ic.scenario_specifications["length_ratios"]
     min_ratio = min(ts_lengths_ratios)
     n,m = df.shape
     offset = int((n-min_ratio*n)/2)
@@ -116,7 +113,7 @@ def gen_ts_len_data(df, a_type, cols):
 
 
 def gen_ts_nbr_data(df, a_type, cols):
-    n_ts = ic.scenario_specifications[ic.TS_NBR]["ts_nbr"]
+    n_ts = ic.scenario_specifications["ts_nbrs"]
     injected_df = df.copy()
     injected_df, col_range_mapper = inject_data_df(injected_df,cols=[0], a_type=a_type)
     ret_val = []
@@ -127,7 +124,7 @@ def gen_ts_nbr_data(df, a_type, cols):
     return ret_val
 
 def gen_a_factor_data(df, a_type, cols):
-    a_factors = ic.scenario_specifications[ic.ANOMALY_FACTOR]["a_factors"]
+    a_factors = ic.scenario_specifications["a_factors"]
     a_factors = sorted(a_factors)
     ret_val = []
     minimal_factor = a_factors[0]
@@ -142,7 +139,7 @@ def gen_a_factor_data(df, a_type, cols):
     return ret_val
 
 def gen_cts_nbr_data(df, a_type, cols):
-    n_cts = ic.scenario_specifications[ic.CTS_NBR]["cts_nbr"]
+    n_cts = ic.scenario_specifications["cts_nbrs"]
     n,m = df.shape
     full_injected_df = df.copy()
     full_injected_df, col_range_mapper = inject_data_df(full_injected_df,cols=list(range(m)), a_type=a_type)

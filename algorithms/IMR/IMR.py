@@ -2,67 +2,72 @@ import numpy as np
 from numpy.linalg import LinAlgError
 
 
-def imr(x, y_k, labels, tau=0.1, p=1, k=2000):
-    z = np.array(y_k,dtype=np.single) - np.array(x,dtype=np.single)
-    yvec = z[p:]
+def imr(x, y_0, labels, tau=0.1, p=1, k=20000):
+    if len(labels) == len(x):
+        labels = np.arange(len(labels))[labels]
+    y_k = x.copy()
+    y_k[labels] = y_0[labels]
 
-    mod_length = len(x) - p
-
-    xMat = np.zeros((mod_length, p),dtype=np.single)
-
-    shifted_non_labelled = np.ones(len(x)-p,dtype=bool)
-    shifted_non_labelled[ (labels-p)[(labels-p) >= 0]] = False  #  if i + p not in labels:
+    n = len(x)
     iterations = 0
+    for iter_counter in range(k):
+        y_k_x_diff = y_k - x
+        V_k = y_k_x_diff[p:]
+        Z_k = np.zeros((n - p, p))
+        for i in range(0, p):
+            Z_k[:, i] = y_k_x_diff[i:n - p + i]
 
-    mod_range = np.arange(mod_length)
+        phi = np.linalg.inv(Z_k.T.dot(Z_k)).dot(Z_k.T).dot(V_k)
 
-    for i in range(len(x) - p):
-        for j in range(p):
-            xMat[i, j] = z[p + i - j - 1]
+        ## candidate generation
+        y_hat = Z_k.dot(phi)+x[p:] ## predicted values (shifted)
+        candidates = y_hat-y_k[p:]
 
-    for i in range(k):
-        try:
-            phi =  np.linalg.inv(xMat.T.dot(xMat)).dot(xMat.T.dot(yvec))
-        except:
-            phi =  np.zeros(len(xMat[0, :]))
-
-        y_hat = xMat.dot(phi)
-
-        elements = mod_range[(np.abs(y_hat - yvec) >= tau) * shifted_non_labelled]
-        try:
-            index = elements[np.argmin(np.abs( y_hat[elements] )) ]
-        except ValueError as e:
-            #print(f'terminated after {i} iterations')
+        candidates[ np.logical_or(np.abs(candidates)<tau , candidates == 0) ] = np.inf # bigger than tau
+        candidates[labels-p] = np.inf # not considering labeled
+        if not any(candidates != np.inf):
+            print("imr iteration stopped at" ,iter_counter)
             break
-        val = y_hat[index]
-        yvec[index] = val
 
-        iterations = i
-        for j in range(p):
-            if index + 1 + j >= mod_length:
-                break
-            if index + 1 + j < 0:
-                continue
-            xMat[index + 1 + j, j] = val
+        ## select smallest index
+        index = np.argmin(candidates)
+        repair_value = y_hat[index]
+        y_k[index+p] = repair_value # +p to get the original index
 
-    modify = x.copy()
-    modify[labels] = y_k[labels]
-    for i in range(len(modify)):
-        if i not in labels:
-            modify[i] = x[i] + yvec[i - p]
+    return { "repair" : y_k , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
 
-    return { "repair" : modify , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
+def imr2(x, y_0, labels, tau=0.1, p=1, k=20000):
+    if len(labels) == len(x):
+        labels = np.arange(len(labels))[labels]
+    y_k = x.copy()
+    y_k[labels] = y_0[labels]
 
-# labels = [0, 1, 2, 5,8,11,22] #in the paper add +1
-# x = np.array([6, 10, 9.6, 8.3, 7.7, 5.4, 5.6, 5.9,  6.3, 6.8, 7.5, 8.5,6, 10, 9.6, 8.3, 7.7, 5.4, 5.6, 5.9,  6.3, 6.8, 7.5, 8.5])
-# y_k = np.array([6, 5.6, 5.4, 8.3, 7.7, 5.4, 5.6, 5.9, 6.3, 6.8, 7.5, 8.5,6, 10, 9.6, 8.3, 7.7, 5.4, 5.6, 5.9,  6.3, 6.8, 7.5, 8.5])
-# y= y_k.copy()
-#
-# result = imr2(x,y_k,labels=np.array(labels))["repair"]
-# print(result)
+    n = len(x)
+    iterations = 0
+    for iter_counter in range(k):
+        y_k_x_diff = y_k - x
+        V_k = y_k_x_diff[p:]
+        Z_k = np.zeros((n - p, p))
+        for i in range(0, p):
+            Z_k[:, i] = y_k_x_diff[i:n - p + i]
 
-# plt.plot(x,label = "dirty")
-# plt.plot(result,label = "rep")
-# plt.plot(y,label = "y")
-# plt.legend()
-# plt.show()
+        non_zero_vk = ~np.all(Z_k == 0, axis=1)
+        Z_k_cutted , V_k_cutted = Z_k[non_zero_vk,:] , V_k[non_zero_vk]
+        phi = np.linalg.inv(Z_k_cutted.T.dot(Z_k_cutted)).dot(Z_k_cutted.T).dot(V_k_cutted)
+        ## candidate generation
+        y_hat = Z_k.dot(phi)+x[p:] ## predicted values (shifted)
+        candidates = y_hat-y_k[p:]
+
+        candidates[ np.logical_or(np.abs(candidates)<tau , candidates == 0) ] = np.inf # bigger than tau
+        candidates[labels-p] = np.inf # not considering labeled
+        if not any(candidates != np.inf):
+            print("imr iteration stopped at" ,iter_counter)
+            break
+
+        ## select smallest index
+        index = np.argmin(candidates)
+        repair_value = y_hat[index]
+        y_k[index+p] = repair_value # +p to get the original index
+
+    return { "repair" : y_k , "iterations"  : iterations , "max_iterations" :k , "tau" : tau , "p" : p , "labels" : labels}
+

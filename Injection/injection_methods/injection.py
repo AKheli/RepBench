@@ -1,38 +1,35 @@
-from Injection.injection_config import ANOMALY_TYPES, BASE_FACTORS, BASE_ANOMALY_SETTINGS , POINT_OUTLIER
+import math
+
+from Injection.injection_config import ANOMALY_TYPES, BASE_FACTORS, POINT_OUTLIER, BASE_PERCENTAGES, DEFAULT_LENGTH
 from Injection.injection_methods.basic_injections import add_anomalies
 
 
-def inject_data_df(data_df, *, a_type, cols=None, offset=10, factor=None
-                   , n_anomalies_or_percentage=BASE_ANOMALY_SETTINGS["a_percentage"],
-                   a_len= BASE_ANOMALY_SETTINGS["a_length"], index_range_col_mapper=None,seed=None):
-
-    if a_type == POINT_OUTLIER:
-        a_len = 1
-
-    assert a_type in ANOMALY_TYPES
-    assert n_anomalies_or_percentage > 0
+def inject_data_df(data_df, *, a_type, cols=None, offset=10,
+                   factor=None, a_percent=None, n_anomalies=None,
+                   a_len=None, index_range_col_mapper=None, seed=None):
+    ##load default setting from config file
     if factor is None:
         factor = BASE_FACTORS[a_type]
-
-    if 1 > n_anomalies_or_percentage:
-        n_anomalies = int(n_anomalies_or_percentage * data_df.shape[0] / a_len) + 1
-    else:
-        n_anomalies = n_anomalies_or_percentage
+    if a_percent is None:
+        a_percent = BASE_PERCENTAGES[a_type]
+    if a_len is None:
+        a_len = 1 if a_type == POINT_OUTLIER else DEFAULT_LENGTH
+    if n_anomalies is None:
+        assert a_percent > 0
+        n_anomalies = math.floor(a_percent / 100 * data_df.shape[0] / a_len) + 1
 
     assert n_anomalies - int(n_anomalies) == 0
 
     columns_to_inject = [0] if cols is None else cols
-
     injected_df = data_df.copy()
     col_ranges_mapper = {}
-
     for col in columns_to_inject:
         injected_df.iloc[:, col], index_ranges = add_anomalies(injected_df.iloc[:, col], a_type, offset=offset,
                                                                a_factor=factor,
                                                                n_anomalies=n_anomalies, a_len=a_len,
                                                                index_ranges=None if
                                                                index_range_col_mapper is None else
-                                                               index_range_col_mapper[col] ,seed=seed)
+                                                               index_range_col_mapper[col], seed=seed)
         col_ranges_mapper[col] = index_ranges
 
     assert injected_df.shape == data_df.shape
