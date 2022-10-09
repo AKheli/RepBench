@@ -36,7 +36,7 @@ MAX_N_COLS = 10
 scenario_specifications = {
     "length_ratios": [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], #ts_len scenario
     "a_lengths" : [5, 10, 20, 40, 60, 80, 100, 200], # a_len scenario
-    "a_percentages ": [0.0025, 0.005, 0.01, 0.02, 0.05, 0.10, 0.15, 0.2], #a_rate scenario
+    "a_percentages": [0.0025, 0.005, 0.01, 0.02, 0.05, 0.10, 0.15, 0.2], #a_rate scenario
     "ts_nbrs": [3, 4, 5, 6, 7, 8, 9, 10], # TS number scenario
     "cts_nbrs": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], # cts_nbr scenario
     "a_factors": [0.5, 1, 2, 3, 4, 5, 10, 20], # a_factor scenario

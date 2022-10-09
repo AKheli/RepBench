@@ -9,7 +9,7 @@ import numpy as np
 
 class SCREENEstimator(Estimator):
 
-    def __init__(self, t:int=3, smax: float = None, smin :float =None, method : str ="local", ci=(2.5, 97.5) ,**kwargs):
+    def __init__(self, t:int=3, smax: float = None, smin :float =None, method : str ="local", ci=(5, 90) ,**kwargs):
         self.infer_s_ = smax is None and smin is None
         self.smin = smin
         self.smax = smax

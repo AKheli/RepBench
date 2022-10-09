@@ -37,7 +37,7 @@ def create_injected_DataContainer(file_name, data_type, *, a_type, cols=None):
 
 from itertools import accumulate
 def gen_a_rate_data(df, a_type, cols):
-    a_ratios = ic.scenario_specifications[ic.ANOMALY_RATE]["a_percentage"]
+    a_ratios = ic.scenario_specifications["a_percentages"]
     max_perc = max(a_ratios)
     a_ratios = sorted(a_ratios)
     injected_df, col_range_mapper = inject_data_df(df, a_type=a_type, cols=cols, a_percent=max_perc)
