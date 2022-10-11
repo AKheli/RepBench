@@ -10,7 +10,7 @@ SCREEN_GLOBAL = "screen_global"
 SCREEN_l = "screen_5_95"
 SCREEN_l2 = "screen_10_90"
 
-ALGORITHM_TYPES = [IMR,SCREEN,RPCA,CDREC,SCREEN_l,SCREEN_l2]#,SCREEN_GLOBAL]
+ALGORITHM_TYPES = [IMR,SCREEN,RPCA,CDREC]#,SCREEN_l,SCREEN_l2]#,SCREEN_GLOBAL]
 
 #black is used for the truth, and red for anomalies
 ALGORITHM_COLORS = {IMR : "blue" , SCREEN : "purple" , RPCA : "green" , CDREC : "orange",}

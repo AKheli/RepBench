@@ -98,6 +98,15 @@ class Scenario:
                         plt.close('all')
 
 
+    @property
+    def common_truth(self):
+        if self.get_amount_of_part_scenarios() == 1:
+            return True
+        first_scen : InjectedDataContainer
+        first_scen , *following_scen =  self.part_scenarios.values()
+        return all([first_scen.truth.equals(other.truth) for other in following_scen])
+
+
     def score_dfs(self):
         used_scores = []
         full_dict = {}
@@ -127,6 +136,27 @@ class Scenario:
         res_df = pd.DataFrame(full_dict).T.applymap(lambda d: ",".join([f"{k}:{v}" for k, v in d.items()]))
         res_df.insert(0, "perc", anomaly_percents, True)
         res_df.to_csv(f'{path}/params.txt')
+
+
+        ### correlation save
+        with open(f'{path}/corr.txt', 'w') as f:
+           if self.common_truth:
+               first, *_ = self.part_scenarios.values()
+               first : InjectedDataContainer
+               first.get_truth_correlation().to_csv(f)
+               for part_name, part_scen in self.part_scenarios.items():
+                   f.write(str(part_name) + "\n")
+                   part_scen.get_injected_correlation().to_csv(f)
+                   f.write("\n")
+
+           else:
+               part_scen: InjectedDataContainer
+               for part_name , part_scen in  self.part_scenarios.items():
+                   f.write(str(part_name)+"\n")
+                   part_scen.get_truth_correlation().to_csv(f)
+                   f.write(str(part_name)+"Injected:\n")
+                   part_scen.get_injected_correlation().to_csv(f)
+                   f.write("\n")
 
     def save_error(self,path):
         from itertools import cycle

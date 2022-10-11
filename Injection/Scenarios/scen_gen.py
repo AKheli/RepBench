@@ -37,9 +37,9 @@ def create_injected_DataContainer(file_name, data_type, *, a_type, cols=None):
 
 from itertools import accumulate
 def gen_a_rate_data(df, a_type, cols):
-    a_ratios = ic.scenario_specifications["a_percentages"]
-    max_perc = max(a_ratios)
-    a_ratios = sorted(a_ratios)
+    a_percentages = ic.scenario_specifications["a_percentages"]
+    max_perc = max(a_percentages)
+    a_percentages = sorted(a_percentages)
     injected_df, col_range_mapper = inject_data_df(df, a_type=a_type, cols=cols, a_percent=max_perc)
     n, _ = df.shape
 
@@ -51,19 +51,23 @@ def gen_a_rate_data(df, a_type, cols):
 
     for col in cols:
         column_ranges = col_range_mapper_rand[col]
-        list_ratios = [0.0] + list(accumulate(column_ranges, lambda b, a: b + len(a)/n, initial=0))
+        print(column_ranges)
+        list_ratios =  list(accumulate(column_ranges, lambda b, a: b + len(a)/n*100, initial=0))
+        print(list_ratios)
         list_ratios = np.array(list_ratios)
         last_index = 0.0
-        for ratio in a_ratios:
+        for p in a_percentages:
+            print("P",p)
             temp_df = df.copy()
-            idx = np.abs(list_ratios - ratio).argmin() # find closest ratio
+            idx = np.abs(list_ratios - p).argmin() #find closest ratio
             if last_index == idx:
                 continue
             last_index = idx
+            print(idx)
             ranges_to_replace = column_ranges[:idx] #select all ranges under this ratio
             for range in ranges_to_replace:
                 temp_df.iloc[range, col] = injected_df.iloc[range, col]
-            ret_val.append((ratio*100, temp_df, df))#store in percent
+            ret_val.append((p, temp_df, df))#store in percent
 
     return ret_val  # starting with the lowest ratio
 

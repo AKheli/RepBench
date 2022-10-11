@@ -118,6 +118,11 @@ class InjectedDataContainer:
         from algorithms.estimator import Estimator
         return Estimator().scores(self.injected,self.truth,self.injected_columns,self.labels,predicted=self.injected)
 
+    def get_truth_correlation(self):
+        return self.truth.corr()
+
+    def get_injected_correlation(self):
+        return self.injected.corr()
 
     def randomize_labels(self):
         self.check()
