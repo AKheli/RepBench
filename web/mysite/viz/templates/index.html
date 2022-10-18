@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+<link rel="stylesheet" href="{% static 'form.css' %}">
 
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 
@@ -39,107 +40,67 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
-
 <div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
+<!-- Injection and repair -->
+<div id="repair">
 
-<!-- Table data -->
-<h2 class="pt-4">Section Details</h2>
-<p class="text-danger">This table will be upated by Django objects, hence leaving it as it is.</p>
-<div class="table-responsive">
-</div>
-</main>
-</div>
-</div>
-
-
-You can use the following markup to achieve that.
-
-
-<div id="group">
-    <div class="container">
-        <div class="btn-group mx-auto">
-            {% for key, form in forms.items %}
-                <button class="btn" type="button" data-parent="#group" data-toggle="collapse" data-target="#{{ key }}"
-                        aria-expanded="false">
-                    {{ key }}
+     <div class="column">
+        <form id="injection_form" class="form-vertical">
+            <div class="colw flex-column-l">
+                {% csrf_token %}
+                {{ injection_form }}
+                <button id="injection_button">
+                    Inject
                 </button>
-            {% endfor %}
-        </div>
+            </div>
+        </form>
     </div>
-    {% for key, form in forms.items %}
-        <div class="panel">
-            <div class="collapse" id="{{ key }}">
-                <form id="{{ key }}">
-                    {% csrf_token %}
-                    {{ form }}
-                    <button>
-                        Apply {{ key }}
-                    </button>
-                </form>
 
+    <div class="column">
+        <div class="dropdown d-flex p-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                Dropdown button
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% for key, _ in forms.items %}
+                    <a onclick="displayfunc('{{ key }}')" class="dropdown-item">{{ key }}</a>
+                {% endfor %}
             </div>
         </div>
-    {% endfor %}
 
+        {% for key, form in forms.items %}
+            <form class="myform" style="display:none;" id={{ key }}>
+                {{ form }}
+                <button class="repair-button" type="button" onclick="repair('{{ key }}')">repair</button>
+            </form>
+        {% endfor %}
+    </div>
+
+
+
+    <div id="rmse_display">
+    </div>
 </div>
 
 
-
-<div class="panel">
-    <form id="injection_form">
-        {% csrf_token %}
-        {{ injection_form }}
-
-        <div>
-            <button id = "injection_button">
-            Inject
-        </button>
-
-        </div>
-
-    </form>
-
-</div>
-
-
-<div id="rmse_display">
-</div>
-
-
-
-{#<script type="text/javascript">#}
-{#    document.getElementById("injection_form").addEventListener("submit", function(e){#}
-{#    e.preventDefault();#}
-{#    console.log("EYYYYYYYYYYYYYYYYYYYYYYY")#}
-{##}
-{#    name = document.getElementById("name").value;#}
-{#    email = document.getElementById("email").value#}
-{#    subject = document.getElementById("subject").value#}
-{##}
-{#  const formData = new FormData();#}
-{#  //console.log(name);#}
-{#  formData.append('name', name);#}
-{#  formData.append('email', email);#}
-{#  formData.append('subject', subject);#}
-{#  formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');#}
-{#  console.log(formData);#}
-{#  fetch('{% url "contact" %}', {#}
-{#    method: 'POST',#}
-{#    body: formData#}
-{#  })#}
-{#  .then(response => response.json())#}
-{#  .then(data => {#}
-{#    console.log('Success:', data);#}
-{#  })#}
-{#  .catch(error => {#}
-{#    console.error('Error:', error);#}
-{#  });#}
-{#</script>#}
-
-
-
-
+<script>
+    let lastkey = null
+    let displayfunc = function (key) {
+        var x = document.getElementById(key);
+        if (key !== lastkey && lastkey != null) {
+            document.getElementById(lastkey).style.display = "none";
+        }
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+        lastkey = key
+    }
+</script>
 
 <script>function getCookie(name) {
     let cookieValue = null;
@@ -156,6 +117,7 @@ You can use the following markup to achieve that.
     }
     return cookieValue;
 }
+
 const csrftoken = getCookie('csrftoken');
 </script>
 
@@ -163,14 +125,21 @@ const csrftoken = getCookie('csrftoken');
         type="text/javascript"></script>
 
 <script type="text/javascript">
-        let selectionButton = document.getElementById("injection_button")
-        selectionButton.prev
-        let injection_url = "{% url 'inject' %}"
-        selectionButton.addEventListener("click",e => {e.preventDefault()
-            inject("injection_form",csrftoken,injection_url)} )
+    let selectionButton = document.getElementById("injection_button")
+    let injection_url = "{% url 'inject' %}"
+    selectionButton.addEventListener("click", e => {
+        console.log("AAAAAAAAAAAAAA")
+        e.preventDefault()
+        inject("injection_form", csrftoken, injection_url)
+    })
+
+    let repair_url = "{% url 'repair' %}"
+
+    let repair =  function(form_id){
+        repairCurrentData(form_id,csrftoken,repair_url)
+    }
 
 </script>
-
 
 
 </body>

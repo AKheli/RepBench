@@ -104,24 +104,57 @@ fetch(fetch_url, {
 //         ))
 // })
 
-
-let create_form = function(form_id,token){
+let createFormData = function(form_id,token){
     let form = document.getElementById(form_id)
-    const formDatatest = new FormData(form);
-    formDatatest.append('csrfmiddlewaretoken', token);
-    return formDatatest
+    const formData = new FormData(form)
+    formData.append('csrfmiddlewaretoken', token)
+    formData.append('injected_series', chart.g)
+    console.log("FORMDATA")
+    console.log(formData)
+    return formData
+}
+
+
+
+
+
+
+
+let injectedSeries = {}
+
+let createRepairRequestFormData = function(form_id,token){
+    console.log(injectedSeries)
+    repairformData = createFormData(form_id,token)
+    repairformData.append("injected_series" , JSON.stringify(injectedSeries))
+    return repairformData
 }
 
 
 let inject  = (form_id, token , fetch_url) =>  fetch(fetch_url, {
         method: 'POST',
-        body: create_form(form_id,token),
+        body: createFormData(form_id,token),
     }).then(response =>  response.json()).then(responseJson => {
     //delete old series
     let s = responseJson.series
     let rmse = responseJson.rmse
-    console.log(s)
-    if(chart.get(s["id"])) chart.get(s["id"]).remove();
+    if(chart.get(s["id"])){
+        chart.get(s["id"]).remove();
+    }
+    injectedSeries[s["id"]] = s
     chart.addSeries(s)
     document.getElementById("rmse_display").innerHTML = "RMSE :" + responseJson.rmse ;
     })
+
+
+
+let repairCurrentData = (form_id, token , fetch_url) =>  fetch(fetch_url, {
+        method: 'POST',
+        body: createRepairRequestFormData(form_id,token),
+    }).then(response =>  response.json()).then(responseJson => {
+        console.log(responseJson)
+        for(key in responseJson){
+            chart.addSeries(responseJson[key])
+        }
+        document.getElementById("rmse_display").innerHTML = "RMSE :" + responseJson.rmse ;
+    })
+

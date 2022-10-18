@@ -1,0 +1,32 @@
+
+#injection_form {
+   display:inline-table;
+    font-size:20px;
+    padding:4px 2px;
+    border:solid 10px black;
+    width:200px;
+    margin:2px 0 20px 10px;
+}
+
+#alg_form {
+  background-color: lightcoral;
+    width:2000px;
+    margin:2px 0 20px 10px;
+}
+
+
+.myform {
+     background-color: lightgray;
+/*    width:max-content;*/
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+
+#repair{
+    display:flex;
+}
+.column{
+    width:max-content;
+}

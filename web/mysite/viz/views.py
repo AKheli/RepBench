@@ -6,9 +6,11 @@ from pandas import DataFrame
 from algorithms import algo_mapper
 from web.mysite.viz.forms.injection_form import ParamForm, InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
+import json
+from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_series
 
 data_set = "bafu5k"  # request.POST.get("dataset","bafu5k")
-df: DataFrame = pd.read_csv(f"../../data/train/{data_set}.csv")
+df: DataFrame = pd.read_csv(f"data/train/{data_set}.csv")
 
 
 def get_data(request):
@@ -22,26 +24,26 @@ def param_forms(df):
     param_forms = {}
     alg_input_map = {alg_name: alg().suggest_param_range(df) for alg_name, alg in algo_mapper.items()}
     for alg, param_range in alg_input_map.items():
-        param_forms[alg] = ParamForm(**param_range)
+        form = ParamForm(alg,**param_range)
+        param_forms[alg] = form
     return param_forms
 
 
 def index(request):
     if request.POST.get("type", None) == "injection":
-        print("JSSSSOOOON RESPONSE")
         df: DataFrame = pd.read_csv("../../data/train/bafu5k.csv")
         data = {'series': [{"name": col_name, "data": list(df[col_name])} for col_name in df.columns]}
         return JsonResponse(data)
 
     elif request.POST.get("type", None) == "load_data_set":
-        df: DataFrame = pd.read_csv("../../data/train/bafu5k.csv")
+        df: DataFrame = pd.read_csv("/data/train/bafu5k.csv")
         data = {
-            'series': [{"visible": i < 5, "id": str(i), "name": col_name, "data": list(df[col_name])} for (i, col_name)
+            'series': [{"zIndex":3,"visible": i < 5, "id": str(i), "name": col_name, "data": list(df[col_name])} for (i, col_name)
                        in enumerate(df.columns)]}
         return JsonResponse(data)
     else:
 
-        df: DataFrame = pd.read_csv("../../data/train/bafu5k.csv")
+        df: DataFrame = pd.read_csv("data/train/bafu5k.csv")
         context = {"table_data": [],
                    'series': [{"name": col_name, "data": list(df[col_name])} for col_name in df.columns]}
 
@@ -51,7 +53,7 @@ def index(request):
 
 
 def inject(request):
-    df: DataFrame = pd.read_csv("../../data/train/bafu5k.csv")
+    df: DataFrame = pd.read_csv("data/train/bafu5k.csv")
     post = request.POST
     col_name = post.get("data_columns")
     col = df[col_name]
@@ -64,7 +66,7 @@ def inject(request):
                                     a_factor=factor,
                                     a_len=30,
                                     n_anomalies=n_anomalies,
-                                    fill_na=True)
+                                    fill_na=True , seed =20)
 
     injected_series = {
         'series': {"linkedTo": col_name,
@@ -79,3 +81,25 @@ def inject(request):
     print(injected_series)
 
     return JsonResponse(injected_series)
+
+
+
+
+def parse_param_input(p:str):
+    if p.isdigit():
+        return int(p)
+    try:
+        return float(p)
+    except:
+        return p
+
+def repair(request):
+    post = request.POST.dict()
+    token = post.pop('csrfmiddlewaretoken')
+    injected_series = json.loads(post.pop("injected_series"))
+    print(post)
+    params =  { k:parse_param_input(v) for k,v in post.items()}
+    print(params)
+    df: DataFrame = pd.read_csv("data/train/bafu5k.csv")
+    output = repair_from_None_series(params,df, *injected_series.values())
+    return JsonResponse(output)
