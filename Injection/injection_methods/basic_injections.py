@@ -54,7 +54,7 @@ def add_anomalies(original_column,a_type,*, n_anomalies, a_factor, a_len, offset
         index_ranges =  [ arr + offset for arr in index_ranges]
 
     for index_range in index_ranges:
-        data_column[index_range] = injection_mapper[a_type](data_column, index_range,factor = a_factor)[index_range]
+                data_column[index_range] = injection_mapper[a_type](data_column, index_range,factor = a_factor)[index_range]
 
     if fill_na:
         anoms = np.invert(np.isclose(data_column,original_column))

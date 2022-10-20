@@ -1,11 +1,15 @@
 
 #injection_form {
    display:inline-table;
-    font-size:20px;
-    padding:4px 2px;
-    border:solid 10px black;
+   font-size:20px;
+   padding:4px 2px;
+   /* border:solid 10px black;*/
     width:200px;
-    margin:2px 0 20px 10px;
+    margin:55px 20px 200px 10px;
+     background-color: lightgray;
+/*    width:max-content;*/
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #alg_form {
@@ -30,3 +34,15 @@
 .column{
     width:max-content;
 }
+
+
+.multi-anomaly{
+
+}
+
+
+
+
+
+
+

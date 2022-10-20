@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
@@ -56,17 +58,29 @@ def inject(request):
     df: DataFrame = pd.read_csv("data/train/bafu5k.csv")
     post = request.POST
     col_name = post.get("data_columns")
+    col_index = list(df.columns).index(col_name)
     col = df[col_name]
     factor = float(post.get("factor"))
     ratio = float(post.get("ratio"))
     a_type = post.get("anomaly")
-    n_anomalies = int(ratio * df.shape[0] / 30) + 1
+    seed = post.get("seed")
+
+    if seed == '':
+        seed = random.randint(0,100)
+    else:
+        seed = int(seed)
+
+    if a_type != "outlier":
+        n_anomalies = int(ratio * df.shape[0] / 30) + 1
+    else:
+        n_anomalies = int(ratio * df.shape[0])
+
     col_injected, _ = add_anomalies(col,
                                     a_type=a_type,
                                     a_factor=factor,
                                     a_len=30,
                                     n_anomalies=n_anomalies,
-                                    fill_na=True , seed =20)
+                                    fill_na=True , seed =seed)
 
     injected_series = {
         'series': {"linkedTo": col_name,
@@ -95,11 +109,10 @@ def parse_param_input(p:str):
 
 def repair(request):
     post = request.POST.dict()
-    token = post.pop('csrfmiddlewaretoken')
     injected_series = json.loads(post.pop("injected_series"))
-    print(post)
     params =  { k:parse_param_input(v) for k,v in post.items()}
-    print(params)
     df: DataFrame = pd.read_csv("data/train/bafu5k.csv")
     output = repair_from_None_series(params,df, *injected_series.values())
+    context = {"metrics" : output["metrics"]}
+    output["html"] =  render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
     return JsonResponse(output)

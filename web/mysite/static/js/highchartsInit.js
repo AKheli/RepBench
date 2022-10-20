@@ -2,6 +2,7 @@ let token = document.currentScript.getAttribute('token');
 let fetch_url = document.currentScript.getAttribute('fetchurl')
 
 
+
 const chart = Highcharts.chart(document.getElementById('container'), {
 
     tooltip: {
@@ -51,8 +52,8 @@ fetch(fetch_url, {
     method: 'post',
     body: formData,
     // headers: {
-	// 	'Content-type': 'application/json; charset=UTF-8'
-	// }
+    // 	'Content-type': 'application/json; charset=UTF-8'
+    // }
 }).then(response => {
 
     response.json().then(responseJson => {
@@ -104,8 +105,9 @@ fetch(fetch_url, {
 //         ))
 // })
 
-let createFormData = function(form_id,token){
+let createFormData = function (form_id, token) {
     let form = document.getElementById(form_id)
+    console.log(form)
     const formData = new FormData(form)
     formData.append('csrfmiddlewaretoken', token)
     formData.append('injected_series', chart.g)
@@ -115,46 +117,55 @@ let createFormData = function(form_id,token){
 }
 
 
-
-
-
-
-
 let injectedSeries = {}
 
-let createRepairRequestFormData = function(form_id,token){
+let createRepairRequestFormData = function (form_id, token) {
     console.log(injectedSeries)
-    repairformData = createFormData(form_id,token)
-    repairformData.append("injected_series" , JSON.stringify(injectedSeries))
+    repairformData = createFormData(form_id, token)
+    repairformData.append("injected_series", JSON.stringify(injectedSeries))
     return repairformData
 }
 
 
-let inject  = (form_id, token , fetch_url) =>  fetch(fetch_url, {
-        method: 'POST',
-        body: createFormData(form_id,token),
-    }).then(response =>  response.json()).then(responseJson => {
+let inject = (form_id, token, fetch_url) => fetch(fetch_url, {
+    method: 'POST',
+    body: createFormData(form_id, token),
+}).then(response => response.json()).then(responseJson => {
     //delete old series
     let s = responseJson.series
     let rmse = responseJson.rmse
-    if(chart.get(s["id"])){
+    if (chart.get(s["id"])) {
         chart.get(s["id"]).remove();
     }
+    s["dashStyle"] = 'ShortDot'
+    series = chart.addSeries(s)
+    s.data = series.yData
     injectedSeries[s["id"]] = s
-    chart.addSeries(s)
-    document.getElementById("rmse_display").innerHTML = "RMSE :" + responseJson.rmse ;
-    })
+    console.log(series.yData)
+})
 
 
+let repairCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
+    method: 'POST',
+    body: createRepairRequestFormData(form_id, token),
+}).then(response => response.json()).then(responseJson => {
+    repairedSeries = responseJson.repaired_series
+    scores = responseJson.scores
+    console.log(repairedSeries)
+    for (key in repairedSeries) {
+        chart.addSeries(repairedSeries[key])
+    }
 
-let repairCurrentData = (form_id, token , fetch_url) =>  fetch(fetch_url, {
-        method: 'POST',
-        body: createRepairRequestFormData(form_id,token),
-    }).then(response =>  response.json()).then(responseJson => {
-        console.log(responseJson)
-        for(key in responseJson){
-            chart.addSeries(responseJson[key])
-        }
-        document.getElementById("rmse_display").innerHTML = "RMSE :" + responseJson.rmse ;
-    })
+    // load the score charts html element given all the error metrics
+    if (document.getElementById("thatsreallywrong") !== null){
+            document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
+
+    }
+
+    addScores(scores)
+
+
+})
+
+
 
