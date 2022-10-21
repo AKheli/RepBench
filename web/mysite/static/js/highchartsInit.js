@@ -1,23 +1,28 @@
 let token = document.currentScript.getAttribute('token');
 let fetch_url = document.currentScript.getAttribute('fetchurl')
 
-
-
 const chart = Highcharts.chart(document.getElementById('container'), {
 
     tooltip: {
-        formatter: function () {
+
+        formatter: function (e) {
             // The first returned item is the header, subsequent items are the
             // points
-            return ['<b>' + this.x + '</b>'].concat(
-                this.points ?
-                    this.points.map(function (point) {
-                        return point.series.name + ': ' + point.y + 'm';
-                    }) : []
+            let x = this.x
+            return ['<p style=\"color:black;font-size:15px;\"> Truth: '  + this.y + '</p>'].concat(
+                this.series.linkedSeries.map(function (s) {
+                    selectedY = s.yData[x]
+                    if (selectedY !== null) {
+                        selectedY = Math.round(selectedY* 1000) / 1000
+                        if (s.name.includes('injected')){
+                            return "<br> <p style=\"color:red;font-size:15px;\"> Anomalous: " + selectedY +"<\p> "
+                        } else return "<br> <p style=\"color:blue;font-size:15px;\">" + s.name +": "+ selectedY +"<\p>"
+                    } else return ""
+                })
             );
         },
         //split: true,
-        shared: true,
+        shared: false,
         valueDecimals: 2
     },
 
@@ -30,9 +35,6 @@ const chart = Highcharts.chart(document.getElementById('container'), {
         text: 'title'
     },
 
-    subtitle: {
-        text: 'Using the Boost module'
-    },
 
     accessibility: {
         screenReaderSection: {
@@ -157,8 +159,8 @@ let repairCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
     }
 
     // load the score charts html element given all the error metrics
-    if (document.getElementById("thatsreallywrong") !== null){
-            document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
+    if (document.getElementById("thatsreallywrong") !== null) {
+        document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
 
     }
 

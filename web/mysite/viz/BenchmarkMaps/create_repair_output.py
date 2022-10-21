@@ -55,4 +55,6 @@ def repair_from_None_series(js_dict, truth_df, *injected_series_dicts):
                                   injected_series_dicts}
 
     repaired_series = generate_repaired_series_out_put(repair, injected_columns_index_map)
+    for v in repaired_series.values():
+        v["name"] = alg_name
     return {"repaired_series": repaired_series, "scores": scores ,"metrics" : metrics}

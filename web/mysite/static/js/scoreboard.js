@@ -13,19 +13,21 @@ initChart = function (series) {
         },
         yAxis: {
             title: {
-                text: 'Total percent market share'
+                text: 'score'
             }
 
         },
-        series: [{data: []}]
+            series: [series]
     });
 
-    score_chart2.renderer.text('This text is background text', 150, 200)
-        .css({
-            color: '#4572A7',
-            fontSize: '16px'
-        })
-        .add();
+    // score_chart2.renderer.text('This text is background text', 150, 200)
+    //     .css({
+    //         color: '#4572A7',
+    //         fontSize: '16px'
+    //     })
+    //     .add();
+
+    return score_chart2.series[0]
 }
 
 
@@ -44,8 +46,8 @@ updateCategories = function () {
 
 addScores = function (scores) {
     if (score_chart2 == null) {
-        initChart(scores)
-        series = score_chart2.addSeries(scores)
+        series = initChart(scores)
+        // series = score_chart2.addSeries(scores)
         seriesMap.set(series, scores.data)
         scores.data.forEach(datapoint => alterCheckbox(datapoint.name))
 
