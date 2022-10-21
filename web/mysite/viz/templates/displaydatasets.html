@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+    <p></p>
+    <table class="table container-fluid">
+        <thead>
+        <tr>
+            <th scope="col">Dataset</th>
+            <th scope="col">Vizualize</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for name,full_name in  datasets.items %}
+            <tr>
+                <td>{{ name }}</td>
+                <td><a href="{% url 'index' setname=name  %}">Display</a></td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

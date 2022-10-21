@@ -1,80 +1,35 @@
-let token = document.currentScript.getAttribute('token');
-let fetch_url = document.currentScript.getAttribute('fetchurl')
-
-const chart = Highcharts.chart(document.getElementById('container'), {
-
-    tooltip: {
-
-        formatter: function (e) {
-            // The first returned item is the header, subsequent items are the
-            // points
-            let x = this.x
-            return ['<p style=\"color:black;font-size:15px;\"> Truth: '  + this.y + '</p>'].concat(
-                this.series.linkedSeries.map(function (s) {
-                    selectedY = s.yData[x]
-                    if (selectedY !== null) {
-                        selectedY = Math.round(selectedY* 1000) / 1000
-                        if (s.name.includes('injected')){
-                            return "<br> <p style=\"color:red;font-size:15px;\"> Anomalous: " + selectedY +"<\p> "
-                        } else return "<br> <p style=\"color:blue;font-size:15px;\">" + s.name +": "+ selectedY +"<\p>"
-                    } else return ""
-                })
-            );
-        },
-        //split: true,
-        shared: false,
-        valueDecimals: 2
-    },
 
 
-    chart: {
-        zoomType: 'x'
-    },
+let chart = null
+fetchChart = function(token, fetch_url) {
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', token);
+    chart = initMainChart()
 
-    title: {
-        text: 'title'
-    },
+    fetch(fetch_url, {
+        method: 'post',
+        body: formData,
+        // headers: {
+        // 	'Content-type': 'application/json; charset=UTF-8'
+        // }
+    }).then(response => {
+        response.json().then(responseJson => {
+            //delete old series
+            var seriesLength = chart.series.length;
+            for (var i = seriesLength - 1; i > -1; i--) {
+                chart.series[i].remove();
+            }
 
+            let data = responseJson.series
+            console.log("loading data in promise")
+            console.log("loading")
 
-    accessibility: {
-        screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
-        }
-    },
+            console.log(data)
+            data.forEach(x => chart.addSeries(x))
+        })
 
-
-    series: [{data: [1, 2, 3, 4, 5, 6, 7], id: "123"}]
-
-});
-
-const formData = new FormData();
-formData.append('csrfmiddlewaretoken', token);
-
-fetch(fetch_url, {
-    method: 'post',
-    body: formData,
-    // headers: {
-    // 	'Content-type': 'application/json; charset=UTF-8'
-    // }
-}).then(response => {
-
-    response.json().then(responseJson => {
-        //delete old series
-        var seriesLength = chart.series.length;
-        for (var i = seriesLength - 1; i > -1; i--) {
-            chart.series[i].remove();
-        }
-
-        let data = responseJson.series
-        console.log("loading data in promise")
-        console.log("loading")
-
-        console.log(data)
-        data.forEach(x => chart.addSeries(x))
     })
-
-})
-
+}
 // var test_button = document.getElementById("datasetformapply")
 // console.log(test_button)
 // //test_button.addEventListener("click",
@@ -153,17 +108,24 @@ let repairCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
 }).then(response => response.json()).then(responseJson => {
     repairedSeries = responseJson.repaired_series
     scores = responseJson.scores
-    console.log(repairedSeries)
+
+
+    let counter = 0
+    let color = null
     for (key in repairedSeries) {
-        chart.addSeries(repairedSeries[key])
+        let repair = repairedSeries[key]
+
+        if(counter > 0) repair["color"] = color
+        s = chart.addSeries(repairedSeries[key])
+        if(counter === 0) color = s.color
+        counter += 1
     }
 
     // load the score charts html element given all the error metrics
     if (document.getElementById("thatsreallywrong") !== null) {
         document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
-
     }
-
+    scores["color"] = color
     addScores(scores)
 
 

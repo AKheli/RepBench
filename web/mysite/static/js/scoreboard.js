@@ -17,7 +17,7 @@ initChart = function (series) {
             }
 
         },
-            series: [series]
+                series: [series]
     });
 
     // score_chart2.renderer.text('This text is background text', 150, 200)
@@ -26,7 +26,7 @@ initChart = function (series) {
     //         fontSize: '16px'
     //     })
     //     .add();
-
+    console.log(series)
     return score_chart2.series[0]
 }
 
@@ -44,7 +44,13 @@ updateCategories = function () {
     )
 }
 
+
+
+colorCounter = 0
 addScores = function (scores) {
+
+    console.log(scores)
+    scores["colorByPoint"] = false
     if (score_chart2 == null) {
         series = initChart(scores)
         // series = score_chart2.addSeries(scores)
