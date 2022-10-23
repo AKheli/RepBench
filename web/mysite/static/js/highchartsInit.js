@@ -1,7 +1,5 @@
-
-
 let chart = null
-fetchChart = function(token, fetch_url) {
+fetchChart = function (token, fetch_url) {
     const formData = new FormData();
     formData.append('csrfmiddlewaretoken', token);
     chart = initMainChart()
@@ -64,12 +62,9 @@ fetchChart = function(token, fetch_url) {
 
 let createFormData = function (form_id, token) {
     let form = document.getElementById(form_id)
-    console.log(form)
     const formData = new FormData(form)
     formData.append('csrfmiddlewaretoken', token)
     formData.append('injected_series', chart.g)
-    console.log("FORMDATA")
-    console.log(formData)
     return formData
 }
 
@@ -115,9 +110,9 @@ let repairCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
     for (key in repairedSeries) {
         let repair = repairedSeries[key]
 
-        if(counter > 0) repair["color"] = color
+        if (counter > 0) repair["color"] = color
         s = chart.addSeries(repairedSeries[key])
-        if(counter === 0) color = s.color
+        if (counter === 0) color = s.color
         counter += 1
     }
 
@@ -125,6 +120,55 @@ let repairCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
     if (document.getElementById("thatsreallywrong") !== null) {
         document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
     }
+    scores["color"] = color
+    addScores(scores)
+
+
+})
+
+
+let createOptimizeRequestFormData = function (form_id, token) {
+    repairformData = createFormData(form_id, token)
+    repairformData.append("injected_series", JSON.stringify(injectedSeries))
+    let form = document.getElementById(form_id)
+    const children = Array.from(form.children);
+
+    dict = {}
+    children.forEach(child => {
+        console.log(child.id)
+        if(child.id){
+            if (child.id in dict){
+                dict[child.id].push(child.value)
+            }
+            else{
+               dict[child.id] =  [child.value]
+            }
+        }
+        repairformData.append("param_ranges", JSON.stringify(dict))
+    })
+    return repairformData
+}
+
+
+let optimizeCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
+    method: 'POST',
+    body: createOptimizeRequestFormData(form_id, token),
+}).then(response => response.json()).then(responseJson => {
+    repairedSeries = responseJson.repaired_series
+    scores = responseJson.scores
+
+
+    let counter = 0
+    let color = null
+    for (key in repairedSeries) {
+        let repair = repairedSeries[key]
+
+        if (counter > 0) repair["color"] = color
+        s = chart.addSeries(repairedSeries[key])
+        if (counter === 0) color = s.color
+        counter += 1
+    }
+
     scores["color"] = color
     addScores(scores)
 

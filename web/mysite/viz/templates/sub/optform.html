@@ -1,0 +1,13 @@
+
+
+
+<div class="container-fluid" style="min-width: 310px; height: 400px; margin: 0 auto">
+    <h2 style="text-align: center;">Metrics</h2>
+   {% for metric in metrics %}
+       <div class="form-check form-check-inline">
+  <input class="form-check-input active" checked="checked" type="checkbox" id="Checkbox{{ metric }}" value="option1" onchange = "alterCheckbox('{{ metric }}')" >
+  <label class="form-check-label" for="inlineCheckbox1">{{ metric}}</label>
+    </div>
+   {% endfor %}
+    <div id="container2"></div>
+</div>

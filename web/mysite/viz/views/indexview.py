@@ -14,7 +14,7 @@ from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_s
 
 
 # to fetch whitout page reload
-def get_data(request,dataset = "bafu5k" ):
+def get_data(request ,dataset = "bafu5k" ):
     df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
     data = {
         'series': [{"visible": i < 5, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name) in
@@ -102,11 +102,9 @@ def repair(request,dataset):
     return JsonResponse(output)
 
 
-def optim(request):
-    return render(request, 'optimization.html', context={})
 
 
-def display_datasets(request):
+def display_datasets(request=None):
     data_files = os.listdir("data/train")
 
     context = {"datasets": {f.split(".")[0]: {"full_file_name": f} for f in data_files}}
