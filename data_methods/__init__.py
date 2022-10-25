@@ -1,0 +1,1 @@
+from data_methods.data_class import normalize_together

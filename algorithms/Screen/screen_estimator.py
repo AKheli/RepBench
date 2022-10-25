@@ -9,8 +9,10 @@ import numpy as np
 
 class SCREENEstimator(Estimator):
 
-    def __init__(self, t:int=3, smax: float = None, smin :float =None, method : str ="local", ci=(5, 90) ,**kwargs):
-        self.infer_s_ = smax is None and smin is None
+    def __init__(self, t:int=3, smax: float = 0.1, smin :float =0.2, method : str ="local", ci=None ,**kwargs):
+        """
+        param ci need to be a tuple e.g (0.1,0.9)
+        """
         self.smin = smin
         self.smax = smax
         self.t = t
@@ -33,8 +35,8 @@ class SCREENEstimator(Estimator):
         for col in [c for c in columns_to_repair if c < injected.shape[1]]:
             x = np.array(injected.iloc[:, col])
 
-            perc = np.percentile(sorted(np.diff(x)), self.ci)
-            if self.infer_s_:
+            if self.ci is not None:
+                perc = np.percentile(sorted(np.diff(x)), self.ci)
                 smax = perc[1]
                 smin = perc[0]
                 self.smax = smax

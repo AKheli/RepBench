@@ -24,12 +24,14 @@
      tau = 0.001
      n_max_itr=100000
 
-[screen] # use confidence intervall approach when smin and smax are not set
+[screen]
      t = 1
+     ci = [0.1,0.9] # use confidence intervall approach when smin and smax are not set
 
 
 [screenglobal] # use percentile approach when smin and smax are not set
      t = 1
+     ci = [0.1,0.9] # use confidence intervall approach when smin and smax are not set
 
 
 

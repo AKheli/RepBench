@@ -148,15 +148,11 @@ def gen_cts_nbr_data(df, a_type, cols):
     full_injected_df = df.copy()
     full_injected_df, col_range_mapper = inject_data_df(full_injected_df,cols=list(range(m)), a_type=a_type)
     ret_val = []
-    print(n_cts)
     for m_c in sorted(n_cts):
         if m_c >= m:
             break
         temp_df = df.copy()
         temp_df.iloc[:,:m_c] = full_injected_df.iloc[:,:m_c]
-        # plt.plot(temp_df)
-        # plt.show()
-        print(m_c)
         ret_val.append((m_c, temp_df, df))
 
     return ret_val

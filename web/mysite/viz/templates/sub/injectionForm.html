@@ -1,0 +1,12 @@
+<div class="column">
+    <form onSubmit="return false" id="injection_form" class="form-vertical">
+
+        <div class="colw flex-column-l">
+            {% csrf_token %}
+            {{ injection_form }}
+            <button id="injection_button">
+                Inject
+            </button>
+        </div>
+    </form>
+</div>

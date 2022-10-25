@@ -7,64 +7,19 @@
     <!-- Injection and repair -->
     <div id="repair">
 
-        <div class="column">
-            <form onSubmit="return false" id="injection_form" class="form-vertical">
-
-                <div class="colw flex-column-l">
-                    {% csrf_token %}
-                    {{ injection_form }}
-                    <button id="injection_button">
-                        Inject
-                    </button>
-                </div>
-            </form>
-            {#    </div>#}
-        </div>
-
-        <div class="column">
-            <div class="dropdown d-flex p-2">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                        data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    Select Algorithm
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    {% for key, _ in forms.items %}
-                        <a onclick="displayfunc('{{ key }}')" class="dropdown-item">{{ key }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-
-            {% for key, form in forms.items %}
-                <form class="myform" style="display:none;" id={{ key }}>
-                    {{ form }}
-                    <button class="repair-button" type="button" onclick="repair('{{ key }}')">repair</button>
-                </form>
-            {% endfor %}
-        </div>
-
-
-        <div id="thatsreallywrong">
-        </div>
+    <div class="column">
+        {% include "sub/injectionForm.html" %}
 
     </div>
 
+    <div class="column">
+        {% include "sub/repairForm.html" %}
+        <div id="thatsreallywrong">
+        </div>
+    </div>
 
-    <script>
-        let lastkey = null
-        let displayfunc = function (key) {
-            var x = document.getElementById(key);
-            if (key !== lastkey && lastkey != null) {
-                document.getElementById(lastkey).style.display = "none";
-            }
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
-            lastkey = key
-        }
-    </script>
+
+
     <script src="{% static  'js/scoreboard.js' %} " type="text/javascript"></script>
     <script src="{% static  'js/highchartsMainContainerInit.js' %} " type="text/javascript"></script>
     <script src="{% static  'js/highchartsInit.js' %}" type="text/javascript"></script>
@@ -74,7 +29,7 @@
         let selectionButton = document.getElementById("injection_button")
         let injection_url = "{% url 'inject' dataset=dataset %}"
 
-        fetchChart(csrftoken,data_url)
+        fetchChart(csrftoken, data_url)
 
         selectionButton.addEventListener("click", e => {
             e.stopPropagation()

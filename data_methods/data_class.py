@@ -18,6 +18,20 @@ def normalize_f(X):
 
     return (X - mean_X) / std_X, inv_func
 
+def normalize_together(X,Y):
+    """
+    Parameters: matrix X
+    Returns: normalized X , normalization_inverse function
+    """
+    mean_X, std_X = X.mean(), X.std()
+    assert (len(mean_X), len(std_X)) == (X.shape[1], X.shape[1])
+
+    def inv_func(X_norm):
+        X_norm.columns = X.columns
+        result = X_norm * std_X + mean_X
+        return result
+
+    return (X - mean_X) / std_X , (Y - mean_X) / std_X, inv_func
 
 def infer_data_file(file_name,folder):
     files_in_folder = [f for f in os.listdir(folder) if os.path.isfile(f"{folder}/{f}")]

@@ -32,34 +32,34 @@ initChart = function (series) {
 
 
 allScores = {}
-const seriesMap = new Map();
-
-x = 0
-selectedCategoires = new Set()
+const seriesMap = [];
+let selectedCategoires = new Set()
 
 updateCategories = function () {
-    seriesMap.forEach((originaldata, series) => {
-            series.update({data: originaldata.filter(d => selectedCategoires.has(d.name))})
+    console.log("map")
+    console.log(seriesMap)
+    seriesMap.forEach( e  => {
+            console.log("E1")
+            console.log(e[1])
+            e[0].update({data: e[1].filter(d => selectedCategoires.has(d.name))})
         }
     )
 }
 
 
 
-colorCounter = 0
 addScores = function (scores) {
-
-    console.log(scores)
     scores["colorByPoint"] = false
     if (score_chart2 == null) {
         series = initChart(scores)
-        // series = score_chart2.addSeries(scores)
-        seriesMap.set(series, scores.data)
-        scores.data.forEach(datapoint => alterCheckbox(datapoint.name))
+        let scoresData = scores.data.data
+        seriesMap.push( [series, scoresData] )
+        console.log(scoresData)
+        scoresData.forEach(datapoint => alterCheckbox(datapoint.name))
 
     } else {
         series = score_chart2.addSeries(scores)
-        seriesMap.set(series, scores.data)
+        seriesMap.push( [series, scores.data.data] )
     }
 
     updateCategories()

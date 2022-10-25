@@ -28,43 +28,15 @@ fetchChart = function (token, fetch_url) {
 
     })
 }
-// var test_button = document.getElementById("datasetformapply")
-// console.log(test_button)
-// //test_button.addEventListener("click",
-// document.getElementById("datasetform").addEventListener("change",e => {
-//     console.log("eventx")
-//     let form = document.getElementById("datasetform")
-//     const formDatatest = new FormData(form);
-//     formDatatest.append('csrfmiddlewaretoken', token);
-//     formDatatest.append("set", "set");
-//
-//     fetch(fetch_url, {
-//         method: 'POST',
-//         body: formDatatest,
-//
-//     }).then(response =>
-//         response.json().then(responseJson => {
-//                 var seriesLength = chart.series.length;
-//         for (var i = seriesLength - 1; i > -1; i--) {
-//             chart.series[i].remove();
-//         }
-//
-//         let data = responseJson.series
-//         console.log("loading data in promise")
-//         console.log("loading")
-//
-//         console.log(data)
-//         data.forEach(x => chart.addSeries(x))
-//             chart.xAxis[0].setExtremes() // reset the zoom
-//             }
-//         ))
-// })
 
 let createFormData = function (form_id, token) {
     let form = document.getElementById(form_id)
+    console.log("Form")
+
+    console.log(form)
+
     const formData = new FormData(form)
     formData.append('csrfmiddlewaretoken', token)
-    formData.append('injected_series', chart.g)
     return formData
 }
 
@@ -136,12 +108,11 @@ let createOptimizeRequestFormData = function (form_id, token) {
     dict = {}
     children.forEach(child => {
         console.log(child.id)
-        if(child.id){
-            if (child.id in dict){
+        if (child.id) {
+            if (child.id in dict) {
                 dict[child.id].push(child.value)
-            }
-            else{
-               dict[child.id] =  [child.value]
+            } else {
+                dict[child.id] = [child.value]
             }
         }
         repairformData.append("param_ranges", JSON.stringify(dict))
@@ -150,29 +121,39 @@ let createOptimizeRequestFormData = function (form_id, token) {
 }
 
 
+
+const opt_container = document.getElementById('container-optscores')
+let optchart = Highcharts.chart(opt_container, {
+        tooltip: {
+            //split: true,
+            valueDecimals: 2
+        },
+
+        title: {
+            text: 'title'
+        },
+
+
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<{headingTagName}>AAAAAAAAAAA{chartTitle}</{headingTagName}><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            }
+        },
+
+
+        series: [ { data : [ {name: "a" , y : 2 }, {name: "b" , y : 2 }  , {name: "a" , y : 3 } ]  }]
+
+    });
+opt_container.style.display = 'none';
+optchart.series[0].remove()
+
 let optimizeCurrentData = (form_id, token, fetch_url) => fetch(fetch_url, {
     method: 'POST',
     body: createOptimizeRequestFormData(form_id, token),
 }).then(response => response.json()).then(responseJson => {
-    repairedSeries = responseJson.repaired_series
-    scores = responseJson.scores
-
-
-    let counter = 0
-    let color = null
-    for (key in repairedSeries) {
-        let repair = repairedSeries[key]
-
-        if (counter > 0) repair["color"] = color
-        s = chart.addSeries(repairedSeries[key])
-        if (counter === 0) color = s.color
-        counter += 1
-    }
-
-    scores["color"] = color
-    addScores(scores)
-
-
+    let repair_res = responseJson.opt_result_series
+    let added_series =  optchart.addSeries(repair_res)
+    opt_container.style.display = 'block';          // Show
 })
 
 

@@ -1,0 +1,25 @@
+    {% for alg,params in b_opt_param_forms.items %}
+        <div class="{{ alg }}" style="visibility:hidden;">
+            {{ alg }}
+            <form class="bayesian-opt-form" id='{{ alg }}' onSubmit="return false" style="visibility:hidden;">
+                {% for param in params %}
+                    <label for="{{ param.param_name }}">{{ param.param_name }}</label>        <br>
+                    min:<input type="text" id="{{ param.param_name }}"
+                               size="4" name="{{ param.param_name }}-min"
+                               pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
+                               value={{ param.min }}>
+                    max:<input type="text" id="{{ param.param_name }}"
+                               size="4" name="{{ param.param_name }}-max"
+                               pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
+                               value="{{ param.max }}">
+                    <br><br>
+                {% endfor %}
+                <div>
+                    <input type="hidden" name="alg_type" value="{{ alg }}">
+
+                    {{ bayesian_opt_form.as_p }}
+                </div>
+                <input type="submit" onclick="bayesian_opt_form('{{ alg }}')">
+            </form>
+        </div>
+    {% endfor %}

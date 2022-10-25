@@ -65,7 +65,7 @@ class InjectedDataContainer:
                 "truth": self.truth,
                 "labels": self.labels,
                 "columns_to_repair": self.injected_columns.copy(),
-                }#"score_indices" : self.get_weights()}
+                }
 
     @property
     def a_perc(self):

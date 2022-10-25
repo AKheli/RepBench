@@ -1,50 +1,41 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block content %}
     <br>
     <div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
     <div id="repair">
+        {% include "sub/injectionForm.html" %}
         <div class="column">
-            <form onSubmit="return false" id="injection_form" class="form-vertical">
-
-                <div class="colw flex-column-l">
-                    {% csrf_token %}
-                    {{ injection_form }}
-                    <button id="injection_button">
-                        Inject
-                    </button>
-                </div>
-            </form>
+        {% include "sub/bayesianForm.html" %}
+        </div>
+        <div class="container-fluid" style="min-width: 310px; height: 400px; margin: 0 auto">
+            <div id="container-optscores"></div>
         </div>
 
-        <div class="column">
-            <div class="bayesian-opt-form">
-                {% for alg,params in b_opt_param_forms.items %}
-                    {{ alg }}
-                    <form class="bayesian-opt-form" id="{{ alg }}" onSubmit="return false">
-                        {% for param in params %}
-                            <label for="{{ param.param_name }}">{{ param.param_name }}</label>        <br>
-                            min:<input type="text" id="{{ param.param_name }}"
-                                       size="4" name = "{{ param.param_name }}-min"
-                                       pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
-                                       value={{ param.min }}>
-                            max:<input type="text" id="{{ param.param_name }}"
-                                       size="4" name = "{{ param.param_name }}-max"
-                                       pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
-                                       value="{{ param.max }}">
-                            <br><br>
-                        {% endfor %}
-                        <div>
-                            {{ bayesian_opt_form.as_p }}
-                        </div>
-                        <input type="submit" onclick="bayesian_opt_form('{{ alg }}')">
-                    </form>
-                {% endfor %}
-            </div>
-        </div>
     </div>
+
+    {#        <div class="bayesian-opt-form">#}
+    {##}
+    {##}
+    {#            {% for alg,params in b_opt_param_forms.items %}#}
+    {#                {{ alg }}#}
+    {#                <form class="bayesian-opt-form" id='{{ alg }}' onSubmit="return false">#}
+    {#                    {% for param in params %}#}
+    {#                        <label for="{{ param.param_name }}">{{ param.param_name }}</label>        <br>#}
+    {#                        <input type="text" id="{{ param.param_name }}"#}
+    {#                               size="15 " name="{{ param.param_name }}min"#}
+    {#                               pattern="([+-]?([0-9]*[.])?[0-9]+)([\s,][+-]?([0-9]*[.])?[0-9]+)*" title="Must be a float value"#}
+    {#                               value={{ param.min }}>#}
+    {#                    {% endfor %}#}
+    {##}
+    {#                    <input type="submit" onclick="bayesian_opt_form('{{ alg }}')">#}
+    {#                </form>#}
+    {#            {% endfor %}#}
+    {#        </div>#}
+
+
+
 
     </script>
     <script src="{% static  'js/scoreboard.js' %} " type="text/javascript"></script>

@@ -28,11 +28,11 @@
 }
 
 .bayesian-opt-form {
-       display:inline-table;
+    display:inline-table;
    font-size:20px;
    padding:4px 2px;
    /* border:solid 10px black;*/
-    width:200px;
+    width:250px;
     margin:55px 20px 200px 10px;
      background-color: lightgray;
 /*    width:max-content;*/

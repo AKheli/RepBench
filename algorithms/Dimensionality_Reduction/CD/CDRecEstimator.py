@@ -7,8 +7,6 @@ import numpy as np
 
 
 class CDRecEstimator(DimensionalityReductionEstimator):
-
-
     def compute_transform(self, centered_weighted_x, truncation, component_method=None):
         L, R, Z = weighted_centroid_decomposition(centered_weighted_x , truncation=truncation, weights=None)
         return np.dot(R,R.T)

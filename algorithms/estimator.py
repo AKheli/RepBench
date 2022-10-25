@@ -17,8 +17,7 @@ class Estimator(ABC, BaseEstimator):
     def set_score_f(self,score):
         self.score_f = score
 
-    def scores(self, injected, truth , columns_to_repair, labels , predicted=None , score = None):
-
+    def scores(self, injected, truth , columns_to_repair, labels ,*, predicted=None , score = None):
         X = injected
         y = truth
         predicted = predicted if predicted is not None else self.repair(X, y,columns_to_repair,labels)
@@ -38,7 +37,6 @@ class Estimator(ABC, BaseEstimator):
         if score is None or score == "full_rmse":
             scores_["full_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], flatten_predicted[full_weights_flattened],squared=False)
             scores_["original_rmse"] = sm.mean_squared_error(flatten_y[full_weights_flattened], injected.values.flatten()[full_weights_flattened], squared=False)
-
 
         partial_weights = np.invert(np.isclose(X.values, y.values))
         partial_weights[labels] = False

@@ -6,6 +6,7 @@ from django.shortcuts import render
 import pandas as pd
 from pandas import DataFrame
 from algorithms import algo_mapper
+from data_methods import normalize_together
 from web.mysite.viz.forms.injection_form import ParamForm, InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
 import json
@@ -96,6 +97,8 @@ def repair(request,dataset):
     injected_series = json.loads(post.pop("injected_series"))
     params = {k: parse_param_input(v) for k, v in post.items()}
     df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
+
+
     output = repair_from_None_series(params, df, *injected_series.values())
     context = {"metrics": output["metrics"]}
     output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
