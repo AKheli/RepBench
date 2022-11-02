@@ -1,27 +1,27 @@
 [rpca]
     threshold = 1.2
     classification_truncation = 2
-    repair_truncation = 4
+    repair_truncation = 3
     n_max_iter = 50
-    repair_iter = 1
+    repair_iter = 10
 
 [wrpca]
     threshold = 1.2
     classification_truncation = 2
-    repair_truncation = 4
+    repair_truncation = 3
     n_max_iter = 50
     repair_iter = 1
 
 [cdrec]
     classification_truncation = 2
-    repair_truncation = 4
+    repair_truncation = 3
     threshold = 1.2
     n_max_iter = 2
     repair_iter = 10
 
 [imr]
      p = 3
-     tau = 0.001
+     tau = 0.02
      n_max_itr=100000
 
 [screen]

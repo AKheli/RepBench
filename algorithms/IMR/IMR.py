@@ -26,7 +26,7 @@ def imr(x, y_0, labels, tau=0.1, p=1, k=20000):
         candidates[ np.logical_or(np.abs(candidates)<tau , candidates == 0) ] = np.inf # bigger than tau
         candidates[labels-p] = np.inf # not considering labeled
         if not any(candidates != np.inf):
-            print("imr iteration stopped at" ,iter_counter)
+            #print("imr iteration stopped at" ,iter_counter)
             break
 
         ## select smallest index
@@ -61,7 +61,7 @@ def imr2(x, y_0, labels, tau=0.1, p=1, k=20000):
         candidates[ np.logical_or(np.abs(candidates)<tau , candidates == 0) ] = np.inf # bigger than tau
         candidates[labels-p] = np.inf # not considering labeled
         if not any(candidates != np.inf):
-            print("imr iteration stopped at" ,iter_counter)
+            #print("imr iteration stopped at" ,iter_counter)
             break
 
         ## select smallest index

@@ -6,7 +6,7 @@ ic.MAX_N_ROWS = 10000
 import matplotlib
 matplotlib.use('TKAgg')
 
-input = "-scen a_factor,a_rate -data bafu5k  -rn partial_rmse -anom all -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = "-scen a_rate,a_factor -data all  -rn l -anom all -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 ic.MAX_N_COLS = 10
 ic.label_seed = 20
 run.main(input)

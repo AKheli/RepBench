@@ -14,7 +14,7 @@ class DimensionalityReductionEstimator(Estimator):
                  , threshold=1.2
                  , eps=1e-6
                  , n_max_iter=50
-                 , repair_iter = 5
+                 , repair_iter = 10
                  , windows = False
                  , **kwargs
                  ):
@@ -30,6 +30,10 @@ class DimensionalityReductionEstimator(Estimator):
         self.windows = windows
         self.additional_plotting_args = {}
         self.state = None
+        self.normalize_before = True
+
+        self.weights_i_ = {}
+        self.reduced_i_ = {}
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
@@ -39,6 +43,7 @@ class DimensionalityReductionEstimator(Estimator):
                 "n_max_iter": self.n_max_iter,
                 }
 
+    ##todo add dtype
     def suggest_param_range(self, X):
         n_cols = X.shape[1]
         return {"classification_truncation": [i for i in [1,2,3,4,5] if i < n_cols-1],
@@ -79,8 +84,14 @@ class DimensionalityReductionEstimator(Estimator):
 
     def repair(self,injected,truth, columns_to_repair , labels=None):
         truth = None
-        injected , inv_f = normalize_f(injected)
+        self.weights_i_ = {}
+        if self.normalize_before:
+            injected , inv_f = normalize_f(injected)
+
         self.state = "classify"
+        self.weights_i_[self.state] = {}
+        self.reduced_i_[self.state] = {}
+
         if  self.windows:
             self.windows = False
             n , _ = injected.shape
@@ -95,29 +106,16 @@ class DimensionalityReductionEstimator(Estimator):
 
         matrix_to_repair = matrix.copy()
 
-        # if (self.sub_set):
-        #     if len(columns_to_repair) == 1:
-        #         sorted_corr = np.argsort(-np.abs(np.corrcoef(matrix,rowvar=False)[columns_to_repair,:]))[0]
-        #         matrix_to_repair[:,sorted_corr[6:]] = 0
-        #         assert np.any(matrix_to_repair[:,columns_to_repair])
-
-        ## Reduce the matrix
-
-
         reduced = self.reduce(matrix_to_repair, self.classification_truncation)
         self.reduced = reduced
-        with open('algorithms/Dimensionality_Reduction/weights.txt', "w") as f:
-            f.write(str(list(self.weights))) #weights
-        with open('algorithms/Dimensionality_Reduction/injected.txt', "w") as f:
-            f.write(str(list(injected.iloc[:,0])))
-        # with open('algorithms/Dimensionality_Reduction/truth.txt', "w") as f:
-        #     f.write(str(list(truth.iloc[:,0])))  # weights
 
         ## classify anomalies
         self.anomaly_matrix = self.classify(matrix_to_repair, reduced=reduced)
 
         assert matrix_to_repair.shape == self.anomaly_matrix.shape
         self.state = "repair"
+        self.weights_i_[self.state] = {}
+        self.reduced_i_[self.state] = {}
         matrix_to_interpolate = matrix_to_repair.copy()
         matrix_to_interpolate[self.anomaly_matrix] = np.nan
         matrix_inter = interpolate(matrix_to_interpolate, self.anomaly_matrix)
@@ -136,7 +134,9 @@ class DimensionalityReductionEstimator(Estimator):
         result = injected.copy()
         result.loc[:] = final
         assert injected.shape == result.shape
-        return inv_f(result)
+        if self.normalize_before:
+            result = inv_f(result)
+        return result
 
 
     def IRLS(self, matrix, truncation):
@@ -154,14 +154,15 @@ class DimensionalityReductionEstimator(Estimator):
             X_centered = X - weighted_mean
             transform_matrix = self.compute_transform(X_centered * np.sqrt(weights.reshape(-1, 1)), truncation)
             assert transform_matrix.shape == (n_features, n_features), transform_matrix.shape
-            diff = X_centered - np.dot(X_centered, transform_matrix)
-
+            reduced_centered = np.dot(X_centered, transform_matrix)
+            diff = X_centered - reduced_centered
+            self.weights_i_[self.state][n_iterations_] = weights
+            self.reduced_i_[self.state][n_iterations_] = reduced_centered+weighted_mean
             errors_raw = np.linalg.norm(diff, axis=1)
             self.errors_raw = errors_raw
             errors_loss = compute_loss(errors_raw, self.delta)
             weights = compute_weights(errors_raw, self.delta)
             self.weights = weights
-
 
 
             n_iterations_ += 1

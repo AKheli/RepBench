@@ -6,7 +6,7 @@ import numpy as np
 class IMR_estimator(Estimator):
     uses_labels = True
 
-    def __init__(self, p=2,tau = 0.037 ,n_max_itr=10000, **kwargs):
+    def __init__(self, p=2,tau = 0.037 ,n_max_itr=None, **kwargs):
         self.p = p
         self.tau = tau
         self.max_itr_n  = n_max_itr
@@ -48,7 +48,11 @@ class IMR_estimator(Estimator):
             if  np.allclose(x, y_0):
                 print("Warning: IMR has not enought labeled anomalies")
 
-            repair_results = imr(x, y_0, col_labels, tau=self.tau, p=self.p, k=self.max_itr_n)
+            if self.max_itr_n is None:
+                max_itr_n  = 4000*len(x)/1000
+            else:
+                max_itr_n = self.max_itr_n
+            repair_results = imr(x, y_0, col_labels, tau=self.tau, p=self.p, k=max_itr_n)
             col_repair = repair_results["repair"]
             repair.iloc[:, col] = col_repair
 
