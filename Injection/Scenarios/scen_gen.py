@@ -49,27 +49,26 @@ def gen_a_rate_data(df, a_type, cols):
     col_range_mapper_rand = {col: np.random.permutation(index_list)
                              for col, index_list in col_range_mapper.items()}
 
+    #assert False ,(cols, col_range_mapper)
+    percentage_dict = {}
     for col in cols:
         column_ranges = col_range_mapper_rand[col]
-        print(column_ranges)
         list_ratios =  list(accumulate(column_ranges, lambda b, a: b + len(a)/n*100, initial=0))
-        print(list_ratios)
         list_ratios = np.array(list_ratios)
         last_index = 0.0
         for p in a_percentages:
-            print("P",p)
-            temp_df = df.copy()
+            temp_df = percentage_dict.get(p,df.copy())
+            percentage_dict[p] = temp_df
             idx = np.abs(list_ratios - p).argmin() #find closest ratio
             if last_index == idx:
                 continue
             last_index = idx
-            print(idx)
             ranges_to_replace = column_ranges[:idx] #select all ranges under this ratio
             for range in ranges_to_replace:
                 temp_df.iloc[range, col] = injected_df.iloc[range, col]
-            ret_val.append((p, temp_df, df))#store in percent
 
-    return ret_val  # starting with the lowest ratio
+    ret_val = [(p,injected_df,df) for p,injected_df in percentage_dict.items()]
+    return  ret_val
 
 
 def gen_a_size_data(df, a_type, cols):
@@ -174,7 +173,10 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
 
     data_container: DataContainer = DataContainer(file_name, data_type , max_n_rows , max_n_cols)
     np.random.seed(10)
-
+    n,m = data_container.norm_data.shape
+    if cols == "all":
+        cols = list(range(m))
+    assert max(cols) < m , f"column numbers { [ i for i in cols if i >= m ]} to high for {m} columns"
 
     data_frame = data_container.norm_data
 
@@ -191,6 +193,7 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
                                     ,index=injected_df.index ,columns=injected_df.columns)
 
             assert class_df.isnull().sum().sum() == 0 , (data_df, )
+            assert sum(class_df.sum(axis=0) != 0) == len(cols) , class_df.sum(axis=0)
 
             label_df: DataFrame = generate_df_labels(class_df)
 
@@ -199,7 +202,7 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
             ##todo remove this once tested
             assert class_df.index.equals(data_df.index)
             assert label_df.index.equals(data_df.index)
-
+            assert all(any(label_df.iloc[:,c]) for c in cols)
             assert injected_df.shape == data_df.shape
             injdected_container = InjectedDataContainer(injected_df,data_df, class_df=class_df,
                                          name=data_container.title,

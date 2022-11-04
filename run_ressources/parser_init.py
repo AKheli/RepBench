@@ -13,9 +13,21 @@ def name_check(choices, para_name):
         return result
     return f
 
+
+
+
+def column_type_split(para_input:str):
+    if para_input == "all":
+        return "all"
+    try:
+        return [  int(s.strip()) for s in para_input.split(",")]
+    except:
+        raise SystemExit(f'only comma seperated integers are allowed  inputs:{para_input}')
+
+
 def add_data_arguments_to_parser(parser, data_choices):
     parser.add_argument("-data", "-d", type= name_check(data_choices , "data set"))
-    parser.add_argument("-col", "-ts", type=str, default= "0")
+    parser.add_argument("-cols", "-ts", type=column_type_split, default= "0")
 
 
 def add_injection_arguments_to_parser(parser ,scenario_choices ,anomaly_choices):

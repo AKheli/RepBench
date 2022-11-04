@@ -50,14 +50,13 @@ def main(input = None):
     data_set_names = [s.split(os.sep)[-1].replace(".csv","") for s in data_paths]
     print("running on ", data_set_names)
     anomaly_types = arg_parser.parse_anomaly_types(args)
-    cols = [0]
-
+    cols = args.cols
     for (scen_name, data_name , anomaly_type) in itertools.product(scen_names, data_set_names , anomaly_types):
         if scen_name == ic.ANOMALY_SIZE and anomaly_type == ic.POINT_OUTLIER:
             print("skipping anomaly_lenght outlier scenario")
             continue
         try:
-            scenario: Scenario = build_scenario(scen_name,data_name,a_type=anomaly_type, data_type="test")
+            scenario: Scenario = build_scenario(scen_name,data_name,a_type=anomaly_type, data_type="test",cols=cols)
         except Exception as e:
             print(f'Buidling {scen_name} on {data_name} with {anomaly_type} anomalies  failed')
             raise e
