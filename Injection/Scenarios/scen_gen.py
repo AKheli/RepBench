@@ -87,12 +87,9 @@ def gen_a_size_data(df, a_type, cols):
         temp_df = injected_df.copy()
         for col in cols:
             for index_range in col_range_mapper[col]:
-                temp_df.iloc[index_range[a_length:]] = df.iloc[index_range[a_length:]]
+                temp_df.iloc[index_range[a_length:],col] = df.iloc[index_range[a_length:],col]
 
         ret_val.append((a_length, temp_df, df))
-        # plt.plot(temp_df.iloc[:, cols])
-        # # plt.title(f"{counter},{n*ratio},{sum([len(arr) for arr in column_ranges[counter:]])}")
-        # plt.show()
     ret_val.append((max_length, injected_df, df))
     return ret_val
 
@@ -193,7 +190,9 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
                                     ,index=injected_df.index ,columns=injected_df.columns)
 
             assert class_df.isnull().sum().sum() == 0 , (data_df, )
-            assert sum(class_df.sum(axis=0) != 0) == len(cols) , class_df.sum(axis=0)
+
+            if scen_name not in ["cts_nbr"]:
+                assert sum(class_df.sum(axis=0) != 0) == len(cols) , class_df.sum(axis=0)
 
             label_df: DataFrame = generate_df_labels(class_df)
 
@@ -202,7 +201,6 @@ def build_scenario(scen_name, file_name, data_type, a_type, max_n_rows=None, max
             ##todo remove this once tested
             assert class_df.index.equals(data_df.index)
             assert label_df.index.equals(data_df.index)
-            assert all(any(label_df.iloc[:,c]) for c in cols)
             assert injected_df.shape == data_df.shape
             injdected_container = InjectedDataContainer(injected_df,data_df, class_df=class_df,
                                          name=data_container.title,
