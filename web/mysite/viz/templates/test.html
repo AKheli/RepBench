@@ -1,0 +1,37 @@
+{% load static %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+<body>
+<div>
+</div>
+<!--button with no action-->
+<button type="button" onclick="myFunction()">Click Me!</button>
+<div id="resultContainer"></div>
+
+<script>
+    // function that fetches html data from the
+    // test view passing the id of the button clicked as a parameter
+    function myFunction() {
+        document.getElementById("resultContainer").innerHTML = "Loading...";
+        for (let i = 0; i < 10; i++) {
+            fetch("{% url 'testInner' %}?index=" + i)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("resultContainer").innerHTML += data;
+                });
+        }
+    }
+
+    // and renders it in the browser
+
+
+</script>
+<script src="{% static  'js/helpers.js' %} " type="text/javascript"></script>
+
+{{ a }}
+
+<!-- create div with id=resultContainer-->
+
+</body>
+

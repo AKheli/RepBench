@@ -158,6 +158,7 @@ class Scenario:
                    part_scen.get_injected_correlation().to_csv(f)
                    f.write("\n")
 
+
     def save_error(self,path):
         from itertools import cycle
 
@@ -169,7 +170,6 @@ class Scenario:
             os.makedirs(path)
         except:
             pass
-
         try:
             plt.clf()
             plt.close()
@@ -180,7 +180,6 @@ class Scenario:
             error_path = f'{path}/{metric}'
             if "time" in metric:
                 error_path = f'{"/".join(initial_path.split("/")[:-2])}/runtime'
-
             try:
                 os.makedirs(error_path)
             except:
@@ -188,17 +187,22 @@ class Scenario:
 
             columns = list(metric_df.columns)
             cyclers = {}
-            for name_type in columns:
-                color = ALGORITHM_COLORS[name_type[1]]
-                if color not in cyclers:
-                    cyclers[color] = cycle(lines)
-                plt.plot(metric_df[name_type], marker='x', label=name_type[0], color=color, ls=next(cyclers[color]))
-            plt.xlabel(metric_df.index.name)
-            plt.ylabel(metric)
-            lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-            plt.savefig(f'{error_path}/{metric}.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
-            plt.clf()
-            plt.close()
+            try:
+                for name_type in columns:
+                    color = ALGORITHM_COLORS[name_type[1]]
+                    if color not in cyclers:
+                        cyclers[color] = cycle(lines)
+                    plt.plot(metric_df[name_type], marker='x', label=name_type[0], color=color, ls=next(cyclers[color]))
+                plt.xlabel(metric_df.index.name)
+                plt.ylabel(metric)
+                lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+                plt.savefig(f'{error_path}/{metric}.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
+                plt.clf()
+                plt.close()
+            except:
+                print(metric, "could not be plotted")
             metric_df.columns = [name for name,type in metric_df.columns]
             metric_df.to_csv(f'{error_path}/{metric}.txt')
+
+
 

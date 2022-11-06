@@ -94,13 +94,15 @@ def gen_a_size_data(df, a_type, cols):
     return ret_val
 
 
+
+
 def gen_ts_len_data(df, a_type, cols):
     ts_lengths_ratios = ic.scenario_specifications["length_ratios"]
     min_ratio = min(ts_lengths_ratios)
     n,m = df.shape
     offset = int((n-min_ratio*n)/2)
     injected_df = df.copy()
-    injected_df, col_range_mapper = inject_data_df(injected_df, a_type=a_type,offset=offset)
+    injected_df, col_range_mapper = inject_data_df(injected_df,cols=cols,a_type=a_type,offset=offset)
     ret_val = []
 
     for ratio in ts_lengths_ratios[:-1]:

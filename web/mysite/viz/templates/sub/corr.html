@@ -1,0 +1,13 @@
+
+<div id="corr{{ dataset }}" style="display:none">
+    <p>Here is the correlation matrix for the data.</p>
+   <div>
+    {{ correlation | safe }}
+</div>
+
+</div>
+<!-- button that toggles the div with id div1 -->
+<button onclick="toggle_visibility('corr{{ dataset }}');">Show/Hide Correlation Matrix</button>
+
+
+

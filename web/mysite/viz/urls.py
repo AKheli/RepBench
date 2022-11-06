@@ -1,23 +1,27 @@
 from django.urls import path
-from web.mysite.viz.views import indexview,optimizationview
+
+import web.mysite.viz.views.dataset_views
+from web.mysite.viz.views import indexview,optimizationview,dataset_views
 
 urlpatterns = [
-    path('', indexview.index, name='index'),
-    path('get_data', indexview.get_data, name='get_data'),
-    path('get_data/<str:dataset>', indexview.get_data, name='get_data'),
-
     path('inject/<str:dataset>', indexview.inject, name='inject'),
     path('repair/<str:dataset>', indexview.repair, name='repair'),
+
+    # optimization
     path('opt' , optimizationview.optimization_view , name="optimization"),
-
-    path('display_dataset', indexview.display_datasets, name='display_dataset'),
-    path('viz_dataset/<str:setname>', indexview.viz_dataset, name='viz_dataset'),
-    path('<str:setname>', indexview.index, name='index'),
-
-
     path('optimize/<str:dataset>', optimizationview.optimize, name='optimize'),
 
 
 
+    # dataset
+    path('viz_dataset/<str:setname>', web.mysite.viz.views.dataset_views.viz_dataset, name='display_dataset'),
+    path('display_datasets', web.mysite.viz.views.dataset_views.display_datasets, name='display_datasets'),
+
+
+    path('get_data/<str:dataset>', indexview.get_data, name='get_data'),
+
+
+    path('', indexview.index, name='index'),
+    path('<str:setname>', indexview.index, name='index'),
 
 ]

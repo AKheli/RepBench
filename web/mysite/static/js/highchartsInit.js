@@ -17,12 +17,7 @@ fetchChart = function (token, fetch_url) {
             for (var i = seriesLength - 1; i > -1; i--) {
                 chart.series[i].remove();
             }
-
             let data = responseJson.series
-            console.log("loading data in promise")
-            console.log("loading")
-
-            console.log(data)
             data.forEach(x => chart.addSeries(x))
         })
 

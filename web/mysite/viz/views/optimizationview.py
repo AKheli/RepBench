@@ -4,7 +4,7 @@ import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
 from pandas import DataFrame
-from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_series, optimize_from_None_series
+from web.mysite.viz.BenchmarkMaps.create_repair_output import optimize_from_None_series
 from web.mysite.viz.forms.injection_form import  InjectionForm
 import pandas as pd
 from web.mysite.viz.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
@@ -59,3 +59,5 @@ def optimize(request, dataset="bafu5k"):
 
     output = json.loads(json.dumps(output, cls=NpEncoder))
     return JsonResponse(output)
+
+

@@ -1,12 +1,10 @@
-import os
 import random
 import numpy as np
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 import pandas as pd
 from pandas import DataFrame
 from algorithms import algo_mapper
-from data_methods import normalize_together
 from web.mysite.viz.forms.injection_form import ParamForm, InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
 import json
@@ -17,8 +15,11 @@ from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_s
 # to fetch whitout page reload
 def get_data(request ,dataset = "bafu5k" ):
     df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
+    viz = int(request.GET.get("viz",5))
+    print(request.body)
+
     data = {
-        'series': [{"visible": i < 5, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name) in
+        'series': [{"visible": i< viz, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name) in
                    enumerate(df.columns)]}
     return JsonResponse(data)
 
@@ -33,7 +34,6 @@ def param_forms(df):
 
 
 def index(request, setname = "bafu5k"):
-
     df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
     context = { "dataset":setname,
                 "forms": param_forms(df), "injection_form": InjectionForm(list(df.columns))}
@@ -107,17 +107,3 @@ def repair(request,dataset):
 
 
 
-def display_datasets(request=None):
-    data_files = os.listdir("data/train")
-
-    context = {"datasets": {f.split(".")[0]: {"full_file_name": f} for f in data_files}}
-
-    return render(request, 'displaydatasets.html', context=context)
-
-
-def viz_dataset(request, setname):
-    df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
-    context = {'series': [{"name": col_name, "data": list(df[col_name])} for col_name in df.columns]}
-    context["forms"] = param_forms(df)
-    context["injection_form"] = InjectionForm(list(df.columns))
-    return render(request, 'index.html', context=context)

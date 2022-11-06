@@ -6,13 +6,28 @@ ic.MAX_N_ROWS = 10000
 import matplotlib
 matplotlib.use('TKAgg')
 
-input = "-scen all -data humidity  -rn fall -anom outlier -alg all -e full_rmse -ts all" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = "-scen  a_factor,a_rate  -data all  -rn full_contaminated -anom outlier,shift -alg all -e full_rmse -ts all" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+ic.MAX_N_COLS = 10
+ic.label_seed = 20
+run.main(input)
+
+input = "-scen  a_factor,a_rate  -data all  -rn single_contaminated -anom outlier,shift -alg all -e full_rmse" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+ic.MAX_N_COLS = 10
+ic.label_seed = 20
+run.main(input)
+
+input = "-scen  a_factor  -data all  -rn single_contaminated_check -anom outlier,shift -alg all -e full_rmse -ts 0 " # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 ic.MAX_N_COLS = 10
 ic.label_seed = 20
 run.main(input)
 
 
-# input = "-scen a_factor  -data all   -rn f -anom all  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+input = "-scen  cts_nbr  -data all  -rn ctss_nbrs_again -anom outlier,shift -alg all -e full_rmse" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
+ic.MAX_N_COLS = 10
+ic.label_seed = 20
+run.main(input)
+
+# input = "-scen a_factor,a_rate  -data all   -rn f -anom all  -alg all -e full_rmse  "  # algox" # "-scen vary_ts_length  -col 0  -data YAHOO.csv -anom a -algo 1 "
 # ic.MAX_N_COLS = 10
 # ic.label_seed = 20
 # run.main(input)

@@ -1,4 +1,4 @@
-from algorithms.Dimensionality_Reduction.Dimensionality_Reduction_Estimator import DimensionalityReductionEstimator
+from algorithms.Dimensionality_Reduction.dimensionality_Reduction_estimator import DimensionalityReductionEstimator
 import numpy as np
 from scipy import linalg
 from sklearn.decomposition import TruncatedSVD
