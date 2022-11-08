@@ -26,11 +26,9 @@ except:
 
 for a_type,error_score,estim_name in list(product(a_types,error_scores,estim_names)):
     store_file_name = f"{estim_name}_{a_type}_{error_score}"
-    print(store_file_name)
     for file_name in ["bafu"]:#, "humidity", "elec" , "msd"]:
             estimator : Estimator = algorithms.algo_mapper[estim_name]()
             train_container = create_injected_DataContainer(file_name, "train", a_type=a_type)
-            print(train_container.a_perc)
             param_grid =  {"classification_truncation": [i for i in [1,2,3,4,5,6]],"threshold": [1,1.2,1.5,2,2.5,3] }
  #estimator.suggest_param_range(train_container.injected)
             optimizer = EstimatorOptimizer(estimator, error_score)

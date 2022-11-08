@@ -1,7 +1,10 @@
 import TestingFramework as run
-import Injection.Scenarios.ScenarioConfig as sc
+import Injection.injection_config as sc
 # cts_nbr,ts_nbr,ts_len
 import timeit
+
+import matplotlib
+matplotlib.use('TKAgg')
 
 sc.MAX_N_ROWS  = 200000
 start = timeit.timeit()

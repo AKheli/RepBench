@@ -12,16 +12,6 @@ from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_s
 
 
 
-# to fetch whitout page reload
-def get_data(request ,dataset = "bafu5k" ):
-    df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
-    viz = int(request.GET.get("viz",5))
-    print(request.body)
-
-    data = {
-        'series': [{"visible": i< viz, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name) in
-                   enumerate(df.columns)]}
-    return JsonResponse(data)
 
 
 def param_forms(df):
@@ -33,14 +23,14 @@ def param_forms(df):
     return param_forms
 
 
-def index(request, setname = "bafu5k"):
+def index(request, setname="bafu5k"):
     df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
-    context = { "dataset":setname,
-                "forms": param_forms(df), "injection_form": InjectionForm(list(df.columns))}
+    context = {"dataset": setname,
+               "forms": param_forms(df), "injection_form": InjectionForm(list(df.columns))}
     return render(request, 'index.html', context=context)
 
 
-def inject(request,dataset):
+def inject(request, dataset):
     df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
     post = request.POST
     col_name = post.get("data_columns")
@@ -92,18 +82,13 @@ def parse_param_input(p: str):
         return p
 
 
-def repair(request,dataset):
+def repair(request, dataset):
     post = request.POST.dict()
     injected_series = json.loads(post.pop("injected_series"))
     params = {k: parse_param_input(v) for k, v in post.items()}
     df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
 
-
     output = repair_from_None_series(params, df, *injected_series.values())
     context = {"metrics": output["metrics"]}
     output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
     return JsonResponse(output)
-
-
-
-

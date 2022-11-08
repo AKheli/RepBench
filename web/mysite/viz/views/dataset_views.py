@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+from django.http import JsonResponse
 from django.shortcuts import render
 from pandas import DataFrame
 
@@ -30,6 +31,20 @@ def test_inner_view(request, dataset="bafu5k"):
     return render(request, 'sub/test2.html', context=context)
 
 
+# to fetch whitout page reload
+def get_data(request, dataset="bafu5k"):
+    df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
+    viz = int(request.GET.get("viz", 5))
+
+    data = {
+        'series': [{"visible": i < viz, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name)
+                   in
+                   enumerate(df.columns)],
+       }
+    return JsonResponse(data)
+
+
+
 def display_datasets(request=None):
     data_files = os.listdir("data/train")
 
@@ -38,11 +53,15 @@ def display_datasets(request=None):
     return render(request, 'displayDatasets.html', context=context)
 
 
+
 def viz_dataset(request, setname):
     df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
     viz = int(request.GET.get("viz", 5))
+    correlation_html  =  df.corr().round(3).to_html(classes=["table table-sm table-dark"])
     context = {
-        "dataset": setname
-        ,"viz": viz}
+        "dataset": setname,
+        "viz": viz,
+        "data_title": setname,
+        "correlation": correlation_html,}
     print("original context",context)
-    return render(request, 'chartbase.html', context=context)
+    return render(request, 'displayDataset.html', context=context)

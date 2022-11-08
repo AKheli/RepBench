@@ -2,53 +2,83 @@
 {% load static %}
 
 <!-- base template with a chart container of a dataset-->
-{% block content %}
-
-    <div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
-    </div>
+{% block chartScript %}
     <script>
-        let data_url = '{% url "get_data" dataset=dataset  %}'+ '?viz={{ viz }}';
+        let chart_title = "{{ data_title }}"
+
+        let tooltip = {
+            formatter: function (e) {
+                // The first returned item is the header, subsequent items are the
+                // points
+                let x = this.x
+                return ['<p style=\"color:black;font-size:15px;\"> Truth: ' + this.y + '</p>'].concat(
+                    this.series.linkedSeries.map(function (s) {
+                        selectedY = s.yData[x]
+                        if (selectedY !== null) {
+                            selectedY = Math.round(selectedY * 1000) / 1000
+                            if (s.name.includes('injected')) {
+                                return "<br> <p style=\"color:red;font-size:15px;\"> Anomalous: " + selectedY + "<\p> "
+                            } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
+                        } else return ""
+                    })
+                );
+            },
+            shared: false,
+            valueDecimals: 2
+        }
+
+        let range_selector = {
+            buttons: [{
+                count: 1,
+                text: '1m',
+                events: {
+                    click: function () {
+                        alert('Clicked button');
+                    }
+                }
+            },
+                {
+                    count: 3,
+                    text: '3m'
+                }
+            ],
+            enabled: true,
+        }
+    </script>
+{% endblock %}
+
+
+{% block chart %}
+
+    <div class=" border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
+    </div>
+
+{#    <script> // get previous element of the container#}
+{#    document.getElementById("container").previousElementSibling.innerHTML = chart_title#}
+{#    </script>#}
+
+
+    {#
+    {#    </div>#}
+    <script>
+        let data_url = '{% url "get_data" dataset=dataset  %}' + '?viz={{ viz|default_if_none:5 }}';
         const mainchart = Highcharts.chart(document.getElementById('container'), {
 
-            tooltip: {
-
-                formatter: function (e) {
-                    // The first returned item is the header, subsequent items are the
-                    // points
-                    let x = this.x
-                    return ['<p style=\"color:black;font-size:15px;\"> Truth: ' + this.y + '</p>'].concat(
-                        this.series.linkedSeries.map(function (s) {
-                            selectedY = s.yData[x]
-                            if (selectedY !== null) {
-                                selectedY = Math.round(selectedY * 1000) / 1000
-                                if (s.name.includes('injected')) {
-                                    return "<br> <p style=\"color:red;font-size:15px;\"> Anomalous: " + selectedY + "<\p> "
-                                } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
-                            } else return ""
-                        })
-                    );
-                },
-                //split: true,
-                shared: false,
-                valueDecimals: 2
-            },
-
+            tooltip: tooltip,
 
             chart: {
-                zoomType: 'x'
+                type: 'line',
+                zoomType: 'x',
+
             },
 
             title: {
-                text: 'title'
+                text: chart_title
             },
 
 
-            accessibility: {
-                screenReaderSection: {
-                    beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
-                }
-            },
 
+            {#rangeSelector :range_selector,#}
 
             series: []
         });
@@ -61,12 +91,13 @@
             }
         }).then(response => response.json())
             .then(data => {
-                console.log(data)
-                console.log(data.series)
                 data.series.forEach(x => mainchart.addSeries(x))
             })
             .catch(error => console.error(error))
 
 
+
+
     </script>
 {% endblock %}
+

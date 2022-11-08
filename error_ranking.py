@@ -7,7 +7,6 @@ import re
 
 error = "RMSE"
 def is_error_path(path,error):
-        print( path.split("/")[-1] )
         return  path.split("/")[-1] == error
 
 
@@ -36,8 +35,6 @@ for i in [ x for x in os.walk("Results") if len(x[0]) > 0] :
 max_ = result_df["error"].argmax()
 min_ = result_df["error"].argmin()
 
-print(result_df.loc[max_])
-print(result_df.loc[min_])
 result_df.groupby("algorithm").median("error").sort_values(by="error")
 """
 algorithm Scenario

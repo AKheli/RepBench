@@ -45,17 +45,13 @@ class Estimator(ABC, BaseEstimator):
         original_mse = 0
         partial_mse = 0
         rmse_per_col = []
-        for col in columns_to_repair:
-            print(non_labeled)
-            print(y)
-            print(non_labeled)
-            print(y[non_labeled[:,col],col])
-            mae += sm.mean_absolute_error(y[non_labeled[:,col],col], predicted[non_labeled[:,col],col])
+        for col in columns_to_repair: # assume same label rate on each column
+            mae += sm.mean_absolute_error(y[non_labeled[:,col],col], predicted[non_labeled[:,col],col])/len(columns_to_repair)
             mse_col = sm.mean_squared_error(y[non_labeled[:,col],col],predicted[non_labeled[:,col],col])
-            mse += mse_col
+            mse += mse_col/len(columns_to_repair)
             rmse_per_col.append((col, np.sqrt(mse_col)))
-            partial_mse += sm.mean_squared_error(y[partial_weights[:,col],col], predicted[partial_weights[:,col],col])
-            original_mse += sm.mean_squared_error(y[:,col], X[:,col])
+            partial_mse += sm.mean_squared_error(y[partial_weights[:,col],col], predicted[partial_weights[:,col],col])/len(columns_to_repair)
+            original_mse += sm.mean_squared_error(y[:,col], X[:,col])/len(columns_to_repair)
 
         scores = {}
         scores['mae'] = mae

@@ -1,14 +1,7 @@
-{% extends "base.html" %}
+{% extends "chartbase.html" %}
 {% load static %}
 
+
 {% block content %}
-    <!-- Highcharts display -->
-    <div class="border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-    <!-- Injection and repair -->
-
-    <script src="{% static  'js/highchartsMainContainerInit.js' %} " type="text/javascript"></script>
-    <script src="{% static  'js/highchartsInit.js' %}" type="text/javascript"></script>
-
-
-
+    {% include "sub/corr.html" %}
 {% endblock %}

@@ -35,7 +35,6 @@ for error in error_metrics:
 
 
 
-print(list(scenario.name_train_test_iter))
 for error in error_metrics:
     train = {}
     test = {}

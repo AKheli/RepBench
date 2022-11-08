@@ -18,7 +18,7 @@ urlpatterns = [
     path('display_datasets', web.mysite.viz.views.dataset_views.display_datasets, name='display_datasets'),
 
 
-    path('get_data/<str:dataset>', indexview.get_data, name='get_data'),
+    path('get_data/<str:dataset>', dataset_views.get_data, name='get_data'),
 
 
     path('', indexview.index, name='index'),

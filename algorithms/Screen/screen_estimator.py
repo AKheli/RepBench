@@ -31,6 +31,7 @@ class SCREENEstimator(Estimator):
                 "smin": -np.linspace(0.01, 2, num=100)}
 
     def repair(self, injected, truth, columns_to_repair, labels=None):
+        truth = None
         repair = injected.copy()
 
         columns_to_repair = [c for c in columns_to_repair if c < injected.shape[1]]
@@ -43,11 +44,6 @@ class SCREENEstimator(Estimator):
                 perc = np.percentile(sorted(np.diff(x)), tuple(self.ci))
                 smax = perc[1]
                 smin = perc[0]
-                print("smin",smin)
-                print("smax",smax)
-                print(perc)
-                print(tuple(self.ci))
-                print(sorted(abs(np.diff(x))))
                 self.smax = smax
                 self.smin = smin
             else:
