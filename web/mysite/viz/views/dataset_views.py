@@ -3,65 +3,71 @@ import os
 import pandas as pd
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views import View
 from pandas import DataFrame
 
-from web.mysite.viz.forms.injection_form import InjectionForm
-from web.mysite.viz.views.indexview import param_forms
+## match case for dataset
+data_set_map = {"bafu5k": "BAFU",
+                "msd1_5": "Server Maschine Dataset",
+                "humidity": "Humidity",
+                "small": "Test",
+                "elec": "Electricity",
+                }
+
+data_set_shape_map = {key: pd.read_csv(f"data/train/{key}.csv").shape for key in data_set_map.keys()}
+
+class DatasetView(View):
+    default_nbr_of_ts_to_display = 5
+
+    def data_set_info_context(self, df):
+        correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"])
+        context = {"correlation_html" : correlation_html}
+        return context
+
+    def data_set_default_context(self, request,setname):
+        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+        context = {"setname": setname}
+        context["data_title"] = data_set_map.get(setname, setname)
+        context["viz"] = int(request.GET.get("viz", self.default_nbr_of_ts_to_display))
+        return context , df
 
 
-def test_view(request):
-    # transform request.body to dictionary
-    a = int(request.GET.get("a", 0)) + 1
-    if request.method == "POST":
-        a = request.POST.dict()
-        print(a)
-
-    return render(request, 'test.html', context={"a": a})
+    def get(self,request,setname = "bafu5k"):
+        context, df = self.data_set_default_context(request,setname)
+        context.update(self.data_set_info_context(df))
+        print(context)
+        return render(request, 'displayDataset.html', context=context)
 
 
-def test_inner_view(request, dataset="bafu5k"):
-    """
-    return html from the test2.html with context
-    """
-    index = int(request.GET.get("index", 0))
-    a = 20
-    df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
-    context = {"dataset": dataset, "correlation": df.corr().round(3).to_html(classes=["table table-sm table-dark"]),
-               "index": index}
-    return render(request, 'sub/test2.html', context=context)
+    @staticmethod
+    def get_data(request, setname="bafu5k"):
+        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+        viz = int(request.GET.get("viz", 5))
+
+        data = {
+            'series': [{"visible": i < viz, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name)
+                       in
+                       enumerate(df.columns)],
+        }
+        return JsonResponse(data)
 
 
-# to fetch whitout page reload
-def get_data(request, dataset="bafu5k"):
-    df: DataFrame = pd.read_csv(f"data/train/{dataset}.csv")
-    viz = int(request.GET.get("viz", 5))
 
-    data = {
-        'series': [{"visible": i < viz, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name)
-                   in
-                   enumerate(df.columns)],
-       }
-    return JsonResponse(data)
 
+### display_datasets.html page
+def mult_tup(tup):
+    return tup[0] * tup[1]
 
 
 def display_datasets(request=None):
-    data_files = os.listdir("data/train")
+    data_files = [f.split(".")[0] for f in os.listdir("data/train")]
+    context = {"datasets": {data_set_map.get(f, f):
+                                {"full_file_name": f.split(".")[0],
+                                 "ts_nbr": data_set_shape_map[f][1],
+                                 "values": mult_tup(data_set_shape_map[f])}
 
-    context = {"datasets": {f.split(".")[0]: {"full_file_name": f} for f in data_files}}
+                            for f in data_files}}
 
     return render(request, 'displayDatasets.html', context=context)
 
 
-
-def viz_dataset(request, setname):
-    df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
-    viz = int(request.GET.get("viz", 5))
-    correlation_html  =  df.corr().round(3).to_html(classes=["table table-sm table-dark"])
-    context = {
-        "dataset": setname,
-        "viz": viz,
-        "data_title": setname,
-        "correlation": correlation_html,}
-    print("original context",context)
-    return render(request, 'displayDataset.html', context=context)

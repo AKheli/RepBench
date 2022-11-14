@@ -9,7 +9,7 @@ import numpy as np
 
 class SCREENEstimator(Estimator):
 
-    def __init__(self, t:int=3, smax: float = 0.1, smin :float =0.2, method : str ="local", ci=None ,**kwargs):
+    def __init__(self, t:int=3, smax: float = 0.1, smin :float =-0.2, method : str ="local", ci=None ,**kwargs):
         """
         param ci need to be a tuple e.g (0.1,0.9)
         """

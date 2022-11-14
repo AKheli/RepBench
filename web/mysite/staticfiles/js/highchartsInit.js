@@ -72,8 +72,6 @@ fetch(fetch_url, {
 
 })
 
-var test_button = document.getElementById("datasetformapply")
-console.log(test_button)
 //test_button.addEventListener("click",
 document.getElementById("datasetform").addEventListener("change",e => {
     console.log("eventx")
@@ -105,15 +103,10 @@ document.getElementById("datasetform").addEventListener("change",e => {
 })
 
 
-let create_form = function(form_id,token){
-    let form = document.getElementById(form_id)
-    const formDatatest = new FormData(form);
-    formDatatest.append('csrfmiddlewaretoken', token);
-    return formDatatest
-}
-
-let inject  = (token, formdata , fetch_url) =>  fetch(fetch_url, {
-        method: 'POST',
-        body: create_form(form_id,token),
-    }).then(response =>  console.log(response))
+// let create_form = function(form_id,token){
+//     let form = document.getElementById(form_id)
+//     const formDatatest = new FormData(form);
+//     formDatatest.append('csrfmiddlewaretoken', token);
+//     return formDatatest
+// }
 

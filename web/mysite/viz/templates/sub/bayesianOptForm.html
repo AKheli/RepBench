@@ -1,25 +1,55 @@
-    {% for alg,params in b_opt_param_forms.items %}
-        <div class="{{ alg }}" style="visibility:hidden;">
-            {{ alg }}
-            <form class="bayesian-opt-form" id='{{ alg }}' onSubmit="return false" style="visibility:hidden;">
-                {% for param in params %}
-                    <label for="{{ param.param_name }}">{{ param.param_name }}</label>        <br>
-                    min:<input type="text" id="{{ param.param_name }}"
-                               size="4" name="{{ param.param_name }}-min"
-                               pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
-                               value={{ param.min }}>
-                    max:<input type="text" id="{{ param.param_name }}"
-                               size="4" name="{{ param.param_name }}-max"
-                               pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
-                               value="{{ param.max }}">
-                    <br><br>
-                {% endfor %}
-                <div>
-                    <input type="hidden" name="alg_type" value="{{ alg }}">
+<!-- dropt down button that toggles form and hides all others -->
+<div class="dropdown">
+    <div id="myDropdown" class="dropdown-content">
+        {% for alg,params in b_opt_param_forms.items %}
+            <button onclick="showForm('{{ alg }}')" class="dropbtn">{{ alg }}</button>
+        {% endfor %}
+    </div>
+</div>
 
-                    {{ bayesian_opt_form.as_p }}
-                </div>
-                <input type="submit" onclick="bayesian_opt_form('{{ alg }}')">
-            </form>
-        </div>
-    {% endfor %}
+{% for alg,params in b_opt_param_forms.items %}
+    <div class="b-opt-form" id='{{ alg }}' style="display:none;">
+        <form class="bayesian-opt-form" id='{{ alg }}form' onSubmit="return false">
+            <h1> {{ alg }}</h1>
+            <table>
+
+                {% for param in params %}
+                    <tr>
+                        <td colspan="2" style="text-align:left;"><label for="{{ param.param_name }}">{{ param.param_name }}</label></td>
+                        <tr>
+
+                          <td style="text-align:right">
+                              <input type="text" id="{{ param.param_name }}" class="form-control"
+                                       size="4" name="{{ param.param_name }}-min"
+                                       pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
+                                       value={{ param.min }}>
+                        </td>
+                        <td style="text-align:left">
+                            <input type="text" id="{{ param.param_name }}"  class="form-control"
+                                       size="4" name="{{ param.param_name }}-max"
+                                       pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
+                                   value="{{ param.max }}">
+                        </td>
+                    </tr>
+
+                {% endfor %}
+            </table>
+
+            <div>
+                <input type="hidden" name="alg_type" value="{{ alg }}">
+                {{ bayesian_opt_form }}
+            </div>
+            <input type="submit" onclick="optimizeCurrentData('{{ alg }}form')">
+        </form>
+    </div>
+{% endfor %}
+
+<script>
+    let showForm = (id) => {
+        let forms = document.getElementsByClassName("b-opt-form");
+        for (let i = 0; i < forms.length; i++) {
+            forms[i].style.display = "none";
+        }
+        document.getElementById(id).style.display = "block";
+    }
+</script>

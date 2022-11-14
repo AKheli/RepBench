@@ -1,31 +1,35 @@
 
-#injection_form {
-   display:inline-table;
-   font-size:20px;
-   padding:4px 2px;
-   /* border:solid 10px black;*/
-    width:200px;
-    margin:55px 20px 200px 10px;
-     background-color: lightgray;
-/*    width:max-content;*/
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-#alg_form {
-  background-color: lightcoral;
-    width:2000px;
-    margin:2px 0 20px 10px;
-}
 
 
 .myform {
-     background-color: lightgray;
-/*    width:max-content;*/
-    padding-left: 10px;
-    padding-right: 10px;
+    background-color: lightblue;
+    margin-top: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 200px;
 
 }
+
+.myform input {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    max-width: 150px;
+}
+
+.switchButton {
+    background-color: lightgray;
+    margin-top: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size:20px;
+    alignment: center;
+    max-width: 200px;
+    width: 150px;
+
+}
+
+
+
 
 .bayesian-opt-form {
     display:inline-table;

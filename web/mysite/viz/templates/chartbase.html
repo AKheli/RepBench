@@ -4,6 +4,7 @@
 <!-- base template with a chart container of a dataset-->
 {% block chartScript %}
     <script>
+        let datasetName = "{{ set_name }}";
         let chart_title = "{{ data_title }}"
 
         let tooltip = {
@@ -50,18 +51,18 @@
 
 {% block chart %}
 
-    <div class=" border" id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12" id="container"></div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            {% block belowchart %}
+            {% endblock %}
+        </div>
+
     </div>
 
-{#    <script> // get previous element of the container#}
-{#    document.getElementById("container").previousElementSibling.innerHTML = chart_title#}
-{#    </script>#}
 
-
-    {#
-    {#    </div>#}
     <script>
-        let data_url = '{% url "get_data" dataset=dataset  %}' + '?viz={{ viz|default_if_none:5 }}';
+        let data_url = '{% url "get_data" setname=setname  %}' + '?viz={{ viz|default_if_none:5 }}';
         const mainchart = Highcharts.chart(document.getElementById('container'), {
 
             tooltip: tooltip,
@@ -75,7 +76,6 @@
             title: {
                 text: chart_title
             },
-
 
 
             {#rangeSelector :range_selector,#}
@@ -94,8 +94,6 @@
                 data.series.forEach(x => mainchart.addSeries(x))
             })
             .catch(error => console.error(error))
-
-
 
 
     </script>

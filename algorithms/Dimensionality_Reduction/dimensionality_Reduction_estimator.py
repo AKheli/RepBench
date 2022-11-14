@@ -43,14 +43,16 @@ class DimensionalityReductionEstimator(Estimator):
                 }
 
     ##todo add dtype
-    def suggest_param_range(self, X):
-        n_cols = X.shape[1]
+    def suggest_param_range(self, X=None):
+        n_cols = X.shape[1] if X is not None else 10
         return {"classification_truncation": [i for i in [1, 2, 3, 4, 5] if i < n_cols - 1],
                 "repair_truncation": [i for i in [2, 3, 4, 5] if i < n_cols - 1],
-                "threshold": [1, 1.2, 1.5, 2, 2.5, 3],
+                "threshold": [1.0, 1.2, 1.5, 2.0, 2.5, 3.0],
                 "repair_iter": [1, 10],
                 "n_max_iter": [1, 20],  # reweighting
                 }
+
+
 
     def fit(self, X, y=None):
         self.reduce(X, self.classification_truncation)

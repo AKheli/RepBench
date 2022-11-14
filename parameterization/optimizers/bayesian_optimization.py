@@ -42,7 +42,7 @@ class BayesianOptimizer(EstimatorOptimizer):
         def f(x):
             self.counter += 1
             estim = self.estim_change_copy(dict(zip(param_keys, x)))
-            score= estim.scores(**repair_inputs)["full_rmse"]
+            score= estim.scores(**repair_inputs)[self.error_score]
             #sys.stdout.write(f"\rbayesian opt search {self.counter / self.n_calls * 100:.1f} % {score}", )
             return score
 

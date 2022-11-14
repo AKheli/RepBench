@@ -1,0 +1,27 @@
+{% extends "chartbase.html" %}
+{% load static %}
+{% block content %}
+
+    <script src="{% static  'js/highchartsMainContainerInit.js' %} " type="text/javascript"></script>
+    <script src="{% static  'js/highchartsInit.js' %}" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        let data_url = '{% url "get_data" dataset=dataset %}'
+        let selectionButton = document.getElementById("injection_button")
+        let injection_url = "{% url 'inject' dataset=dataset %}"
+
+        fetchChart(csrftoken, data_url)
+
+        selectionButton.addEventListener("click", e => {
+            e.stopPropagation()
+            inject("injection_form", csrftoken, injection_url)
+        })
+
+        let optimization_url = "{% url 'opt' dataset=dataset %}"
+        let bayesian_opt_form = function (form_id) {
+            optimizeCurrentData(form_id, csrftoken, optimization_url)
+        }
+
+    </script>
+
+{% endblock %}

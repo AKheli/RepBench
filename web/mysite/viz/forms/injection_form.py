@@ -9,19 +9,10 @@ DATA_SET_CHOISES = [
 ]
 
 
-class UserForm(forms.Form):
-    dataset = forms.CharField(label='What is your favorite fruit?', widget=forms.Select(choices=DATA_SET_CHOISES))
+# class UserForm(forms.Form):
+#     dataset = forms.CharField(label='What is your favorite fruit?', widget=forms.Select(choices=DATA_SET_CHOISES))
 
 
-class ParamForm(forms.Form):
-    def __init__(self, alg_type, **kwargs):
-        super(ParamForm, self).__init__()
-        # self.fields = tuple(kwargs.keys())
-        for k, v in kwargs.items():
-            self.fields[k] = forms.CharField(label=k, widget=forms.Select(choices=[(i, i) for i in v],
-                                                                          attrs={"class": 'form-control'}))
-            # self.widget[k] =
-        self.fields["alg_type"] = forms.CharField(widget=forms.HiddenInput(), initial=alg_type)
 
 
 ANOMALY_CHOICES = [

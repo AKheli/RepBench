@@ -49,7 +49,7 @@ class IMR_estimator(Estimator):
                 print("Warning: IMR has not enought labeled anomalies")
 
             if self.max_itr_n is None:
-                max_itr_n  = 4000*len(x)/1000
+                max_itr_n  = int(4000*len(x)/1000)
             else:
                 max_itr_n = self.max_itr_n
             repair_results = imr(x, y_0, col_labels, tau=self.tau, p=self.p, k=max_itr_n)

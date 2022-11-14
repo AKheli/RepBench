@@ -1,0 +1,40 @@
+{% load static %}
+
+
+
+
+
+
+<div id="repairandinjectform">
+    <button class="switchButton" onclick="updateRepairAndInjectionForm('injectSwitch','repairSwitch')">
+        Injection
+    </button>
+    <div id="injectSwitch">
+        {% include "sub/injectionForm.html" %}
+    </div>
+    <button class="switchButton" id="repairSwtichButton"
+            onclick="updateRepairAndInjectionForm('repairSwitch','injectSwitch')">
+        Repair
+    </button>
+    <div id="repairSwitch">
+
+        {% include "sub/repairForm.html" %}
+    </div>
+
+</div>
+
+<script>
+    let repairFormSwitch = document.getElementById("repairSwtichButton");
+    repairFormSwitch.style.display = "none";
+    document.getElementById("injection_form").onclick = function () {
+        repairFormSwitch.style.display = "block";
+    }
+
+    function updateRepairAndInjectionForm(toggle, off) {
+        var toggleSwitch = document.getElementById(toggle);
+        var offSwitch = document.getElementById(off);
+        offSwitch.style.display = "none";
+        toggleSwitch.style.display === "none" ? toggleSwitch.style.display = "block" : toggleSwitch.style.display = "none";
+    }
+</script>
+

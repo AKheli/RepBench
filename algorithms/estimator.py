@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
 import sklearn.metrics as sm
+import inspect
 
 
 class Estimator(ABC, BaseEstimator):
@@ -28,12 +29,16 @@ class Estimator(ABC, BaseEstimator):
 
         :return: score or dict with scores
         """
+
         if predicted is None:
-            predicted = self.repair(X, y,columns_to_repair,labels).values
+            predicted = self.repair(injected, truth, columns_to_repair, labels).values
 
         labels = labels.values if isinstance(labels,pd.DataFrame) else labels
         X = injected.values if isinstance(injected,pd.DataFrame) else injected
         y = truth.values if isinstance(truth,pd.DataFrame) else truth
+
+
+
         predicted = predicted.values if isinstance(predicted,pd.DataFrame) else predicted
 
         non_labeled = np.invert(labels.astype(bool))
@@ -99,10 +104,6 @@ class Estimator(ABC, BaseEstimator):
         return score_
 
 
-    def fit(self, X, y=None):
-        raise NotImplementedError(self)
-
-
     def repair(self,injected, truth, columns_to_repair , labels=None):
         raise NotImplementedError(self)
 
@@ -112,10 +113,29 @@ class Estimator(ABC, BaseEstimator):
     def get_fitted_params(self, **args):
         raise NotImplementedError(self)
 
-    def suggest_param_range(self, X):
-        "parameter ranges used for training depending on data X, data is normalized for training"
+    def suggest_param_range(self, X=None):
+        "parameter ranges used for training depending on data X"
         raise NotImplementedError(self)
 
+    def get_default_params(self):
+        signature = inspect.signature(self.__init__)
+        return {
+            k: v.default
+            for k, v in signature.parameters.items()
+            if v.default is not inspect.Parameter.empty
+        }
+
+
+    def get_param_info(self, X=None):
+        """
+        return : dictionary with the parameters of the estimator
+        that we vary to find the best estimator for a given dataset
+        each key is a parameter name and the value is a tuples of values:
+        (type,min,max,default,range)
+        """
+        default_params = self.get_default_params()
+
+        return {k: (type(v[0]),min(v),max(v),default_params[k],v)  for k, v in self.suggest_param_range(X).items()}
 
     @property
     def alg_type(self):
@@ -124,10 +144,6 @@ class Estimator(ABC, BaseEstimator):
 
     def algo_name(self):
         raise NotImplementedError(self)
-
-    def addiotnal_plotting_args(self) -> dict:
-        # col_index :  kwargs for plt.plot()
-        return {}
 
 
 

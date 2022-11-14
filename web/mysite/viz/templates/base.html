@@ -50,15 +50,34 @@ const csrftoken = getCookie('csrftoken');
 <body>
 
 {% block topbar %}
-<!-- Top Bar -->>
+<!-- Top Bar with 3 hyperlinks-->
+
+
+
 <nav class="row navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href='{% url "display_datasets" %}'>Repairviz</a>
-{#    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">#}
-    <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" href="#">Sign out</a>
-        </li>
-    </ul>
+<div class="col-4">
+
+
+    <!-- navbar-brand with urls : index, display_datasets,optimize and repair-->
+    <a class="navbar-brand col-sm-8 col-md-2 mr-8" href="{% url 'index' %}">Repairviz</a>
+    <a class="navbar-brand col-sm-8 col-md-2 mr-8" href="{% url 'display_datasets' %}">Datasets</a>
+    <a class="navbar-brand col-sm-5 col-md-2 mr-0" href="{% url 'repair' %}">Repair</a>
+    <a class="navbar-brand col-sm-5 col-md-2 mr-0" href="{% url 'opt' %}">Optimize</a>
+
+
+
+{#    <a class="navbar-brand col-sm-4 col-md-2 mr-2" href='{% url "index" %}'> <b>Repairviz</b></a>#}
+{#    <a class="navbar-brand col-sm-2 col-md-2 mr-1" href='{% url "display_datasets" %}'>Datasets</a>#}
+{#    <a class="navbar-brand col-sm-2 col-md-2 mr-1" href='{% url "optimize" %}'>Optimize</a>#}
+{#    <a class="navbar-brand col-sm-2 col-md-2 mr-1" href='{% url "optimize" %}'>Optimize</a>#}
+
+
+    </div>
+{#    <ul class="navbar-nav px-3">#}
+{#        <li class="nav-item text-nowrap">#}
+{#            <a class="nav-link" href="#">Sign out</a>#}
+{#        </li>#}
+{#    </ul>#}
 </nav>
 {% endblock %}
 

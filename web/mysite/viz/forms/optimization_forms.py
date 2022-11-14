@@ -2,12 +2,15 @@ from django import forms
 
 from algorithms import algo_mapper
 
-error_choices = [("full_rmse", "RMSE"), ("mae", "MAE"), ("partial_rmse", "RMSE on anomaly")]
+error_choices = [("rmse", "RMSE"), ("mae", "MAE"), ("partial_rmse", "RMSE on anomaly")]
 
 
 class BayesianOptForm(forms.Form):
     n_initial_points = forms.IntegerField(label="n start", initial=20)
+    n_initial_points.widget.attrs.update({ "class": 'form-control multi-anomaly', "style": "width: 90px"})
+
     n_calls = forms.IntegerField(label="n", initial=20)
+    n_calls.widget.attrs.update({ "class": 'form-control multi-anomaly', "style": "width: 90px"})
     error_loss = forms.CharField(label='Anomaly Type', widget=forms.Select(choices=error_choices,
                                                                            attrs={
                                                                                "class": 'form-control multi-anomaly'}))
