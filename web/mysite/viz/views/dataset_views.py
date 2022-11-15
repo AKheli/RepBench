@@ -19,13 +19,18 @@ data_set_shape_map = {key: pd.read_csv(f"data/train/{key}.csv").shape for key in
 class DatasetView(View):
     default_nbr_of_ts_to_display = 5
 
+
+    def load_data_set(self,setname):
+        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+        return df
+
     def data_set_info_context(self, df):
         correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"])
         context = {"correlation_html" : correlation_html}
         return context
 
     def data_set_default_context(self, request,setname):
-        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+        df = self.load_data_set(setname)
         context = {"setname": setname}
         context["data_title"] = data_set_map.get(setname, setname)
         context["viz"] = int(request.GET.get("viz", self.default_nbr_of_ts_to_display))
@@ -39,9 +44,8 @@ class DatasetView(View):
         return render(request, 'displayDataset.html', context=context)
 
 
-    @staticmethod
-    def get_data(request, setname="bafu5k"):
-        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+    def get_data(self ,request, setname="bafu5k"):
+        df = self.load_data_set(setname)
         viz = int(request.GET.get("viz", 5))
 
         data = {

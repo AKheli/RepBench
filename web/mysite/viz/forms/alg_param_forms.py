@@ -28,6 +28,6 @@ def create_param_forms(df):
         for param, v in estim().get_param_info(df).items():
             type_,min_,max_,default_,range_ = v
             param_form.fields[param] = type_form_mapper[type_](label=param, min_value=min_, max_value=max_, initial=default_,
-                                                               widget=NumberInput( attrs={'class': 'form-control', 'title': 'Enter numbers Only '}))
+                                                               widget=NumberInput( attrs={ 'title': 'Enter numbers Only '}))
         param_forms[alg] = param_form
     return param_forms

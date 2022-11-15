@@ -1,17 +1,16 @@
 <!-- dropt down button that toggles form and hides all others -->
-<div class="dropdown">
-    <div id="myDropdown" class="dropdown-content">
-        {% for alg,params in b_opt_param_forms.items %}
-            <button onclick="showForm('{{ alg }}')" class="dropbtn">{{ alg }}</button>
+
+ <label for="alg_selection"></label>
+    <select name="alg_selection" class="switchButton alg-select" onchange="showForm(value)">
+        {% for key, _ in b_opt_param_forms.items %}
+            <option value={{ key }}> <h1>{{ key }}</h1></option>
         {% endfor %}
-    </div>
-</div>
+    </select>
 
 {% for alg,params in b_opt_param_forms.items %}
     <div class="b-opt-form" id='{{ alg }}' style="display:none;">
         <form class="bayesian-opt-form" id='{{ alg }}form' onSubmit="return false">
-            <h1> {{ alg }}</h1>
-            <table>
+            <table class="django-table">
 
                 {% for param in params %}
                     <tr>
@@ -19,13 +18,13 @@
                         <tr>
 
                           <td style="text-align:right">
-                              <input type="text" id="{{ param.param_name }}" class="form-control"
+                              <input type="text" id="{{ param.param_name }}"
                                        size="4" name="{{ param.param_name }}-min"
                                        pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
                                        value={{ param.min }}>
                         </td>
                         <td style="text-align:left">
-                            <input type="text" id="{{ param.param_name }}"  class="form-control"
+                            <input type="text" id="{{ param.param_name }}"
                                        size="4" name="{{ param.param_name }}-max"
                                        pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
                                    value="{{ param.max }}">

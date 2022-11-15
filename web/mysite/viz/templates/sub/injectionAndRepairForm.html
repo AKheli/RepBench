@@ -1,11 +1,7 @@
 {% load static %}
 
 
-
-
-
-
-<div id="repairandinjectform">
+<div id="repairandinjectform" class="myform">
     <button class="switchButton" onclick="updateRepairAndInjectionForm('injectSwitch','repairSwitch')">
         Injection
     </button>
@@ -17,7 +13,6 @@
         Repair
     </button>
     <div id="repairSwitch">
-
         {% include "sub/repairForm.html" %}
     </div>
 
@@ -25,7 +20,10 @@
 
 <script>
     let repairFormSwitch = document.getElementById("repairSwtichButton");
+    let repairSwitch = document.getElementById("repairSwitch");
+
     repairFormSwitch.style.display = "none";
+    repairSwitch.style.display = "none";
     document.getElementById("injection_form").onclick = function () {
         repairFormSwitch.style.display = "block";
     }

@@ -7,13 +7,13 @@ error_choices = [("rmse", "RMSE"), ("mae", "MAE"), ("partial_rmse", "RMSE on ano
 
 class BayesianOptForm(forms.Form):
     n_initial_points = forms.IntegerField(label="n start", initial=20)
-    n_initial_points.widget.attrs.update({ "class": 'form-control multi-anomaly', "style": "width: 90px"})
+    n_initial_points.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
 
     n_calls = forms.IntegerField(label="n", initial=20)
-    n_calls.widget.attrs.update({ "class": 'form-control multi-anomaly', "style": "width: 90px"})
+    n_calls.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
     error_loss = forms.CharField(label='Anomaly Type', widget=forms.Select(choices=error_choices,
                                                                            attrs={
-                                                                               "class": 'form-control multi-anomaly'}))
+                                                                               "class": ' multi-anomaly'}))
 
 
 def bayesian_opt_param_forms_inputs(df):

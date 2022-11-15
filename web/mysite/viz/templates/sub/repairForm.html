@@ -1,40 +1,42 @@
-
-
-<div class="dropdown d-flex p-2">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-        Select Algorithm
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+<div class="myform" id="repair-select-form">
+    <label for="alg_selection"></label>
+    <select name="alg_selection" class="switchButton alg-select" onchange="displayfunc(value)">
         {% for key, _ in alg_forms.items %}
-            <a onclick="displayfunc('{{ key }}')" class="dropdown-item">{{ key }}</a>
+            <option value={{ key }}> {{ key }}</option>
         {% endfor %}
-    </div>
-</div>
+    </select>
 
-{% for key, form in alg_forms.items %}
-    <form class="myform" style="display:none;" id={{ key }}>
-        {{ form }}
-        <button class="repair-button" type="button" onclick="repair('{{ key }}')">repair</button>
-    </form>
-{% endfor %}
+    {% for key, form in alg_forms.items %}
+        <form class="myform" style="display:none;" id={{ key }}>
+            <div class="django-table repair-form-table">
+                {% for field in form.visible_fields %}
+                    <div> {{ field.label }} </div>
+                    <div> {{ field }} </div>
+                {% endfor %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+            </div>
+            <button class="repair-button" type="button" onclick="repair('{{ key }}')">repair</button>
+        </form>
+
+    {% endfor %}
 </div>
 
 
 <script>
-        let lastkey = null
-        let displayfunc = function (key) {
-            var x = document.getElementById(key);
-            if (key !== lastkey && lastkey != null) {
-                document.getElementById(lastkey).style.display = "none";
-            }
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
-            lastkey = key
+    let lastkey = null
+    let displayfunc = function (key) {
+        var x = document.getElementById(key);
+        if (key !== lastkey && lastkey != null) {
+            document.getElementById(lastkey).style.display = "none";
         }
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+        lastkey = key
+    }
 </script>
 

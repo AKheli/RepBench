@@ -1,18 +1,19 @@
-<style type="text/css">
 
-    .form  {
-        margin-top: 0px;
-    }
 
-    .form-vertical{
-        margin-bottom: 0px;
-    }
-</style>
-
-<form onSubmit="return false" id="injection_form" class="form-vertical myform">
-        <div class="colw flex-column-l">
+<form onSubmit="return false" id="injection_form"  class="myform" >
+        <div>
             {% csrf_token %}
-            {{ injection_form }}
+            <!--table with two columns-->
+
+            <div class="django-table injection-form-table">
+                {% for field in injection_form.visible_fields %}
+                   <div> {{ field.label }} </div>
+                    <div> {{ field }} </div>
+                {% endfor %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+            </div>
             <button id="injection_button">
                 Inject
             </button>

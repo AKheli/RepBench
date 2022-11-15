@@ -52,14 +52,6 @@ class DimensionalityReductionEstimator(Estimator):
                 "n_max_iter": [1, 20],  # reweighting
                 }
 
-
-
-    def fit(self, X, y=None):
-        self.reduce(X, self.classification_truncation)
-        self.is_fitted = True
-        assert hasattr(self, "transform_matrix")
-        return self
-
     def reduce(self, matrix, truncation):
         matrix = matrix.copy()
         n, m = matrix.shape
