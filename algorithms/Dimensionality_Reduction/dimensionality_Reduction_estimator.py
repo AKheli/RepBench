@@ -13,7 +13,7 @@ class DimensionalityReductionEstimator(Estimator):
                  , delta=1.5
                  , threshold=1.2
                  , eps=1e-6
-                 , n_max_iter=50
+                 , n_max_iter=10
                  , repair_iter=10
                  , windows=False
                  , **kwargs

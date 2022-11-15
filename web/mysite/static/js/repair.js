@@ -13,7 +13,16 @@ let repair = (alg) => fetch(repair_url, {
     body: createRepairRequestFormData(alg),
 }).then(response => response.json()).then(responseJson => {
     repairResult = responseJson
-    console.log(repairResult)
+    additionalData = responseJson["additional_repair_info"]
+    console.log("additionalData")
+    console.log(additionalData)
+    if(additionalData){
+         if(additionalData["reduced"]){
+            add_list_of_data_to_chart(additionalData.reduced, mainchart, "reduced")
+        }
+
+    }
+
     repairedSeries = responseJson.repaired_series
     scores = responseJson.scores
 

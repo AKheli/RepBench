@@ -12,6 +12,8 @@ data_set_map = {"bafu5k": "BAFU",
                 "humidity": "Humidity",
                 "small": "Test",
                 "elec": "Electricity",
+                "tiny" : "Tiny",
+                "20" : "20",
                 }
 
 data_set_shape_map = {key: pd.read_csv(f"data/train/{key}.csv").shape for key in data_set_map.keys()}

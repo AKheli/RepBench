@@ -25,6 +25,7 @@ urlpatterns = [
 
     # alg inspection
     path('alg_inspection', alg_inspection_view.AlgInspectionView.as_view(), name="alg_inspection"),
+    path('alg_inspection/<str:setname>', alg_inspection_view.AlgInspectionView.as_view(), name="alg_inspection"),
     path('alg_inspection_repair/<str:setname>' , alg_inspection_view.AlgInspectionView().repair_data , name="alg_inspection_repair"),
 
     # datagetter
