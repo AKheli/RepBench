@@ -35,23 +35,27 @@ function loadTableData(data, error) {
     //insert table header
     const header = table.createTHead();
     const row = header.insertRow(0);
+    let header1 = row.insertCell(0);
+    header1.innerHTML = "Iteration";
+
     let first_col = data[0].name
     let loss = error
+
     Object.keys(first_col).forEach((key, i) => {
-        const cell = row.insertCell(i);
+        const cell = row.insertCell(i+1);
         cell.innerHTML = key;
     })
-    let cell = row.insertCell(first_col.length)
+    let cell = row.insertCell(Object.keys(first_col).length+1)
     cell.innerHTML = loss;
     //insert table body
-    data.forEach(item => {
+    data.forEach((item,iter) => {
             let row = body.insertRow();
-            console.log(item)
+            row.insertCell(0).innerHTML = iter;
             Object.keys(item.name).forEach((key, i) => {
-                const cell = row.insertCell(i);
+                const cell = row.insertCell(i+1);
                 cell.innerHTML = item.name[key];
             })
-            const cell = row.insertCell(item.name.length);
+            const cell = row.insertCell(Object.keys(item.name).length+1);
             cell.innerHTML = item.y;
         }
     )
