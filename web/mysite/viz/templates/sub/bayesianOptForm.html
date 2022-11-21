@@ -9,7 +9,7 @@
 
 {% for alg,params in b_opt_param_forms.items %}
     <div class="b-opt-form" id='{{ alg }}' style="display:none;">
-        <form class="bayesian-opt-form" id='{{ alg }}form' onSubmit="return false">
+        <form class="kt-form" id='{{ alg }}form' onSubmit="return false">
             <table class="django-table">
 
                 {% for param in params %}

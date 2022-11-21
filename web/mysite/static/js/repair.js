@@ -1,5 +1,10 @@
 let createRepairRequestFormData = function (alg) {
+    console.log("this")
+    console.log(alg)
     let form = document.getElementById(alg)
+    console.log("alg"+alg)
+    console.log("Form")
+    console.log(form)
     const repairFormData = new FormData(form)
     repairFormData.append('csrfmiddlewaretoken', csrftoken)
     repairFormData.append("injected_series", JSON.stringify(injectedSeries))

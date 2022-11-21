@@ -10,7 +10,7 @@ from pandas import DataFrame
 data_set_map = {"bafu5k": "BAFU",
                 "msd1_5": "Server Maschine Dataset",
                 "humidity": "Humidity",
-                "small": "Test",
+                "small": "Small",
                 "elec": "Electricity",
                 "tiny" : "Tiny",
                 "20" : "20",

@@ -1,0 +1,80 @@
+{% load static %}
+<div class="kt-header__topbar-item kt-header__topbar-item--user">
+    <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
+        <span class="kt-header__topbar-icon" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" data-original-title="User Menu"><i class="mdi mdi-account mdi-24px"></i></span>
+    </div>
+
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+        {% if user.is_authenticated %}
+        <!--begin: User Nav Main -->
+        <div class="kt-user-card kt-user-card--skin-light kt-notification-item-padding-x">
+            <div class="kt-user-card__name">
+                {{ user.username }}
+            </div>
+            <div>
+            {% if user.first_name and user.last_name %}
+                <span class="kt-font-primary">
+                    {{ user.first_name }} {{ user.last_name }}
+                </span><br/>
+            {% endif %}
+                <span class="kt-font-primary font-italic">
+                    {% if user.is_superuser %}Administrator{% else %}Regular User{% endif %}
+                </span>
+            </div>
+        </div>
+        <!--end: User Nav Main -->
+        {% endif %}
+        <!--begin: User Navigation -->
+        <div class="kt-notification">
+            <a href="{% url 'vadetisweb:account' %}" class="kt-notification__item">
+                <div class="kt-notification__item-icon">
+                    <i class="mdi mdi-account-outline mdi-24px kt-font-success"></i>
+                </div>
+                <div class="kt-notification__item-details">
+                    <div class="kt-notification__item-title kt-font-bold">
+                        Profile
+                    </div>
+                    <div class="kt-notification__item-time">
+                        Settings for your account
+                    </div>
+                </div>
+            </a>
+            <a href="{% url 'vadetisweb:account_datasets' %}" class="kt-notification__item">
+                <div class="kt-notification__item-icon">
+                    <i class="mdi mdi-chart-timeline-variant mdi-24px kt-font-brand"></i>
+                </div>
+                <div class="kt-notification__item-details">
+                    <div class="kt-notification__item-title kt-font-bold">
+                        Datasets
+                    </div>
+                    <div class="kt-notification__item-time">
+                        Manage your datasets
+                    </div>
+                </div>
+            </a>
+            <a href="{% url 'vadetisweb:account_training_datasets' %}" class="kt-notification__item">
+                <div class="kt-notification__item-icon">
+                    <i class="mdi mdi-chart-timeline-variant mdi-24px kt-font-brand"></i>
+                </div>
+                <div class="kt-notification__item-details">
+                    <div class="kt-notification__item-title kt-font-bold">
+                        Training Datasets
+                    </div>
+                    <div class="kt-notification__item-time">
+                        Manage your training datasets
+                    </div>
+                </div>
+            </a>
+            {% if user.is_authenticated %}
+            <div class="kt-notification__custom kt-space-between">
+                <a href="{% url 'account_logout' %}" class="btn btn-label btn-label-brand btn-sm btn-bold">Sign Out</a>
+            </div>
+            {% else %}
+            <div class="kt-notification__custom kt-space-between">
+                <a href="{% url 'account_login' %}" class="btn btn-label btn-label-brand btn-sm btn-bold">Login</a>
+            </div>
+            {% endif %}
+        </div>
+        <!--end: User Navigation -->
+    </div>
+</div>

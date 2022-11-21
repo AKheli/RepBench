@@ -11,9 +11,7 @@ class BayesianOptForm(forms.Form):
 
     n_calls = forms.IntegerField(label="n", initial=20)
     n_calls.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
-    error_loss = forms.CharField(label='Anomaly Type', widget=forms.Select(choices=error_choices,
-                                                                           attrs={
-                                                                               "class": ' multi-anomaly'}))
+    error_loss = forms.CharField(label='Loss', widget=forms.Select(choices=error_choices))
 
 
 def bayesian_opt_param_forms_inputs(df):

@@ -40,6 +40,9 @@ class AlgInspectionView(RepairView):
                     return float(obj)
                 if isinstance(obj, np.ndarray):
                         return obj.tolist()
+                if isinstance(obj, pd.DataFrame):
+                        return obj.values.tolist()
+
                 return json.JSONEncoder.default(self, obj)
 
         output = json.loads(json.dumps(output, cls=NpEncoder))

@@ -1,0 +1,14 @@
+{% load rest_framework %}
+<!-- begin: Form -->
+<form id="{{ formid }}" name="{{ formid }}_name" class="kt-form" method="POST" action="{{ url }}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="kt-portlet__body">
+    {% render_form form_serializer %}
+    </div>
+    <div class="kt-portlet__foot">
+        <div class="kt-form__actions">
+            <button {% if id %}id="{{ submit_button_id }}" {% endif %}type="submit" class="btn btn-primary">{{ submit_label }}</button>
+        </div>
+    </div>
+</form>
+<!-- end: Form -->

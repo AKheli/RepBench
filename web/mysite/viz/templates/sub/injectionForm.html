@@ -1,21 +1,54 @@
+<form class="kt-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="kt-portlet__body{% if class %} {{ class }}{% endif %}">
+        {#    {% render_form serializer %}#}
+        {% for field in injection_form.visible_fields %}
+            <div class="form-group {{ style.class }}">
+                <label>{{ field.label }}{% if True %}
+                    <a href="#" class="btn" role="button" data-toggle="popover" data-placement="top"
+                       title="Tooltip on top" data-trigger="focus" data-content="helptext" onclick="return false"><i
+                            class="mdi mdi-information-outline mdi-18px"></i></a>{% endif %}
 
+                </label>
+                <!--check if field.field.widget.input_type is number todo check min and max-->
+                {% if field.field.widget.input_type == 'number' %}
+                    <input type="number" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
+                           placeholder="{{ field.label }}"
+                           min={{ field.field.widget.minimum }} max={{ field.field.widget.max }} step="0.1">
+                    <!--check if field.field.widget.input_type is select-->
+                {% elif field.field.widget.input_type == 'select' %}
+                    <select name="{{ field.name }}" class="form-control custom-select">
+                        {% for v,e in field.field.widget.choices %}
+                            <option value="{{ v }}">{{ e }}</option>
+                        {% endfor %}
+                    </select>
 
-<form onSubmit="return false" id="injection_form"  class="myform" >
-        <div>
-            {% csrf_token %}
-            <!--table with two columns-->
+                {% elif field.field.widget.input_type == 'checkbox' %}
+                    <input type="checkbox" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
+                           placeholder="{{ field.label }}">
+                    <!--check if field.field.widget.input_type is date-->
+                {% else %}
 
-            <div class="django-table injection-form-table">
-                {% for field in injection_form.visible_fields %}
-                   <div> {{ field.label }} </div>
-                    <div> {{ field }} </div>
-                {% endfor %}
-                {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
+                    {{ field }}
+                {% endif %}
             </div>
-            <button id="injection_button">
-                Inject
-            </button>
+
+        {% endfor %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <div class="kt-portlet__foot">
+            <div class="kt-form__actions">
+                <button id="injection_button" onclick="return false" type="submit" class="btn btn-primary">
+                    Inject
+                </button>
+            </div>
         </div>
+    </div>
 </form>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+</script>

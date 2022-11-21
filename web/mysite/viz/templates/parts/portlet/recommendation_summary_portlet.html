@@ -1,0 +1,129 @@
+{% load vadetistags %}
+<div id="{{ id }}" class="kt-portlet" data-ktportlet="true">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title">{{ title }}</h3>
+        </div>
+        <div class="kt-portlet__head-toolbar">
+            <div class="kt-portlet__head-group">
+                <a href="#" data-ktportlet-tool="toggle" class="btn btn-sm btn-icon btn-default btn-icon-md"><i class="mdi mdi-chevron-down mdi-18px"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="kt-portlet__body kt-portlet__body--fit">
+        <div class="kt-padding-25">
+            {% with recommendation|get_item:'nmi_scores' as nmi_scores %}
+                <table class="table table-xs table-head-bg-brand">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th style="width: 80%;">Best NMI-Score</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for nmi_score in nmi_scores %}
+                        <tr>
+                            <td>{{ nmi_score|get_item:'algorithm' }}</td>
+                            <td>{{ nmi_score|get_item:'nmi' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endwith %}
+
+            {% with recommendation|get_item:'rmse_scores' as rmse_scores %}
+                <table class="table table-xs table-head-bg-brand">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th style="width: 80%;">Best RMSE-Score</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for rmse_score in rmse_scores %}
+                        <tr>
+                            <td>{{ rmse_score|get_item:'algorithm' }}</td>
+                            <td>{{ rmse_score|get_item:'rmse' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endwith %}
+
+            {% with recommendation|get_item:'f1_scores' as f1_scores %}
+                <table class="table table-xs table-head-bg-brand">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th style="width: 80%;">Best F1-Score</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for f1_score in f1_scores %}
+                        <tr>
+                            <td>{{ f1_score|get_item:'algorithm' }}</td>
+                            <td>{{ f1_score|get_item:'f1_score' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endwith %}
+
+            {% with recommendation|get_item:'accuracies' as accuracies %}
+                <table class="table table-xs table-head-bg-brand">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th style="width: 80%;">Best Accuracy</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for accuracy in accuracies %}
+                        <tr>
+                            <td>{{ accuracy|get_item:'algorithm' }}</td>
+                            <td>{{ accuracy|get_item:'accuracy' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endwith %}
+
+            {% with recommendation|get_item:'precisions' as precisions %}
+                <table class="table table-xs table-head-bg-brand">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th style="width: 80%;">Best Precision</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for precision in precisions %}
+                        <tr>
+                            <td>{{ precision|get_item:'algorithm' }}</td>
+                            <td>{{ precision|get_item:'precision' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endwith %}
+            {% with recommendation|get_item:'recalls' as recalls %}
+                <table class="table table-xs table-head-bg-brand">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th style="width: 80%;">Best Recall</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for recall in recalls %}
+                        <tr>
+                            <td>{{ recall|get_item:'algorithm' }}</td>
+                            <td>{{ recall|get_item:'recall' }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endwith %}
+        </div>
+    </div>
+</div>

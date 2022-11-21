@@ -1,0 +1,106 @@
+<div id="faq_detection_content" class="accordion accordion-solid accordion-toggle-plus"{% if hide %} style="display: none;"{% endif %}>
+    <div class="card">
+        <div class="card-header" id="heading_detection1">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse_detection1" aria-expanded="false"
+                 aria-controls="collapse_detection1">
+                How is model training performed?
+            </div>
+        </div>
+        <div id="collapse_detection1" class="collapse" aria-labelledby="heading_detection1" data-parent="#faq_detection_content">
+            <div class="card-body">
+                <p>
+                    <strong>Histogram, Cluster, SVM, Isolation Forest, RPCA</strong><br/>
+                    Histogram, Cluster, SVM, Isolation Forest and RPCA use a selected proportion of normal data instances in the training dataset for
+                    semi-supervised learning. The rest of the normal data as well as outlier instances will be split by the given proportion to a validation
+                    set. No data instances are shared between training and validation sets. For example, given a dataset of 1000 data instances containing 60
+                    outlier data instances and a proportion of 0.5, then the training set will contain 470 normal data instances whereas the validation set
+                    contains 235 normal and 30 outlier instances. The validation set is used to determine the threshold for the decision boundary that maximizes
+                    a performance metric.
+                </p>
+                <p>
+                    Afterwards, the trained model is applied on the evaluation dataset. Data instances with a score below the threshold will be marked as
+                    anomalies for Histogram, Cluster, SVM, Isolation Forest whereas RPCA marks outliers if they are above the threshold. Contrary to these
+                    techniques, LISA does not require training and is directly applied to the data. It marks points as outliers if their score is below the
+                    threshold.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="heading_detection5">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse_detection5" aria-expanded="false"
+                 aria-controls="collapse_detection5">
+                What is the confusion matrix?
+            </div>
+        </div>
+        <div id="collapse_detection5" class="collapse" aria-labelledby="heading_detection5" data-parent="#faq_detection_content">
+            <div class="card-body">
+                <p>
+                    The confusion matrix is a specific table layout that allows visualization of the performance of detection method.
+                    Each row of the matrix represents the instances of the actual class while each column represents the instances in a predicted class.
+                </p>
+                <table style="border:1px solid black;">
+                    <tbody>
+                    <tr>
+                        <th style="background:white; border:none;" colspan="2" rowspan="2"></th>
+                        <th colspan="2" style="background:none;">Predicted class</th>
+                    </tr>
+                    <tr>
+                        <th>Normal</th>
+                        <th>Anomaly</th>
+                    </tr>
+                    <tr>
+                        <th rowspan="2" style="height:6em;">
+                            <div style="display: inline-block; -ms-transform: rotate(-90deg); -webkit-transform: rotate(-90deg); transform: rotate(-90deg);;">
+                                True<br>class
+                            </div>
+                        </th>
+                        <th>Normal</th>
+                        <td>True Negative (TN)</td>
+                        <td>False Positive (FP)</td>
+                    </tr>
+                    <tr>
+                        <th>Anomaly</th>
+                        <td>False Negative (FN)</td>
+                        <td>True Positive (TP)</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="heading_detection2">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse_detection2" aria-expanded="false"
+                 aria-controls="collapse_detection2">
+                How is the decision boundary (threshold) determined?
+            </div>
+        </div>
+        <div id="collapse_detection2" class="collapse" aria-labelledby="heading_detection2" data-parent="#faq_detection_content">
+            <div class="card-body">
+                <p>
+                    The tool always validates 200 threshold candidates from range 0 to 1. Because the data is supervised the performance can be computed
+                    for each threshold candidate. Depending on the score type (NMI, RMSE, Accuracy, F1-Score, Precision or Recall)
+                    which is selected to be maximized, the tool will select the most appropriate that maximizes the selected performance metric.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="heading_detection3">
+            <div class="card-title collapsed" data-toggle="collapse" data-target="#collapse_detection3" aria-expanded="false"
+                 aria-controls="collapse_detection3">
+                How can I interpret outliers scores between different detection methods?
+            </div>
+        </div>
+        <div id="collapse_detection3" class="collapse" aria-labelledby="heading_detection3" data-parent="#faq_detection_content">
+            <div class="card-body">
+                <p>
+                    Although the outlier score is normalized to a range from 0 to 1, you may not interpret them across different detection methods. Outlier
+                    scores computed by different methods differ in significance, range and contrast between those models and are therefore
+                    not easy to compare or interpret.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -33,6 +33,7 @@ class DimensionalityReductionEstimator(Estimator):
 
         self.weights_i_ = {}
         self.reduced_i_ = {}
+        self.current_inv_f = None # lambda x : x
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
@@ -78,6 +79,7 @@ class DimensionalityReductionEstimator(Estimator):
         self.weights_i_ = {}
         if self.normalize_before:
             injected, inv_f = normalize_f(injected)
+            self.current_inv_f = inv_f
 
         self.state = "classify"
         self.weights_i_[self.state] = {}
@@ -136,7 +138,7 @@ class DimensionalityReductionEstimator(Estimator):
             reduced_centered = np.dot(X_centered, transform_matrix)
             diff = X_centered - reduced_centered
             self.weights_i_[self.state][n_iter] = weights
-            self.reduced_i_[self.state][n_iter] = reduced_centered + weighted_mean
+            self.reduced_i_[self.state][n_iter] = self.current_inv_f(reduced_centered + weighted_mean)
             errors_raw = np.linalg.norm(diff, axis=1)
             self.errors_raw = errors_raw
             errors_loss = compute_loss(errors_raw, self.delta)

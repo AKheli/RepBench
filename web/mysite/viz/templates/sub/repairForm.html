@@ -1,32 +1,27 @@
-<div class="myform" id="repair-select-form">
-    <label for="alg_selection"></label>
-    <select name="alg_selection" class="switchButton alg-select" onchange="displayfunc(value)">
-        {% for key, _ in alg_forms.items %}
-            <option value={{ key }}> {{ key }}</option>
+<div class="kt-portlet__body">
+    <div class="form-group ">
+        <label>Algorithm<a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
+                           data-trigger="focus"
+                           data-content="Select the algorithm you want to use for detection. The possibilities depend on whether training data and spatial data are available or not."
+                           data-original-title="" title=""><i
+                class="mdi mdi-information-outline mdi-18px"></i></a></label>
+        <select class="form-control custom-select " name="algorithm" onchange="displayfunc(value)">
+            <option value="" selected="">----</option>
+            {% for key, _ in alg_forms.items %}
+                <option value={{ key }}> {{ key }}</option>
+            {% endfor %}
+        </select>
+        {% for key, form in alg_forms.items %}
+            {% include 'sub/form.html' with form=form form_id=key style="display:none;" onclick="repair('"|add:key|add:"')"%}
         {% endfor %}
-    </select>
 
-    {% for key, form in alg_forms.items %}
-        <form class="myform" style="display:none;" id={{ key }}>
-            <div class="django-table repair-form-table">
-                {% for field in form.visible_fields %}
-                    <div> {{ field.label }} </div>
-                    <div> {{ field }} </div>
-                {% endfor %}
-                {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
-            </div>
-            <button class="repair-button" type="button" onclick="repair('{{ key }}')">repair</button>
-        </form>
-
-    {% endfor %}
+    </div>
 </div>
-
 
 <script>
     let lastkey = null
     let displayfunc = function (key) {
+        console.log(key)
         var x = document.getElementById(key);
         if (key !== lastkey && lastkey != null) {
             document.getElementById(lastkey).style.display = "none";

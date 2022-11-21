@@ -42,7 +42,9 @@ class RepairView(DatasetView):
     def inject_data(request, setname):
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
         post = request.POST
-        col_name = post.get("data_columns")
+        col_name = post.get("data_columns").strip() #todo check why input is not stripped
+        print(col_name)
+        print(df.columns)
         col = df[col_name]
         factor = float(post.get("factor"))
         ratio = float(post.get("ratio"))

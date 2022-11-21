@@ -1,19 +1,12 @@
 from django import forms
 from django.forms import NumberInput
 
-DATA_SET_CHOISES = [
-    ('bafu5k', 'bafu5k'),
-    ('elec', 'elec'),
-    ('humidity', 'humidity'),
-    ('msd1_5', 'msd1_5'),
-]
-
-
-# class UserForm(forms.Form):
-#     dataset = forms.CharField(label='What is your favorite fruit?', widget=forms.Select(choices=DATA_SET_CHOISES))
-
-
-
+# DATA_SET_CHOISES = [
+#     ('bafu5k', 'bafu5k'),
+#     ('elec', 'elec'),
+#     ('humidity', 'humidity'),
+#     ('msd1_5', 'msd1_5'),
+# ]
 
 ANOMALY_CHOICES = [
     ("shift", "shift"),

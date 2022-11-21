@@ -12,6 +12,7 @@ def normalize_f(X):
     assert (len(mean_X), len(std_X)) == (X.shape[1], X.shape[1])
 
     def inv_func(X_norm):
+        X_norm = pd.DataFrame(X_norm)
         X_norm.columns = X.columns
         result = X_norm * std_X + mean_X
         return result
