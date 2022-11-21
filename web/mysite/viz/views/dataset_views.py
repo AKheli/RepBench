@@ -6,6 +6,8 @@ from django.shortcuts import render
 from django.views import View
 from pandas import DataFrame
 
+from web.mysite.viz.ts_manager.ts_manager import get_truth_data
+
 ## match case for dataset
 data_set_map = {"bafu5k": "BAFU",
                 "msd1_5": "Server Maschine Dataset",
@@ -47,15 +49,8 @@ class DatasetView(View):
 
 
     def get_data(self ,request, setname="bafu5k"):
-        df = self.load_data_set(setname)
         viz = int(request.GET.get("viz", 5))
-
-        data = {
-            'series': [{"visible": i < viz, "id": col_name, "name": col_name, "data": list(df[col_name])} for (i, col_name)
-                       in
-                       enumerate(df.columns)],
-        }
-        return JsonResponse(data)
+        return JsonResponse(get_truth_data(setname, viz=viz))
 
 
 

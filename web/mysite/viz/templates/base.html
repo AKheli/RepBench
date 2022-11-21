@@ -20,21 +20,6 @@
         <script src="{% static 'js/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
     {% endblock %}
 
-    {#    <!-- Bootstrap core CSS -->#}
-    {#    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"#}
-    {#          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">#}
-    {##}
-    {#    <script src="http://code.highcharts.com/stock/highstock.js"></script>#}
-    {#    <script src="https://code.highcharts.com/modules/boost.js"></script>#}
-    {#    <script src="https://code.highcharts.com/modules/exporting.js"></script>#}
-    {#    <script src="https://code.highcharts.com/modules/accessibility.js"></script>#}
-    {#    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"#}
-    {#            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"#}
-    {#            crossorigin="anonymous"></script>#}
-    {#    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"#}
-    {#            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"#}
-    {#            crossorigin="anonymous"></script>#}
-    {#    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.3/js/bootstrap.js"></script>#}
 
     <script>function getCookie(name) {
         let cookieValue = null;
@@ -94,66 +79,75 @@
                                 id="kt_aside_toggler"><span></span></button>
                         <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
                             <ul class="kt-menu__nav ">
-                                {#                                <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'vadetisweb:index' %}"#}
-                                {#                                                                                class="kt-menu__link"><span#}
-                                {#                                        class="kt-menu__link-text">Vadetis</span></a></li>#}
-                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"
-                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"
-                                                                                               class="kt-menu__link kt-menu__toggle"><span
-                                        class="kt-menu__link-text">Display</span></a>
-                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
-                                        <ul class="kt-menu__subnav">
-                                            <li class="kt-menu__item " aria-haspopup="true"><a
-                                                    href="{% url 'repair' %}"
-                                                    class="kt-menu__link "><i
-                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>
-                                            <li class="kt-menu__item " aria-haspopup="true"><a
-                                                    href="{% url 'repair' %}"
-                                                    class="kt-menu__link "><i
-                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"
-                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"
-                                                                                               class="kt-menu__link kt-menu__toggle"><span
-                                        class="kt-menu__link-text">Detection</span></a>
-                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
-                                        <ul class="kt-menu__subnav">
-                                            <li class="kt-menu__item " aria-haspopup="true"><a
-                                                    href="{% url 'repair' %}"
-                                                    class="kt-menu__link "><i
-                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>
-                                            <li class="kt-menu__item " aria-haspopup="true"><a
-                                                    href="{% url 'repair' %}"
-                                                    class="kt-menu__link "><i
-                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"
-                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"
-                                                                                               class="kt-menu__link kt-menu__toggle"><span
-                                        class="kt-menu__link-text">Recommendation</span></a>
-                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
-                                        <ul class="kt-menu__subnav">
-                                            <li class="kt-menu__item " aria-haspopup="true"><a
-                                                    href="{% url 'repair' %}"
-                                                    class="kt-menu__link "><i
-                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>
-                                            <li class="kt-menu__item " aria-haspopup="true"><a
-                                                    href="{% url 'repair' %}"
-                                                    class="kt-menu__link "><i
-                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
-                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>
-                                        </ul>
-                                    </div>
-                                </li>
+                                <li class="kt-menu__item kt-menu__item--rel"><a href="/" class="kt-menu__link"><span
+                                        class="kt-menu__link-text">Index</span></a></li>
+                                <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'repair' %}" class="kt-menu__link"><span
+                                        class="kt-menu__link-text">Repair</span></a></li>
+
+
+                                 <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'display_datasets' %}" class="kt-menu__link"><span
+                                        class="kt-menu__link-text">Datasets</span></a></li>
+
+                                 <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'opt' %}" class="kt-menu__link"><span
+                                        class="kt-menu__link-text">Optimization</span></a></li>
+
+{#                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"#}
+{#                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"#}
+{#                                                                                               class="kt-menu__link kt-menu__toggle"><span#}
+{#                                        class="kt-menu__link-text">Display</span></a>#}
+{#                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">#}
+{#                                        <ul class="kt-menu__subnav">#}
+{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
+{#                                                    href="{% url 'repair' %}"#}
+{#                                                    class="kt-menu__link "><i#}
+{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
+{#                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>#}
+{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
+{#                                                    href="{% url 'repair' %}"#}
+{#                                                    class="kt-menu__link "><i#}
+{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
+{#                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>#}
+{#                                        </ul>#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"#}
+{#                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"#}
+{#                                                                                               class="kt-menu__link kt-menu__toggle"><span#}
+{#                                        class="kt-menu__link-text">Detection</span></a>#}
+{#                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">#}
+{#                                        <ul class="kt-menu__subnav">#}
+{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
+{#                                                    href="{% url 'repair' %}"#}
+{#                                                    class="kt-menu__link "><i#}
+{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
+{#                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>#}
+{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
+{#                                                    href="{% url 'repair' %}"#}
+{#                                                    class="kt-menu__link "><i#}
+{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
+{#                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>#}
+{#                                        </ul>#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"#}
+{#                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"#}
+{#                                                                                               class="kt-menu__link kt-menu__toggle"><span#}
+{#                                        class="kt-menu__link-text">Recommendation</span></a>#}
+{#                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">#}
+{#                                        <ul class="kt-menu__subnav">#}
+{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
+{#                                                    href="{% url 'repair' %}"#}
+{#                                                    class="kt-menu__link "><i#}
+{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
+{#                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>#}
+{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
+{#                                                    href="{% url 'repair' %}"#}
+{#                                                    class="kt-menu__link "><i#}
+{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
+{#                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>#}
+{#                                        </ul>#}
+{#                                    </div>#}
+{#                                </li>#}
                                 {#                                <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'vadetisweb:faq' %}"#}
                                 {#                                                                                class="kt-menu__link"><span#}
                                 {#                                        class="kt-menu__link-text">FAQ</span></a></li>#}

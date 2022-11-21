@@ -4,7 +4,8 @@ import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
 from pandas import DataFrame
-from web.mysite.viz.BenchmarkMaps.optimization import optimize_from_None_series
+from web.mysite.viz.BenchmarkMaps.optimization import optimize_web
+from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from web.mysite.viz.forms.injection_form import  InjectionForm
 import pandas as pd
 from web.mysite.viz.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
@@ -20,6 +21,8 @@ def parse_param_input(p: str):
         return float(p)
     except:
         return p
+
+
 
 
 class OptimizationView(DatasetView):
@@ -40,10 +43,19 @@ class OptimizationView(DatasetView):
         print(context)
         return render(request, 'optimization.html', context=context)
 
-
+    @staticmethod
     def optimize(request, setname="bafu5k"):
         post = request.POST.dict()
+        print("POOOOOOOOOOOOOOOOOOOOOOOOOST")
         print(post)
+
+        alg_type= post["alg_type"]
+
+        # Bayesopt inputs
+        n_initial_points = int(post["n_initial_points"])
+        n_calls = int(post["n_calls"])
+        error_loss = post["error_loss"]
+
         injected_series = json.loads(post.pop("injected_series"))
         param_ranges = {}
         for key, v in post.items():
@@ -59,7 +71,11 @@ class OptimizationView(DatasetView):
 
         bayesian_opt_inputs = {"n_calls": int(post.pop("n_calls")), "n_initial_points": int(post.pop("n_initial_points")),
                                "error_score": error_loss}
-        output = optimize_from_None_series(param_ranges, alg_type, bayesian_opt_inputs, df, *injected_series.values())
+
+        injected_data_container = injected_container_None_Series(df, *injected_series.values())
+
+        output = optimize_web(param_ranges, alg_type, injected_data_container,
+                              n_calls=n_calls, n_initial_points=n_initial_points, error_loss=error_loss)
 
         class NpEncoder(json.JSONEncoder):
             def default(self, obj):
