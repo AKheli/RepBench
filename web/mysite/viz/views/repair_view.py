@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import pandas as pd
 from pandas import DataFrame
-from web.mysite.viz.forms.alg_param_forms import create_param_forms
+from web.mysite.viz.forms.alg_param_forms import ParamForms
 from web.mysite.viz.forms.injection_form import  InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
 import json
@@ -28,7 +28,7 @@ class RepairView(DatasetView):
 
     def data_set_repair_and_injection_context(self, df):
         context = {}
-        context["alg_forms"] = create_param_forms(df)
+        context["alg_forms"] = ParamForms
         context["injection_form"] = InjectionForm(list(df.columns))
         return context
 
@@ -42,8 +42,7 @@ class RepairView(DatasetView):
     def inject_data(request, setname):
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
         post = request.POST
-        col_name = post.get("data_columns").strip() #todo check why input is not stripped
-        print(col_name)
+        col_name = post.get("data_columns") #.strip() #todo check why input is not stripped
         print(df.columns)
         col = df[col_name]
         factor = float(post.get("factor"))

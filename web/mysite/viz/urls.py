@@ -21,7 +21,7 @@ urlpatterns = [
     path('opt', optimizationview.OptimizationView.as_view(), name="opt"),
     path('opt/<str:setname>' , optimizationview.OptimizationView.as_view() , name="opt"),
     path('optimize_data/<str:setname>', optimizationview.OptimizationView.optimize, name='optimize_data'),
-
+    path( 'fetch_optresults', optimizationview.OptimizationView.fetch_optresults, name='fetch_optresults'),
 
     # alg inspection
     path('alg_inspection', alg_inspection_view.AlgInspectionView.as_view(), name="alg_inspection"),

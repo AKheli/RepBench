@@ -1,19 +1,11 @@
 from django import forms
 from django.forms import NumberInput
 
-# DATA_SET_CHOISES = [
-#     ('bafu5k', 'bafu5k'),
-#     ('elec', 'elec'),
-#     ('humidity', 'humidity'),
-#     ('msd1_5', 'msd1_5'),
-# ]
-
 ANOMALY_CHOICES = [
-    ("shift", "shift"),
-    ("outlier", "outlier"),
-    ("distortion", "distortion"),
+    ("shift", "Shift"),
+    ("outlier", "Outlier"),
+    ("distortion", "Distortion"),
 ]
-
 
 class InjectionForm(forms.Form):
     ratio = forms.FloatField(label='ratio', min_value=0, max_value=1, initial=0.1, widget=NumberInput(

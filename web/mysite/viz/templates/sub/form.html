@@ -9,17 +9,31 @@
         {#    {% render_form serializer %}#}
         {% for field in form.visible_fields %}
             <div class="form-group {{ style.class }}">
-                <label>{{ field.label }}{% if True %}
-                    <a href="#" class="btn" role="button" data-toggle="popover" data-placement="top"
-                       title="Tooltip on top" data-trigger="focus" data-content="helptext" onclick="return false"><i
-                            class="mdi mdi-information-outline mdi-18px"></i></a>{% endif %}
-
+                <label>{{ field.label }}
+                    {% if field.help_text %}
+                    <a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
+                       data-trigger="focus"
+                       data-content='{{ field.help_text }}'
+                       data-original-title="" title=""><i
+                            class="mdi mdi-information-outline mdi-18px"></i></a>
+                    {% endif %}
                 </label>
                 <!--check if field.field.widget.input_type is number todo check min and max-->
                 {% if field.field.widget.input_type == 'number' %}
                     <input type="number" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
-                           placeholder="{{ field.label }}"
-                           min={{ field.field.widget.minimum }} max={{ field.field.widget.max }} step="0.1">
+                           {% if field.field.widget.attrs.placeholder %}
+                           placeholder= {{ field.field.widget.attrs.placeholder }}
+                           {% endif %}
+                            {% if field.field.widget.attrs.min %}
+                            min= {{ field.field.widget.attrs.min }}
+                            {% endif %}
+                            {% if field.field.widget.attrs.max %}
+                            max= {{ field.field.widget.attrs.max }}
+                            {% endif %}
+                            {% if field.field.widget.attrs.step %}
+                            step= {{ field.field.widget.attrs.step }}
+                            {% endif %}
+                    >
                     <!--check if field.field.widget.input_type is select-->
                 {% elif field.field.widget.input_type == 'select' %}
                     <select name="{{ field.name }}" class="form-control custom-select">
@@ -43,16 +57,16 @@
             {{ hidden }}
         {% endfor %}
         <div class="kt-portlet__foot">
-                <button  class="btn btn-primary"
-                         {% if onclick %}
-                            onclick="{{ onclick }}"
-                        {%  else %}
-                            onclick="return false"
-                         {% endif %}
-                >
-                    {{ button_label|default:"Apply" }}
+            <button class="btn btn-primary"
+                    {% if onclick %}
+                    onclick="{{ onclick }}"
+                    {% else %}
+                    onclick="return false"
+                    {% endif %}
+            >
+                {{ button_label|default:"Apply" }}
 
-                </button>
-            </div>
+            </button>
+        </div>
     </div>
 </form>

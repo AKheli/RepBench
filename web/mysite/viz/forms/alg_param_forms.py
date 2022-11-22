@@ -16,18 +16,39 @@ type_form_mapper = {
     np.float64 : forms.IntegerField,
 }
 
-class ParamForm(forms.Form):
-    pass
+def hidden(initial):
+    return forms.CharField(widget=forms.HiddenInput(), required=False, initial=initial)
 
-def create_param_forms(df):
-    estim : Estimator
-    param_forms = {}
-    for alg , estim in algo_mapper.items():
-        param_form = ParamForm()
-        param_form.fields["alg_type"] = forms.CharField(widget=forms.HiddenInput(), initial=alg)
-        for param, v in estim().get_param_info(df).items():
-            type_,min_,max_,default_,range_ = v
-            param_form.fields[param] = type_form_mapper[type_](label=param, min_value=min_, max_value=max_, initial=default_,
-                                                               widget=NumberInput( attrs={ 'title': 'Enter numbers Only '}))
-        param_forms[alg] = param_form
-    return param_forms
+class RPCAparamForm(forms.Form):
+    classification_truncation = forms.IntegerField(label='k', required=False, initial = 2, widget=forms.NumberInput(attrs={'placeholder':2, 'min' : "1" , "step" : "1"}))
+    threshold = forms.IntegerField(label='Threshold', required=False, initial = 1, widget=forms.NumberInput(attrs={ 'min' : "0" , "step" : "any" , 'placeholder': '1'}))
+    delta = forms.FloatField(label="Delta",min_value=0, initial=1.2,  widget=forms.NumberInput(attrs={ 'min' : "0" , "step" : "any" , 'placeholder': '1.2'}))
+    alg_type = hidden("rpca")
+
+
+class CDparamForm(forms.Form):
+    classification_truncation = forms.IntegerField(label='k', required=False, initial=2, widget=forms.NumberInput(
+        attrs={'placeholder': 2, 'min': "1", "step": "1"}))
+    threshold = forms.IntegerField(label='Threshold', required=False, initial=1,
+                                   widget=forms.NumberInput(attrs={'min': "0", "step": "any", 'placeholder': '1'}))
+    delta = forms.FloatField(label="Delta", min_value=0, initial=1.2,
+                             widget=forms.NumberInput(attrs={'min': "0", "step": "any", 'placeholder': '1.2'}))
+    alg_type = hidden("cd")
+
+
+class SCREENparamForm(forms.Form):
+    smin = forms.FloatField(help_text="Minimal change less than 0.", label='SMIN', initial=-0.5,
+                            widget=forms.NumberInput(attrs={'max': "0", "step": "any"}))
+    smax =forms.FloatField(help_text="Maximal change greater than 0.",label='SMAX', initial= 0.5,
+                           widget=forms.NumberInput(attrs={'min': "0", "step": "any"}))
+    alg_type = hidden("screen")
+
+class IMRparamField(forms.Form):
+    p = forms.FloatField(help_text="ARX parameter", label='p', initial=3,
+                            widget=forms.NumberInput(attrs={'min': "1", "step": "1"}))
+    tau =forms.FloatField(help_text="Minimal change parameter",label='Tau', initial= 0.01,
+                           widget=forms.NumberInput(attrs={'min': "0.000001", "step": "any"}))
+    alg_type = hidden("imr")
+
+ParamForms = {"SCREEN" : SCREENparamForm(), "RPCA" : RPCAparamForm(),"CDrec" : CDparamForm(), "IMR" : IMRparamField()}
+

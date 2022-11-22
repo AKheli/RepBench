@@ -5,9 +5,11 @@ from testing_frame_work.repair import AnomalyRepairer
 from web.mysite.viz.ts_manager.ts_manager import get_repair_data
 
 
-def optimize_web(param_ranges, alg_type, injected_data_container : InjectedDataContainer, *, error_loss, n_calls, n_initial_points):
+def optimize_web(param_ranges, alg_type, injected_data_container : InjectedDataContainer, *, error_loss, n_calls, n_initial_points,callback=None):
     estimator = algo_mapper[alg_type]()
-    optimizer = BayesianOptimizer(estimator,error_score=error_loss,n_calls=n_calls,n_initial_points=n_initial_points,n_restarts_optimizer=1)
+
+
+    optimizer = BayesianOptimizer(estimator,error_score=error_loss,n_calls=n_calls,n_initial_points=n_initial_points,n_restarts_optimizer=1,callback=callback)
     params, scores = optimizer.search(injected_data_container.repair_inputs,param_ranges,return_full_minimize_result=True)
 
     min_index = list(scores).index(min(scores))
@@ -27,4 +29,5 @@ def optimize_web(param_ranges, alg_type, injected_data_container : InjectedDataC
              "repaired_series": repaired_series,
              "optimal_params": optimal_params
              }
+
     return data

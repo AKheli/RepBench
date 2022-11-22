@@ -67,14 +67,42 @@
                 <option value={{ key }}> {{ key }}</option>
             {% endfor %}
         </select>
-        {% for key, form in b_opt_param_forms.items %}
-{#            {% include 'sub/form.html' with form=form form_id=key style="display:none;" %}#}
+        {% for alg,params in b_opt_param_forms.items %}
+            <form class="kt-form" enctype="multipart/form-data" id='{{ alg }}'
+                  onchange="return false"
+                  onsubmit="return false" style="display:none;">
+                {% for param in params %}
+                    <div class="kt-portlet__body{% if class %} {{ class }}{% endif %}">
 
-           {% include 'sub/form.html' with form=bayesian_opt_form form_id=key style="display:none;" onclick="optimizeCurrentData('"|add:key|add:"')"%}
-         {% endfor %}
+                        <label for="{{ param.param_name }}">{{ param.param_name }}</label></th>
+                        <table class="table kt-visible-tablet-inline-block}">
+                            <tr>
+                                <td>min</td>
+                                <td>max</td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="{{ param.param_name }}"
+                                           size=3 name="{{ param.param_name }}-min"
+                                           pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
+                                           value={{ param.min }}
+                                                   class="form-control"></td>
+                                <td><input type="text" id="{{ param.param_name }}"
+                                           size="3" name="{{ param.param_name }}-max"
+                                           pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
+                                           value="{{ param.max }}"
+                                           class="form-control"></td>
+                            </tr>
+                        </table>
+                    </div>
+                {% endfor %}
+                <input type="hidden" name="alg_type" value="{{ alg }}">
+
+                {% include 'sub/form.html' with form=bayesian_opt_form form_id=alg style="display:none;" onclick="optimizeCurrentData('"|add:alg|add:"')" %}
+            </form>
+
+        {% endfor %}
     </div>
 </div>
-
 <script>
     let lastkeyopt = null
     let displayfuncOpt = function (key) {

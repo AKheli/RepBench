@@ -3,10 +3,11 @@ from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
 
 class BayesianOptimizer(EstimatorOptimizer):
 
-    def __init__(self, estim, error_score, *, n_jobs=6,n_calls=30,n_initial_points=20,n_restarts_optimizer=2):
+    def __init__(self, estim, error_score, *, n_jobs=6,n_calls=30,n_initial_points=20,n_restarts_optimizer=0 , callback=None):
         self.n_calls = n_calls
         self.n_initial_points = n_initial_points
         self.n_restarts_optimizer = n_restarts_optimizer
+        self.callback = callback
         super().__init__(estim, error_score, n_jobs=n_jobs)
 
     @staticmethod
@@ -37,13 +38,14 @@ class BayesianOptimizer(EstimatorOptimizer):
         param_keys, param_values = param_ranges.keys(), param_ranges.values()
 
         self.counter = 0
-        import sys
-
         def f(x):
             self.counter += 1
-            estim = self.estim_change_copy(dict(zip(param_keys, x)))
+            params = dict(zip(param_keys, x))
+            estim = self.estim_change_copy(params)
             score= estim.scores(**repair_inputs)[self.error_score]
             #sys.stdout.write(f"\rbayesian opt search {self.counter / self.n_calls * 100:.1f} % {score}", )
+            if self.callback is not None:
+                self.callback(params, score,self.counter)
             return score
 
         gp_result = gp_minimize(f, param_values, n_jobs=-1,
