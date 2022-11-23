@@ -18,7 +18,7 @@
                 <td>{{ name }}</td>
                 <td>{{ attr.ts_nbr }}</td>
                 <td>{{ attr.values }}</td>
-                <td> <a href="{% url 'display_dataset' setname=attr.full_file_name %}">View</a>
+                <td> <a href="{% url 'display_dataset' setname=attr.full_file_name%}">View</a>
                     <br>
                  <a href="{% url 'repair' setname=attr.full_file_name %}">Inject and Repair</a></td>
             </tr>

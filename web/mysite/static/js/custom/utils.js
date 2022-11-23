@@ -1,16 +1,16 @@
-"use strict";
-
-/**
- * algorithm names must be equal as on the server side
- */
-const lisaPearson = 'LISA (Pearson)';
-const lisaDtw = 'LISA (DTW with Pearson)';
-const lisaSpatial = 'LISA (Spatial)';
-const rpca = 'RPCA (Huber Loss Function)';
-const histogram = 'Histogram';
-const clusterGaussianMixture = 'Cluster (Gaussian Mixture)';
-const svm = 'SVM';
-const isolationForest = 'Isolation Forest';
+// "use strict";
+//
+// /**
+//  * algorithm names must be equal as on the server side
+//  */
+// const lisaPearson = 'LISA (Pearson)';
+// const lisaDtw = 'LISA (DTW with Pearson)';
+// const lisaSpatial = 'LISA (Spatial)';
+// const rpca = 'RPCA (Huber Loss Function)';
+// const histogram = 'Histogram';
+// const clusterGaussianMixture = 'Cluster (Gaussian Mixture)';
+// const svm = 'SVM';
+// const isolationForest = 'Isolation Forest';
 
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection

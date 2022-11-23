@@ -15,6 +15,22 @@
               type="text/css"/>
         <link href="{% static 'css/messages.css' %}" rel="stylesheet" type="text/css"/>
         <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+
+            <style>
+    .kt-myColor{
+    background-color: #282a3c !important; }
+
+    .kt-menu__link-text{
+        color:white  !important;
+         {# larger text size css#}
+        font-size: 25px !important;
+    }
+    #highcharts_container{
+        top: 0;
+        bottom:0 !important;
+    }
+
+    </style>
     {% endblock %}
     {% block head_js %}
         <script src="{% static 'js/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
@@ -45,7 +61,11 @@
 
 <!-- begin: Body -->
 <!-- begin: Body -->
-<body class="kt-page--loading-enabled kt-page--loading kt-page--fixed kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-aside--enabled kt-aside--left kt-aside--fixed kt-page--loading">
+<body class="kt-page--loading-enabled kt-page--loading kt-page--fixed kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed
+kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled
+ kt-subheader--transparent
+kt-aside--enabled kt-aside--left kt-aside--fixed kt-page--loading"
+>
 
 <!-- begin: Page -->
 <!-- begin: Mobile Header -->
@@ -68,7 +88,7 @@
         <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
 
             <!-- begin: Header -->
-            <div id="kt_header" class="kt-header  kt-header--fixed " data-ktheader-minimize="on">
+            <div id="kt_header" class="kt-header  kt-header--fixed kt-myColor" data-ktheader-minimize="on">
                 <div class="kt-container kt-container--fluid">
 
                     <!-- begin: Menu -->
