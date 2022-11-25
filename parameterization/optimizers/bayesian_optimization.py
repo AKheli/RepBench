@@ -45,10 +45,10 @@ class BayesianOptimizer(EstimatorOptimizer):
             score= estim.scores(**repair_inputs)[self.error_score]
             #sys.stdout.write(f"\rbayesian opt search {self.counter / self.n_calls * 100:.1f} % {score}", )
             if self.callback is not None:
-                self.callback(params, score,self.counter)
+                self.callback({"params":params, "score":score,"iter":self.counter})
             return score
 
-        gp_result = gp_minimize(f, param_values, n_jobs=-1,
+        gp_result = gp_minimize(f, param_values, n_jobs=self.n_jobs,
                         n_calls=self.n_calls+self.n_initial_points,
                         n_initial_points=self.n_initial_points,
                         n_restarts_optimizer=self.n_restarts_optimizer,

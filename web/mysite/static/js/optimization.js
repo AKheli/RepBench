@@ -1,8 +1,5 @@
 let createBayesianOptFormData = function (form_id) {
     let form = document.getElementById(form_id)
-    console.log(form)
-    console.log("optimform")
-
     const bayesienOptFormData = new FormData(form)
     bayesienOptFormData.append('csrfmiddlewaretoken', csrftoken)
     bayesienOptFormData.append("injected_series", JSON.stringify(injectedSeries))
@@ -27,46 +24,46 @@ let createBayesianOptFormData = function (form_id) {
 // optchart.series[0].remove()
 //
 
-function loadTableData(data, error) {
-    $("#myTable tr").remove();
-    $("#testBody tr").remove();
-
-    const table = document.getElementById("myTable");
-    const header = table.createTHead();
-    const row = header.insertRow(0);
-    let header1 = row.insertCell(0);
-    header1.innerHTML = "Iteration";
-
-    let first_col = data[0].name
-    let loss = error
-
-    Object.keys(first_col).forEach((key, i) => {
-        const cell = row.insertCell(i + 1);
-        cell.innerHTML = key;
-    })
-    let cell = row.insertCell(Object.keys(first_col).length + 1)
-    cell.innerHTML = loss;
-    //insert table body
-
-    let body = document.getElementById("testBody");
-    body.innerHTML += "<tr style='border-bottom:1px solid black'> " +
-        "<td colSpan='100%'> Initial Parameters </td> </tr>  "
-    body = document.getElementById("testBody");
-
-
-    data.forEach((item, iter) => {
-            let row = body.insertRow();
-            row.insertCell(0).innerHTML = iter;
-            Object.keys(item.name).forEach((key, i) => {
-                const cell = row.insertCell(i + 1);
-                cell.innerHTML = item.name[key];
-            })
-            const cell = row.insertCell(Object.keys(item.name).length + 1);
-            cell.innerHTML = item.y;
-            cell.addstyle = "border-bottom:1px solid black"
-        }
-    )
-}
+// function loadTableData(data, error) {
+//     $("#myTable tr").remove();
+//     $("#testBody tr").remove();
+//
+//     const table = document.getElementById("myTable");
+//     const header = table.createTHead();
+//     const row = header.insertRow(0);
+//     let header1 = row.insertCell(0);
+//     header1.innerHTML = "Iteration";
+//
+//     let first_col = data[0].name
+//     let loss = error
+//
+//     Object.keys(first_col).forEach((key, i) => {
+//         const cell = row.insertCell(i + 1);
+//         cell.innerHTML = key;
+//     })
+//     let cell = row.insertCell(Object.keys(first_col).length + 1)
+//     cell.innerHTML = loss;
+//     //insert table body
+//
+//     let body = document.getElementById("testBody");
+//     body.innerHTML += "<tr style='border-bottom:1px solid black'> " +
+//         "<td colSpan='100%'> Initial Parameters </td> </tr>  "
+//     body = document.getElementById("testBody");
+//
+//
+//     data.forEach((item, iter) => {
+//             let row = body.insertRow();
+//             row.insertCell(0).innerHTML = iter;
+//             Object.keys(item.name).forEach((key, i) => {
+//                 const cell = row.insertCell(i + 1);
+//                 cell.innerHTML = item.name[key];
+//             })
+//             const cell = row.insertCell(Object.keys(item.name).length + 1);
+//             cell.innerHTML = item.y;
+//             cell.addstyle = "border-bottom:1px solid black"
+//         }
+//     )
+// }
 
 let optimData = null
 let optimizeCurrentData = (form_id) => {
@@ -75,43 +72,25 @@ let optimizeCurrentData = (form_id) => {
         body: createBayesianOptFormData(form_id),
     }).then(response => response.json()).then(responseJson => {
         optimData = responseJson
-        // loadTableData(responseJson.data, responseJson.error_loss)
-        // generate table with responseJson.data
-
-
-        // let repair_scores = responseJson.opt_result_series
-        // let added_series =  optchart.addSeries(repair_scores)
-        // opt_container.style.display = 'block'; // Show
-        // optchart.chart.yAxis[0].axisTitle.attr({
-        //     text: 'new title'
-        // });
-        //
-        //
-        // let repairedSeries = responseJson.repaired_series
-        // let counter = 0
-        // let color = null
-        // for (key in repairedSeries) {
-        //     let repair = repairedSeries[key]
-        //     s = mainchart.addSeries(repair)
-        // }
-
+        //textract error_loss from formdata
+        let error_loss = optimData.error_loss.toUpperCase();
+        let params = Object.keys(optimData.param_ranges);
+        let n_initial_points = optimData.n_initial_points;
+        let job_id = optimData.job_id;
+        initOptChart(params, error_loss)
+        fetch_loop(n_initial_points, job_id)
     })
-    let formdata = createBayesianOptFormData(form_id)
 
-    //textract error_loss from formdata
-    let error_loss = formdata.get("error_loss").toUpperCase();
-    let n_initial_points = formdata.get("n_initial_points");
-    let body = document.getElementById("testBody");
-    body.innerHTML = "<tr style='border-bottom:1px solid black'>" +
-        "<td>Iter</td><td>Parameters</td><td>" + error_loss + "</td> " +
-        "</tr>"
-
-    fetch_loop(n_initial_points)
 
 }
 
-const empty_form = new FormData()
-empty_form.append('csrfmiddlewaretoken', csrftoken)
+let create_job_id_form = function (job_id) {
+    const empty_form = new FormData()
+    empty_form.append('csrfmiddlewaretoken', csrftoken)
+    empty_form.append('job_id', job_id)
+    console.log("EMPTY fORM")
+    return empty_form
+}
 
 function objToString(obj, round) {
     var str = '';
@@ -123,38 +102,30 @@ function objToString(obj, round) {
     return str;
 }
 
-let fetch_loop = function (n_initial_points) {
+let fetch_loop = function (n_initial_points, job_id) {
+    console.log("FEEEEEETCH")
     fetch(fetch_opt_result, {
         method: 'POST',
-        body: empty_form,
+        body: create_job_id_form(job_id),
     }).then(response => response.json()).then(
-        async responseJson => {
-            response = responseJson.response
+        responseJson => {
             console.log(responseJson)
-            console.log(response)
-            if (response === "results") {
-                    console.log(n_initial_points)
-                    console.log(responseJson.iter)
-                if (Number(responseJson.iter) === Number(n_initial_points)) {
-                    let body = document.getElementById("testBody");
-                    body.innerHTML += "<tr style='border-bottom:1px solid black'> " +
-                        "<td colSpan='100%'> Parameters Maximiting Gaussian Process Likelyhood</td> </tr>  "
+            let response_status = responseJson.status
+            if (response_status !== "DONE") {
+                if (response_status === "running") {
+                    let data = responseJson.data
+                    optChart.addParamError(Object.values(data.params), data.score)
                 }
-                let body = document.getElementById("testBody");
-                body.innerHTML += "<tr style='border-bottom:1px solid black'>" +
-                    "<td>" + responseJson.iter + "</td><td>" + objToString(responseJson.params, 3) + "</td><td>" + Number(responseJson.error.toFixed(3)) + "</td> " +
-                    "</tr>"
-
+                fetch_loop(n_initial_points, job_id)
+                // setTimeout(function () {
+                //     fetch_loop(n_initial_points, job_id)
+                // }, 500)
             }
 
-
-            // pause for 1 second
-            await new Promise(r => setTimeout(r, 1000));
-            if (response !== "done") {
-                fetch_loop(n_initial_points)
-
-            }
         })
+
+
+
 }
 
 

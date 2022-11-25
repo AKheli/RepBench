@@ -10,6 +10,7 @@ let createInjectFormData = function (form_id) {
 let injectedSeries = {}
 
 const inject = function() {
+    console.log("inject before fetch")
     fetch(injection_url , {
         method: 'POST',
         body: createInjectFormData("injection_form"),
@@ -19,11 +20,12 @@ const inject = function() {
         if (mainchart.get(s["id"])) {
             mainchart.get(s["id"]).remove();
         }
+        console.log("inject fetched")
         s["dashStyle"] = 'ShortDot'
         series = mainchart.addSeries(s)
         s.data = series.yData
         injectedSeries[s["id"]] = s
-        console.log(series.yData)
+        // console.log(series.yData)
     })
     return false
 }

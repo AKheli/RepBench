@@ -1,16 +1,17 @@
 import json
+import time
 
 import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
 from pandas import DataFrame
-from web.mysite.viz.BenchmarkMaps.optimization import optimize_web
 from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from web.mysite.viz.forms.injection_form import InjectionForm
 import pandas as pd
 from web.mysite.viz.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
-# from web.mysite.viz.models import OptResult
 from web.mysite.viz.views.dataset_views import DatasetView
+
+import web.mysite.viz.BenchmarkMaps.Optjob as OptJob
 
 
 class NpEncoder(json.JSONEncoder):
@@ -25,6 +26,7 @@ class NpEncoder(json.JSONEncoder):
             return round(obj, 3)
         return json.JSONEncoder.default(self, obj)
 
+
 def parse_param_input(p: str):
     if p.isdigit():
         return int(p)
@@ -34,8 +36,17 @@ def parse_param_input(p: str):
         return p
 
 
-a = []
-b = ["waiting"]
+class opt_JSONRespnse(JsonResponse):
+    def __init__(self, data, callback=None, **kwargs):
+        self.callback = callback
+        super().__init__(data, encoder=NpEncoder, **kwargs)
+
+    def close(self):
+        print("opt CALLBACK")
+        if self.callback:
+            self.callback()
+        super(opt_JSONRespnse, self).close()
+
 
 class OptimizationView(DatasetView):
 
@@ -57,20 +68,15 @@ class OptimizationView(DatasetView):
 
     @staticmethod
     def optimize(request, setname="bafu5k"):
-
-        while len(a)> 0:
-            a.pop()
-
+        token = request.POST.get("csrfmiddlewaretoken")
+        job_id = OptJob.add_job(token)
         post = request.POST.dict()
-        print("POOOOOOOOOOOOOOOOOOOOOOOOOST")
-        print(post)
-
-        alg_type = post["alg_type"]
 
         # Bayesopt inputs
         n_initial_points = int(post["n_initial_points"])
         n_calls = int(post["n_calls"])
         error_loss = post["error_loss"]
+        alg_type = post.pop("alg_type")
 
         injected_series = json.loads(post.pop("injected_series"))
         param_ranges = {}
@@ -81,41 +87,43 @@ class OptimizationView(DatasetView):
             if key.endswith("-max"):
                 param_ranges[key.split("-")[0]] = (param_ranges[key.split("-")[0]], parse_param_input(v))
 
-        error_loss = post.pop("error_loss")
-        alg_type = post.pop("alg_type")
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
-
-        bayesian_opt_inputs = {"n_calls": int(post.pop("n_calls")),
-                               "n_initial_points": int(post.pop("n_initial_points")),
-                               "error_score": error_loss}
 
         injected_data_container = injected_container_None_Series(df, *injected_series.values())
 
-        output = optimize_web(param_ranges, alg_type, injected_data_container,
-                              n_calls=n_calls, n_initial_points=n_initial_points, error_loss=error_loss,
-                              callback=lambda x, y, z: a.append({"params": x, "error" : y, "iter": z }))
+        optcallback = OptJob.start(job_id, param_ranges, alg_type, injected_data_container,
+                                   n_calls=n_calls, n_initial_points=n_initial_points, error_loss=error_loss)
+
+        context = {
+            "error_loss": error_loss,
+            "alg_type": alg_type,
+            "n_calls": n_calls,
+            "n_initial_points": n_initial_points,
+            "injected_series": injected_series,
+            "param_ranges": param_ranges,
+            "setname": setname,
+        }
+        return opt_JSONRespnse(context, callback=optcallback)
 
 
+def fetch_opt_results(request):
+    token = request.POST.get("csrfmiddlewaretoken")
+    status, data = OptJob.retrieve_results(token)
+    if len(data) > 0:
+        #data_entry = data.pop(0)
+        res = {"data": 1}
+        res.update({"status": "running"})
+        print("fetch_opt_results", res)
+        print(res)
+        return JsonResponse(res, encoder=NpEncoder)
 
-        output = json.loads(json.dumps(output, cls=NpEncoder))
-        print("AAAAAAAAAAAAAAAAAAA")
-        print(a)
-        b.append("done")
-        return JsonResponse(output)
-
-
-    @staticmethod
-    def fetch_optresults(request):
-        print(a)
-        if len(a) > 0:
-            res = a.pop(0)
-            res.update({"response":"results"})
-            res = json.loads(json.dumps(res, cls=NpEncoder))
-            print("res",res)
-            return JsonResponse(res)
-
-        if b[-1] == "done":
-            b.pop()
-            return JsonResponse( {"response":"done"})
-
-        return JsonResponse({"response":"waiting"})
+    if status == "finished":
+        return JsonResponse({"status": "DONE"}, encoder=NpEncoder)
+    else:
+        return JsonResponse({"status": "pending"}, encoder=NpEncoder)
+        # time.sleep(1)
+    #
+# if status == "running":
+#     res = {"data":data}
+#     res.update({"response": "running"})
+#     return JsonResponse(res)

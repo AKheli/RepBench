@@ -22,24 +22,24 @@
             {% include 'sub/bayesianOptForm.html' %}
         </div>
     </div>
-    <script> let optimization_url = "{% url 'optimize_data' setname=setname %}"</script>
-    <script> let fetch_opt_result = "{% url 'fetch_optresults' %}"</script>
-
+    <script>
+        let optimization_url = "{% url 'optimize_data' setname=setname %}"
+        let fetch_opt_result = "{% url 'fetch_optresults' %}"</script>
+    <script src="{% static 'js/optchart.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/optimization.js' %}" type="text/javascript"></script>
 {% endblock %}
 
-{% block innerRow %}
-       <div class="data-kt-">
 
-            <table id="myTable">
-                <thead>
-                </thead>
-                <tbody id="testBody"></tbody>
-            </table>
-        </div>
-{% endblock %}
 
 
 {% block content %}
+    <div id="optChartContainer" , class="data-kt-">
+
+        <table id="myTable">
+            <thead>
+            </thead>
+            <tbody id="testBody"></tbody>
+        </table>
+    </div>
     <script src="{% static 'js/injection.js' %}" type="text/javascript"></script>
 {% endblock %}

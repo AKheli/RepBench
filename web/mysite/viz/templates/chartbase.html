@@ -153,6 +153,12 @@
 
 
     <script>
+        Highcharts.dateFormats = {
+            n: function (n) {
+                return n.toFixed(0);
+            }
+        };
+
         let toggles = Array.from(document.getElementsByClassName("myToggle"));
         toggles.forEach(element => {
             element["on"] = false;
@@ -162,14 +168,14 @@
         toggles.forEach(element => {
             element.addEventListener("click", function (input) {
                 element.on = !element.on;
-                element.primary= true;
+                element.primary = true;
                 toggles.forEach(other => {
                     if (other.on && !other.primary) {
                         other.click();
                     }
                 });
-                element.primary= false;
-                })
+                element.primary = false;
+            })
         })
 
         let data_url = '{% url "get_data" setname=setname  %}' + '?viz={{ viz|default_if_none:5 }}';
@@ -177,18 +183,71 @@
 
             tooltip: tooltip,
 
+
             chart: {
                 type: 'line',
                 zoomType: 'x',
 
             },
 
+            {#xAxis: {#}
+            {#    labels: {#}
+            {#          pointInterval: 36e5, // one hour#}
+            {#relativeXValue: true,#}
+            {#        formatter: function () {#}
+            {#            console.log("v" + this.value)#}
+            {#            return this.value.toString();#}
+            {#        },#}
+            {#    }#}
+
+
+            plotOptions: {
+                series: {
+                    pointStart: 1,
+                    {#pointInterval: 36e5, // one hour,#}
+
+                },
+            },
+
             title: {
                 text: chart_title
             },
+            navigator: {
+                enabled: true,
+                adaptToUpdatedData: true,
+                height: 60
+            },
 
+            rangeSelector: {
+                inputDateParser: function (value) {
+                    console.log(value)
+                    value = value.split(/[:\.]/);
+                    return 1
+                },
+                enabled: true,
+                inputEnabled: false,
+                {#allButtonsEnabled: true,#}
+                inputDateFormat: '%y',
+                inputEditDateFormat: '%y',
 
-            {#rangeSelector :range_selector,#}
+                buttons: [{
+                    type: 'millisecond',
+                    count: 50,
+                    text: '50'
+                },
+                    {
+
+                        type: 'millisecond',
+                        count: 1000,
+                        text: '1000'
+                    }, {
+                        type: 'all',
+                        text: 'All',
+                        align: 'right',
+                        x: 0,
+                        y: 100,
+                    }],
+            },
 
             series: []
         });

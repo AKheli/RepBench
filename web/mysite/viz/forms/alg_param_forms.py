@@ -33,7 +33,7 @@ class CDparamForm(forms.Form):
                                    widget=forms.NumberInput(attrs={'min': "0", "step": "any", 'placeholder': '1'}))
     delta = forms.FloatField(label="Delta", min_value=0, initial=1.2,
                              widget=forms.NumberInput(attrs={'min': "0", "step": "any", 'placeholder': '1.2'}))
-    alg_type = hidden("cd")
+    alg_type = hidden("cdrec")
 
 
 class SCREENparamForm(forms.Form):

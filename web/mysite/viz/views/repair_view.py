@@ -4,15 +4,14 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import pandas as pd
 from pandas import DataFrame
+
 from web.mysite.viz.forms.alg_param_forms import ParamForms
 from web.mysite.viz.forms.injection_form import  InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
 import json
 from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_series
 from web.mysite.viz.views.dataset_views import DatasetView
-
-
-
+from web.mysite.viz.views.optimizationview import opt_JSONRespnse
 
 
 def parse_param_input(p: str):
@@ -79,6 +78,7 @@ class RepairView(DatasetView):
         }
         return JsonResponse(injected_series)
 
+
     @staticmethod
     def repair_data(request, setname):
 
@@ -89,7 +89,6 @@ class RepairView(DatasetView):
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
         injected_series = json.loads(post.pop("injected_series"))
         params = {k: parse_param_input(v) for k, v in post.items()}
-        print(params)
         output = repair_from_None_series(alg_type , params, df, *injected_series.values())
         context = {"metrics": output["metrics"]}
         output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
