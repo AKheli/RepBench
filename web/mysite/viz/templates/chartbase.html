@@ -3,60 +3,11 @@
 
 <!-- base template with a chart container of a dataset-->
 {% block chartScript %}
-    <script>
-        let datasetName = "{{ set_name }}";
-        let chart_title = "{{ data_title }}"
 
-        let tooltip = {
-            formatter: function (e) {
-                // The first returned item is the header, subsequent items are the
-                // points
-                let x = this.x
-                return ['<p style=\"color:black;font-size:15px;\"> Truth: ' + this.y + '</p>'].concat(
-                    this.series.linkedSeries.map(function (s) {
-                        selectedY = s.yData[x]
-                        if (selectedY !== null) {
-                            selectedY = Math.round(selectedY * 1000) / 1000
-                            if (s.name.includes('injected')) {
-                                return "<br> <p style=\"color:red;font-size:15px;\"> Anomalous: " + selectedY + "<\p> "
-                            } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
-                        } else return ""
-                    })
-                );
-            },
-            shared: false,
-            valueDecimals: 2
-        }
-
-        let range_selector = {
-            buttons: [{
-                count: 1,
-                text: '1m',
-                events: {
-                    click: function () {
-                        alert('Clicked button');
-                    }
-                }
-            },
-                {
-                    count: 3,
-                    text: '3m'
-                }
-            ],
-            enabled: true,
-        }
-    </script>
 {% endblock %}
 
 
 {% block chart %}
-    <script src="{% static 'js/lib/binarytransport/jquery.binarytransport.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/lib/highcharts/highstock.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/custom/highcharts.utils.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/custom/highcharts.line.view.init.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/custom/highcharts.actions.init.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/custom/form.extensions.js' %}" type="text/javascript"></script>
-
     <style>  .full-height {
         height: 98%;
     {#float: right;#}
@@ -105,7 +56,7 @@
         <!--end: Inner Row -->
         <div id="form_portlets" class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
             {% block first_form %}
-                <div class="kt-portlet kt-portlet--collapsed" data-ktportlet="true">
+                <div class="kt-portlet" data-ktportlet="true">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title">Anomaly Injection</h3>
@@ -151,128 +102,21 @@
     </div>
 
 
-
-    <script>
-        Highcharts.dateFormats = {
-            n: function (n) {
-                return n.toFixed(0);
-            }
-        };
-
-        let toggles = Array.from(document.getElementsByClassName("myToggle"));
-        toggles.forEach(element => {
-            element["on"] = false;
-            element["primary"] = false;
-        });
-
-        toggles.forEach(element => {
-            element.addEventListener("click", function (input) {
-                element.on = !element.on;
-                element.primary = true;
-                toggles.forEach(other => {
-                    if (other.on && !other.primary) {
-                        other.click();
-                    }
-                });
-                element.primary = false;
-            })
-        })
-
+     <script>
+        let datasetName = "{{ set_name }}";
+        let chart_title = "{{ data_title }}"
         let data_url = '{% url "get_data" setname=setname  %}' + '?viz={{ viz|default_if_none:5 }}';
-        const mainchart = Highcharts.chart(document.getElementById('highcharts_container'), {
-
-            tooltip: tooltip,
-
-
-            chart: {
-                type: 'line',
-                zoomType: 'x',
-
-            },
-
-            {#xAxis: {#}
-            {#    labels: {#}
-            {#          pointInterval: 36e5, // one hour#}
-            {#relativeXValue: true,#}
-            {#        formatter: function () {#}
-            {#            console.log("v" + this.value)#}
-            {#            return this.value.toString();#}
-            {#        },#}
-            {#    }#}
-
-
-            plotOptions: {
-                series: {
-                    pointStart: 1,
-                    {#pointInterval: 36e5, // one hour,#}
-
-                },
-            },
-
-            title: {
-                text: chart_title
-            },
-            navigator: {
-                xAxis : {
-                    labels: {
-                        formatter: function () {
-                            return this.value.toString();
-                        }
-                    }
-                },
-                enabled: true,
-                adaptToUpdatedData: true,
-                height: 60
-            },
-
-            rangeSelector: {
-                inputDateParser: function (value) {
-                    console.log(value)
-                    value = value.split(/[:\.]/);
-                    return 1
-                },
-                enabled: true,
-                inputEnabled: false,
-                inputDateFormat: '%y',
-                inputEditDateFormat: '%y',
-
-                buttons: [{
-                    type: 'millisecond',
-                    count: 50,
-                    text: '50'
-                },
-                    {
-
-                        type: 'millisecond',
-                        count: 1000,
-                        text: '1000'
-                    }, {
-                        type: 'all',
-                        text: 'All',
-                        align: 'right',
-                        x: 0,
-                        y: 100,
-                    }],
-            },
-
-            series: []
-        });
-
-        fetch(data_url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        }).then(response => response.json())
-            .then(data => {
-                data.series.forEach(x => mainchart.addSeries(x))
-            })
-            .catch(error => console.error(error))
-
 
     </script>
-    {#    <script src="{% static 'js/additionalSeriesManager.js' %}" type="text/javascript"></script>#}
+    <script src="{% static 'js/additionalSeriesManager.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/binarytransport/jquery.binarytransport.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/highcharts/highstock.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/custom/highcharts.utils.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/custom/highcharts.line.view.init.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/custom/highcharts.actions.init.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/custom/form.extensions.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/mainChart.js' %}" type="text/javascript"></script>
+
 
 
 {% endblock %}

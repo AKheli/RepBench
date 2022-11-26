@@ -1,10 +1,8 @@
 let createRepairRequestFormData = function (alg) {
-    let form = document.getElementById(alg)
-    console.log(form)
+    const form = document.getElementById(alg)
     const repairFormData = new FormData(form)
     repairFormData.append('csrfmiddlewaretoken', csrftoken)
     repairFormData.append("injected_series", JSON.stringify(injectedSeries))
-
     return repairFormData
 }
 let repairResult = null
@@ -20,21 +18,17 @@ let repair = (alg) => fetch(repair_url, {
          if(additionalData["reduced"]){
             add_list_of_data_to_chart(additionalData.reduced, mainchart, "reduced")
         }
-
     }
+    const repSeries = responseJson.repaired_series
+    const scores = responseJson.scores
 
-    repairedSeries = responseJson.repaired_series
-    scores = responseJson.scores
-
-    let counter = 0
     let color = null
-    for (key in repairedSeries) {
-        let repair = repairedSeries[key]
-
-        if (counter > 0) repair["color"] = color
-        s = mainchart.addSeries(repairedSeries[key])
-        if (counter === 0) color = s.color
-        counter += 1
+    for ( key in repSeries) {
+        let repair = repSeries[key]
+        let c = addRepairedSeries(repair,color)
+        if(color === null) {
+            color = c
+        }
     }
 
     // load the score charts html element given all the error metrics
@@ -43,6 +37,5 @@ let repair = (alg) => fetch(repair_url, {
     }
     scores["color"] = color
     addScores(scores)
-
 
 })

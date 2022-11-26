@@ -3,8 +3,8 @@ from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_
 from web.mysite.viz.ts_manager.ts_manager import get_repair_data
 
 
-def repair_from_None_series(alg_type,params, truth_df, *injected_series_dicts   ):
-    injected_data_container = injected_container_None_Series(truth_df, *injected_series_dicts)
+def repair_from_None_series(alg_type,params, truth_df, injected_series_dicts):
+    injected_data_container = injected_container_None_Series(truth_df, injected_series_dicts)
     repairer = AnomalyRepairer(1, 1)
     repair_info = repairer.repair_data_part(alg_type, injected_data_container, params)
 

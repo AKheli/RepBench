@@ -1,18 +1,33 @@
+const injectedSeries = []
+const repairedSeries = []
 
-let injectedSeries = []
-let repairedSeries = []
 
-let addInjectedSeries = function(series) {
+const normalizationState = false
+
+const addInjectedSeries = function(series) {
     // add series to injectedSeries and main chart keep track of index of the series
     chartSeries = mainchart.addSeries(series)
     series['chartId'] = chartSeries.options.id
     injectedSeries.push(series)
+    return chartSeries.color
 }
 
-let addRepairedSeries = function(series) {
-    chartSeries = mainchart.addSeries(series)
+const addRepairedSeries = function(series,col) {
+    let chartSeries = null
+    if(col === null){
+        console.log(series)
+        chartSeries = mainchart.addSeries(series)
+        col = chartSeries.color
+        series['color'] = col
+    }
+    else{
+        series['color'] = col
+        chartSeries = mainchart.addSeries(series)
+    }
+
     series['chartId'] = chartSeries.options.id
     repairedSeries.push(series)
+    return col
 }
 
 let clearInjectedSeries = function() {

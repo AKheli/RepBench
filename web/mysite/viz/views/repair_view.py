@@ -96,7 +96,6 @@ class RepairView(DatasetView):
 
     @staticmethod
     def repair_data(request, setname):
-
         post = request.POST.dict()
         post.pop("csrfmiddlewaretoken")
         alg_type = post.pop("alg_type")
@@ -104,7 +103,8 @@ class RepairView(DatasetView):
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
         injected_series = json.loads(post.pop("injected_series"))
         params = {k: parse_param_input(v) for k, v in post.items()}
-        output = repair_from_None_series(alg_type , params, df, *injected_series.values())
+        print("injectedSeries" ,injected_series)
+        output = repair_from_None_series(alg_type , params, df, injected_series)
         context = {"metrics": output["metrics"]}
         output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
         return JsonResponse(output)
