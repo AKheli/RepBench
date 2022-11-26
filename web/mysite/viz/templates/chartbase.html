@@ -213,6 +213,13 @@
                 text: chart_title
             },
             navigator: {
+                xAxis : {
+                    labels: {
+                        formatter: function () {
+                            return this.value.toString();
+                        }
+                    }
+                },
                 enabled: true,
                 adaptToUpdatedData: true,
                 height: 60
@@ -226,7 +233,6 @@
                 },
                 enabled: true,
                 inputEnabled: false,
-                {#allButtonsEnabled: true,#}
                 inputDateFormat: '%y',
                 inputEditDateFormat: '%y',
 

@@ -23,6 +23,9 @@ def parse_param_input(p: str):
         return p
 
 
+
+
+
 class RepairView(DatasetView):
 
     def data_set_repair_and_injection_context(self, df):
@@ -39,6 +42,18 @@ class RepairView(DatasetView):
 
     @staticmethod
     def inject_data(request, setname):
+        token = request.POST.get("csrfmiddlewaretoken")
+        import web.mysite.viz.BenchmarkMaps.Optjob as OptJob
+        try:
+            status, data = OptJob.retrieve_results(token)
+            #log to javascript console
+            print("EEEEEEEEEEEEEEEEEYYYY")
+            print(data)
+        except Exception as e:
+            o = OptJob
+            print("exception")
+            print(e)
+            pass
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
         post = request.POST
         col_name = post.get("data_columns") #.strip() #todo check why input is not stripped

@@ -5,37 +5,44 @@ from testing_frame_work.repair import AnomalyRepairer
 from web.mysite.viz.ts_manager.ts_manager import get_repair_data
 
 job_status = {}
+job_results = {}
 
+def retrieve_results(job_id):
+    data = job_results[job_id]
+    if job_status[job_id] == 'running':
+        return 'running', data
+    elif job_status[job_id] == 'finished':
+        return 'finished', data
+
+    assert False
 
 def add_job(job_id):
-    with open(f"web/mysite/viz/BenchmarkMaps/{job_id}.txt", 'w') as f:
-        pass
+    # with open(f"web/mysite/viz/BenchmarkMaps/{job_id}.txt", 'w') as f:
+    #     pass
+    job_status[job_id] = "running"
+    job_results[job_id] = []
     return job_id
 
 
-def read(job_id):
-    with open(f"web/mysite/viz/BenchmarkMaps/{job_id}.txt", 'r') as f:
-        return f.readlines()
 
-
-def save(job_id, data):
-    with open(f"web/mysite/viz/BenchmarkMaps/{job_id}.txt", 'a') as f:
-        f.write(str(data))
+    # with open(f"web/mysite/viz/BenchmarkMaps/{job_id}.txt", 'a') as f:
+    #     f.write(str(data))
 
 
 def start(job_id, param_ranges, alg_type, injected_data_container: InjectedDataContainer, *, error_loss, n_calls,
           n_initial_points):
+
+    def save(data):
+        print("SAVE")
+        job_results[job_id].append(data)
+
     def callback():
         estimator = algo_mapper[alg_type]()
-
-        def subcallback(data):
-            save(job_id, data)
-            print("subcallback", data)
 
         optimizer = BayesianOptimizer(estimator, error_score=error_loss, n_calls=n_calls,
                                       n_initial_points=n_initial_points,
                                       n_restarts_optimizer=1,
-                                      callback=subcallback,
+                                      callback=save,
                                       n_jobs=1
                                       )
 
@@ -67,15 +74,7 @@ def start(job_id, param_ranges, alg_type, injected_data_container: InjectedDataC
     return callback
 
 
-def retrieve_results(job_id):
-    if job_status[job_id] == 'running':
-        results = read(job_id)
-        return 'running', results
-    elif job_status[job_id] == 'finished':
-        results = read(job_id)
-        return 'finished', results
 
-    assert False
 
 
 def optimize_web(param_ranges, alg_type, injected_data_container: InjectedDataContainer, *, error_loss, n_calls,

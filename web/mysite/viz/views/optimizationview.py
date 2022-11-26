@@ -1,5 +1,5 @@
 import json
-import time
+import threading
 
 import numpy as np
 from django.http import JsonResponse
@@ -35,17 +35,17 @@ def parse_param_input(p: str):
     except:
         return p
 
-
 class opt_JSONRespnse(JsonResponse):
     def __init__(self, data, callback=None, **kwargs):
         self.callback = callback
         super().__init__(data, encoder=NpEncoder, **kwargs)
 
-    def close(self):
-        print("opt CALLBACK")
-        if self.callback:
-            self.callback()
-        super(opt_JSONRespnse, self).close()
+    # def close(self):
+    #     if self.callback:
+    #         t = threading.Thread(target=self.callback)
+    #         t.start()
+    #     super(opt_JSONRespnse, self).close()
+
 
 
 class OptimizationView(DatasetView):
@@ -93,6 +93,8 @@ class OptimizationView(DatasetView):
 
         optcallback = OptJob.start(job_id, param_ranges, alg_type, injected_data_container,
                                    n_calls=n_calls, n_initial_points=n_initial_points, error_loss=error_loss)
+        t = threading.Thread(target=optcallback)
+        t.start()
 
         context = {
             "error_loss": error_loss,
@@ -110,11 +112,11 @@ def fetch_opt_results(request):
     token = request.POST.get("csrfmiddlewaretoken")
     status, data = OptJob.retrieve_results(token)
     if len(data) > 0:
-        #data_entry = data.pop(0)
-        res = {"data": 1}
+        res = data.pop(0)
         res.update({"status": "running"})
         print("fetch_opt_results", res)
         print(res)
+        print()
         return JsonResponse(res, encoder=NpEncoder)
 
     if status == "finished":
