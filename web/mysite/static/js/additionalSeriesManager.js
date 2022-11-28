@@ -1,8 +1,6 @@
 const injectedSeries = []
 const repairedSeries = []
 
-// const normalized_series = new Map() // series -> normdata
-
 const original_data_map = new Map();
 const norm_data_map = new Map();
 
@@ -12,11 +10,9 @@ const addSeries = function (series) {
     const chartSeries = mainchart.addSeries(series)
     original_data_map.set(chartSeries.options.id, [...series.data])
     norm_data_map.set(chartSeries.options.id, [...series.norm_data])
-    series.norm_data = -1
     set_series_state(chartSeries)
     return chartSeries
 }
-
 
 const set_series_state = function (ser) {
     if (norm_data_map.has(ser.options.id)) {
@@ -30,9 +26,21 @@ const set_series_state = function (ser) {
 
 const swap_norm = function () {
     normalized = !normalized
+    document.getElementById("swap_norm").innerHTML
+        = normalized ? "Show Original Data" : "Normalize Data"
+
     mainchart.series.forEach(ser => set_series_state(ser))
 }
 
+
+const get_injected_norm_data = function () {
+    return injectedSeries.map(s => {
+        return {
+            linkedTo: s.series.linkedTo,
+            data: s.series.norm_data
+        }
+    })
+}
 
 const addOriginalSeries = function (series) {
     addSeries(series)
@@ -40,13 +48,15 @@ const addOriginalSeries = function (series) {
 const addInjectedSeries = function (series) {
     // add series to injectedSeries and main chart keep track of index of the series
     let chartSeries = addSeries(series)
+    console.log("injectedseries")
+    console.log(chartSeries)
     series['chartId'] = chartSeries.options.id
-    injectedSeries.push(series)
+    injectedSeries.push({series: series, chartSeries: chartSeries})
     return chartSeries.color
 }
 
 const addRepairedSeries = function (series, col) {
-    console.log("series",series)
+    console.log(series.linkedTo)
     let chartSeries = null
     if (col === null) {
         chartSeries = addSeries(series)
@@ -56,26 +66,24 @@ const addRepairedSeries = function (series, col) {
         series['color'] = col
         chartSeries = addSeries(series)
     }
-    series['chartId'] = chartSeries.options.id
-    repairedSeries.push(series)
+    series['chartId'] = "" + chartSeries.options.id
+    repairedSeries.push({series: series, chartSeries: chartSeries})
+
     return col
 }
 
-// let clearInjectedSeries = function () {
-//     for (let i = 0; i < injectedSeries.length; i++) {
-//         mainchart.get(injectedSeries.chartId).remove(false);
-//     }
-//     injectedSeries.length = 0 // is that rally smart?
-// }
-//
-// let clearRepairedSeries = function () {
-//     for (let i = 0; i < repairedSeries.length; i++) {
-//         mainchart.get(repairedSeries.chartId).remove(false);
-//     }
-//     repairedSeries.length = 0
-// }
-//
-// let clearAllSeries = function () {
-//     clearInjectedSeries()
-//     clearRepairedSeries()
-// }
+
+const clearRepairedSeries = function () {
+    repairedSeries.forEach(s => s.chartSeries.remove())
+    repairedSeries.length = 0
+}
+
+const clearInjectedSeries = function () {
+    injectedSeries.forEach(s => s.chartSeries.remove())
+    injectedSeries.length = 0
+}
+const clearAllSeries = function () {
+    clearRepairedSeries()
+    clearInjectedSeries()
+}
+

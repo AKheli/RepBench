@@ -2,19 +2,27 @@
 {% load static %}
 
 
-     {% block thirdblock %}
-                <div id="container2" class="row" style="width: 500px; height: 400px; margin: 0 auto" ></div>
-                <div id="detection_portlets" class="row"></div>
-     {% endblock %}
+{% block thirdblock %}
+    <div id="container2" class="row" style="width: 500px; height: 400px; margin: 0 auto"></div>
+    <div id="detection_portlets" class="row"></div>
+{% endblock %}
+
+
+
+{% block graphbuttons %}
+    <button onclick="clearAllSeries()" class="btn btn-warning">Reset</button>
+    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize</button>
+
+{% endblock %}
 
 
 {% block content %}
 
-{#    <div class="row">#}
-{#     <div class="col-md-10">#}
-{#        <div id="container2" style="max-width: 800px">#}
-{#        </div>#}
-{#    </div>#}
+    {#    <div class="row">#}
+    {#     <div class="col-md-10">#}
+    {#        <div id="container2" style="max-width: 800px">#}
+    {#        </div>#}
+    {#    </div>#}
 
 
     <script src="{% static  'js/scoreboard.js' %} " type="text/javascript"></script>

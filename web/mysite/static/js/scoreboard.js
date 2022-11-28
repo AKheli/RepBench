@@ -1,6 +1,11 @@
 score_chart = null
 
+
+// display text in the center of div container2
+document.getElementById('container2').innerHTML = "<h4 style='text-align:   ;margin-top:20px;'>Inject and then repair a <br> TimeSeries to display scores</h4>"
+
 initChart = function (series) {
+    document.getElementById('container2').innerHTML = ""
     score_chart = Highcharts.chart('container2', {
         chart: {
             type: 'column',
@@ -60,5 +65,3 @@ alterCheckbox = function (category) {
     else selectedCategoires.add(category)
     updateCategories()
 }
-
-

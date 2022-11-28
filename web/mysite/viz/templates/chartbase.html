@@ -9,7 +9,7 @@
 
 {% block chart %}
     <style>  .full-height {
-        height: 98%;
+        height: 95%;
     {#float: right;#}
     }
 
@@ -24,6 +24,10 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 full-height ">
             <div class="kt-portlet full-height ">
                 <div class="kt-portlet__head--sm">
+                    <div style="text-align:right;position:relative;top:110%;z-index: 1;margin-right: 20px">
+                        {% block graphbuttons %}
+                        {% endblock %}
+                    </div>
                     {#                    <div class="kt-portlet__head-label">#}
                     {#                        <h3 class="kt-portlet__head-title">{{ data_title }}</h3>#}
                     {#                    </div>#}
@@ -40,13 +44,13 @@
                     {#                        </div>#}
                     {#                    </div>#}
                 </div>
-{#                <div class="kt-portlet__body kt-portlet__body--fit full-height">#}
+                {#                <div class="kt-portlet__body kt-portlet__body--fit full-height">#}
 
-                    <!--begin: Highcharts -->
-                    <div id="highcharts_container" class="full-height"></div>
-                    <!--end: Highcharts -->
-{#                </div>#}
-                 {% block belowchart %}
+                <!--begin: Highcharts -->
+                <div id="highcharts_container" class="full-height"></div>
+                <!--end: Highcharts -->
+                {#                </div>#}
+                {% block belowchart %}
                 {% endblock %}
             </div>
             {#            <!--begin: Inner Row  block below the main chart -->#}
