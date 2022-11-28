@@ -1,10 +1,13 @@
 import random
+
+import matplotlib.pyplot as plt
 import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
 import pandas as pd
 from pandas import DataFrame
 
+from data_methods.data_class import DataContainer
 from web.mysite.viz.forms.alg_param_forms import ParamForms
 from web.mysite.viz.forms.injection_form import  InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
@@ -25,7 +28,6 @@ def parse_param_input(p: str):
 
 
 
-
 class RepairView(DatasetView):
 
     def data_set_repair_and_injection_context(self, df):
@@ -40,25 +42,16 @@ class RepairView(DatasetView):
         print(context)
         return render(request, 'repair.html', context=context)
 
+
     @staticmethod
     def inject_data(request, setname):
-        token = request.POST.get("csrfmiddlewaretoken")
-        import web.mysite.viz.BenchmarkMaps.Optjob as OptJob
-        try:
-            status, data = OptJob.retrieve_results(token)
-            #log to javascript console
-            print("EEEEEEEEEEEEEEEEEYYYY")
-            print(data)
-        except Exception as e:
-            o = OptJob
-            print("exception")
-            print(e)
-            pass
-        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+        data_container = DataContainer(setname)
+        df: DataFrame = data_container.norm_data
         post = request.POST
         col_name = post.get("data_columns") #.strip() #todo check why input is not stripped
-        print(df.columns)
         col = df[col_name]
+        original_col = data_container.original_data[col_name]
+
         factor = float(post.get("factor"))
         ratio = float(post.get("ratio"))
         a_type = post.get("anomaly")
@@ -81,16 +74,21 @@ class RepairView(DatasetView):
                                         a_len=30,
                                         n_anomalies=n_anomalies,
                                         fill_na=True, seed=seed)
+        original_std = np.std(original_col.values)
+        original_mean  = np.mean(original_col.values)
+
 
         injected_series = {
             'series': {"linkedTo": col_name,
                        "id": f"{col_name}_injected",
                        "name": f"{col_name}_injected",
-                       "data": col_injected.replace({np.nan: None}).values.tolist(),
+                       "data": (col_injected*original_std+original_mean).replace({np.nan: None}).values.tolist() , #((col_injected+original_col.mean())*original_col.std()).replace({np.nan: None}).values.tolist(),
+                       "norm_data": col_injected.replace({np.nan: None}).values.tolist(),
                        "color": "red",
                        },
             'rmse': 0.1
         }
+        print(injected_series)
         return JsonResponse(injected_series)
 
 
@@ -100,11 +98,19 @@ class RepairView(DatasetView):
         post.pop("csrfmiddlewaretoken")
         alg_type = post.pop("alg_type")
 
-        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
+        data_container = DataContainer(setname)
+        df = data_container.norm_data # only work with normalized data
+        df_original = data_container.original_data
         injected_series = json.loads(post.pop("injected_series"))
+
+
         params = {k: parse_param_input(v) for k, v in post.items()}
-        print("injectedSeries" ,injected_series)
         output = repair_from_None_series(alg_type , params, df, injected_series)
+        for k,v in output["repaired_series"].copy().items():
+            norm_data = v["data"]
+            link = v["linkedTo"]
+            v["norm_data"] = norm_data
+            v["data"] = list(np.array(norm_data)*df_original[link].values.std()+df_original[link].values.mean())
         context = {"metrics": output["metrics"]}
         output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
         return JsonResponse(output)

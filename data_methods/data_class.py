@@ -61,7 +61,7 @@ def read_data(data_name, folder):
 
 class DataContainer():
     def __init__(self, file_name, type="train" , max_n_rows = None , max_n_cols = None):
-        assert type in ["train", "test"]
+        assert type in ["train", "test","opt"]
         data_df = read_data(file_name,folder="data/"+type)
 
         n,m = data_df.shape

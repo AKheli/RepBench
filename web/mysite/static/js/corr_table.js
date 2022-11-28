@@ -1,29 +1,44 @@
-//https://stackoverflow.com/questions/3065342/how-do-i-iterate-through-table-rows-and-cells-in-javascript
-
-const highlightSeries = function (col, row, chart){
-    // sets series col and row to be highlighted
-    // returns initially highlighted series
-    return  chart.series.filter((series,i) => {
-        let retval =  series.visible
-        console.log(col,i)
-        console.log(i==col, "i===col")
-        series.setVisible(i==col || i == row)
+const highlightSeries = function (col, row, chart) {
+    const highlighed_before = chart.series.filter((series, scounter) => {
+        let retval = series.visible
+        series.setVisible(scounter == col || scounter == row)
         return retval
     })
 }
+let initial_highlighted_series = null;
 
+const reset_series_highlighted = function () {
+    console.log(initial_highlighted_series)
+    setTimeout(_ => {
+        initial_highlighted_series.forEach(series => series.setVisible(true))
+        initial_highlighted_series = null
 
-const corrTable = document.getElementById("correlation_table");
-console.log("setupt corr tabel")
+    }, 50)
+}
+const set_series_highlighted = function () {
+    if (initial_highlighted_series === null) {
+        initial_highlighted_series = mainchart.series.filter(series => series.visible)
+    }
+}
+
+const corrTable = document.getElementById("correlation_table")
+const corr_div = document.getElementById("correlationMatrix")
+
+corr_div.setAttribute("onmouseleave", 'reset_series_highlighted()')
+corr_div.setAttribute("onmouseover", 'set_series_highlighted()')
+
 const init_corr_table = function () {
-    let i = 0;
-    let j = 0;
+    let r_i = -1;
     for (let row of corrTable.rows) {
-        i += 1;
+        let r_j = -1;
         for (let cell of row.cells) {
-            cell.setAttribute("onclick", 'highlightSeries("'+i+'","'+j+'",mainchart)');
+            cell.style.cssText += 'text-align:center;';
+            if (r_i !== -1 || r_j !== -1) {
+                cell.setAttribute("onclick", 'highlightSeries("' + r_i + '","' + r_j + '",mainchart)');
+            }
+            r_j += 1;
         }
-        j += 1;
+        r_i += 1;
     }
 }
 

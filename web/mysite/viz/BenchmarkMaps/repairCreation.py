@@ -33,8 +33,6 @@ def create_injected_container(injected_df, truth_df):
 def injected_container_None_Series( truth_df , injected_series_dicts):
     injected_df = truth_df.copy()
     for series_dict in injected_series_dicts:
-        print("sdict")
-        print(series_dict)
         col_name, data = series_dict["linkedTo"] ,  series_dict["data"]
         injected_data= np.array(data,dtype=float)
         values_to_repalce = ~np.isnan(injected_data)

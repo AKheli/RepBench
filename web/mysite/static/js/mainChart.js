@@ -39,7 +39,15 @@ let range_selector = {
 
 
 const mainchart = Highcharts.chart(document.getElementById('highcharts_container'), {
+      legend: {
+          nabled: true,
 
+            align: 'right',
+            verticalAlign: 'top',
+            // floating: true,
+            // x: 0,
+             y: 30
+        },
     tooltip: tooltip,
     chart: {
         type: 'line',
@@ -68,6 +76,8 @@ const mainchart = Highcharts.chart(document.getElementById('highcharts_container
     title: {
         text: chart_title
     },
+
+
     navigator: {
         xAxis: {
             labels: {
@@ -111,7 +121,7 @@ const mainchart = Highcharts.chart(document.getElementById('highcharts_container
             }],
     },
 
-    series: []
+    series: {}
 });
 
 fetch(data_url, {
@@ -122,7 +132,7 @@ fetch(data_url, {
     }
 }).then(response => response.json())
     .then(data => {
-        data.series.forEach(x => mainchart.addSeries(x))
+        data.series.forEach(x => addOriginalSeries(x))
     })
     .catch(error => console.error(error))
 

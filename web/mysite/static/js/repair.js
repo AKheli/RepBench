@@ -5,6 +5,7 @@ let createRepairRequestFormData = function (alg) {
     repairFormData.append("injected_series", JSON.stringify(injectedSeries))
     return repairFormData
 }
+
 let repairResult = null
 let repair = (alg) => fetch(repair_url, {
     method: 'POST',
@@ -21,7 +22,7 @@ let repair = (alg) => fetch(repair_url, {
     }
     const repSeries = responseJson.repaired_series
     const scores = responseJson.scores
-
+    repairResult = repSeries
     let color = null
     for ( key in repSeries) {
         let repair = repSeries[key]

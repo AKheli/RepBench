@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views import View
 from pandas import DataFrame
 
+from data_methods.data_class import DataContainer
 from web.mysite.viz.ts_manager.ts_manager import get_truth_data
 
 ## match case for dataset
