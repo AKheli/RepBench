@@ -88,8 +88,7 @@ class OptimizationView(DatasetView):
                 param_ranges[key.split("-")[0]] = (param_ranges[key.split("-")[0]], parse_param_input(v))
 
         df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
-
-        injected_data_container = injected_container_None_Series(df, *injected_series.values())
+        injected_data_container = injected_container_None_Series(df, injected_series)
 
         optcallback = OptJob.start(job_id, param_ranges, alg_type, injected_data_container,
                                    n_calls=n_calls, n_initial_points=n_initial_points, error_loss=error_loss)

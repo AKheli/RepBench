@@ -1,13 +1,16 @@
+{% load static %}
 
-
-<button onclick="toggle_visibility('corr{{ dataset }}');">Show/Hide Correlation Matrix</button>
-<div id="corr{{ dataset }}" style="display:none">
+<button onclick="toggle_visibility('correlationMatrix');">Show/Hide Correlation Matrix</button>
+<div id="correlationMatrix" style="display:none">
     <p>Here is the correlation matrix for the data.</p>
    <div>
-    {{ correlation | safe }}
+    {{ correlation_html | safe }}
+
 </div>
 
 </div>
+
+<script src='{%  static "js/corr_table.js" %}' ></script>
 
 
 

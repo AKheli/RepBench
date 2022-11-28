@@ -34,7 +34,7 @@ class DatasetView(View):
         return df
 
     def data_set_info_context(self, df,setname):
-        correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"])
+        correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"],table_id='correlation_table')
         context = {"correlation_html" : correlation_html}
         return context
 
