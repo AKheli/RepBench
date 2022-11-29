@@ -17,7 +17,7 @@ const reset_series_highlighted = function () {
 }
 const set_series_highlighted = function () {
     if (initial_highlighted_series === null) {
-        initial_highlighted_series = mainchart.series.filter(series => series.visible)
+        initial_highlighted_series = mainChart.series.filter(series => series.visible)
     }
 }
 

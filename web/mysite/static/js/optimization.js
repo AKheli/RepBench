@@ -2,7 +2,7 @@ let createBayesianOptFormData = function (form_id) {
     let form = document.getElementById(form_id)
     const bayesienOptFormData = new FormData(form)
     bayesienOptFormData.append('csrfmiddlewaretoken', csrftoken)
-    bayesienOptFormData.append("injected_series", JSON.stringify(injectedSeries))
+    bayesienOptFormData.append("injected_series", JSON.stringify(get_injected_norm_data()))
     return bayesienOptFormData
 }
 
@@ -18,8 +18,10 @@ let optimizeCurrentData = (form_id) => {
         let error_loss = optimData.error_loss.toUpperCase();
         let params = Object.keys(optimData.param_ranges);
         let n_initial_points = optimData.n_initial_points;
+        let n_calls = optimData.n_calls;
         let job_id = optimData.job_id;
-        initOptChart(params, error_loss)
+        console.log("OPTFETCH")
+        initOptChart(params, error_loss, n_initial_points, n_calls)
         fetch_loop(n_initial_points, job_id)
 
     })

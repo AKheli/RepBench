@@ -50,24 +50,19 @@ class opt_JSONRespnse(JsonResponse):
 
 class OptimizationView(DatasetView):
 
-    def load_data_set(self, setname):
-        df: DataFrame = pd.read_csv(f"data/opt/{setname}.csv")
-        return df
-
     def create_opt_context(self, df):
         opt_context = {"bayesian_opt_form": BayesianOptForm(),
                        "b_opt_param_forms": bayesian_opt_param_forms_inputs(df),
                        "injection_form": InjectionForm(list(df.columns))}
         return opt_context
 
-    def get(self, request, setname="bafu5k"):
+    def get(self, request, setname="BAFU"):
         context, df = self.data_set_default_context(request, setname)
         context.update(self.create_opt_context(df))
-        print(context)
         return render(request, 'optimization.html', context=context)
 
     @staticmethod
-    def optimize(request, setname="bafu5k"):
+    def optimize(request, setname="BAFU"):
         token = request.POST.get("csrfmiddlewaretoken")
         job_id = OptJob.add_job(token)
         post = request.POST.dict()
@@ -87,12 +82,12 @@ class OptimizationView(DatasetView):
             if key.endswith("-max"):
                 param_ranges[key.split("-")[0]] = (param_ranges[key.split("-")[0]], parse_param_input(v))
 
-        df: DataFrame = pd.read_csv(f"data/train/{setname}.csv")
-        injected_data_container = injected_container_None_Series(df, injected_series)
+        df_norm = DatasetView.load_data_container(setname).norm_data
+        injected_data_container = injected_container_None_Series(df_norm, injected_series)
 
-        optcallback = OptJob.start(job_id, param_ranges, alg_type, injected_data_container,
+        opt_callback = OptJob.start(job_id, param_ranges, alg_type, injected_data_container,
                                    n_calls=n_calls, n_initial_points=n_initial_points, error_loss=error_loss)
-        t = threading.Thread(target=optcallback)
+        t = threading.Thread(target=opt_callback)
         t.start()
 
         context = {
@@ -104,7 +99,7 @@ class OptimizationView(DatasetView):
             "param_ranges": param_ranges,
             "setname": setname,
         }
-        return opt_JSONRespnse(context, callback=optcallback)
+        return opt_JSONRespnse(context, callback=context)
 
 
 def fetch_opt_results(request):

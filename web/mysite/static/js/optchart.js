@@ -1,15 +1,68 @@
 let optChart = null
-let initOptChart = function (params, error) {
+let initOptChart = function (params, error, n_init, n_sample) {
     optChart = Highcharts.chart('optChartContainer', {
+            chart: {
+                marginRight: 0
+            },
+
             legend: {
                 align: 'right',
                 verticalAlign: 'top',
-                floating: true
+                layout: 'vertical',
+                x: 0,
+                y: 10
+            },
+
+            tooltip: {
+                shared: true,
+                crosshairs: true
             },
             xAxis: {
+                label: {
+                    text: 'Iteration',
+                    style: {
+                        "font-size": "15px",
+                        transform: "translate(0, -37px)"
+                    },
+                },
+                plotBands: [{
+                    color: 'rgba(3, 11, 12, 0.2)',// Color value
+                    from: 0, // Start of the plot band
+                    to: n_init, // End of the plot band
+                    label: {
+                        text: 'Initial Sampling',
+                        verticalAlign: 'middle',
+                        y: -1,
+                        style: {
+                            "font-size": "15px",
+                            // transform: "translate(0, -21px)"
+
+                        }
+
+                    }, // Content of the label
+                }, {
+                    color: 'rgba(3, 11, 12, 0.2)',// Color value
+                    from: n_init + 1, // Start of the plot band
+                    to: n_init + n_sample, // End of the plot band
+                    label: {
+                        text: 'Maximum Expectation Sampling',
+                        verticalAlign: 'middle',
+                        style: {
+                            "font-size": "15px",
+                            // transform: "translate(0, -37px)"
+                        }
+
+                    }, // Content of the label
+                }],
                 labels: {
-                     tickInterval: 1,
-                }
+                    tickInterval: 1,
+                    start: 1
+
+                },
+                max: n_init + n_sample,
+            },
+            title: {
+                text: '',
             },
             yAxis: [{
                 title: {

@@ -2,8 +2,7 @@ let createRepairRequestFormData = function (alg) {
     const form = document.getElementById(alg)
     const repairFormData = new FormData(form)
     repairFormData.append('csrfmiddlewaretoken', csrftoken)
-    console.log("repairFormData")
-    console.log(get_injected_norm_data())
+
     repairFormData.append("injected_series", JSON.stringify(get_injected_norm_data()))
     return repairFormData
 }
@@ -15,11 +14,10 @@ let repair = (alg) => fetch(repair_url, {
 }).then(response => response.json()).then(responseJson => {
     repairResult = responseJson
     additionalData = responseJson["additional_repair_info"]
-    console.log("additionalData")
-    console.log(additionalData)
+
     if(additionalData){
          if(additionalData["reduced"]){
-            add_list_of_data_to_chart(additionalData.reduced, mainchart, "reduced")
+            add_list_of_data_to_chart(additionalData.reduced, mainChart, "reduced")
         }
     }
     const repSeries = responseJson.repaired_series

@@ -1,12 +1,12 @@
-score_chart = null
-
+let score_chart = null
+let runtime_chart = null
 
 // display text in the center of div container2
-document.getElementById('container2').innerHTML = "<h4 style='text-align:   ;margin-top:20px;'>Inject and then repair a <br> TimeSeries to display scores</h4>"
+document.getElementById('score-container').innerHTML = "<h4 style='text-align:   ;margin-top:20px;'>Inject and then repair a <br> TimeSeries to display scores</h4>"
 
-initChart = function (series) {
-    document.getElementById('container2').innerHTML = ""
-    score_chart = Highcharts.chart('container2', {
+initScoreChart = function (series) {
+    document.getElementById('score-container').innerHTML = ""
+    score_chart = Highcharts.chart('score-container', {
         chart: {
             type: 'column',
         },
@@ -14,54 +14,66 @@ initChart = function (series) {
             text: '',
         },
         xAxis: {
-            type: 'category'
+            categories: ["MAE", "RMSE", "RMSE on Anomaly"]
         },
         yAxis: {
             title: {
-                text: 'score'
+                text: 'Score'
             }
 
         },
-                series: [series]
+        series: [series]
     });
     return score_chart.series[0]
 }
 
+initRuntimeChart = function (series) {
+    runtime_chart = Highcharts.chart('runtime-container', {
+        chart: {
+            type: 'column',
+        },
+        title: {
+            text: '',
+        },
+        xAxis: {
+            categories: ["Runtime"]
+        },
+        yAxis: {
+            type: 'logarithmic',
 
-allScores = {}
-const seriesMap = [];
-let selectedCategoires = new Set()
+            title: {
+                text: 'time(s)'
+            }
 
-updateCategories = function () {
-    seriesMap.forEach( e  => {
-            e[0].update({data: e[1].filter(d => selectedCategoires.has(d.name))})
-        }
-    )
+        },
+        series: [series]
+    });
+    return runtime_chart.series[0]
 }
-
 
 
 addScores = function (scores) {
     scores["colorByPoint"] = false
     if (score_chart == null) {
-        series = initChart(scores)
-        let scoresData = scores.data.data
-        seriesMap.push( [series, scoresData] )
-        console.log(scoresData)
-        scoresData.forEach(datapoint => alterCheckbox(datapoint.name))
-
+        const runtime = scores.data.data[3]
+        scores.data = scores.data.data.filter((d, i) => i < 3) // remove runtime
+        initScoreChart(scores)
+        scores.data = [runtime]
+        initRuntimeChart(scores)
+        const element = document.getElementById("chart-right");
+        element.scroll({
+            top: 100,
+            left: 100,
+            behavior: 'smooth'
+        });
     } else {
-        series = score_chart.addSeries(scores)
-        seriesMap.push( [series, scores.data.data] )
+        const runtime = scores.data.data[3]
+        scores.data = scores.data.data.filter((d, i) => i < 3) // remove runtime
+        score_chart.addSeries(scores)
+        scores.data = [runtime]
+        runtime_chart.addSeries(scores)
     }
 
-    updateCategories()
 
 }
 
-alterCheckbox = function (category) {
-    console.log()
-    if (selectedCategoires.has(category)) selectedCategoires.delete(category);
-    else selectedCategoires.add(category)
-    updateCategories()
-}

@@ -3,6 +3,7 @@ import os
 
 default_data_folder = "data"
 
+
 def normalize_f(X):
     """
     Parameters: matrix X
@@ -19,7 +20,8 @@ def normalize_f(X):
 
     return (X - mean_X) / std_X, inv_func
 
-def normalize_together(X,Y):
+
+def normalize_together(X, Y):
     """
     Parameters: matrix X
     Returns: normalized X , normalization_inverse function
@@ -32,13 +34,15 @@ def normalize_together(X,Y):
         result = X_norm * std_X + mean_X
         return result
 
-    return (X - mean_X) / std_X , (Y - mean_X) / std_X, inv_func
+    return (X - mean_X) / std_X, (Y - mean_X) / std_X, inv_func
 
-def infer_data_file(file_name,folder):
+
+def infer_data_file(file_name, folder):
     files_in_folder = [f for f in os.listdir(folder) if os.path.isfile(f"{folder}/{f}")]
     assert len(files_in_folder) > 0, os.listdir(folder)
     possible_files = [f for f in files_in_folder if f.startswith(file_name)]
-    assert len(possible_files) == 1, f"{file_name} could not be from possible files {files_in_folder} in {folder} , got {possible_files}"
+    assert len(
+        possible_files) == 1, f"{file_name} could not be from possible files {files_in_folder} in {folder} , got {possible_files}"
     file_path = f"{folder}/{possible_files[0]}"
     return file_path
 
@@ -46,8 +50,8 @@ def infer_data_file(file_name,folder):
 def read_data(data_name, folder):
     curr_wd = os.getcwd()
     root_dir = "RepairBenchmark"
-    os.chdir("".join(curr_wd.split(root_dir)[:-1])+root_dir)
-    file_path = infer_data_file(data_name,folder)
+    os.chdir("".join(curr_wd.split(root_dir)[:-1]) + root_dir)
+    file_path = infer_data_file(data_name, folder)
     ## check if first row are headrs or numerical values belongin to the dataset
     first_row = pd.read_csv(file_path, nrows=1, header=None, sep=",")
     float_in_first_row = any([isinstance(x, float) for x in first_row.values])
@@ -60,13 +64,19 @@ def read_data(data_name, folder):
 
 
 class DataContainer():
-    def __init__(self, file_name, type="train" , max_n_rows = None , max_n_cols = None):
-        assert type in ["train", "test","opt"]
-        data_df = read_data(file_name,folder="data/"+type)
+    def __init__(self, file_name, type="train", max_n_rows=None, max_n_cols=None):
+        assert type in ["train", "test", "opt"]
+        print(file_name)
+        if len(file_name.split("/")) > 1:
+            *folders, file_name = file_name.split("/")
+            type = "/".join(folders) + "/"
+            print(file_name, type)
 
-        n,m = data_df.shape
-        if max_n_rows is None : max_n_rows = n
-        if max_n_cols is None : max_n_cols = m
+        data_df = read_data(file_name, folder="data/" + type)
+
+        n, m = data_df.shape
+        if max_n_rows is None: max_n_rows = n
+        if max_n_cols is None: max_n_cols = m
 
         data_df = data_df.iloc[:max_n_rows, :max_n_cols]
 
@@ -75,4 +85,3 @@ class DataContainer():
         self.title = file_name
         self.norm_data, self.inf_norm_f = normalize_f(self.original_data)
         self.injected = None
-

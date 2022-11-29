@@ -2,7 +2,7 @@ from Injection.injected_data_part import InjectedDataContainer
 from algorithms import algo_mapper
 from parameterization.optimizers import BayesianOptimizer
 from testing_frame_work.repair import AnomalyRepairer
-from web.mysite.viz.ts_manager.ts_manager import get_repair_data
+from web.mysite.viz.ts_manager.HighchartsMapper import map_repair_data
 
 job_status = {}
 job_results = {}
@@ -57,7 +57,7 @@ def start(job_id, param_ranges, alg_type, injected_data_container: InjectedDataC
         repair_info = repairer.repair_data_part(alg_type, injected_data_container, optimal_params)
         repair = repair_info["repair"]
 
-        repaired_series = get_repair_data(repair, injected_data_container, alg_type)
+        repaired_series = map_repair_data(repair, injected_data_container, alg_type)
 
         data = {"alg_type": alg_type,
                 "data": [{"name": dict(param), "y": float(score)} for param, score in zip(params, scores)],

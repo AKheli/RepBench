@@ -1,4 +1,4 @@
-const injectedSeries = []
+let injectedSeries = []
 const repairedSeries = []
 
 const original_data_map = new Map();
@@ -7,7 +7,7 @@ const norm_data_map = new Map();
 let normalized = true
 
 const addSeries = function (series) {
-    const chartSeries = mainchart.addSeries(series)
+    const chartSeries = mainChart.addSeries(series)
     original_data_map.set(chartSeries.options.id, [...series.data])
     norm_data_map.set(chartSeries.options.id, [...series.norm_data])
     set_series_state(chartSeries)
@@ -29,7 +29,7 @@ const swap_norm = function () {
     document.getElementById("swap_norm").innerHTML
         = normalized ? "Show Original Data" : "Normalize Data"
 
-    mainchart.series.forEach(ser => set_series_state(ser))
+    mainChart.series.forEach(ser => set_series_state(ser))
 }
 
 
@@ -47,16 +47,15 @@ const addOriginalSeries = function (series) {
 }
 const addInjectedSeries = function (series) {
     // add series to injectedSeries and main chart keep track of index of the series
-    let chartSeries = addSeries(series)
-    console.log("injectedseries")
-    console.log(chartSeries)
+    let chartSeries = null
+    chartSeries = addSeries(series)
+    console.log("charts",chartSeries)
     series['chartId'] = chartSeries.options.id
-    injectedSeries.push({series: series, chartSeries: chartSeries})
+    injectedSeries.push({series: series, "chartSeries": chartSeries})
     return chartSeries.color
 }
 
 const addRepairedSeries = function (series, col) {
-    console.log(series.linkedTo)
     let chartSeries = null
     if (col === null) {
         chartSeries = addSeries(series)
@@ -81,6 +80,7 @@ const clearRepairedSeries = function () {
 const clearInjectedSeries = function () {
     injectedSeries.forEach(s => s.chartSeries.remove())
     injectedSeries.length = 0
+    collapseRepairToggle()
 }
 const clearAllSeries = function () {
     clearRepairedSeries()

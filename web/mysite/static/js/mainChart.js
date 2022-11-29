@@ -38,7 +38,7 @@ let range_selector = {
 }
 
 
-const mainchart = Highcharts.chart(document.getElementById('highcharts_container'), {
+const mainChart = Highcharts.chart(document.getElementById('highcharts_container'), {
       legend: {
           nabled: true,
 
@@ -74,7 +74,12 @@ const mainchart = Highcharts.chart(document.getElementById('highcharts_container
     },
 
     title: {
-        text: chart_title
+        text: chart_title,
+        style: {
+            color: 'black',
+            fontWeight: 'bold',
+             "font-size": "30px"
+        }
     },
 
 

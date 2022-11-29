@@ -1,6 +1,6 @@
 from testing_frame_work.repair import AnomalyRepairer
 from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
-from web.mysite.viz.ts_manager.ts_manager import get_repair_data
+from web.mysite.viz.ts_manager.HighchartsMapper import map_repair_data
 
 
 def repair_from_None_series(alg_type,params, truth_df, injected_series_dicts):
@@ -16,7 +16,7 @@ def repair_from_None_series(alg_type,params, truth_df, injected_series_dicts):
     metrics = list(scores.keys())
     alg_name = f"{alg_type}{tuple((v for v in params.values()))}"
     scores = {"name": alg_name, "colorByPoint": "true", "data": data}
-    repaired_series = get_repair_data(repair, injected_data_container,alg_name)
+    repaired_series = map_repair_data(repair, injected_data_container,alg_name)
     return {"repaired_series": repaired_series, "scores": scores ,"metrics" : metrics}
 
 
