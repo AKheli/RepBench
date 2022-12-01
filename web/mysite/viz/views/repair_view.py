@@ -96,9 +96,10 @@ class RepairView(DatasetView):
         output = repair_from_None_series(alg_type , params, df, injected_series)
         for k,v in output["repaired_series"].copy().items():
             norm_data = v["data"]
-            link = v["linkedTo"]
+            injected_link = v["linkedTo"]
+            original_series_col = v["original_series_col"]
             v["norm_data"] = norm_data
-            v["data"] = list(np.array(norm_data)*df_original[link].values.std()+df_original[link].values.mean())
+            v["data"] = list(np.array(norm_data)*df_original[original_series_col].values.std()+df_original[original_series_col].values.mean())
         context = {"metrics": output["metrics"]}
         output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
         return JsonResponse(output)

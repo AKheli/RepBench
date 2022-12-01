@@ -34,7 +34,8 @@ const init_corr_table = function () {
         for (let cell of row.cells) {
             cell.style.cssText += 'text-align:center;';
             if (r_i !== -1 || r_j !== -1) {
-                cell.setAttribute("onclick", 'highlightSeries("' + r_i + '","' + r_j + '",mainchart)');
+                cell.setAttribute("onclick" +
+                    "", 'highlightSeries("' + r_i + '","' + r_j + '",mainChart)');
             }
             r_j += 1;
         }

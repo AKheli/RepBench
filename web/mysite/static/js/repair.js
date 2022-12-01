@@ -24,19 +24,24 @@ let repair = (alg) => fetch(repair_url, {
     const scores = responseJson.scores
     repairResult = repSeries
     let color = null
-    for ( key in repSeries) {
+    const chartRepairSeries = Object.keys(repSeries).map(key => {
         let repair = repSeries[key]
-        let c = addRepairedSeries(repair,color)
+        let retval = addRepairedSeries(repair,color)
+        let c = retval.color
         if(color === null) {
             color = c
         }
-    }
+        return retval.series
+    })
+
+
 
     // load the score charts html element given all the error metrics
     if (document.getElementById("thatsreallywrong") !== null) {
         document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
     }
     scores["color"] = color
-    addScores(scores)
+    console.log("reptcharSeries", chartRepairSeries)
+    addScores(scores,chartRepairSeries)
 
 })

@@ -9,7 +9,7 @@
 
 {% block chart %}
     <style>  .full-height {
-        height: 90vh;
+        height: 85vh;
     {#float: right;#}
     }
 
@@ -56,40 +56,34 @@
             <div id="highcharts_container" class="full-height"></div>
             <!--end: Highcharts -->
             {#                </div>#}
-            {% block belowchart %}
-            {% endblock %}
-        </div>
-        {#            <!--begin: Inner Row  block below the main chart -->#}
-        {#            {% block innerRow %}#}
-        {#            {% endblock %}#}
-        {##}
-        {#            <!--end: Inner Row -->#}
-        <div>
 
         </div>
     </div>
+
+
+
+
     <!--end: Inner Row -->
     <style>
 
-        ::-webkit-scrollbar {
+        #chart-right::-webkit-scrollbar {
             width: 10px;
         }
 
-
         /* Handle */
-        ::-webkit-scrollbar-thumb {
+        #chart-right::-webkit-scrollbar-thumb {
             background: grey;
 
         }
 
         /* Handle on hover */
-        ::-webkit-scrollbar-thumb:hover {
+        #chart-right::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
     </style>
 
     <div id="chart-right" class="col-lg-3 col-md-6 col-sm-6 col-xs-6 full-height"
-         style="overflow-y: auto; overflow-y: auto; overflow-x:hidden;">
+         style="overflow-y: auto; overflow-x:hidden;">
         {% block first_form %}
             <div class="kt-portlet" data-ktportlet="true">
                 <div class="kt-portlet__head">
@@ -143,6 +137,10 @@
         </div>
     </div>
 
+    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        {% block belowchart %}s
+        {% endblock %}
+    </div>
 
     <script>
         let datasetName = "{{ set_name }}";

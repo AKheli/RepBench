@@ -38,16 +38,17 @@ def map_injected_series(injected_series,col_name,data_container):
 
 
 def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataContainer, alg_name: str,
-                    repair_is_normalized=False):
+                    links : dict):
     truth = injected_data_container.truth
     repair.columns = truth.columns
     injected_data_container: InjectedDataContainer
     data = {
-        col_name + "repair": {"linkedTo": col_name,
+        col_name + "repair": {"linkedTo": links[col_name],
                               "id": col_name + "repair",
                               "name": alg_name,
                               "data": list(repair[col_name]),
-                              "norm_data": list(repair[col_name])
+                              "norm_data": list(repair[col_name]),
+                              "original_series_col" : col_name,
                               }
         for (i, col_name) in enumerate(injected_data_container.truth.columns) if
         i in injected_data_container.injected_columns}

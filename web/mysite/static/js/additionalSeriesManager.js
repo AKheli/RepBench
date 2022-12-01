@@ -1,27 +1,22 @@
 let injectedSeries = []
 const repairedSeries = []
+const originalSeries = []
 
-const original_data_map = new Map();
-const norm_data_map = new Map();
-
-let normalized = true
-
+let normalized = false
 const addSeries = function (series) {
     const chartSeries = mainChart.addSeries(series)
-    original_data_map.set(chartSeries.options.id, [...series.data])
-    norm_data_map.set(chartSeries.options.id, [...series.norm_data])
-    set_series_state(chartSeries)
-    return chartSeries
+    let ser = {
+        series: series,
+        chartSeries: chartSeries,
+        originalData: [...series.data],
+        normData: [...series.norm_data]
+    }
+    set_series_state(ser)
+    return ser
 }
 
 const set_series_state = function (ser) {
-    if (norm_data_map.has(ser.options.id)) {
-        if (normalized) {
-            ser.update({data: norm_data_map.get(ser.options.id)})
-        } else {
-            ser.update({data: original_data_map.get(ser.options.id)})
-        }
-    }
+    ser.chartSeries.update({data: normalized ? ser.normData : ser.originalData})
 }
 
 const swap_norm = function () {
@@ -29,46 +24,61 @@ const swap_norm = function () {
     document.getElementById("swap_norm").innerHTML
         = normalized ? "Show Original Data" : "Normalize Data"
 
-    mainChart.series.forEach(ser => set_series_state(ser))
+    injectedSeries.forEach(ser => set_series_state(ser))
+    repairedSeries.forEach(ser => set_series_state(ser))
+    originalSeries.forEach(ser => set_series_state(ser))
 }
 
 
 const get_injected_norm_data = function () {
+    //data that gets sent to the back end
     return injectedSeries.map(s => {
         return {
             linkedTo: s.series.linkedTo,
+            id: s.series.id, //injected id
             data: s.series.norm_data
         }
     })
 }
 
 const addOriginalSeries = function (series) {
-    addSeries(series)
+    originalSeries.push(addSeries(series))
 }
-const addInjectedSeries = function (series) {
-    // add series to injectedSeries and main chart keep track of index of the series
-    let chartSeries = null
-    chartSeries = addSeries(series)
-    console.log("charts",chartSeries)
-    series['chartId'] = chartSeries.options.id
-    injectedSeries.push({series: series, "chartSeries": chartSeries})
-    return chartSeries.color
+
+const addInjectedSeries = function (series, previously_injected) {
+    console.log(previously_injected)
+    if (previously_injected) {
+        console.log("previously injected")
+        series.data.forEach((p, i) => {
+            if (series.data[i] === null) {
+                if (previously_injected.originalData[i] !== null) {
+                    series.data[i] = previously_injected.originalData[i]
+                    series.norm_data[i] = previously_injected.normData[i]
+                }
+            }
+
+        })
+    }
+    const retval = addSeries(series)
+    injectedSeries.push(retval)
+
+
+    return retval.chartSeries.color
 }
 
 const addRepairedSeries = function (series, col) {
-    let chartSeries = null
+    let retval = null
     if (col === null) {
-        chartSeries = addSeries(series)
-        col = chartSeries.color
-        series['color'] = col
+        retval = addSeries(series)
+        col = retval.chartSeries.color
     } else {
-        series['color'] = col
-        chartSeries = addSeries(series)
-    }
-    series['chartId'] = "" + chartSeries.options.id
-    repairedSeries.push({series: series, chartSeries: chartSeries})
+        series.color = col
+        retval = addSeries(series)
 
-    return col
+    }
+    repairedSeries.push(retval)
+
+    return {color: col, series: retval.chartSeries}
 }
 
 
