@@ -1,3 +1,5 @@
+import json
+import numpy as np
 import pandas as pd
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -8,17 +10,30 @@ import web.mysite.viz.datasetsConfig as datasetsConfig
 from web.mysite.viz.ts_manager.HighchartsMapper import map_truth_data
 
 
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return round(float(obj), 3)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, float):
+            return round(obj, 3)
+        return json.JSONEncoder.default(self, obj)
+
+
 class DatasetView(View):
     default_nbr_of_ts_to_display = 5
+    template = 'displayDataset.html'
+    encoder = NpEncoder
 
     @staticmethod
     def load_data_container(setname):
-        print(setname)
-        print(datasetsConfig.data_sets_info)
         path = datasetsConfig.data_sets_info.get(setname).get("path")
         return DataContainer(path)
 
-    def data_set_info_context(self, df, setname=datasetsConfig.default_set):
+    def data_set_info_context(self, df, setname):
         correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"],
                                                       table_id='correlation_table')
         context = {"correlation_html": correlation_html}
@@ -35,16 +50,12 @@ class DatasetView(View):
     def get(self, request, setname=datasetsConfig.default_set):
         context, df = self.data_set_default_context(request, setname)
         context.update(self.data_set_info_context(df, setname))
-        return render(request, 'displayDataset.html', context=context)
+        return render(request, self.template, context=context)
 
     def get_data(self, request, setname=datasetsConfig.default_set):
         viz = int(request.GET.get("viz", 5))
         container = self.load_data_container(setname)
         return JsonResponse(map_truth_data(container, viz=viz))
-
-
-
-
 
 
 def display_datasets(request=None):

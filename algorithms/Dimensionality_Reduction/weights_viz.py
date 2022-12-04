@@ -6,11 +6,7 @@ from Injection.injected_data_part import InjectedDataContainer
 from RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 import matplotlib
 
-from algorithms import CDRecEstimator
-
 matplotlib.use('TKAgg')
-
-import ast
 
 scen_name = "a_factor"
 anomaly_type = "outlier"
@@ -39,22 +35,3 @@ for i, delta in enumerate([[1, 1.2,2,500000000000][0]]):  # ]):
 result_df.round(3).iloc[800:1200, :].to_csv(f'algorithms/Dimensionality_Reduction/weight_results/deltaweights.csv', index_label="t")
 result_df.round(3).iloc[800:1200, :].plot(style={'injected': 'r',"reduced":"black"})
 plt.savefig(f'algorithms/Dimensionality_Reduction/weight_results/weightsdelta.pdf', bbox_inches='tight')
-
-# plt.plot(part_scen.repair_inputs["injected"].iloc[:, columns_to_repair], color="yellow", label="injected")
-# plt.plot(part_scen.repair_inputs["truth"].iloc[:, columns_to_repair], color="black", label="truth")
-#
-# pd.DataFrame()
-# for (k, v) in list(rpca.reduced_i_["classify"].items())[::2]:
-#     plt.plot(v[:, columns_to_repair[0]], label=k)
-# plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-# plt.savefig(f'algorithms/Dimensionality_Reduction/weight_results/reduced.pdf', bbox_inches='tight')
-# plt.clf()
-#
-# for (k, v) in list(rpca.weights_i_["classify"].items())[::2]:
-#     plt.plot(v, label=k)
-# plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-# plt.savefig(f'algorithms/Dimensionality_Reduction/weight_results/weights.pdf', bbox_inches='tight')
-# plt.clf()
-#
-# pd.DataFrame(rpca.weights_i_["classify"]).iloc[:200, :].to_csv(
-#     f'algorithms/Dimensionality_Reduction/weight_results/weights.csv')

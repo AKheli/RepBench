@@ -1,17 +1,18 @@
 let tooltip = {
     formatter: function (e) {
         // The first returned item is the header, subsequent items are the
-        // points
+            // points
         let x = this.x
-        return ['<p style=\"color:black;font-size:15px;\"> Truth: ' + this.y + '</p>'].concat(
+        return ['<p style=\"color:black;font-size:15px;\"> ' +this.series.name+': ' + this.y + '</p>'].concat(
             this.series.linkedSeries.map(function (s) {
-                selectedY = s.yData[x]
-                if (selectedY !== null) {
-                    selectedY = Math.round(selectedY * 1000) / 1000
-                    if (s.name.includes('injected')) {
-                        return "<br> <p style=\"color:red;font-size:15px;\"> Anomalous: " + selectedY + "<\p> "
-                    } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
-                } else return ""
+                selectedY = s.data[x].y
+                selectedY = Math.round(selectedY * 1000) / 1000
+                if(selectedY !== null){
+                  if (s.name.includes('injected')) {
+                    return "<br> <p style=\"color:red;font-size:15px;\">"+ s.name + " "  + selectedY + "<\p> "
+                } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
+                }
+
             })
         );
     },
@@ -39,21 +40,28 @@ let range_selector = {
 
 
 const mainChart = Highcharts.chart(document.getElementById('highcharts_container'), {
-      legend: {
-          nabled: true,
+    // dataGrouping: {
+    //     enabled: false
+    // },
+    legend: {
+        enabled: true,
 
-            align: 'right',
-            verticalAlign: 'top',
-            // floating: true,
-            // x: 0,
-             y: 30
-        },
+        align: 'right',
+        verticalAlign: 'top',
+        // floating: true,
+        // x: 0,
+        y: 30
+    },
     tooltip: tooltip,
     chart: {
         type: 'line',
         zoomType: 'x',
     },
 
+    // boost: {
+    //     useGPUTranslations: true,
+    //     usePreAllocated: true
+    // },
     // {#xAxis: {#}
     // {#    labels: {#}
     // {#          pointInterval: 36e5, // one hour#}
@@ -68,7 +76,7 @@ const mainChart = Highcharts.chart(document.getElementById('highcharts_container
     plotOptions: {
         series: {
             pointStart: 1,
-            pointInterval: 36e5, // one hour
+            pointInterval: 1,
 
         },
     },
@@ -78,7 +86,7 @@ const mainChart = Highcharts.chart(document.getElementById('highcharts_container
         style: {
             color: 'black',
             fontWeight: 'bold',
-             "font-size": "30px"
+            "font-size": "30px"
         }
     },
 
@@ -138,6 +146,9 @@ fetch(data_url, {
 }).then(response => response.json())
     .then(data => {
         data.series.forEach(x => addOriginalSeries(x))
+        mainChart.redraw()
+
     })
     .catch(error => console.error(error))
+
 

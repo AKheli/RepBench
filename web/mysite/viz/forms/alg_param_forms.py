@@ -50,5 +50,4 @@ class IMRparamField(forms.Form):
                            widget=forms.NumberInput(attrs={'min': "0.000001", "step": "any"}))
     alg_type = hidden("imr")
 
-ParamForms = {"SCREEN" : SCREENparamForm(), "RPCA" : RPCAparamForm(),"CDrec" : CDparamForm(), "IMR" : IMRparamField()}
 

@@ -1,3 +1,5 @@
+let repairResult = null
+let repairResponse = null
 let createRepairRequestFormData = function (alg) {
     const form = document.getElementById(alg)
     const repairFormData = new FormData(form)
@@ -7,33 +9,25 @@ let createRepairRequestFormData = function (alg) {
     return repairFormData
 }
 
-let repairResult = null
+
 let repair = (alg) => fetch(repair_url, {
     method: 'POST',
     body: createRepairRequestFormData(alg),
 }).then(response => response.json()).then(responseJson => {
-    repairResult = responseJson
-    additionalData = responseJson["additional_repair_info"]
-
-    if(additionalData){
-         if(additionalData["reduced"]){
-            add_list_of_data_to_chart(additionalData.reduced, mainChart, "reduced")
-        }
-    }
+    repairResponse = responseJson
     const repSeries = responseJson.repaired_series
     const scores = responseJson.scores
     repairResult = repSeries
     let color = null
     const chartRepairSeries = Object.keys(repSeries).map(key => {
         let repair = repSeries[key]
-        let retval = addRepairedSeries(repair,color)
+        let retval = addRepairedSeries(repair, color)
         let c = retval.color
-        if(color === null) {
+        if (color === null) {
             color = c
         }
         return retval.series
     })
-    mainChart.redraw()
 
 
     // load the score charts html element given all the error metrics
@@ -42,6 +36,14 @@ let repair = (alg) => fetch(repair_url, {
     }
     scores["color"] = color
     console.log("reptcharSeries", chartRepairSeries)
-    addScores(scores,chartRepairSeries)
+    addScores(scores, chartRepairSeries)
+    repairResponse.reductions.forEach((reduction) => {
+        reduction.forEach((series) => {
+            console.log(series)
+            addSeries(series)
+        })
+    })
+    mainChart.redraw()
+
 
 })

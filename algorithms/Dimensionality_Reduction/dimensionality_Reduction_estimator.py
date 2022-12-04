@@ -15,7 +15,6 @@ class DimensionalityReductionEstimator(Estimator):
                  , eps=1e-6
                  , n_max_iter=10
                  , repair_iter=10
-                 , windows=False
                  , **kwargs
                  ):
         self.threshold = threshold
@@ -26,14 +25,17 @@ class DimensionalityReductionEstimator(Estimator):
         self.n_max_iter = n_max_iter
         self.repair_iter = repair_iter
         self.reduced_ = None
-        self.windows = windows
-        self.additional_plotting_args = {}
-        self.state = None
-        self.normalize_before = True
 
         self.weights_i_ = {}
         self.reduced_i_ = {}
-        self.current_inv_f = None # lambda x : x
+        self.current_inv_f = None  # lambda x : x
+        self.init_weights_and_reduced()
+
+    def init_weights_and_reduced(self):
+        self.weights_per_classification_iter = []
+        self.reduction_per_classification_iter = []
+        self.reduction_per_repair_iter = []
+        self.weights_per_repair_iter = []
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
@@ -43,7 +45,6 @@ class DimensionalityReductionEstimator(Estimator):
                 "n_max_iter": self.n_max_iter,
                 }
 
-    ##todo add dtype
     def suggest_param_range(self, X=None):
         n_cols = X.shape[1] if X is not None else 10
         return {"classification_truncation": [i for i in [1, 2, 3, 4, 5] if i < n_cols - 1],
@@ -59,48 +60,33 @@ class DimensionalityReductionEstimator(Estimator):
         if truncation >= m:
             truncation = m - 1
 
-        if isinstance(matrix, pd.DataFrame):
-            matrix = matrix.values
-        transform_matrix, weighted_mean, weights = self.IRLS(matrix, truncation)
+        self.transform_matrix, self.weighted_mean, weights = self.IRLS(matrix, truncation)
+        assert np.linalg.matrix_rank(self.transform_matrix) == truncation
 
-        assert np.linalg.matrix_rank(transform_matrix) == truncation
-        self.transform_matrix = transform_matrix
-        self.weighted_mean = weighted_mean
-
-        reduced = self.transform_(matrix)
-
-        return reduced
+        return self.transform_(matrix)
 
     def transform_(self, matrix):
         return np.dot(matrix - self.weighted_mean, self.transform_matrix) + self.weighted_mean
 
     def repair(self, injected, truth, columns_to_repair, labels=None):
         truth = None
-        self.weights_i_ = {}
-        if self.normalize_before:
-            injected, inv_f = normalize_f(injected)
-            self.current_inv_f = inv_f
-
-        self.state = "classify"
-        self.weights_i_[self.state] = {}
-        self.reduced_i_[self.state] = {}
-
-        self.columns_to_repair = columns_to_repair
-        if isinstance(injected, pd.DataFrame):
-            matrix = injected.values
-
-        matrix_to_repair = matrix.copy()
-
-        reduced = self.reduce(matrix_to_repair, self.classification_truncation)
-        self.reduced = reduced
+        self.init_weights_and_reduced()
+        injected, self.current_inv_f = normalize_f(injected)
+        matrix_to_repair = self.to_numpy(injected)
 
         ## classify anomalies
-        self.anomaly_matrix = classify(matrix_to_repair, reduced=reduced , columns_to_repair = columns_to_repair , threshold=self.threshold)
+        self.state = "classification"
+
+        reduced = self.reduce(matrix_to_repair, self.classification_truncation)
+
+
+        self.anomaly_matrix = classify(matrix_to_repair, reduced=reduced, columns_to_repair=columns_to_repair,
+                                       threshold=self.threshold)
 
         assert matrix_to_repair.shape == self.anomaly_matrix.shape
+
         self.state = "repair"
-        self.weights_i_[self.state] = {}
-        self.reduced_i_[self.state] = {}
+
         matrix_to_interpolate = matrix_to_repair.copy()
         matrix_to_interpolate[self.anomaly_matrix] = np.nan
         matrix_inter = interpolate(matrix_to_interpolate, self.anomaly_matrix)
@@ -111,16 +97,15 @@ class DimensionalityReductionEstimator(Estimator):
             reduced = self.reduce(reduced, self.repair_truncation)
             matrix_to_repair[self.anomaly_matrix] = reduced[self.anomaly_matrix]
             reduced = matrix_to_repair.copy()
-        self.reduced_ = reduced
 
-        final = matrix.copy()
+        final =  self.to_numpy(injected)
         final[:, columns_to_repair] = matrix_to_repair[:, columns_to_repair]
 
         result = injected.copy()
         result.loc[:] = final
         assert injected.shape == result.shape
-        if self.normalize_before:
-            result = inv_f(result)
+
+        result = self.current_inv_f(result)
         return result
 
     def IRLS(self, matrix, truncation):
@@ -137,8 +122,14 @@ class DimensionalityReductionEstimator(Estimator):
             assert transform_matrix.shape == (n_features, n_features), transform_matrix.shape
             reduced_centered = np.dot(X_centered, transform_matrix)
             diff = X_centered - reduced_centered
-            self.weights_i_[self.state][n_iter] = weights
-            self.reduced_i_[self.state][n_iter] = self.current_inv_f(reduced_centered + weighted_mean)
+            if self.state == "classification":
+                self.reduction_per_classification_iter.append(self.current_inv_f(reduced_centered + weighted_mean))
+                self.weights_per_classification_iter.append(weights)
+            if self.state == "repair":
+                self.reduction_per_repair_iter.append(self.current_inv_f(reduced_centered + weighted_mean))
+                self.weights_per_repair_iter.append(weights)
+
+
             errors_raw = np.linalg.norm(diff, axis=1)
             self.errors_raw = errors_raw
             errors_loss = compute_loss(errors_raw, self.delta)

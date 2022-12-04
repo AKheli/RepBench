@@ -18,27 +18,23 @@ def map_truth_data(data_container: DataContainer, viz=5):
     return data
 
 
-def map_injected_series(injected_series,col_name,data_container):
-    #assume normalized data got injected
+def map_injected_series(injected_series, col_name, data_container):
+    # assume normalized data got injected
 
-    col_mean = data_container.original_data[col_name].mean()
-    col_std = data_container.original_data[col_name].std()
     data_norm = injected_series
-    data =  data_norm * col_std + col_mean
-    print(data_norm)
-    print(data)
-    injected_series = { "linkedTo": col_name,
-                   "id": f"{col_name}_injected",
-                   "name": f"{col_name}_injected",
-                   "data": data.replace({np.nan: None}).values.tolist(),
-                   "norm_data": data_norm.replace({np.nan: None}).values.tolist(),
-                   "color": "red",
-                   }
+    data = reverse_norm(data_norm, data_container.original_data[col_name])
+    injected_series = {"linkedTo": col_name,
+                       "id": f"{col_name}_injected",
+                       "name": f"{col_name}_injected",
+                       "data": data.replace({np.nan: None}).values.tolist(),
+                       "norm_data": data_norm.replace({np.nan: None}).values.tolist(),
+                       "color": "red",
+                       }
     return injected_series
 
 
 def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataContainer, alg_name: str,
-                    links : dict):
+                    links: dict, df_original: DataFrame):
     truth = injected_data_container.truth
     repair.columns = truth.columns
     injected_data_container: InjectedDataContainer
@@ -46,11 +42,16 @@ def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataCont
         col_name + "repair": {"linkedTo": links[col_name],
                               "id": col_name + "repair",
                               "name": alg_name,
-                              "data": list(repair[col_name]),
+                              "data": list(reverse_norm(repair[col_name], df_original[col_name])),
                               "norm_data": list(repair[col_name]),
-                              "original_series_col" : col_name,
+                              "original_series_col": col_name,
                               }
         for (i, col_name) in enumerate(injected_data_container.truth.columns) if
         i in injected_data_container.injected_columns}
 
     return data
+
+
+def reverse_norm(norm_data, original_data):
+    return norm_data * original_data.std() + original_data.mean()
+

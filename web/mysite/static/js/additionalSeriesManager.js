@@ -2,9 +2,11 @@ let injectedSeries = []
 const repairedSeries = []
 const originalSeries = []
 
-let normalized = false
+let normalized = true
+
+
 const addSeries = function (series) {
-    const chartSeries = mainChart.addSeries(series)
+    const chartSeries = mainChart.addSeries(series,false)
     let ser = {
         series: series,
         chartSeries: chartSeries,
@@ -16,7 +18,10 @@ const addSeries = function (series) {
 }
 
 const set_series_state = function (ser) {
-    ser.chartSeries.update({data: normalized ? ser.normData : ser.originalData})
+    console.log(ser.chartSeries)
+    const updatedata = normalized ? ser.normData : ser.originalData
+    // console.log(updatedata)
+    ser.chartSeries.update({data : [...updatedata]} ,false)
 }
 
 const swap_norm = function () {
@@ -27,7 +32,8 @@ const swap_norm = function () {
     injectedSeries.forEach(ser => set_series_state(ser))
     repairedSeries.forEach(ser => set_series_state(ser))
     originalSeries.forEach(ser => set_series_state(ser))
-}
+    mainChart.redraw()
+ }
 
 
 const get_injected_norm_data = function () {
@@ -46,9 +52,7 @@ const addOriginalSeries = function (series) {
 }
 
 const addInjectedSeries = function (series, previously_injected) {
-    console.log(previously_injected)
     if (previously_injected) {
-        console.log("previously injected")
         series.data.forEach((p, i) => {
             if (series.data[i] === null) {
                 if (previously_injected.originalData[i] !== null) {
@@ -61,8 +65,6 @@ const addInjectedSeries = function (series, previously_injected) {
     }
     const retval = addSeries(series)
     injectedSeries.push(retval)
-
-
     return retval.chartSeries.color
 }
 

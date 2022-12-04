@@ -29,7 +29,10 @@ const inject = function () {
         s["dashStyle"] = 'ShortDot'
         console.log(previously_injected)
         addInjectedSeries(s,previously_injected)
+        mainChart.redraw()
+
     })
+
     return false
 }
 

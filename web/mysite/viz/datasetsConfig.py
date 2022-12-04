@@ -26,4 +26,11 @@ data_sets_info = {
         "ref_url": "https://archive.ics.uci.edu/ml/datasets/ElectricityLoadDiagrams20112014",
         "url_text": "UCI Machine Learning Repository"
     },
+
+    "Tiny": {
+        "name": "Tiny",
+        "path": "train/tiny.csv",
+        "ref_url": "-",
+        "url_text": ""
+    },
 }

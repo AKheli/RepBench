@@ -14,17 +14,7 @@ from web.mysite.viz.views.dataset_views import DatasetView
 import web.mysite.viz.BenchmarkMaps.Optjob as OptJob
 
 
-class NpEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return round(float(obj), 3)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        if isinstance(obj, float):
-            return round(obj, 3)
-        return json.JSONEncoder.default(self, obj)
+
 
 
 def parse_param_input(p: str):
@@ -38,17 +28,12 @@ def parse_param_input(p: str):
 class opt_JSONRespnse(JsonResponse):
     def __init__(self, data, callback=None, **kwargs):
         self.callback = callback
-        super().__init__(data, encoder=NpEncoder, **kwargs)
-
-    # def close(self):
-    #     if self.callback:
-    #         t = threading.Thread(target=self.callback)
-    #         t.start()
-    #     super(opt_JSONRespnse, self).close()
+        super().__init__(data, encoder=self.NpEncoder, **kwargs)
 
 
 
 class OptimizationView(DatasetView):
+    template = "optimization.html"
 
     def create_opt_context(self, df):
         opt_context = {"bayesian_opt_form": BayesianOptForm(),
@@ -59,10 +44,9 @@ class OptimizationView(DatasetView):
     def get(self, request, setname="BAFU"):
         context, df = self.data_set_default_context(request, setname)
         context.update(self.create_opt_context(df))
-        return render(request, 'optimization.html', context=context)
+        return render(request, self.template, context=context)
 
-    @staticmethod
-    def optimize(request, setname="BAFU"):
+    def optimize(self,request, setname="BAFU"):
         token = request.POST.get("csrfmiddlewaretoken")
         job_id = OptJob.add_job(token)
         post = request.POST.dict()
@@ -99,7 +83,7 @@ class OptimizationView(DatasetView):
             "param_ranges": param_ranges,
             "setname": setname,
         }
-        return opt_JSONRespnse(context, callback=context)
+        return JsonResponse(context, encoder=self.encoder)
 
 
 def fetch_opt_results(request):
@@ -111,15 +95,10 @@ def fetch_opt_results(request):
         print("fetch_opt_results", res)
         print(res)
         print()
-        return JsonResponse(res, encoder=NpEncoder)
+        return JsonResponse(res, encoder=OptimizationView.encoder)
 
     if status == "finished":
-        return JsonResponse({"status": "DONE"}, encoder=NpEncoder)
+        return JsonResponse({"status": "DONE"}, encoder=OptimizationView.encoder)
     else:
-        return JsonResponse({"status": "pending"}, encoder=NpEncoder)
-        # time.sleep(1)
-    #
-# if status == "running":
-#     res = {"data":data}
-#     res.update({"response": "running"})
-#     return JsonResponse(res)
+        return JsonResponse({"status": "pending"}, encoder=OptimizationView.encoder)
+
