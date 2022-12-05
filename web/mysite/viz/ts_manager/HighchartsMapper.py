@@ -40,7 +40,7 @@ def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataCont
     injected_data_container: InjectedDataContainer
     data = {
         col_name + "repair": {"linkedTo": links[col_name],
-                              "id": col_name + "repair",
+                              "id": col_name + "repair" + alg_name,
                               "name": alg_name,
                               "data": list(reverse_norm(repair[col_name], df_original[col_name])),
                               "norm_data": list(repair[col_name]),

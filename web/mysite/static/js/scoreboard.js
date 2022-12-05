@@ -52,19 +52,25 @@ initRuntimeChart = function (series) {
 }
 
 
-const bindSeriesMouseOver = function (score_series, repair_series) {
-    score_series.update({
-        events: {
-            click: function () {
+const bindSeriesMouseOver = function (score_series,runtime_series, repair_series) {
+    const f = function () {
                 mainChart.series.forEach(s => s.setVisible(false))
                 repair_series.forEach(chartSeries => {
-                    chartSeries.update({visible: true})
                     let injected_series = chartSeries.linkedParent
                     let truth_series = injected_series.linkedParent
                     injected_series.update({visible: true})
                     truth_series.update({visible: true})
+                    chartSeries.setVisible()
                 })
             }
+    score_series.update({
+        events: {
+            click: f
+        }
+    })
+    runtime_series.update({
+        events: {
+            click: f
         }
     })
 
@@ -73,13 +79,14 @@ const bindSeriesMouseOver = function (score_series, repair_series) {
 
 const addScores = function (scores, rapiredSeries) {
     let score_series = null
+    let runtime_series = null
     scores["colorByPoint"] = false
     if (score_chart == null) {
         const runtime = scores.data.data[3]
         scores.data = scores.data.data.filter((d, i) => i < 3) // remove runtime
         score_series = initScoreChart(scores)
         scores.data = [runtime]
-        initRuntimeChart(scores)
+        runtime_series = initRuntimeChart(scores)
         const element = document.getElementById("chart-right");
 
         // setTimeout(
@@ -97,11 +104,22 @@ const addScores = function (scores, rapiredSeries) {
         scores.data = scores.data.data.filter((d, i) => i < 3) // remove runtime
         score_series = score_chart.addSeries(scores)
         scores.data = [runtime]
-        runtime_chart.addSeries(scores)
+        runtime_series = runtime_chart.addSeries(scores)
     }
 
-    bindSeriesMouseOver(score_series, rapiredSeries)
+    bindSeriesMouseOver(score_series,runtime_series, rapiredSeries)
 
 
 }
 
+const removeScores = function () {
+    if(score_chart !== null){
+        score_chart.destroy()
+    }
+    score_chart = null
+    if(runtime_chart !== null){
+        runtime_chart.destroy()
+    }
+    runtime_chart = null
+    document.getElementById('score-container').innerHTML = "<h4 style='text-align:   ;margin-top:20px;'>Inject and then repair a <br> TimeSeries to display scores</h4>"
+}

@@ -57,6 +57,9 @@ const mainChart = Highcharts.chart(document.getElementById('highcharts_container
         type: 'line',
         zoomType: 'x',
     },
+     yAxis: [{},{title: {
+                    text: ""
+                },}],
 
     // boost: {
     //     useGPUTranslations: true,

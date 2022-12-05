@@ -8,7 +8,6 @@ const highlightSeries = function (col, row, chart) {
 let initial_highlighted_series = null;
 
 const reset_series_highlighted = function () {
-    console.log(initial_highlighted_series)
     setTimeout(_ => {
         initial_highlighted_series.forEach(series => series.setVisible(true))
         initial_highlighted_series = null

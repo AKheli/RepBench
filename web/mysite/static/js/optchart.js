@@ -72,7 +72,7 @@ let initOptChart = function (params, error, n_init, n_sample) {
                     text: 'Parameters'
                 },
                 height: '43%',
-                lineWidth: 2
+                lineWidth: 2,
             }, {
                 title: {
                     text: error
@@ -83,7 +83,6 @@ let initOptChart = function (params, error, n_init, n_sample) {
                 lineWidth: 2
             }],
             series: params.map(param => {
-                console.log(param)
                 return {
                     type: 'line',
                     name: param,

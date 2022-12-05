@@ -1,12 +1,13 @@
 let injectedSeries = []
 const repairedSeries = []
 const originalSeries = []
+const reducedSeries = []
 
-let normalized = true
+let normalized = false
 
 
 const addSeries = function (series) {
-    const chartSeries = mainChart.addSeries(series,false)
+    const chartSeries = mainChart.addSeries(series, false)
     let ser = {
         series: series,
         chartSeries: chartSeries,
@@ -18,10 +19,8 @@ const addSeries = function (series) {
 }
 
 const set_series_state = function (ser) {
-    console.log(ser.chartSeries)
     const updatedata = normalized ? ser.normData : ser.originalData
-    // console.log(updatedata)
-    ser.chartSeries.update({data : [...updatedata]} ,false)
+    ser.chartSeries.update({data: [...updatedata]}, false)
 }
 
 const swap_norm = function () {
@@ -32,8 +31,9 @@ const swap_norm = function () {
     injectedSeries.forEach(ser => set_series_state(ser))
     repairedSeries.forEach(ser => set_series_state(ser))
     originalSeries.forEach(ser => set_series_state(ser))
+    reducedSeries.forEach(ser => set_series_state(ser))
     mainChart.redraw()
- }
+}
 
 
 const get_injected_norm_data = function () {
@@ -49,6 +49,10 @@ const get_injected_norm_data = function () {
 
 const addOriginalSeries = function (series) {
     originalSeries.push(addSeries(series))
+}
+
+const addReducedSeries = function (series) {
+    reducedSeries.push(addSeries(series))
 }
 
 const addInjectedSeries = function (series, previously_injected) {
@@ -84,18 +88,25 @@ const addRepairedSeries = function (series, col) {
 }
 
 
-const clearRepairedSeries = function () {
-    repairedSeries.forEach(s => s.chartSeries.remove())
-    repairedSeries.length = 0
-}
-
-const clearInjectedSeries = function () {
-    injectedSeries.forEach(s => s.chartSeries.remove())
-    injectedSeries.length = 0
-    collapseRepairToggle()
-}
+// const clearRepairedSeries = function () {
+//     repairedSeries.forEach(s => s.chartSeries.remove())
+//     repairedSeries.length = 0
+// }
+//
+// const clearInjectedSeries = function () {
+//     injectedSeries.forEach(s => s.chartSeries.remove())
+//     injectedSeries.length = 0
+//     collapseRepairToggle()
+// }
 const clearAllSeries = function () {
-    clearRepairedSeries()
-    clearInjectedSeries()
+    while(mainChart.series.length > originalSeries.length){
+        mainChart.series[originalSeries.length].remove(false)
+    }
+
+    repairedSeries.length = 0
+    injectedSeries.length = 0
+    reducedSeries.length = 0
+    mainChart.redraw()
+    removeScores()
 }
 

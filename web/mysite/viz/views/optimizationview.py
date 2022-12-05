@@ -46,7 +46,8 @@ class OptimizationView(DatasetView):
         context.update(self.create_opt_context(df))
         return render(request, self.template, context=context)
 
-    def optimize(self,request, setname="BAFU"):
+    @staticmethod
+    def optimize(request, setname="BAFU"):
         token = request.POST.get("csrfmiddlewaretoken")
         job_id = OptJob.add_job(token)
         post = request.POST.dict()
@@ -83,7 +84,7 @@ class OptimizationView(DatasetView):
             "param_ranges": param_ranges,
             "setname": setname,
         }
-        return JsonResponse(context, encoder=self.encoder)
+        return JsonResponse(context, encoder=OptimizationView.encoder)
 
 
 def fetch_opt_results(request):

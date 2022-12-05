@@ -8,32 +8,43 @@
 
 
     {% block css %}
+
         <link href="{% static 'css/lib/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" type="text/css"/>
-        <!-- end: Global Styles Plugins -->
-        <!-- begin:Global Styles -->
+        {#        <!-- end: Global Styles Plugins -->#}
+        {#        <!-- begin:Global Styles -->#}
         <link href="{% static 'css/fonts/materialdesignicons/materialdesignicons.min.css' %}" rel="stylesheet"
               type="text/css"/>
         <link href="{% static 'css/messages.css' %}" rel="stylesheet" type="text/css"/>
+
+
+        <script src="{% static "css/revival/jquery-1.10.2.js" %}"></script>
+
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+                integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+                crossorigin="anonymous"></script>
+        <script src="{% static "css/revival/jquery-ui.js" %}"></script>
+        <!-- CSS sources -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+              integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+              crossorigin="anonymous">
+
+
+
+
+
+        {#        <link rel="stylesheet" href="{% static "css/revival/custom.css" %}">#}
+        {#        <link rel="stylesheet" href="{% static "css/revival/jquery-ui.css" %}">#}
+        {#        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"#}
+        {#              integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"#}
+        {#              crossorigin="anonymous">#}
+
         <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
 
-            <style>
-    .kt-myColor{
-    background-color: #282a3c !important; }
-
-    .kt-menu__link-text{
-        color:white  !important;
-         {# larger text size css#}
-        font-size: 25px !important;
-    }
-    #highcharts_container{
-        top: 0;
-        bottom:0 !important;
-    }
-
-    </style>
     {% endblock %}
     {% block head_js %}
-        <script src="{% static 'js/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
+        {#                    <script src="{% static 'js/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>#}
+
     {% endblock %}
 
 
@@ -61,258 +72,164 @@
 
 <!-- begin: Body -->
 <!-- begin: Body -->
-<body class="kt-page--loading-enabled kt-page--loading kt-page--fixed kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed
-kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled
- kt-subheader--transparent
-kt-aside--enabled kt-aside--left kt-aside--fixed kt-page--loading"
->
+<body>
 
 <!-- begin: Page -->
-<!-- begin: Mobile Header -->
-<div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
-    <div class="kt-header-mobile__logo">
-        {#        <a href="{% url 'vadetisweb:index' %}">#}
-        {#            <img alt="Logo" src="{% static 'img/global/logo.png' %}" style="max-height: 30px;"/>#}
-        {#        </a>#}
-    </div>
-    <div class="kt-header-mobile__toolbar">
-        <button class="kt-header-mobile__toolbar-topbar-toggler" id="kt_header_mobile_topbar_toggler"><i
-                class="mdi mdi-dots-vertical mdi-24px"></i></button>
-        <button class="kt-header-mobile__toolbar-toggler" id="kt_header_mobile_toggler"><span></span></button>
-    </div>
-</div>
-<!-- end: Mobile Header -->
-
-<div class="kt-grid kt-grid--hor kt-grid--root">
-    <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
-        <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
-
-            <!-- begin: Header -->
-            <div id="kt_header" class="kt-header  kt-header--fixed kt-myColor" data-ktheader-minimize="on">
-                <div class="kt-container kt-container--fluid">
-
-                    <!-- begin: Menu -->
-                    <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn"><i
-                            class="mdi mdi-close mdi-18px"></i></button>
-                    <div class="kt-header-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_header_menu_wrapper">
-                        <button style="display: none;" class="kt-aside-toggler kt-aside-toggler--left"
-                                id="kt_aside_toggler"><span></span></button>
-                        <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
-                            <ul class="kt-menu__nav ">
-                                <li class="kt-menu__item kt-menu__item--rel"><a href="/" class="kt-menu__link"><span
-                                        class="kt-menu__link-text">Index</span></a></li>
-                                <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'repair' %}" class="kt-menu__link"><span
-                                        class="kt-menu__link-text">Repair</span></a></li>
-
-
-                                 <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'display_datasets' %}" class="kt-menu__link"><span
-                                        class="kt-menu__link-text">Datasets</span></a></li>
-
-                                 <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'opt' %}" class="kt-menu__link"><span
-                                        class="kt-menu__link-text">Optimization</span></a></li>
-
-                                  <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'dimensionality_reduction' %}" class="kt-menu__link"><span
-                                        class="kt-menu__link-text">AAAAA</span></a></li>
-
-
-{#                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"#}
-{#                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"#}
-{#                                                                                               class="kt-menu__link kt-menu__toggle"><span#}
-{#                                        class="kt-menu__link-text">Display</span></a>#}
-{#                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">#}
-{#                                        <ul class="kt-menu__subnav">#}
-{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
-{#                                                    href="{% url 'repair' %}"#}
-{#                                                    class="kt-menu__link "><i#}
-{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
-{#                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>#}
-{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
-{#                                                    href="{% url 'repair' %}"#}
-{#                                                    class="kt-menu__link "><i#}
-{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
-{#                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </li>#}
-{#                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"#}
-{#                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"#}
-{#                                                                                               class="kt-menu__link kt-menu__toggle"><span#}
-{#                                        class="kt-menu__link-text">Detection</span></a>#}
-{#                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">#}
-{#                                        <ul class="kt-menu__subnav">#}
-{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
-{#                                                    href="{% url 'repair' %}"#}
-{#                                                    class="kt-menu__link "><i#}
-{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
-{#                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>#}
-{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
-{#                                                    href="{% url 'repair' %}"#}
-{#                                                    class="kt-menu__link "><i#}
-{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
-{#                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </li>#}
-{#                                <li class="kt-menu__item kt-menu__item--submenu kt-menu__item--rel"#}
-{#                                    data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="javascript:;"#}
-{#                                                                                               class="kt-menu__link kt-menu__toggle"><span#}
-{#                                        class="kt-menu__link-text">Recommendation</span></a>#}
-{#                                    <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">#}
-{#                                        <ul class="kt-menu__subnav">#}
-{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
-{#                                                    href="{% url 'repair' %}"#}
-{#                                                    class="kt-menu__link "><i#}
-{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
-{#                                                    class="kt-menu__link-text">Real-World Datasets</span></a></li>#}
-{#                                            <li class="kt-menu__item " aria-haspopup="true"><a#}
-{#                                                    href="{% url 'repair' %}"#}
-{#                                                    class="kt-menu__link "><i#}
-{#                                                    class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span#}
-{#                                                    class="kt-menu__link-text">Synthetic Datasets</span></a></li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </li>#}
-                                {#                                <li class="kt-menu__item kt-menu__item--rel"><a href="{% url 'vadetisweb:faq' %}"#}
-                                {#                                                                                class="kt-menu__link"><span#}
-                                {#                                        class="kt-menu__link-text">FAQ</span></a></li>#}
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- end: Menu -->
-
-                    <!-- begin: Logo -->
-                    {#                    <div class="kt-header__brand  kt-grid__item" id="kt_header_brand">#}
-                    {#                        <a class="kt-header__brand-logo" href="{% url 'vadetisweb:index' %}">#}
-                    {#                            <img alt="Logo" src="{% static 'img/global/logo.png' %}"/>#}
-                    {#                        </a>#}
-                    {#                    </div>#}
-                    <!-- end: Logo -->
-
-                    <!-- begin: Topbar -->
-                    <div class="kt-header__topbar kt-grid__item">
-
-                        {#                        <!--begin: Search -->#}
-                        {#                        {% block search %}#}
-                        {#                            {% include 'vadetisweb/parts/header/search.html' %}#}
-                        {#                        {% endblock %}#}
-                        {#                        <!--end: Search -->#}
-                        {##}
-                        {#                        <!--begin: Actions -->#}
-                        {#                        {% block actions %}#}
-                        {#                            {% include 'vadetisweb/parts/header/actions.html' %}#}
-                        {#                        {% endblock %}#}
-                        {#                        <!--end: Actions -->#}
-                        {##}
-                        {#                        <!--begin: User -->#}
-                        {#                        {% block user %}#}
-                        {#                            {% include 'vadetisweb/parts/header/user_navigation.html' %}#}
-                        {#                        {% endblock %}#}
-                        {#                        <!--end: User -->#}
-                        {##}
-                        {#                        <!--begin: Login -->#}
-                        {#                        {% block login_block %}#}
-                        {#                            {% include 'vadetisweb/parts/header/login_block.html' %}#}
-                        {#                        {% endblock %}#}
-                        <!--end: Login -->
-                    </div>
-
-                    <!-- end: Topbar -->
-                </div>
-            </div>
-            <!-- end: Header -->
-
-{#            <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-grid--stretch"  style="#}
-{#    padding-right: 15px !important;#}
-{#    padding-left: 15px !important;#}
-{#    margin-right: auto!important;#}
-{#    margin-left: auto !important;">#}
-{#                <div class="kt-container kt-body  kt-grid kt-grid--ver" id="kt_body" style="#}
-{#    padding-right: 15px !important;#}
-{#    padding-left: 15px !important;#}
-{#    margin-right: auto!important;#}
-{#    margin-left: auto !important;">#}
-{#                    <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" style="#}
-{#    padding-right: 15px !important;#}
-{#    padding-left: 15px !important;#}
-{#    margin-right: auto!important;#}
-{#    margin-left: auto !important;">#}
-
-                        {#                        <!-- begin: SubHeader -->#}
-                        {#                        <div class="kt-subheader kt-grid__item" id="kt_subheader">#}
-                        {#                            <div class="kt-subheader__main">#}
-                        {#                                {% block page_title %}{% endblock %}#}
-                        {#                                <span class="kt-subheader__separator kt-hidden"></span>#}
-                        {#                                {% block breadcrumbs %}{% endblock %}#}
-                        {#                                {% block breadcrumbs_content %}{% render_breadcrumbs %}{% endblock %}#}
-                        {#                            </div>#}
-                        {#                        </div>#}
-                        {#                        <!-- end: SubHeader -->#}
-
-                        <!-- begin: Content -->
-                        <div class="kt-content kt-grid__item kt-grid__item--fluid" id="kt_content">
-                            <div id="message-container">
-                                {#                                {% include 'vadetisweb/parts/messages.html' %}#}
-                            </div>
-                            <!-- begin: Main Content -->
-                            {% block chartScript %}
-                            {% endblock %}
-                            {% block chart %}
-                            {% endblock %}
-                            {% block content %}
-                            {% endblock %}
-                            <!-- end: Main Content -->
-                        </div>
-                        <!-- end: Content -->
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-            <!-- begin: Footer -->
-            {% block footer %}
-                {#                {% include 'vadetisweb/parts/footer/footer.html' %}#}
-            {% endblock %}
-            <!-- end: Footer -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Index</a>
         </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Repair<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'repair' %}">Repair Anomalies</a></li>
+                        <li><a href="{% url 'dimensionality_reduction' %}">Dimensionality Reduction Viz</a></li>
+
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Display<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'display_datasets' %}">Datasets</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'opt' %}">
+                        Optimization
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
     </div>
+    <!-- /.container -->
+</nav>
+
+{#<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>#}
+
+<!-- begin: Content -->
+<div id="content">
+
+    <div class="kt-content kt-grid__item kt-grid__item--fluid" id="kt_content">
+        <div id="message-container">
+            {#                                {% include 'vadetisweb/parts/messages.html' %}#}
+        </div>
+        <!-- begin: Main Content -->
+        {% block chartScript %}
+        {% endblock %}
+        {% block chart %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+        <!-- end: Main Content -->
+    </div>
+    <!-- end: Content -->
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    <!-- begin: Footer -->
+    {% block footer %}
+        {#                {% include 'vadetisweb/parts/footer/footer.html' %}#}
+    {% endblock %}
+    <!-- end: Footer -->
+
+    <!-- end: Page -->
+
+    {#<!-- begin: Scrolltop -->#}
+    {#<div id="kt_scrolltop" class="kt-scrolltop">#}
+    {#    <i class="mdi mdi-arrow-up-bold mdi-24px"></i>#}
+    {#</div>#}
+    {#<!-- end: Scrolltop -->#}
+
+
+    <script src="{% static  'js/helpers.js' %} " type="text/javascript"></script>
+    <script src="{% static  'js/highcharts_helpers.js' %} " type="text/javascript"></script>
+
+    {% block scripts %}
+    {% endblock %}
+
+
+    <!-- begin: Scrolltop -->
+    <div id="kt_scrolltop" class="kt-scrolltop">
+        <i class="mdi mdi-arrow-up-bold mdi-24px"></i>
+    </div>
+    <!-- end: Scrolltop -->
+
+
+    <!-- begin: Global Plugins Scripts -->
+    {#    <script src="{% static 'js/lib/popper-js/popper.min.js' %}" type="text/javascript"></script>#}
+    {#    <script src="{% static 'js/lib/bootstrap/bootstrap.min.js' %}" type="text/javascript"></script>#}
+    <script src="{% static 'js/lib/js-cookie/js-cookie.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/tooltip-js/tooltip.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/sticky/sticky.min.js' %}" type="text/javascript"></script>
+    <!-- end: Global Plugins Scripts -->
+    <!-- begin:Global Scripts -->
+    <script src="{% static 'js/custom/utils.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>
+    <!-- end:Global Script -->
+
+    <style>
+        .button-group {
+            margin: 50px;
+        }
+
+        .booked {
+            background: blue;
+            color: white;
+        }
+
+        .popover-content {
+            color: black;
+            font-size: 10px;
+            z-index: 1000;
+
+        }
+
+        .form-group label {
+            font-size: 15px;
+        }
+
+        .kt-portlet__head-title {
+            font-size: 17px !important;
+        }
+
+        #chart-right {
+            margin-top: 10px;
+        }
+    </style>
+
+    <script>
+        $('[data-toggle="kt-popover"]').popover({
+            html: true,
+            zIndex: 9999,
+            container: 'body'
+        });
+    </script>
+
+
+
+    {% block additional_bottom_js %}
+    {% endblock %}
 </div>
-<!-- end: Page -->
-
-{#<!-- begin: Scrolltop -->#}
-{#<div id="kt_scrolltop" class="kt-scrolltop">#}
-{#    <i class="mdi mdi-arrow-up-bold mdi-24px"></i>#}
-{#</div>#}
-{#<!-- end: Scrolltop -->#}
-
-
-<script src="{% static  'js/helpers.js' %} " type="text/javascript"></script>
-<script src="{% static  'js/highcharts_helpers.js' %} " type="text/javascript"></script>
-
-{% block scripts %}
-{% endblock %}
-
-
-<!-- begin: Scrolltop -->
-<div id="kt_scrolltop" class="kt-scrolltop">
-    <i class="mdi mdi-arrow-up-bold mdi-24px"></i>
-</div>
-<!-- end: Scrolltop -->
-</div>
-
-
-<!-- begin: Global Plugins Scripts -->
-<script src="{% static 'js/lib/popper-js/popper.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/lib/bootstrap/bootstrap.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/lib/perfect-scrollbar/perfect-scrollbar.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/lib/js-cookie/js-cookie.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/lib/tooltip-js/tooltip.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/lib/sticky/sticky.min.js' %}" type="text/javascript"></script>
-<!-- end: Global Plugins Scripts -->
-<!-- begin:Global Scripts -->
-<script src="{% static 'js/custom/utils.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>
-<!-- end:Global Script -->
-
-{% block additional_bottom_js %}
-{% endblock %}
 
 </body>
 </html>

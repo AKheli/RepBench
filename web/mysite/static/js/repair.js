@@ -41,7 +41,6 @@ let repair = (alg) => fetch(repair_url, {
         document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
     }
     scores["color"] = color
-    console.log("reptcharSeries", chartRepairSeries)
     addScores(scores,chartRepairSeries)
 
 })
