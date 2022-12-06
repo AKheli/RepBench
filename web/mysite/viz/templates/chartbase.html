@@ -20,15 +20,15 @@
     }
 
     </style>
-    <div class="row full-height margin-top-20" style="
+    <div class="row margin-top-20" style="
     padding-right: 15px !important;
     padding-left: 15px !important;
     margin-right: auto!important;
     margin-left: auto !important;">
-    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 full-height ">
-        <div class="kt-portlet full-height ">
+    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="kt-portlet">
             <div class="kt-portlet__head--sm">
-                <div style="text-align:right;position:relative;top:110%;z-index: 1;margin-right: 20px">
+                <div style="text-align:right;position:relative;top:110%;z-index: 1;margin-right: 20px;margin-top:20px">
                     {% block graphbuttons %}
                         <button onclick="swap_norm()" class="btn btn-warning">Reset</button>
 
@@ -83,7 +83,7 @@
     </style>
 
     <div id="chart-right" class="col-lg-3 col-md-6 col-sm-6 col-xs-6 full-height"
-         style="overflow-y: auto; overflow-x:hidden;">
+         style="overflow-y: auto; overflow-x:auto;">
         {% block first_form %}
             <div class="kt-portlet" data-ktportlet="true">
                 <div class="kt-portlet__head">

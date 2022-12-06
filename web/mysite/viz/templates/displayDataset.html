@@ -2,16 +2,32 @@
 {% load static %}
 
 
-
 {% block first_form %}
+    <h2>{{ data_info.name }}</h2>
+    <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>
+    <p>{{ data_info.description }}</p>
+        <p>Number of Values: {{ data_info.values }}</p>
+        <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
+    {% include "sub/corr.html" %}
 
 {% endblock %}
 
 {% block belowchart %}
-    {% include "sub/corr.html" %}
+     <div id="correlationMatrixFull" style="display:none;">
+
+        {#               <div style="position:absolute"> YOOO</div>#}
+        {#               <div style="position:static"> EYYYY</div>#}
+        {#                   <div style="position:inherit"> HHHHHHH</div>#}
+
+
+        {{ correlation_html | safe }}
+    </div>
+    <script src='{% static "js/corr_table.js" %}'></script>
+
 {% endblock %}
 
 {% block second_form %}
 {% endblock %}
 {% block content %}
 {% endblock %}
+

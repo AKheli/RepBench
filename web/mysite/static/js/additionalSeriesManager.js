@@ -35,11 +35,15 @@ const get_injected_norm_data = function () {
 }
 
 const addOriginalSeries = function (series) {
+    const retval = addSeries(series)
     originalSeries.push(addSeries(series))
+    return retval
 }
 
 const addReducedSeries = function (series) {
-    reducedSeries.push(addSeries(series))
+    const retval = addSeries(series)
+    reducedSeries.push(retval)
+    return retval
 }
 
 const addInjectedSeries = function (series, previously_injected) {
@@ -56,29 +60,27 @@ const addInjectedSeries = function (series, previously_injected) {
     }
     const retval = addSeries(series)
     injectedSeries.push(retval)
+    return retval
 }
 
 const addRepairedSeries = function (series, col) {
-
     if (col != null) {
         series.color = col
-        repairedSeries.push(addSeries(series))
-    } else {
-        repairedSeries.push(addSeries(series))
-
     }
+    const retval = addSeries(series)
+    repairedSeries.push(retval)
+    return retval
 }
 
 
 const clearAllSeries = function () {
-    while (mainChart.series.length > originalSeries.length) {
-        mainChart.series[originalSeries.length].remove(false)
-    }
     repairedSeries.length = 0
     injectedSeries.length = 0
     reducedSeries.length = 0
-    mainChart.redraw()
+    threshold = null
+    resetSeries()
     removeScores()
+
 }
 
 const resetSeries = function () {
@@ -89,4 +91,5 @@ const resetSeries = function () {
     let allInputSeries = allSeries.map(s => s.series)
     initMainChart(allInputSeries)
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
+
 }

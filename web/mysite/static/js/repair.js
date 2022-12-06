@@ -12,28 +12,15 @@ let repair = (alg) => fetch(repair_url, {
     method: 'POST',
     body: createRepairRequestFormData(alg),
 }).then(response => response.json()).then(responseJson => {
-    repairResult = responseJson
-    additionalData = responseJson["additional_repair_info"]
-
-    if(additionalData){
-         if(additionalData["reduced"]){
-            add_list_of_data_to_chart(additionalData.reduced, mainChart, "reduced")
-        }
-    }
     const repSeries = responseJson.repaired_series
     const scores = responseJson.scores
     repairResult = repSeries
     let color = null
     const chartRepairSeries = Object.keys(repSeries).map(key => {
         let repair = repSeries[key]
-       addRepairedSeries(repair,color)
+       return addRepairedSeries(repair,color)
     })
     resetSeries()
-
-    // load the score charts html element given all the error metrics
-    if (document.getElementById("thatsreallywrong") !== null) {
-        document.getElementById("thatsreallywrong").outerHTML = responseJson.html;
-    }
     scores["color"] = mainChart.series[mainChart.series.length-2].color
     addScores(scores,chartRepairSeries)
 

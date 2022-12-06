@@ -6,6 +6,7 @@ data_sets_info = {
         "path": "train/bafu5k.csv",
         "ref_url": "https://www.bafu.admin.ch/bafu/en/home.html",
         "url_text":"Federal Office for the Environment",
+        "description" : "Measurement of the water level in different rivers in Switzerland",
     },
     "Humidity": {
         "name": "Humidity",

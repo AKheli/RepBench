@@ -37,6 +37,12 @@ class DatasetView(View):
         correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"],
                                                       table_id='correlation_table')
         context = {"correlation_html": correlation_html}
+        info = datasetsConfig.data_sets_info[setname]
+        path = info["path"]
+        n, m = pd.read_csv(f"data/{path}").shape
+        info["values"] = n * m
+        info["ts_nbr"] = m
+        context["data_info"] = info
         return context
 
     def data_set_default_context(self, request, setname=datasetsConfig.default_set):

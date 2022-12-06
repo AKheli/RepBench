@@ -52,29 +52,43 @@ let threshold = null
 
 let splitMainChart = function () {
 
-    return [{
+    return [{ // Primary yAxis
         title: {
             text: 'Parameters'
         },
-        height: '53%',
+        height: '63%',
         lineWidth: 2,
     }, {
+      //   yAxis: 1,
+      //   title: {
+      //       text: "Normalized Difference"
+      //   },
+      //   top: '67%',
+      //   height: '0%',
+      //   offset: 0,
+      //   lineWidth: 2,
+      //   plotBands: [{
+      //       color: 'rgba(68, 170, 213, 0.1)',
+      //       from: -100,
+      //       to: 100
+      //   },
+      // ]
+    },
+    {
+        yAxis: 2,
         title: {
             text: "Normalized Difference"
         },
-        top: '57%',
-        height: '43%',
+        top: '67%',
+        height: '33%',
         offset: 0,
         lineWidth: 2,
-        min: -1,
-        max: 10,
-        // }], series: mainChart.series.concat([{
-        //     //error chart
-        //     showInLegend: false,
-        //     type: 'line',
-        //     color: 'red',
-        //     data: [1, 3, 4, 5, 6, 7],
-        yAxis: 1,
+        plotBands: [{
+            color: 'rgba(68, 170, 213, 0.1)',
+            from: -100,
+            to: 100
+        },
+      ]
     }]
 }
 
@@ -183,13 +197,13 @@ const initMainChart = function (series = {}) {
     });
 
     if(threshold !== null){
-        mainChart.yAxis[1].addPlotLine(
+        mainChart.yAxis[2].addPlotLine(
         {
-            color: '#FF0000',
-            width: 1,
-            style: "dash",
+            color: 'black',
+            width: 2,
+            // style: "dash",
             value: threshold,
-            yAxis: 1,
+            yAxis: 2,
             label: {
                 text: 'Threshold',
                 align: 'right',

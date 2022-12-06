@@ -52,17 +52,18 @@ initRuntimeChart = function (series) {
 }
 
 
-const bindSeriesMouseOver = function (score_series,runtime_series, repair_series) {
+const bindSeriesMouseOver = function (score_series, runtime_series, repair_series) {
     const f = function () {
-                mainChart.series.forEach(s => s.setVisible(false))
-                repair_series.forEach(chartSeries => {
-                    let injected_series = chartSeries.linkedParent
-                    let truth_series = injected_series.linkedParent
-                    injected_series.update({visible: true})
-                    truth_series.update({visible: true})
-                    chartSeries.setVisible()
-                })
-            }
+        mainChart.series.forEach(s => s.setVisible(false, false))
+        console.log("repair_series", repair_series)
+        repair_series.forEach(rep_series => {
+            let injected_series = rep_series.chartSeries.linkedParent
+            let truth_series = injected_series.linkedParent
+            injected_series.update({visible: true})
+            truth_series.update({visible: true})
+            rep_series.chartSeries.setVisible()
+        })
+    }
     score_series.update({
         events: {
             click: f
@@ -97,7 +98,7 @@ const addScores = function (scores, rapiredSeries) {
         //         // element.scrollTop = element.scrollHeight;
         // element.scrollIntoView({ behavior: 'smooth', block: 'end' });
         //     }, 1000);
-        element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        element.scrollIntoView({behavior: 'smooth', block: 'end'});
 
     } else {
         const runtime = scores.data.data[3]
@@ -107,19 +108,24 @@ const addScores = function (scores, rapiredSeries) {
         runtime_series = runtime_chart.addSeries(scores)
     }
 
-    bindSeriesMouseOver(score_series,runtime_series, rapiredSeries)
+    bindSeriesMouseOver(score_series, runtime_series, rapiredSeries)
 
 
 }
 
-const removeScores = function () {
-    if(score_chart !== null){
-        score_chart.destroy()
+const
+    removeScores = function () {
+        if (score_chart !== null) {
+            score_chart.destroy()
+        }
+        score_chart = null
+        if (runtime_chart !== null) {
+            runtime_chart.destroy()
+        }
+        runtime_chart = null
+        document.getElementById('score-container').innerHTML = "<h4 style='text-align:   ;margin-top:20px;'>Inject and then repair a <br> TimeSeries to display scores</h4>"
+
+        if (document.getElementById("after-runtime") !== null) {
+            document.getElementById("after-runtime").innerHTML = ""
+        }
     }
-    score_chart = null
-    if(runtime_chart !== null){
-        runtime_chart.destroy()
-    }
-    runtime_chart = null
-    document.getElementById('score-container').innerHTML = "<h4 style='text-align:   ;margin-top:20px;'>Inject and then repair a <br> TimeSeries to display scores</h4>"
-}

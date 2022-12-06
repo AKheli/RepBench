@@ -86,5 +86,16 @@ class DimensionalityReductionView(RepairView):
              for i, col in enumerate(df_reduced.columns) if
              i in injected_data_container.injected_columns]
 
+        Anomalies = injected_data_container.class_df.values
+        classified = estimator.anomaly_matrix
+        TP = np.sum(np.logical_and(classified,Anomalies))
+        TN = np.sum( np.logical_and(~classified,~Anomalies))
+
+        FP = np.sum(classified == 1) - TP
+        FN = np.sum( np.logical_and(~classified,Anomalies))
+        context["TP"] = TP
+        context["FP"] = FP
+        context["FN"] = FN
+        context["TN"] = TN
 
         return JsonResponse(context, encoder=DimensionalityReductionView.encoder)
