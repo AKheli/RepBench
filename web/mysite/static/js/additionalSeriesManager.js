@@ -18,6 +18,7 @@ const addSeries = function (series) {
 
 const swap_norm = function () {
     normalized = !normalized
+    document.getElementById("swap_norm").innerHTML = normalized ? "Show Original Data" : "Normalize Data"
     resetSeries()
 
 }

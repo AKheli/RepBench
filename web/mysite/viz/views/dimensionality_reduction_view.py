@@ -55,11 +55,18 @@ class DimensionalityReductionView(RepairView):
         estimator: DimensionalityReductionEstimator = repair_retval["estimator"]
 
         ## same way as done by the estimator
+        # def z_score(x, threshold):
+        #     x_abs = np.abs(x)
+        #     x_normalized = (x_abs - np.mean(x_abs)) / np.std(x_abs)
+        #     return x_normalized > threshold
+
         def z_score(x):
             x_abs = np.abs(x)
             x_normalized_diff = (x_abs - np.mean(x_abs)) / np.std(x_abs)
-            return x_normalized_diff
+            print(x_normalized_diff.std())
+            print(sum(x_normalized_diff > float(threshold)))
 
+            return x_normalized_diff
         normalized_injected, _ = normalize_f(injected_data_container.injected)
 
         reductions = estimator.reduction_per_classification_iter
@@ -82,6 +89,7 @@ class DimensionalityReductionView(RepairView):
               "diff_norm": list(z_score(df_reduced[col] - normalized_injected[col]))
               if i in injected_data_container.injected_columns else None,
               "threshold": threshold,
+              "classified" : list(estimator.anomaly_matrix[:,i]*1)
               }
              for i, col in enumerate(df_reduced.columns) if
              i in injected_data_container.injected_columns]

@@ -8,140 +8,340 @@
 
 
 {% block chart %}
+    {#    <!--end: Inner Row -->#}
+    {#    <style>#}
+    {##}
+    {#        #chart-right::-webkit-scrollbar {#}
+    {#            width: 10px;#}
+    {#        }#}
+    {##}
+    {#        /* Handle */#}
+    {#        #chart-right::-webkit-scrollbar-thumb {#}
+    {#            background: grey;#}
+    {##}
+    {#        }#}
+    {##}
+    {#        /* Handle on hover */#}
+    {#        #chart-right::-webkit-scrollbar-thumb:hover {#}
+    {#            background: #555;#}
+    {#        }#}
+    {#    </style>#}
     <style>  .full-height {
-        height: 85vh;
+        height: 90vh;
     {#float: right;#}
     }
 
     .margin-top-20 {
-        margin-top: 20px;
+        margin-top: 35px;
         left: 0;
-    {#float: right;#}
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
     }
-
     </style>
-    <div class="row margin-top-20" style="
-    padding-right: 15px !important;
-    padding-left: 15px !important;
-    margin-right: auto!important;
-    margin-left: auto !important;">
-    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-        <div class="kt-portlet">
-            <div class="kt-portlet__head--sm">
-                <div style="text-align:right;position:relative;top:110%;z-index: 1;margin-right: 20px;margin-top:20px">
-                    {% block graphbuttons %}
-                        <button onclick="swap_norm()" class="btn btn-warning">Reset</button>
 
-                    {% endblock %}
-                </div>
-                {#                    <div class="kt-portlet__head-label">#}
-                {#                        <h3 class="kt-portlet__head-title">{{ data_title }}</h3>#}
-                {#                    </div>#}
-                {#                    <div class="kt-portlet__head-toolbar">#}
-                {#                        <div id="highcharts_head_actions" class="kt-portlet__head-actions">#}
-                {#                            <a id="reset_chart_btn" href="#" class="btn btn-outline-brand btn-bold btn-sm">Reset</a>#}
-                {#                            <div class="dropdown dropdown-inline">#}
-                {#                                <a href="#" class="btn btn-outline-brand btn-icon btn-sm" data-toggle="dropdown"#}
-                {#                                   aria-haspopup="true" aria-expanded="false">#}
-                {#                                    <i class="mdi mdi-18px mdi-dots-horizontal"></i>#}
-                {#                                </a>#}
-                {#                                {% include 'vadetisweb/parts/misc/highcharts_line_dropdown.html' %}#}
-                {#                            </div>#}
-                {#                        </div>#}
-                {#                    </div>#}
+    <div class="row margin-top-20">
+        <div class="col-md-9" style="position:relative;">
+            <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
+                {% block graphbuttons %}
+{#                    <div class="form-group" style="position:absolute; top: 77px; right:85px; z-index: 1;">#}
+{#                    Data:#}
+{#                    <div class="btn-group" role="group">#}
+{#                        <button id="rawButton" type="button" class="btn btn-default btn-sm active">Raw</button>#}
+{#                        <button id="zButton" type="button" class="btn btn-default btn-sm">Z-Score</button>#}
+{#                        <button id="minMaxButton" type="button" class="btn btn-default btn-sm">Min-Max</button>#}
+{#                    </div>#}
+{#                </div>#}
+                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>
+                {% endblock %}
             </div>
-            {#                <div class="kt-portlet__body kt-portlet__body--fit full-height">#}
-
-            <!--begin: Highcharts -->
             <div id="highcharts_container" class="full-height"></div>
-            <!--end: Highcharts -->
-            {#                </div>#}
+        </div>
+        <div id="chart-right" class="col-md-3 full-height" style="overflow-y: auto; overflow-x:auto;">
+            {% block first_form %}
+{#            <h3>Gas Sensor Array Drift</h3>#}
+{#            <p>Gas Sensor Array Drift at Different Concentrations</p>#}
+{#            <p>#}
+{#                <span>Source: </span>#}
+{#                <a href="https://archive.ics.uci.edu/ml/datasets/Gas+Sensor+Array+Drift+Dataset+at+Different+Concentrations">UCI Machine Learning Repository</a><br>Unit: --            </p>#}
+{#            <h3>Recovery of missing values</h3>#}
+{#            <form id="retrieveForm">#}
+{#                <input type="hidden" name="dataset" value="8">#}
+{#                <input type="hidden" name="truncation" value="0">#}
+{#                <input type="hidden" name="start" id="hiddenMin" value="1087257600000">#}
+{#                <input type="hidden" name="end" id="hiddenMax" value="1150329600000">#}
+{#                <div class="form-group">#}
+{#                    <!-- <label>Recover missing values for:</label> -->#}
+{#                    <!-- <select class="form-control" id="base" name="base_serie" multiple>#}
+{#                        <option value='15400'>0-6_EMAi0.1_0</option><option value='15401'>1-10_|DR|_1</option><option value='15402'>2-28_EMAi0.01_3</option><option value='15403'>3-18_|DR|_2</option><option value='15404'>4-58_|DR|_7</option><option value='15405'>5-21_EMAi0.001_2</option><option value='15406'>6-52_EMAi0.01_6</option><option value='15407'>7-124_EMAi0.01_15</option><option value='15408'>8-110_EMAi0.1_13</option><option value='15409'>9-36_EMAi0.01_4</option>                    </select> -->#}
+{#                    <div class="accordion" id="seriesAccordion">#}
+{#                        <div class="card dropdown">#}
+{#                            <div class="card-header" id="headingOne">#}
+{#                            <h2 class="mb-0">#}
+{#                                <button class="btn dropdown-toggle collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">#}
+{#                                    <span>Recover missing values for: <i class="fa fa-chevron-down"></i></span>#}
+{#                                </button>#}
+{#                            </h2>#}
+{#                            </div>#}
+{#                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#seriesAccordion" aria-expanded="false" style="height: 0px;">#}
+{#                                <div class="card-body" style="max-height: 150px; overflow: scroll;">#}
+{#                                    <ul style="list-style: none;">#}
+{#                                        <li>#}
+{#                                                        <label for="15400">#}
+{#                                                            <input id="15400" type="checkbox" name="series" value="15400">#}
+{#                                                            <span> 0-6_EMAi0.1_0</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15401">#}
+{#                                                            <input id="15401" type="checkbox" name="series" value="15401">#}
+{#                                                            <span> 1-10_|DR|_1</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15402">#}
+{#                                                            <input id="15402" type="checkbox" name="series" value="15402">#}
+{#                                                            <span> 2-28_EMAi0.01_3</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15403">#}
+{#                                                            <input id="15403" type="checkbox" name="series" value="15403" checked="">#}
+{#                                                            <span> 3-18_|DR|_2</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15404">#}
+{#                                                            <input id="15404" type="checkbox" name="series" value="15404">#}
+{#                                                            <span> 4-58_|DR|_7</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15405">#}
+{#                                                            <input id="15405" type="checkbox" name="series" value="15405">#}
+{#                                                            <span> 5-21_EMAi0.001_2</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15406">#}
+{#                                                            <input id="15406" type="checkbox" name="series" value="15406">#}
+{#                                                            <span> 6-52_EMAi0.01_6</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15407">#}
+{#                                                            <input id="15407" type="checkbox" name="series" value="15407">#}
+{#                                                            <span> 7-124_EMAi0.01_15</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15408">#}
+{#                                                            <input id="15408" type="checkbox" name="series" value="15408">#}
+{#                                                            <span> 8-110_EMAi0.1_13</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15409">#}
+{#                                                            <input id="15409" type="checkbox" name="series" value="15409">#}
+{#                                                            <span> 9-36_EMAi0.01_4</span>#}
+{#                                                        </label>#}
+{#                                                    </li>                                    </ul>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                <div class="form-group">#}
+{#                    <div class="accordion" id="seriesAccordion2">#}
+{#                        <div class="card dropdown">#}
+{#                            <div class="card-header" id="headingTwo">#}
+{#                                <h2 class="mb-0">#}
+{#                                    <button class="btn dropdown-toggle collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">#}
+{#                                        <span>Use custom time series for reference: <i class="fa fa-chevron-down"></i></span>#}
+{#                                    </button>#}
+{#                                </h2>#}
+{#                            </div>#}
+{#                            <div id="collapseTwo" class="collapse" aria-expanded="false" aria-labelledby="headingTwo" data-parent="#seriesAccordion2" style="height: 0px;">#}
+{#                                <div class="card-body" style="max-height: 150px; overflow: scroll;">#}
+{#                                    <ul style="list-style: none;">#}
+{#                                        <li>#}
+{#                                                    <label for="15400-ref">#}
+{#                                                        <input id="15400" type="checkbox" name="reference" value="15400">#}
+{#                                                        <span> 0-6_EMAi0.1_0</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15401-ref">#}
+{#                                                        <input id="15401" type="checkbox" name="reference" value="15401">#}
+{#                                                        <span> 1-10_|DR|_1</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15402-ref">#}
+{#                                                        <input id="15402" type="checkbox" name="reference" value="15402">#}
+{#                                                        <span> 2-28_EMAi0.01_3</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15403-ref">#}
+{#                                                        <input id="15403" type="checkbox" name="reference" value="15403">#}
+{#                                                        <span> 3-18_|DR|_2</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15404-ref">#}
+{#                                                        <input id="15404" type="checkbox" name="reference" value="15404">#}
+{#                                                        <span> 4-58_|DR|_7</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15405-ref">#}
+{#                                                        <input id="15405" type="checkbox" name="reference" value="15405">#}
+{#                                                        <span> 5-21_EMAi0.001_2</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15406-ref">#}
+{#                                                        <input id="15406" type="checkbox" name="reference" value="15406">#}
+{#                                                        <span> 6-52_EMAi0.01_6</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15407-ref">#}
+{#                                                        <input id="15407" type="checkbox" name="reference" value="15407">#}
+{#                                                        <span> 7-124_EMAi0.01_15</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15408-ref">#}
+{#                                                        <input id="15408" type="checkbox" name="reference" value="15408">#}
+{#                                                        <span> 8-110_EMAi0.1_13</span>#}
+{#                                                    </label>#}
+{#                                                </li><li>#}
+{#                                                    <label for="15409-ref">#}
+{#                                                        <input id="15409" type="checkbox" name="reference" value="15409">#}
+{#                                                        <span> 9-36_EMAi0.01_4</span>#}
+{#                                                    </label>#}
+{#                                                </li>                                    </ul>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <input type="hidden" name="threshold" value="0.01">#}
+{#                <!--#}
+{#                <div class="form-group">#}
+{#                    <label>Threshold epsilon for CD:</label>#}
+{#                    <select class="form-control" id="threshold" name="threshold">#}
+{#                        <option>0.1</option>#}
+{#                        <option selected="selected">0.01</option>#}
+{#                        <option>0.001</option>#}
+{#                        <option>0.0001</option>#}
+{#                    </select>#}
+{#                </div>#}
+{#                -->#}
+{#                <div class="form-group">#}
+{#                    <label>Drop values by:</label>#}
+{#                    <select class="form-control" name="drop">#}
+{#                        <option value="0">0%</option>#}
+{#                        <option value="0.10">10%</option>#}
+{#                        <option value="0.20" selected="">20%</option>#}
+{#                        <option value="0.40">40%</option>#}
+{#                        <option value="0.60">60%</option>#}
+{#                        <option value="0.80">80%</option>#}
+{#                    </select>#}
+{#                </div>#}
+{#                <div class="form-group clearfix">#}
+{#                    <input id="applyBtn" type="submit" formaction="/api/drop.php" value="Apply" class="btn btn-default pull-left">#}
+{#                    <div id="recovery" class="hidden">#}
+{#                        <input id="recoverBtn" type="submit" formaction="/api/recover.php" value="Recover" class="btn btn-default pull-right">#}
+{#                        <div class="text-center hidden">#}
+{#                            <label for="udfCheck">#}
+{#                                <input id="udfCheck" type="checkbox" name="udf">#}
+{#                                <span> use PHP</span>#}
+{#                            </label>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div id="metrics" class="form-group hidden">#}
+{#                        <small>#}
+{#                            <label for="">#}
+{#                                Runtime:#}
+{#                                <span id="runtime"></span>#}
+{#                            </label>#}
+{#                            <br>#}
+{#                            <label for="">#}
+{#                                RMSE (raw):#}
+{#                                <span id="rmse"></span>#}
+{#                            </label><br>#}
+{#                            <label for="">#}
+{#                                RMSE (normal):#}
+{#                                <span id="rmseNorm"></span>#}
+{#                            </label><br>#}
+{#                            <label for="">#}
+{#                                MAE (raw):#}
+{#                                <span id="mae"></span>#}
+{#                            </label><br>#}
+{#                            <label for="">#}
+{#                                MAE (normal):#}
+{#                                <span id="maeNorm"></span>#}
+{#                            </label>#}
+{#                        </small>#}
+{#                    </div>#}
+{#            </form>#}
+{#        </div>#}
+                <div class="kt-portlet" data-ktportlet="true">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title">Anomaly Injection</h3>
+                        </div>
+                        <div class="kt-portlet__head-toolbar">
+                            <div class="kt-portlet__head-group">
+                                <a href="#" data-ktportlet-tool="toggle"
+                                   class="btn btn-sm btn-icon btn-default btn-icon-md myToggle"><i
+                                        class="mdi mdi-chevron-down mdi-18px"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body kt-portlet__body--fit">
+                        {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" %}
+                    </div>
+                </div>
 
+            {% endblock %}
+
+{#            {% block second_form %}#}
+{#                <div id="" class="kt-portlet kt-portlet--collapsed" data-ktportlet="true">#}
+{#                    <div class="kt-portlet__head">#}
+{#                        <div class="kt-portlet__head-label">#}
+{#                            <h3 class="kt-portlet__head-title">Anomaly Repair</h3>#}
+{#                        </div>#}
+{#                        <div class="kt-portlet__head-toolbar">#}
+{#                            <div class="kt-portlet__head-group">#}
+{#                                <a id="repair-toggle" href="#" data-ktportlet-tool="toggle"#}
+{#                                   class="btn btn-sm btn-icon btn-default btn-icon-md myToggle"><i#}
+{#                                        class="mdi mdi-chevron-down mdi-18px"></i></a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{##}
+{#                    <div class="kt-portlet__body kt-portlet__body--fit">#}
+{#                        {% include 'sub/repairForm.html' %}#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#            {% endblock %}#}
+{#            <div class="kt-portlet kt-portlet__body--fit">#}
+{#                <div class="kt-portlet__body kt-portlet__body--fit">#}
+{#                    <div class="kt-portlet__body">#}
+{#                        {% block thirdblock %}#}
+{##}
+{#                        {% endblock %}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+    </div>
+    </div>
+    <div class="row margin-top-20">
+      <div class="col-md-9" style="position:relative;">
+      <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
+                {% block graphbuttons2 %}
+                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>
+                {% endblock %}
+            </div>
+          <div id="highcharts_container2" class="full-height"></div>
+
+            <div id="highcharts_container" class="full-height"></div>
         </div>
     </div>
 
 
-
-
-    <!--end: Inner Row -->
-    <style>
-
-        #chart-right::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        /* Handle */
-        #chart-right::-webkit-scrollbar-thumb {
-            background: grey;
-
-        }
-
-        /* Handle on hover */
-        #chart-right::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
-
-    <div id="chart-right" class="col-lg-3 col-md-6 col-sm-6 col-xs-6 full-height"
-         style="overflow-y: auto; overflow-x:auto;">
-        {% block first_form %}
-            <div class="kt-portlet" data-ktportlet="true">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">Anomaly Injection</h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                        <div class="kt-portlet__head-group">
-                            <a href="#" data-ktportlet-tool="toggle"
-                               class="btn btn-sm btn-icon btn-default btn-icon-md myToggle"><i
-                                    class="mdi mdi-chevron-down mdi-18px"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="kt-portlet__body kt-portlet__body--fit">
-                    {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" %}
-                </div>
-            </div>
-
-        {% endblock %}
-
-        {% block second_form %}
-            <div id="" class="kt-portlet kt-portlet--collapsed" data-ktportlet="true">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">Anomaly Repair</h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                        <div class="kt-portlet__head-group">
-                            <a id="repair-toggle" href="#" data-ktportlet-tool="toggle"
-                               class="btn btn-sm btn-icon btn-default btn-icon-md myToggle"><i
-                                    class="mdi mdi-chevron-down mdi-18px"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="kt-portlet__body kt-portlet__body--fit">
-                    {% include 'sub/repairForm.html' %}
-                </div>
-            </div>
-
-        {% endblock %}
-        <div class="kt-portlet kt-portlet__body--fit">
-            <div class="kt-portlet__body kt-portlet__body--fit">
-                <div class="kt-portlet__body">
-                    {% block thirdblock %}
-
-                    {% endblock %}
-                </div>
-            </div>
-        </div>
+    <div class=" col-lg-9 col-md-12 col-sm-12 col-xs-12">
     </div>
-
-    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-        {% block belowchart %}s
-        {% endblock %}
-    </div>
-
     <script>
         let datasetName = "{{ set_name }}";
         let chart_title = "{{ data_title }}"

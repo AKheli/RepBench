@@ -51,6 +51,7 @@ class RepairView(DatasetView):
 
     @staticmethod
     def inject_data(request, setname):
+
         post = request.POST
         col_name = post.get("data_columns")
 

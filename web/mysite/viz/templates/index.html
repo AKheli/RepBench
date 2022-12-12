@@ -3,71 +3,71 @@
 
 {% block content %}
 
-                <div class="accordion" id="seriesAccordion">
-                        <div class="card dropdown">
-                            <div class="card-header" id="headingOne">
-                            <h2 class="mb-0">
-                                <button class="btn collapsed dropdown-toggle" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <span>Recover missing values for: <i class="fa fa-chevron-down"></i></span>
-                                </button>
-                            </h2>
-                            </div>
-                            <div id="collapseOne" class="collapse in" aria-labelledby="headingOne" data-parent="#seriesAccordion">
-                                <div class="" style="max-height: 100px; overflow-y: auto;">
-                                    <ul style="list-style: none;">
-                                        <li>
-                                                        <label for="15400">
-                                                            <input id="15400" type="checkbox" name="series" value="15400">
-                                                            <span> 0-6_EMAi0.1_0</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15401">
-                                                            <input id="15401" type="checkbox" name="series" value="15401">
-                                                            <span> 1-10_|DR|_1</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15402">
-                                                            <input id="15402" type="checkbox" name="series" value="15402">
-                                                            <span> 2-28_EMAi0.01_3</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15403">
-                                                            <input id="15403" type="checkbox" name="series" value="15403" checked="">
-                                                            <span> 3-18_|DR|_2</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15404">
-                                                            <input id="15404" type="checkbox" name="series" value="15404">
-                                                            <span> 4-58_|DR|_7</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15405">
-                                                            <input id="15405" type="checkbox" name="series" value="15405">
-                                                            <span> 5-21_EMAi0.001_2</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15406">
-                                                            <input id="15406" type="checkbox" name="series" value="15406">
-                                                            <span> 6-52_EMAi0.01_6</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15407">
-                                                            <input id="15407" type="checkbox" name="series" value="15407">
-                                                            <span> 7-124_EMAi0.01_15</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15408">
-                                                            <input id="15408" type="checkbox" name="series" value="15408">
-                                                            <span> 8-110_EMAi0.1_13</span>
-                                                        </label>
-                                                    </li><li>
-                                                        <label for="15409">
-                                                            <input id="15409" type="checkbox" name="series" value="15409">
-                                                            <span> 9-36_EMAi0.01_4</span>
-                                                        </label>
-                                                    </li>                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+{#                <div class="accordion" id="seriesAccordion">#}
+{#                        <div class="card dropdown">#}
+{#                            <div class="card-header" id="headingOne">#}
+{#                            <h2 class="mb-0">#}
+{#                                <button class="btn collapsed dropdown-toggle" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">#}
+{#                                    <span>Recover missing values for: <i class="fa fa-chevron-down"></i></span>#}
+{#                                </button>#}
+{#                            </h2>#}
+{#                            </div>#}
+{#                            <div id="collapseOne" class="collapse in" aria-labelledby="headingOne" data-parent="#seriesAccordion">#}
+{#                                <div class="" style="max-height: 100px; overflow-y: auto;">#}
+{#                                    <ul style="list-style: none;">#}
+{#                                        <li>#}
+{#                                                        <label for="15400">#}
+{#                                                            <input id="15400" type="checkbox" name="series" value="15400">#}
+{#                                                            <span> 0-6_EMAi0.1_0</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15401">#}
+{#                                                            <input id="15401" type="checkbox" name="series" value="15401">#}
+{#                                                            <span> 1-10_|DR|_1</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15402">#}
+{#                                                            <input id="15402" type="checkbox" name="series" value="15402">#}
+{#                                                            <span> 2-28_EMAi0.01_3</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15403">#}
+{#                                                            <input id="15403" type="checkbox" name="series" value="15403" checked="">#}
+{#                                                            <span> 3-18_|DR|_2</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15404">#}
+{#                                                            <input id="15404" type="checkbox" name="series" value="15404">#}
+{#                                                            <span> 4-58_|DR|_7</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15405">#}
+{#                                                            <input id="15405" type="checkbox" name="series" value="15405">#}
+{#                                                            <span> 5-21_EMAi0.001_2</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15406">#}
+{#                                                            <input id="15406" type="checkbox" name="series" value="15406">#}
+{#                                                            <span> 6-52_EMAi0.01_6</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15407">#}
+{#                                                            <input id="15407" type="checkbox" name="series" value="15407">#}
+{#                                                            <span> 7-124_EMAi0.01_15</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15408">#}
+{#                                                            <input id="15408" type="checkbox" name="series" value="15408">#}
+{#                                                            <span> 8-110_EMAi0.1_13</span>#}
+{#                                                        </label>#}
+{#                                                    </li><li>#}
+{#                                                        <label for="15409">#}
+{#                                                            <input id="15409" type="checkbox" name="series" value="15409">#}
+{#                                                            <span> 9-36_EMAi0.01_4</span>#}
+{#                                                        </label>#}
+{#                                                    </li>                                    </ul>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
 {% endblock %}

@@ -1,74 +1,95 @@
 {#{% include "form.html" with button_label="Inject" id="injection_form" %}#}
-
-<form class="kt-form" enctype="multipart/form-data" id="{{ form_id }}"
+<form class="retrieveForm" enctype="multipart/form-data" id="{{ form_id }}"
       onchange="return false"
-      onsubmit="return false" {% if style %} style='{{ style }}'{% endif %}
->
+      onsubmit="return false" {% if style %} style='{{ style }}'{% endif %}>
     {% csrf_token %}
-<div  style="max-height: 510px; overflow-y: auto;">
-    <div class="kt-portlet__body{% if class %} {{ class }}{% endif %}">
-        {#    {% render_form serializer %}#}
+    <div style="max-height: 510px; overflow-y: auto;">
         {% for field in form.visible_fields %}
             <div class="form-group {{ style.class }}">
+            {% if field.field.widget.input_type != 'checkbox' %}
                 <label>{{ field.label }}
+
                     {% if field.help_text %}
-                    <a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
-                       data-trigger="focus"
-                       data-content='{{ field.help_text }}'
-                       data-original-title="" title=""><i
-                            class="mdi mdi-information-outline mdi-18px"></i></a>
+                        <a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
+                           data-trigger="focus"
+                           data-content='{{ field.help_text }}'
+                           data-original-title="" title=""><i
+                                class="mdi mdi-information-outline mdi-18px"></i></a>
                     {% endif %}
                 </label>
-                <!--check if field.field.widget.input_type is number todo check min and max-->
-                {% if field.field.widget.input_type == 'number' %}
-                    <input type="number" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
-                           {% if field.field.widget.attrs.placeholder %}
-                           placeholder= {{ field.field.widget.attrs.placeholder }}
-                           {% endif %}
-                            {% if field.field.widget.attrs.min %}
-                            min= {{ field.field.widget.attrs.min }}
-                            {% endif %}
-                            {% if field.field.widget.attrs.max %}
-                            max= {{ field.field.widget.attrs.max }}
-                            {% endif %}
-                            {% if field.field.widget.attrs.step %}
-                            step= {{ field.field.widget.attrs.step }}
-                            {% endif %}
-                    >
-                    <!--check if field.field.widget.input_type is select-->
-                {% elif field.field.widget.input_type == 'select' %}
-                    <select name="{{ field.name }}" class="form-control custom-select">
-                        {% for v,e in field.field.widget.choices %}
-                            <option value="{{ v }}">{{ e }}</option>
-                        {% endfor %}
-                    </select>
-
-                {% elif field.field.widget.input_type == 'checkbox' %}
-                    <input type="checkbox" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
-                           placeholder="{{ field.label }}">
-                    <!--check if field.field.widget.input_type is date-->
-                {% else %}
-
-                    {{ field }}
+            {% endif %}
+            <!--check if field.field.widget.input_type is number todo check min and max-->
+            {% if field.field.widget.input_type == 'number' %}
+                <input type="number" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
+                        {% if field.field.widget.attrs.placeholder %}
+                            placeholder= {{ field.field.widget.attrs.placeholder }}
+                        {% endif %}
+                {% if field.field.widget.attrs.min %}
+                    min= {{ field.field.widget.attrs.min }}
                 {% endif %}
-            </div>
+                        {% if field.field.widget.attrs.max %}
+                            max= {{ field.field.widget.attrs.max }}
+                        {% endif %}
+                {% if field.field.widget.attrs.step %}
+                    step= {{ field.field.widget.attrs.step }}
+                {% endif %}
+                >
+                <!--check if field.field.widget.input_type is select-->
+            {% elif field.field.widget.input_type == 'select' %}
+                <select name="{{ field.name }}" class="form-control custom-select">
+                    {% for v,e in field.field.widget.choices %}
+                        <option value="{{ v }}">{{ e }}</option>
+                    {% endfor %}
+                </select>
 
+            {% elif field.field.widget.input_type == 'checkbox' %}
+                <div class="accordion" id="seriesAccordion">
+                <div class="card dropdown">
+                    <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn dropdown-toggle collapsed" type="button" data-toggle="collapse"
+                                    data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne"
+                                    style="background: rgba(0,0,0,.075); height:35px" >
+                                <span>{{ field.label }}  <i class="fa fa-chevron-down"></i></span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                         data-parent="#seriesAccordion" aria-expanded="false" style="height: 0px;">
+                        <div class="card-body" style="max-height: 150px; overflow: scroll;">
+                            <ul style="list-style: none;">
+                                {% for v,e in field.field.widget.choices %}
+                                    <li>
+                                        <label> {{ e }}</label>
+                                        {% if forloop.counter0 == 0 %}
+                                            <input type="checkbox" name="{{ field.name }}" value="{{ v }}" checked>
+                                        {% else %}
+                                            <input type="checkbox" name="{{ field.name  }}" value="{{ v }}">
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {{ field }}
+            {% endif %}
+        </div>
         {% endfor %}
-    </div>
+        </div>
         {% for hidden in form.hidden_fields %}
             {{ hidden }}
         {% endfor %}
-        <div class="kt-portlet__foot">
-            <button class="btn btn-primary"
-                    {% if onclick %}
-                    onclick="{{ onclick }}"
-                    {% else %}
-                    onclick="return false"
-                    {% endif %}
-            >
-                {{ button_label|default:"Apply" }}
 
-            </button>
-        </div>
-    </div>
+        <button class="btn btn-primary"
+                {% if onclick %}
+                onclick="{{ onclick }}"
+                {% else %}
+                onclick="return false"
+                {% endif %}
+        >
+            {{ button_label|default:"Apply" }}
+
+        </button>
 </form>

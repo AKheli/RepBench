@@ -11,7 +11,7 @@ class DimensionalityReductionEstimator(Estimator):
     def __init__(self, classification_truncation=2
                  , repair_truncation=4
                  , delta=1.5
-                 , threshold=1.2
+                 , threshold=1
                  , eps=1e-6
                  , n_max_iter=10
                  , repair_iter=10
