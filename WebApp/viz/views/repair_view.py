@@ -7,14 +7,13 @@ from pandas import DataFrame
 
 from data_methods.data_class import DataContainer
 from testing_frame_work.repair import AnomalyRepairer
-from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
-from web.mysite.viz.forms.alg_param_forms import  SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
-from web.mysite.viz.forms.injection_form import  InjectionForm
+from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
+from WebApp.viz.forms.alg_param_forms import  SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
+from WebApp.viz.forms.injection_form import  InjectionForm
 from Injection.injection_methods.basic_injections import add_anomalies
 import json
-from web.mysite.viz.BenchmarkMaps.create_repair_output import repair_from_None_series
-from web.mysite.viz.ts_manager.HighchartsMapper import map_injected_series, map_repair_data
-from web.mysite.viz.views.dataset_views import DatasetView
+from WebApp.viz.ts_manager.HighchartsMapper import map_injected_series, map_repair_data
+from WebApp.viz.views.dataset_views import DatasetView
 
 
 def parse_param_input(p: str):

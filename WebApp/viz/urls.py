@@ -1,6 +1,6 @@
 from django.urls import path
-import web.mysite.viz.views.dataset_views
-from web.mysite.viz.views import (
+
+from WebApp.viz.views import (
     indexview,
     optimizationview,
     dataset_views,
@@ -10,7 +10,7 @@ from web.mysite.viz.views import (
 
 urlpatterns = [
     path('', indexview.index, name='index'),
-    path('display_datasets', web.mysite.viz.views.dataset_views.display_datasets, name='display_datasets'),
+    path('display_datasets', dataset_views.display_datasets, name='display_datasets'),
     path('display_dataset/<str:setname>', dataset_views.DatasetView.as_view(), name='display_dataset'),
 
     ## repair view
@@ -28,7 +28,8 @@ urlpatterns = [
     path('fetch_optresults', optimizationview.fetch_opt_results, name='fetch_optresults'),
 
     # alg inspection
-    path('alg_inspection', dimensionality_reduction_view.DimensionalityReductionView.as_view(), name="dimensionality_reduction"),
+    path('alg_inspection', dimensionality_reduction_view.DimensionalityReductionView.as_view(),
+         name="dimensionality_reduction"),
     path('alg_inspection/<str:setname>', dimensionality_reduction_view.DimensionalityReductionView.as_view(),
          name="dimensionality_reduction"),
     path('alg_inspection_repair/<str:setname>', dimensionality_reduction_view.DimensionalityReductionView().repair_data,

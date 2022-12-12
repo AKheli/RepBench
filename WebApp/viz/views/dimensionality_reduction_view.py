@@ -6,11 +6,11 @@ import json
 from Injection.injected_data_part import InjectedDataContainer
 from algorithms.Dimensionality_Reduction.dimensionality_Reduction_estimator import DimensionalityReductionEstimator
 from testing_frame_work.repair import AnomalyRepairer
-from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
-from web.mysite.viz.forms.alg_param_forms import RPCAparamForm, CDparamForm
-from web.mysite.viz.ts_manager.HighchartsMapper import map_repair_data, reverse_norm
-from web.mysite.viz.views.dataset_views import DatasetView
-from web.mysite.viz.views.repair_view import RepairView, parse_param_input
+from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
+from WebApp.viz.forms.alg_param_forms import RPCAparamForm, CDparamForm
+from WebApp.viz.ts_manager.HighchartsMapper import map_repair_data, reverse_norm
+from WebApp.viz.views.dataset_views import DatasetView
+from WebApp.viz.views.repair_view import RepairView, parse_param_input
 from data_methods.data_class import normalize_f
 
 

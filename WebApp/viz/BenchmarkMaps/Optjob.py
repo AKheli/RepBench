@@ -2,7 +2,7 @@ from Injection.injected_data_part import InjectedDataContainer
 from algorithms import algo_mapper
 from parameterization.optimizers import BayesianOptimizer
 from testing_frame_work.repair import AnomalyRepairer
-from web.mysite.viz.ts_manager.HighchartsMapper import map_repair_data
+from WebApp.viz.ts_manager.HighchartsMapper import map_repair_data
 
 job_status = {}
 job_results = {}

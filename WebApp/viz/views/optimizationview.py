@@ -1,17 +1,13 @@
 import json
 import threading
 
-import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
-from pandas import DataFrame
-from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
-from web.mysite.viz.forms.injection_form import InjectionForm
-import pandas as pd
-from web.mysite.viz.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
-from web.mysite.viz.views.dataset_views import DatasetView
-
-import web.mysite.viz.BenchmarkMaps.Optjob as OptJob
+from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
+from WebApp.viz.forms.injection_form import InjectionForm
+from WebApp.viz.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
+from WebApp.viz.views.dataset_views import DatasetView
+import WebApp.viz.BenchmarkMaps.Optjob as OptJob
 
 
 

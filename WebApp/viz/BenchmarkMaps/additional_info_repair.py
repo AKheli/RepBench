@@ -1,5 +1,5 @@
 from testing_frame_work.repair import AnomalyRepairer
-from web.mysite.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
+from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 
 
 def repair_from_None_series_with_additional_info(alg_type,params, truth_df, *injected_series_dicts   ):

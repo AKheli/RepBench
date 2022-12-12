@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.views import View
 from data_methods.data_class import DataContainer
 
-import web.mysite.viz.datasetsConfig as datasetsConfig
-from web.mysite.viz.ts_manager.HighchartsMapper import map_truth_data
+import WebApp.viz.datasetsConfig as datasetsConfig
+from WebApp.viz.ts_manager.HighchartsMapper import map_truth_data
 
 
 class NpEncoder(json.JSONEncoder):
