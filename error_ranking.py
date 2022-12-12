@@ -36,10 +36,4 @@ max_ = result_df["error"].argmax()
 min_ = result_df["error"].argmin()
 
 result_df.groupby("algorithm").median("error").sort_values(by="error")
-"""
-algorithm Scenario
-        PCA
-        PCA
-        PCA
 
-"""
