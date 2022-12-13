@@ -3,14 +3,14 @@ const repairedSeries = []
 const originalSeries = []
 const reducedSeries = []
 
-let normalized = false
+let normalized = true
 
 const addSeries = function (series) {
     let ser = {
         series: series,
         chartSeries: null,
-        originalData: [...series.data],
-        normData: [...series.norm_data]
+        originalData: series.data.map(s=>s),
+        normData: series.norm_data.map(s=>s)
     }
     return ser
 }
@@ -94,3 +94,26 @@ const resetSeries = function () {
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
 
 }
+
+
+let injectedString = null
+const stringifyInjectedSeries = function () {
+     injectedSeries.forEach(s => {
+         console.log(s.originalData)
+            s.series.data = s.originalData
+     })
+    injectedString = JSON.stringify(injectedSeries.map(s => s.series))
+}
+
+const loadInjectedSeries = function () {
+    if (injectedString) {
+        let loadedInjected = JSON.parse(injectedString)
+        loadedInjected.forEach(s => {
+            addInjectedSeries(s)
+        })
+        resetSeries()
+
+    }
+
+}
+

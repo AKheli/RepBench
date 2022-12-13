@@ -1,6 +1,6 @@
 let createInjectFormData = function (form_id) {
     let form = document.getElementById(form_id)
-    const formData = new FormData(form)
+    let formData = new FormData(form)
     formData.append('csrfmiddlewaretoken', csrftoken)
     return formData
 }

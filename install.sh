@@ -13,7 +13,7 @@ pip3 install scikit-optimize
 pip3 install pyinform
 
 # web Requriemnts
-pip3 isntall WebApp/requirements.txt
+pip3 install WebApp/requirements.txt
 pip install django-jsonfield
 
 python3  manage.py runserver
