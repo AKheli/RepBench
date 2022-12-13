@@ -4,14 +4,17 @@ from algorithms import algo_mapper
 
 error_choices = [("rmse", "RMSE"), ("mae", "MAE"), ("partial_rmse", "RMSE on anomaly")]
 
+def hidden(initial):
+    return forms.CharField(widget=forms.HiddenInput(), required=False, initial=initial)
+
 
 class BayesianOptForm(forms.Form):
-    n_initial_points = forms.IntegerField(label="n start", initial=20)
+    n_initial_points = hidden(20) #forms.IntegerField(label="n start", initial=20)
     n_initial_points.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
 
-    n_calls = forms.IntegerField(label="n", initial=20)
+    n_calls = hidden(20) #forms.IntegerField(label="n", initial=20)
     n_calls.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
-    error_loss = forms.CharField(label='Loss', widget=forms.Select(choices=error_choices))
+    error_loss = hidden(error_choices[0][0]) #forms.CharField(label='Loss', widget=forms.Select(choices=error_choices))
 
 
 def bayesian_opt_param_forms_inputs(df):

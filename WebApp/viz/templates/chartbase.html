@@ -3,7 +3,15 @@
 
 <!-- base template with a chart container of a dataset-->
 {% block chartScript %}
-
+ <script src="{% static 'js/additionalSeriesManager.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/binarytransport/jquery.binarytransport.js' %}" type="text/javascript"></script>
+{#    <script src="{% static 'js/lib/highcharts/highstock.js' %}" type="text/javascript"></script>#}
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+{#    <script src="{% static 'js/custom/highchart   s.utils.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/custom/highcharts.line.view.init.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/custom/highcharts.actions.init.js' %}" type="text/javascript"></script>#}
 {% endblock %}
 
 
@@ -113,19 +121,18 @@
         </div>
     </div>
     </div>
-    <div class="row margin-top-20">
-      <div class="col-md-9" style="position:relative;">
-      <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
-                {% block graphbuttons2 %}
-                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>
-                {% endblock %}
-            </div>
-            <div id="highcharts_container" class="full-height"></div>
-        </div>
-    </div>
-
-
-    <div class=" col-lg-9 col-md-12 col-sm-12 col-xs-12">
+{#    <div class="row margin-top-20">#}
+{#      <div class="col-md-9" style="position:relative;">#}
+{#      <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">#}
+{#                {% block graphbuttons2 %}#}
+{#                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>#}
+{#                {% endblock %}#}
+{#            </div>#}
+{#            <div id="highcharts_container" class="full-height"></div>#}
+{#        </div>#}
+{#    </div>#}
+{% block belowchart %}
+{% endblock %}
     </div>
     <script>
         let datasetName = "{{ set_name }}";
@@ -133,13 +140,13 @@
         let data_url = '{% url "get_data" setname=setname  %}' + '?viz={{ viz|default_if_none:5 }}';
 
     </script>
-    <script src="{% static 'js/additionalSeriesManager.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/lib/binarytransport/jquery.binarytransport.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/lib/highcharts/highstock.js' %}" type="text/javascript"></script>
-
-    <script src="{% static 'js/custom/highcharts.utils.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/custom/highcharts.line.view.init.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/custom/highcharts.actions.init.js' %}" type="text/javascript"></script>
+{#    <script src="{% static 'js/additionalSeriesManager.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/lib/binarytransport/jquery.binarytransport.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/lib/highcharts/highstock.js' %}" type="text/javascript"></script>#}
+{##}
+{#    <script src="{% static 'js/custom/highcharts.utils.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/custom/highcharts.line.view.init.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/custom/highcharts.actions.init.js' %}" type="text/javascript"></script>#}
 
     {#    <script src="https://code.highcharts.com/highcharts.js"></script>#}
     {#    <script src="https://code.highcharts.com/modules/boost.js"></script>#}

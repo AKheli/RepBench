@@ -12,7 +12,7 @@
 </div>
 
 {% for alg,params in b_opt_param_forms.items %}
-    <form class="bayesian-opt-form" id='{{ alg }}'  onSubmit="return false" style="display:none;">
+    <form class="bayesian-opt-form" id='{{ alg }}' onSubmit="return false" style="display:none;">
         {% for param in params %}
             <label for="{{ param.param_name }}">{{ param.param_name }}</label>        <br>
             min:<input type="text" id="{{ param.param_name }}"
@@ -25,10 +25,12 @@
                        value="{{ param.max }}">
 
         {% endfor %}
+    HAAAAAALO
         <div>
             <input type="hidden" name="alg_type" value="{{ alg }}">
-
-            {{ bayesian_opt_form.as_p }}
+            {% for field in bayesian_opt_form %}
+                <input type="hidden" name={{ field.label }} value="{{ field }}">
+            {% endfor %}
         </div>
         <input type="submit" onclick="bayesian_opt_form('{{ alg }}')">
     </form>

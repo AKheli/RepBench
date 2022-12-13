@@ -34,8 +34,16 @@ class DatasetView(View):
         return DataContainer(path)
 
     def data_set_info_context(self, df, setname):
+        corr = df.corr().round(3)
         correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"],
                                                       table_id='correlation_table')
+
+        corr_data = []
+        for i,row in enumerate(corr.values):
+            for j,v in enumerate(row):
+                    corr_data.append([i, j, v])
+        columns = df.columns.tolist()
+
         context = {"correlation_html": correlation_html}
         info = datasetsConfig.data_sets_info[setname]
         path = info["path"]
@@ -43,6 +51,9 @@ class DatasetView(View):
         info["values"] = n * m
         info["ts_nbr"] = m
         context["data_info"] = info
+        context["columns"] = columns
+        context["corr_data"] = corr_data
+
         return context
 
     def data_set_default_context(self, request, setname=datasetsConfig.default_set):

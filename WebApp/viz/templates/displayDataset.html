@@ -6,23 +6,120 @@
     <h2>{{ data_info.name }}</h2>
     <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>
     <p>{{ data_info.description }}</p>
-        <p>Number of Values: {{ data_info.values }}</p>
-        <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
+    <p>Number of Values: {{ data_info.values }}</p>
+    <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
     {% include "sub/corr.html" %}
 
 {% endblock %}
 
 {% block belowchart %}
-     <div id="correlationMatrixFull" style="display:none;">
-
-        {#               <div style="position:absolute"> YOOO</div>#}
-        {#               <div style="position:static"> EYYYY</div>#}
-        {#                   <div style="position:inherit"> HHHHHHH</div>#}
-
-
+    <div id="correlationMatrixFull" style="display:none;">
         {{ correlation_html | safe }}
     </div>
+
     <script src='{% static "js/corr_table.js" %}'></script>
+    <div id="corr_container" style="height: 900px">
+        AAAAAAAAAAAAAAAAAA
+        <script>
+
+            categories = {{ columns | safe }};
+            var corr_data = {{ corr_data | safe }};
+
+            function getPointCategoryName(point, dimension) {
+                var series = point.series,
+                    isY = dimension === 'y',
+                    axis = series[isY ? 'yAxis' : 'xAxis'];
+                return axis.categories[point[isY ? 'y' : 'x']];
+            }
+
+            Highcharts.chart('corr_container', {
+
+                chart: {
+                    type: 'heatmap',
+                    marginTop: 40,
+                    marginBottom: 80,
+                    plotBorderWidth: 1
+                },
+
+
+                title: {
+                    text: 'Time Series Correlation'
+                },
+
+                xAxis: {
+                    categories: categories
+                },
+
+                yAxis: {
+                    categories: categories,
+                    title: null,
+                    reversed: true
+                },
+
+                accessibility: {
+                    point: {
+                        descriptionFormatter: function (point) {
+                            var ix = point.index + 1,
+                                xName = getPointCategoryName(point, 'x'),
+                                yName = getPointCategoryName(point, 'y'),
+                                val = point.value;
+                            return ix + '. ' + xName + ' sales ' + yName + ', ' + val + '.';
+                        }
+                    }
+                },
+
+                colorAxis: {
+                    min: 0,
+                    minColor: '#FFFFFF',
+                    maxColor: Highcharts.getOptions().colors[0]
+                },
+
+                legend: {
+                    align: 'right',
+                    layout: 'vertical',
+                    margin: 0,
+                    verticalAlign: 'top',
+                    y: 25,
+                    symbolHeight: 280
+                },
+
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + getPointCategoryName(this.point, 'x') + '</b> sold <br><b>' +
+                            this.point.value + '</b> items on <br><b>' + getPointCategoryName(this.point, 'y') + '</b>';
+                    }
+                },
+
+                series: [{
+                    name: 'Sales per employee',
+                    borderWidth: 1,
+                    data: corr_data,
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000'
+                    }
+                }],
+
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            yAxis: {
+                                labels: {
+                                    formatter: function () {
+                                        return this.value.charAt(0);
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+
+            });
+        </script>
+    </div>
 
 {% endblock %}
 
