@@ -2,7 +2,6 @@
       onchange="return false"
       onsubmit="return false" {% if style %} style='{{ style }}'{% endif %}>
     {% csrf_token %}
-{#    <div style="max-height: 510px; overflow-y: auto;">#}
         {% for field in form.visible_fields %}
             <div class="form-group {{ style.class }}">
             {% if field.field.widget.input_type != 'checkbox' %}

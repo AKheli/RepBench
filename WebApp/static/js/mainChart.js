@@ -93,19 +93,13 @@ let splitMainChart = function () {
 }
 
 
-const initMainChart = function (series = {}) {
-    mainChart = Highcharts.chart(document.getElementById('highcharts_container'), {
-        // dataGrouping: {
-        //     enabled: false
-        // },
-
+const initMainChart = function (series  = {} , container = 'highcharts_container') {
+    mainChart = Highcharts.chart(document.getElementById(container), {
         legend: {
             enabled: true,
 
             align: 'right',
             verticalAlign: 'top',
-            // floating: true,
-            // x: 0,
             y: 30
         },
         tooltip: tooltip,
@@ -171,14 +165,12 @@ const initMainChart = function (series = {}) {
             inputEnabled: false,
             inputDateFormat: '%y',
             inputEditDateFormat: '%y',
-
             buttons: [{
                 type: 'millisecond',
                 count: 50,
                 text: '50'
             },
                 {
-
                     type: 'millisecond',
                     count: 1000,
                     text: '1000'
@@ -201,7 +193,6 @@ const initMainChart = function (series = {}) {
         {
             color: 'black',
             width: 2,
-            // style: "dash",
             value: threshold,
             yAxis: 2,
             label: {
@@ -223,6 +214,10 @@ fetch(data_url, {
 }).then(response => response.json())
     .then(data => {
         data.series.forEach(x => addOriginalSeries(x))
+        console.log(data.injected)
+        if(data.injected){
+            data.injected.forEach(x => addInjectedSeries(x))
+        }
         resetSeries()
     }).catch(error => console.error(error))
 

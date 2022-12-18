@@ -25,3 +25,14 @@ class InjectionForm(forms.Form):
         self.fields["data_set"] = forms.CharField(widget=forms.HiddenInput(), required=False, initial=ts_name)
         self.fields["seed"] = forms.IntegerField(label='seed', required=False, widget=forms.NumberInput(
             attrs={'title': 'Enter numbers Only '}))
+
+class store_injection_form(forms.Form):
+    title = forms.CharField(label='Title', max_length=100)
+    description = forms.CharField(label='Description', max_length=1000, required=False
+                                  , widget=forms.Textarea())
+
+    class Meta:
+        fields = ['title', 'body']
+        widgets = {
+            'body': forms.Textarea(attrs={'cols': 4, 'rows': 2})
+        }

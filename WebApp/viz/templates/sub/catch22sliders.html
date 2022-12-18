@@ -1,0 +1,27 @@
+{% load static %}
+<link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
+<script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>
+<script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
+    {% for ts,features in catch22.items %}
+        {% with outer_counter=forloop.counter %}
+            {% for name,value in features.items %}
+                <div id="roundslider_{{ outer_counter }}_{{ name }}" class="roundslider normal"
+                     title="{{ name }} {{ value.value }}"></div>
+            {% endfor %}
+        {% endwith %}
+    {% endfor %}
+    <script>
+        RoundSliders.init(10)
+        let round_id = null
+    </script>
+
+    {% for ts,features in catch22.items %}
+        {% with outer_counter=forloop.counter %}
+            {% for name,value in features.items %}
+                <script>
+                    round_id = "#roundslider_{{ outer_counter }}_{{name}}"
+                    RoundSliders.updateValue(round_id, {{ value.value }}, {{ value.min }}, {{ value.max }})
+                </script>
+            {% endfor %}
+        {% endwith %}
+    {% endfor %}

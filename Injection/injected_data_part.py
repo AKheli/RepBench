@@ -7,8 +7,8 @@ import pandas as pd
 
 
 class InjectedDataContainer:
-    def __init__(self, injected ,truth, *,class_df , labels , name):
-        self.truth_ = truth  #contains the Original Series
+    def __init__(self, injected, truth, *, class_df, labels, name):
+        self.truth_ = truth  # contains the Original Series
         self.injected_ = injected
         self._labels_ = labels
         self.repairs = {}
@@ -20,18 +20,16 @@ class InjectedDataContainer:
         if class_df is None:
             class_df = pd.DataFrame(np.invert(np.isclose(injected, truth))).reindex_like(truth)
         self.class_df = class_df
-        self.injected_columns = [i for i,v in enumerate(class_df.any(axis=0).values) if v]
+        self.injected_columns = [i for i, v in enumerate(class_df.any(axis=0).values) if v]
         assert injected.shape == truth.shape
         self.check_original_rmse()
-
 
         self.check()
 
     def check(self):
-        index_check(self.klass,self.injected,self.truth,self._labels_)
-        anomaly_check(self.klass,self.injected,self.truth)
-        anomaly_label_check(class_df=self.class_df,label_df=self._labels_)
-
+        index_check(self.klass, self.injected, self.truth, self._labels_)
+        anomaly_check(self.klass, self.injected, self.truth)
+        anomaly_label_check(class_df=self.class_df, label_df=self._labels_)
 
     def __repr__(self):
         return f"{self.name}"
@@ -40,10 +38,31 @@ class InjectedDataContainer:
     def truth(self):
         return self.truth_.copy()
 
-
     @property
     def injected(self):
         return self.injected_.copy()
+
+    def get_none_filled_injected(self):
+        injected = self.injected.copy()
+        for col in self.injected.columns:
+            # convolve over class df setting each entry next to a true entry to true
+            class_col = self.class_df[col].values
+            class_col = np.convolve(class_col, [1, 1, 1], mode="same") > 0
+            injected.loc[~class_col, col] = np.nan
+        return injected
+
+    def get_anomaly_info(self):
+        import functools
+        #get number of preceding 1 per col
+        for col in self.class_df:
+            last = False
+            class_col = self.class_df[col].values
+            for v in class_col:
+
+                last = v
+
+
+
 
     @property
     def klass(self):
@@ -56,7 +75,7 @@ class InjectedDataContainer:
 
     @property
     def labels_rate(self):
-        return self._labels_.iloc[:,self.injected_columns].mean().mean()
+        return self._labels_.iloc[:, self.injected_columns].mean().mean()
 
     @property
     def repair_inputs(self):
@@ -69,23 +88,24 @@ class InjectedDataContainer:
 
     @property
     def a_perc(self):
-        return np.mean(self.klass.iloc[:,self.injected_columns].values)
+        return np.mean(self.klass.iloc[:, self.injected_columns].values)
 
-    def add_repair(self, repair_results, repair_type, repair_name = None):
+    def add_repair(self, repair_results, repair_type, repair_name=None):
         self.check()
         repair_name = repair_type if repair_name is None else repair_name
         self.repair_names.append(repair_name)
-        assert repair_name not in self.repairs , f" {repair_name} already in {self.repairs.keys()}"
+        assert repair_name not in self.repairs, f" {repair_name} already in {self.repairs.keys()}"
         f"such a repair already exists:{repair_name}"
 
         repair = repair_results["repair"]
-        assert repair.shape == self.labels.shape , (repair_name,repair.shape , self.labels.shape ,self.truth.shape, self.injected.shape)
+        assert repair.shape == self.labels.shape, (
+        repair_name, repair.shape, self.labels.shape, self.truth.shape, self.injected.shape)
 
         repair_dict = {
             "repair": repair_results["repair"],
             "name": repair_name,
-            "type" : repair_type,
-            "parameters" : repair_results["params"]
+            "type": repair_type,
+            "parameters": repair_results["params"]
         }
 
         self.repairs[repair_name] = repair_dict
@@ -94,7 +114,7 @@ class InjectedDataContainer:
         repair_metrics["runtime"] = repair_results["runtime"]
         self.repair_metrics[(repair_name, repair_type)] = repair_metrics
 
-    def check_original_rmse(self,check_labels = True):
+    def check_original_rmse(self, check_labels=True):
         assert np.any(self.klass.values)
         weights = np.zeros_like(self.injected.values)
         weights[self.klass] = 1
@@ -103,8 +123,6 @@ class InjectedDataContainer:
         weights = weights.flatten()
         assert np.any(weights)
 
-
-
     def hash(self, additional_input=""):
         m = hashlib.md5(self.injected.values.flatten())
         m.update(self.labels.values.flatten())
@@ -112,11 +130,11 @@ class InjectedDataContainer:
         result = m.hexdigest()
         return result
 
-
     @property
     def original_scores(self):
         from algorithms.estimator import Estimator
-        return Estimator().scores(self.injected,self.truth,self.injected_columns,self.labels,predicted=self.injected)
+        return Estimator().scores(self.injected, self.truth, self.injected_columns, self.labels,
+                                  predicted=self.injected)
 
     def get_truth_correlation(self):
         return self.truth.corr()
@@ -126,7 +144,33 @@ class InjectedDataContainer:
 
     def randomize_labels(self):
         self.check()
-        self.relabeled +=1
+        self.relabeled += 1
         self._labels_ = generate_df_labels(self.class_, seed=self.relabeled)
         self.check()
 
+    # dump to json
+    def to_json(self):
+        import json
+        result = {
+            "name": self.name,
+            "truth": self.truth.to_json(),
+            "injected": self.injected.to_json(),
+            "labels": self.labels.to_json(),
+            "class_df": self.class_df.to_json(),
+            "repairs": {k: v.to_json() for k, v in self.repairs.items()},
+            "repair_metrics": self.repair_metrics,
+            "repair_names": self.repair_names,
+        }
+        return json.dumps(result)
+
+    @staticmethod
+    def from_json(json_string):
+        import json
+        result = json.loads(json_string)
+        return InjectedDataContainer(
+            injected=pd.read_json(result["injected"]),
+            truth=pd.read_json(result["truth"]),
+            labels=pd.read_json(result["labels"]),
+            class_df=pd.read_json(result["class_df"]),
+            name=result["name"],
+        )

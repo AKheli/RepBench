@@ -65,14 +65,17 @@ def read_data(data_name, folder):
 
 class DataContainer():
     def __init__(self, file_name, type="train", max_n_rows=None, max_n_cols=None):
-        assert type in ["train", "test", "opt"]
-        print(file_name)
-        if len(file_name.split("/")) > 1:
-            *folders, file_name = file_name.split("/")
-            type = "/".join(folders) + "/"
-            print(file_name, type)
 
-        data_df = read_data(file_name, folder="data/" + type)
+        if isinstance(file_name, pd.DataFrame):
+            data_df = file_name
+        else:
+            assert type in ["train", "test", "opt"]
+            print(file_name)
+            if len(file_name.split("/")) > 1:
+                *folders, file_name = file_name.split("/")
+                type = "/".join(folders) + "/"
+                print(file_name, type)
+            data_df = read_data(file_name, folder="data/" + type)
 
         n, m = data_df.shape
         if max_n_rows is None: max_n_rows = n
