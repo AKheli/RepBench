@@ -13,25 +13,29 @@ data_sets_info = {
         "path": "train/humidity.csv",
         "ref_url": "https://www.meteoswiss.admin.ch/",
         "url_text" : "MeteoSwiss",
+        "description": "Humidity in different cities",
 
     },
     "SMD": {
         "title": "Server Machine Dataset",
         "path": "train/smd1_5.csv",
         "ref_url": "https://github.com/NetManAIOps/OmniAnomaly",
-        "url_text": "Omni Anomaly"
-    },
+        "url_text": "Omni Anomaly",
+         "description": "Measurement of different metrics like  the CPU and memory usage of a server machine",
+
+},
     "Electricity": {
         "title": "Electricity",
         "path": "train/elec.csv",
         "ref_url": "https://archive.ics.uci.edu/ml/datasets/ElectricityLoadDiagrams20112014",
-        "url_text": "UCI Machine Learning Repository"
+        "url_text": "UCI Machine Learning Repository",
     },
 
     "Tiny": {
         "title": "Tiny",
         "path": "train/tiny.csv",
         "ref_url": "-",
-        "url_text": ""
+        "url_text": "",
+        "description": "test data",
     },
 }

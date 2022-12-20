@@ -22,6 +22,7 @@ urlpatterns = [
          name='synthetic_dataset_view'),
 
     path('repairDatasets', repair_view.RepairView.repair_datasets, name='repair_datasets'),
+    path('repairDataset/<str:type>', repair_view.RepairView.repair_datasets, name='repair_datasets'),
 
     ## repair view
     path('repair', repair_view.RepairView.as_view(), name='repair'),

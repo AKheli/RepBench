@@ -1,108 +1,65 @@
-{#<!-- dropt down button that toggles form and hides all others -->#}
-{##}
-{##}
-{#<label for="alg_selection"></label>#}
-{#    <select name="alg_selection" class="switchButton alg-select" onchange="showForm(value)">#}
-{#        {% for key, _ in b_opt_param_forms.items %}#}
-{#            <option value={{ key }}> <h1>{{ key }}</h1></option>#}
-{#        {% endfor %}#}
-{#    </select>#}
-{##}
-{#{% for alg,params in b_opt_param_forms.items %}#}
-{#    <div class="b-opt-form" id='{{ alg }}' style="display:none;">#}
-{#        <form class="kt-form" id='{{ alg }}form' onSubmit="return false">#}
-{#            <table class="django-table">#}
-{##}
-{#                {% for param in params %}#}
-{#                    <tr>#}
-{#                        <td colspan="2" style="text-align:left;"><label for="{{ param.param_name }}">{{ param.param_name }}</label></td>#}
-{#                        <tr>#}
-{##}
-{#                          <td style="text-align:right">#}
-{#                              <input type="text" id="{{ param.param_name }}"#}
-{#                                       size="4" name="{{ param.param_name }}-min"#}
-{#                                       pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"#}
-{#                                       value={{ param.min }}>#}
-{#                        </td>#}
-{#                        <td style="text-align:left">#}
-{#                            <input type="text" id="{{ param.param_name }}"#}
-{#                                       size="4" name="{{ param.param_name }}-max"#}
-{#                                       pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"#}
-{#                                   value="{{ param.max }}">#}
-{#                        </td>#}
-{#                    </tr>#}
-{##}
-{#                {% endfor %}#}
-{#            </table>#}
-{##}
-{#            <div>#}
-{#                <input type="hidden" name="alg_type" value="{{ alg }}">#}
-{#                {{ bayesian_opt_form }}#}
-{#            </div>#}
-{#            <input type="submit" onclick="optimizeCurrentData('{{ alg }}form')">#}
-{#        </form>#}
-{#    </div>#}
-{#{% endfor %}#}
-{##}
-{#<script>#}
-{#    let showForm = (id) => {#}
-{#        let forms = document.getElementsByClassName("b-opt-form");#}
-{#        for (let i = 0; i < forms.length; i++) {#}
-{#            forms[i].style.display = "none";#}
-{#        }#}
-{#        document.getElementById(id).style.display = "block";#}
-{#    }#}
-{#</script>#}
-
 <div class="kt-portlet__body">
     <div class="form-group ">
         <label>Algorithm<a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
                            data-trigger="focus"
-                           data-content="Select the algorithm you want to use for detection. The possibilities depend on whether training data and spatial data are available or not."
+                           data-content="Select the algorithm you to optimize on."
                            data-original-title="" title=""><i
                 class="mdi mdi-information-outline mdi-18px"></i></a></label>
-        <select class="form-control custom-select " name="algorithm" onchange="displayfuncOpt(value)">
+        <select class="form-control custom-select " id="optFormAlgSelect" name="algorithm" onchange="displayfuncOpt(value)">
             <option value="" selected="">----</option>
             {% for key, _ in b_opt_param_forms.items %}
                 <option value={{ key }}> {{ key }}</option>
             {% endfor %}
         </select>
-        {% for alg,params in b_opt_param_forms.items %}
-            <form class="kt-form" enctype="multipart/form-data" id='{{ alg }}'
-                  onchange="return false"
-                  onsubmit="return false" style="display:none;">
-                {% for param in params %}
-                    <div class="kt-portlet__body{% if class %} {{ class }}{% endif %}">
+        {% include "sub/accordion/accordionBefore.html"  with button_text="Show Parameter Space" c="One" %}
+        <div>
+            {% for alg,params in b_opt_param_forms.items %}
+                <form class="kt-form" enctype="multipart/form-data" id='{{ alg }}'
+                      onchange="return false"
+                      onsubmit="return false" style="display:none;">
+                    {% for param in params %}
+                        <div class="kt-portlet__body{% if class %} {{ class }}{% endif %}">
 
-                        <label for="{{ param.param_name }}">{{ param.param_name }}</label></th>
-                        <table class="table kt-visible-tablet-inline-block}">
-                            <tr>
-                                <td>min</td>
-                                <td>max</td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" id="{{ param.param_name }}"
-                                           size=3 name="{{ param.param_name }}-min"
-                                           pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
-                                           value={{ param.min }}
-                                                   class="form-control"></td>
-                                <td><input type="text" id="{{ param.param_name }}"
-                                           size="3" name="{{ param.param_name }}-max"
-                                           pattern="[+-]?([0-9]*[.])?[0-9]+" title="Must be a float value"
-                                           value="{{ param.max }}"
-                                           class="form-control"></td>
-                            </tr>
-                        </table>
-                    </div>
-                {% endfor %}
-                <input type="hidden" name="alg_type" value="{{ alg }}">
+                            <label for="{{ param.param_name }}">{{ param.param_name }}</label></th>
+                            <table class="table kt-visible-tablet-inline-block}">
+                                <tr>
+                                    <td>min</td>
+                                    <td>max</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" id="{{ param.param_name }}"
+                                               size=3 name="{{ param.param_name }}-min"
+                                               pattern="[+-]?([0-9]*[.])?[0-9]+"
+                                               title="Must be a float value"
+                                               value={{ param.min }}
+                                                       class="form-control"></td>
+                                    <td><input type="text" id="{{ param.param_name }}"
+                                               size="3" name="{{ param.param_name }}-max"
+                                               pattern="[+-]?([0-9]*[.])?[0-9]+"
+                                               title="Must be a float value"
+                                               value="{{ param.max }}"
+                                               class="form-control"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
 
-                {% include 'sub/form.html' with form=bayesian_opt_form form_id=alg style="display:none;" onclick="optimizeCurrentData('"|add:alg|add:"')" %}
-            </form>
+                    <input type="hidden" name="alg_type" value="{{ alg }}">
+                </form>
+            {% endfor %}
 
-        {% endfor %}
+        </div>
+
+
     </div>
+    {% include "sub/accordion/accordionBefore.html"  with button_text="Show Bayesian Opt Parameters" c="Two" %}
+    <form class="form" id="bayesian_opt_form_params">
+        {{ bayesian_opt_form.as_p }}
+    </form>
+    <input type="submit" onclick="optimizeCurrentData('{{ alg }}form')">
+
 </div>
+
 <script>
     let lastkeyopt = null
     let displayfuncOpt = function (key) {

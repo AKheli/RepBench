@@ -1,7 +1,8 @@
+import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
-
 from WebApp.viz.models import InjectedContainer
+from algorithms.estimator import Estimator
 from testing_frame_work.repair import AnomalyRepairer
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from WebApp.viz.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
@@ -39,7 +40,6 @@ class RepairView(DatasetView):
 
         return render(request, self.template, context=context)
 
-
     @staticmethod
     def repair_data(request, setname):
         post = request.POST.dict()
@@ -56,25 +56,41 @@ class RepairView(DatasetView):
         repairer = AnomalyRepairer(1, 1)
         repair_retval = repairer.repair_data_part(alg_type, injected_data_container, params)
         repair = repair_retval["repair"]
-        scores = repair_retval["scores"]
+        repair_scores = repair_retval["scores"]
+        print("repair_scores", repair_scores)
+        print("Estimatorscores",Estimator().scores(injected_data_container.injected, df_original, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
+        print("truth scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
 
-        data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in scores.items() if
-                         k in RepairView.error_map.keys()]}
-        metrics = list(scores.keys())
+        print(np.count_nonzero(np.isclose(injected_data_container.injected, injected_data_container.truth)))
+        print(np.count_nonzero(np.isclose(injected_data_container.injected,repair)))
+        print(np.count_nonzero(np.isclose(injected_data_container.truth,repair)))
+        print("injected scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=injected_data_container.injected))
+        print("repair scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
+
+        score_data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in repair_scores.items() if
+                               k in RepairView.error_map.keys()]}
+
+        metrics = list(repair_scores.keys())
         alg_name = f"{alg_type}{tuple((v for v in params.values()))}"
-        scores = {"name": alg_name, "colorByPoint": "true", "data": data}
+        scores = {"name": alg_name, "colorByPoint": "true", "score_data": score_data}
 
         links = {inj_object["linkedTo"]: inj_object["id"] for inj_object in injected_series}
         repaired_series = map_repair_data(repair, injected_data_container, alg_name, links, df_original)
         output = {"repaired_series": repaired_series, "scores": scores, "metrics": metrics}
 
-        context = {"metrics": output["metrics"]}
-        output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
+        score_context = {
+            "metrics": output["metrics"],
+            "original_scores": injected_data_container.original_scores,
+            "alg_name": alg_name
+        }
+        score_context.update(repair_scores)
+        output["scores"] = score_context
         return JsonResponse(output)
 
-    def repair_datasets(request=None):
+    def repair_datasets(request=None, type="repair"):
         context = {}
         context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
                                         for dataSet in InjectedContainer.objects.all() if
                                         dataSet.title is not None and dataSet.title != ""}
+        context["type"] = type
         return render(request, 'repairDatasets.html', context=context)

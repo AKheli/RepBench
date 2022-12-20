@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
     <!-- import style sheet -->
     <link rel="stylesheet" href="{% static 'css/revival/datasets.css' %}">
-
     <div class="container" style="padding-top: 50px">
      <h2>Synthetic Datasets</h2>
         <table class="table">
@@ -23,12 +21,9 @@
                 <td><a href="{% url 'synthetic_dataset_view' setname=name %}">{{ attr.title }}</a>
                 <td style="text-align: right">{{ attr.ts_nbr }}</td>
                 <td style="text-align: right">{{ attr.values }}</td>
-
-                <td style="text-align: right"><a href="{% url 'repair' setname=attr.title  %}">Repair</a></td>
+                <td style="text-align: right"><a href="{% url type setname=attr.title  %}">Repair</a></td>
             </tr>
         {% endfor %}
-
-
             </tbody>
         </table>
     </div>

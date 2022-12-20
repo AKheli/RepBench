@@ -16,9 +16,7 @@ def create_injected_container(injected_df, truth_df):
 
     label_df: pd.DataFrame = generate_df_labels(class_df)
 
-    # plt.plot(injected_df.iloc[:,cols_to_inject])
-    # plt.show()
-    ##todo remove this once tested
+
     assert class_df.index.equals(truth_df.index)
     assert label_df.index.equals(truth_df.index)
 

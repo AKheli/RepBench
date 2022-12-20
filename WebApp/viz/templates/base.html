@@ -8,7 +8,20 @@
 
 
     {% block css %}
-{#        <link href="{% static 'css/lib/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" type="text/css"/>#}
+        <style>  .full-height {
+            height: 90vh;
+        }
+
+        .margin-top-20 {
+            margin-top: 55px;
+            left: 0;
+            padding-right: 15px !important;
+            padding-left: 15px !important;
+            margin-right: auto !important;
+            margin-left: auto !important;
+        }
+        </style>
+        {#        <link href="{% static 'css/lib/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" type="text/css"/>#}
         {#        <!-- end: Global Styles Plugins -->#}
         {#        <!-- begin:Global Styles -->#}
         <link href="{% static 'css/fonts/materialdesignicons/materialdesignicons.min.css' %}" rel="stylesheet"
@@ -89,23 +102,26 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">
-                        Repair<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'repair_datasets' %}">Repair Anomalies</a></li>
-                        <li><a href="{% url 'dimensionality_reduction' %}">Dimensionality Reduction Viz</a></li>
-
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
                         Display<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'display_datasets' %}">Datasets</a></li>
                     </ul>
                 </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Repair<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'repair_datasets' %}">Repair Anomalies</a></li>
+                        <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Dimensionality
+                            Reduction Viz</a></li>
+
+                    </ul>
+                </li>
+
 
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'opt' %}">
@@ -219,8 +235,17 @@
         });
     </script>
 
-
-
+    <script>
+        // handle on or multiple classes
+        document.querySelectorAll('.move-after-accordion').forEach(function (el) {
+            console.log(el)
+            // get child with id move-in
+            var moveIn = el.querySelector('#move-in');
+            var nextElement = el.nextElementSibling;
+            // move nextElement into moveIn
+            moveIn.appendChild(nextElement);
+        });
+    </script>
     {% block additional_bottom_js %}
     {% endblock %}
 </div>

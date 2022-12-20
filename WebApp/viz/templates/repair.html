@@ -25,6 +25,8 @@
                 {% endblock %}
             </div>
             {% include 'sub/MainChart.html' %}
+      {% include 'sub/scoreBoard.html' %}
+
         </div>
         <div id="chart-right" class="col-md-3">
             {% block first_form %}
@@ -38,6 +40,10 @@
         let store_url = "{% url 'store_data' setname=setname %}"
     </script>
     <script src="{% static 'js/repair.js' %}" type="text/javascript"></script>
-    <script src="{% static  'js/scoreboard.js' %} " type="text/javascript"></script>
+
+{#          {% include 'sub/scoreBoard.html' %}#}
+
+
 
 {% endblock %}
+

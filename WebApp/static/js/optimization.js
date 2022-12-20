@@ -1,6 +1,15 @@
 let createBayesianOptFormData = function (form_id) {
-    let form = document.getElementById(form_id)
-    const bayesienOptFormData = new FormData(form)
+    var e = document.getElementById("optFormAlgSelect");
+    var algorithm = e.value;
+    console.log(algorithm)
+    let form = document.getElementById(algorithm)
+    let formData = new FormData(form)
+    let form_b_opt = document.getElementById("bayesian_opt_form_params")
+    const bayesienOptFormData = new FormData(form_b_opt)
+
+    for (var pair of formData.entries()) {
+        bayesienOptFormData.append(pair[0], pair[1]);
+    }
     bayesienOptFormData.append('csrfmiddlewaretoken', csrftoken)
     bayesienOptFormData.append("injected_series", JSON.stringify(get_injected_norm_data()))
     return bayesienOptFormData
@@ -67,7 +76,6 @@ let fetch_loop = function (n_initial_points, job_id) {
             }
 
         })
-
 
 
 }

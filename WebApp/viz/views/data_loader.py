@@ -14,7 +14,7 @@ def load_data_container(setname,viz=4):
         injected_data_container: InjectedDataContainer = InjectedContainer.objects.get(title=setname).injected_container
     except InjectedContainer.DoesNotExist:
         raise ValueError(f"No dataset with name: {setname} found {InjectedContainer.objects.all()}")
-    return DataContainer(injected_data_container.injected)
+    return DataContainer(injected_data_container.truth)
 
 
 def get_data(request, setname,viz=4):

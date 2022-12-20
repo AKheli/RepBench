@@ -5,12 +5,13 @@ const reducedSeries = []
 
 let normalized = true
 
+
 const addSeries = function (series) {
     let ser = {
         series: series,
         chartSeries: null,
-        originalData: series.data.map(s=>s),
-        normData: series.norm_data.map(s=>s)
+        originalData: series.data.map(s => s),
+        normData: series.norm_data.map(s => s)
     }
     return ser
 }
@@ -84,8 +85,19 @@ const clearAllSeries = function () {
 
 }
 
-const resetSeries = function () {
+const resetSeries = function (showOnlyInjected = false) {
+
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
+
+    if (showOnlyInjected) {
+        const repairLinks = injectedSeries.map(s => {
+            return s.series.linkedTo
+        })
+        originalSeries.forEach(o => {
+            o.series.visible = repairLinks.includes(o.series.id)
+        })
+    }
+
     allSeries.forEach(s => {
         s.series.data = normalized ? [...s.normData] : [...s.originalData]
     })
@@ -98,10 +110,10 @@ const resetSeries = function () {
 
 let injectedString = null
 const stringifyInjectedSeries = function () {
-     injectedSeries.forEach(s => {
-         console.log(s.originalData)
-            s.series.data = s.originalData
-     })
+    injectedSeries.forEach(s => {
+        console.log(s.originalData)
+        s.series.data = s.originalData
+    })
     injectedString = JSON.stringify(injectedSeries.map(s => s.series))
 }
 
