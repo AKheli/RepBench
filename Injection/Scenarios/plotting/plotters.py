@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from algorithms import algorithms_config as ac
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 
 
 def plot_data_part(data_part : InjectedDataContainer, path , file_name):

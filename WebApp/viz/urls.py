@@ -21,6 +21,7 @@ urlpatterns = [
     path('display_dataset_synthetic/<str:setname>', synthetic_dataset_view.SyntheticDatasetView.as_view(),
          name='synthetic_dataset_view'),
 
+    path('repairDatasets', repair_view.RepairView.repair_datasets, name='repair_datasets'),
 
     ## repair view
     path('repair', repair_view.RepairView.as_view(), name='repair'),

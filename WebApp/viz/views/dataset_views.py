@@ -90,7 +90,8 @@ class DatasetView(View):
     def get(self, request, setname=datasetsConfig.default_set):
         context, df = self.data_set_default_context(request, setname)
         context.update(self.data_set_info_context(setname))
-        print(context)
+        print("AAAAAAAAAAAAAAAAAAAAAAAA")
+        print(self.data_set_info_context(setname))
         return render(request, self.template, context=context)
 
 

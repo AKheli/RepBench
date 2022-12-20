@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import json
 
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from algorithms.Dimensionality_Reduction.dimensionality_Reduction_estimator import DimensionalityReductionEstimator
 from testing_frame_work.repair import AnomalyRepairer
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series

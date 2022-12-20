@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib.ticker import MaxNLocator
 import Injection.injection_config as ac
 from Injection.Scenarios.plotting.plotters import plot_data_part
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from algorithms.algorithms_config import ALGORITHM_COLORS
 import matplotlib.pyplot as plt
 

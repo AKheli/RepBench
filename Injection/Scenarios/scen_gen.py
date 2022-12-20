@@ -3,7 +3,7 @@ from pandas import DataFrame
 import pandas as pd
 
 from Injection.Scenarios.scenario import Scenario
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 import Injection.injection_config as ic
 from Injection.injection_methods.injection import inject_data_df
 from Injection.label_generator import generate_df_labels

@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 
 from Injection.Scenarios.scen_gen import build_scenario
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from algorithms.IMR.IMR_estimator import IMR_estimator
 import matplotlib
 

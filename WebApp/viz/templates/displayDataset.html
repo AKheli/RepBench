@@ -15,6 +15,15 @@
         margin-right: auto !important;
         margin-left: auto !important;
     }
+
+    .margin-bot-20 {
+        margin-bottom: 55px;
+        left: 0;
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+    }
     </style>
 
     <div class="row margin-top-20">
@@ -27,195 +36,148 @@
             {% include 'sub/MainChart.html' %}
         </div>
         <div id="chart-right" class="col-md-3">
-            {% block first_form %}
+            {% block datasetInfo %}
                 <h2>{{ data_info.name }}</h2>
                 <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>
                 <p>{{ data_info.description }}</p>
                 <p>Number of Values: {{ data_info.values }}</p>
                 <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
                 {#    {% include "sub/corr.html" %}#}
+
+
             {% endblock %}
+            <div id="corr_container" style="max-height: 600px;"></div>
+
         </div>
     </div>
-    {%  include "sub/catch22sliders.html" %}
+    <div class="row margin-top-20 margin-bot-20 ">
+        <div class="col-md-9" style="position:relative;">
+            {% include "sub/catch22sliders.html" %}
+        </div>
 
-    {#     {% for ts_features in catch22 %}#}
-    {#        {% with outer_counter=forloop.counter %}#}
-    {#            {% for feature in ts_features %}#}
-    {#                <div id="roundslider_{{ outer_counter }}_{{ feature }}" class="roundslider normal" title="NMI"></div>#}
-    {#                </div>#}
-    {#                <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">#}
-    {#                    <div id="roundslider_rmse" class="roundslider inverse" title="RMSE"></div>#}
-    {#                </div>#}
-    {#            {% endfor %}#}
-    {#        {% endwith %}#}
-    {#    {% endfor %}#}
-
-
-    {#    <div id="roundslider_nmi" class="roundslider normal rs-ie rs-control rs-animation" title="NMI"#}
-    {#         style="height: 100px; width: 100px;">#}
-    {#        <div class="rs-container full pie rs-disabled rs-readonly" style="height: 100px; width: 100px;">#}
-    {#            <div class="rs-inner-container">#}
-    {#                <div class="rs-block rs-outer rs-border rs-split" style="border-color: rgb(255, 0, 0);">#}
-    {#                    <div class="rs-path rs-transition rs-range-color"#}
-    {#                         style="transform: rotate(315deg); background: rgb(255, 0, 0);"></div>#}
-    {#                    <div class="rs-path rs-transition rs-range-color"#}
-    {#                         style="opacity: 0; transform: rotate(136.35deg); background: rgb(255, 0, 0);"></div>#}
-    {#                    <div class="rs-path rs-transition rs-path-color"#}
-    {#                         style="transform: rotate(316.35deg); opacity: 1;"></div>#}
-    {#                    <div class="rs-path rs-transition rs-path-color"#}
-    {#                         style="opacity: 1; z-index: 1; transform: rotate(135deg);"></div>#}
-    {#                    <span class="rs-block" style="padding: 6px;"><div class="rs-inner rs-bg-color rs-border"#}
-    {#                                                                      style="border-color: rgb(255, 0, 0);"></div></span>#}
-    {#                </div>#}
-    {#            </div>#}
-    {#            <div class="rs-bar rs-transition rs-first" style="z-index: 7; transform: rotate(316.35deg);">#}
-    {#                <div class="rs-handle rs-move rs-handle-square" index="2" tabindex="0" role="slider"#}
-    {#                     aria-label="roundslider_nmi_handle" style="height: 0px; width: 0px; margin: 0px 0px 0px 4px;"#}
-    {#                     aria-valuenow="0.005" aria-valuemin="0" aria-valuemax="1"></div>#}
-    {#            </div>#}
-    {#            <span class="rs-bar rs-transition rs-start" style="transform: rotate(315deg);"><span#}
-    {#                    class="rs-seperator rs-border"#}
-    {#                    style="width: 8px; margin-top: -0.5px; border-color: rgb(255, 0, 0);"></span></span><span#}
-    {#                class="rs-bar rs-transition rs-end" style="transform: rotate(585deg);"><span#}
-    {#                class="rs-seperator rs-border"#}
-    {#                style="width: 8px; margin-top: -0.5px; border-color: rgb(255, 0, 0);"></span></span>#}
-    {#            <div class="rs-overlay rs-transition rs-bg-color" style="transform: rotate(585deg);"></div>#}
-    {#            <span class="rs-tooltip rs-tooltip-text" style="margin-top: -10.75px; margin-left: -17.2735px;">0.005</span>#}
-    {#        </div>#}
-    {#        <input type="hidden" name="roundslider_nmi" value="0.005">#}
-    {#        <div class="rs-title" style="position:absolute; bottom:0; width: 100%; text-align:center;"><strong>NMI</strong>#}
-    {#        </div>#}
     </div>
 
-    {#    <div id="correlationMatrixFull" style="display:none; height: 800px">#}
-    {#        {{ correlation_html | safe }}#}
-    {#    </div>#}
 
-    {#    <script src='{% static "js/corr_table.js" %}'></script>#}
-    {#    <div id="corr_container" style="height: 600px ">#}
-    {#        <script>#}
-    {##}
-    {#            categories = {{ columns | safe }};#}
-    {#            var corr_data = {{ corr_data | safe }};#}
-    {##}
-    {#            function getPointCategoryName(point, dimension) {#}
-    {#                var series = point.series,#}
-    {#                    isY = dimension === 'y',#}
-    {#                    axis = series[isY ? 'yAxis' : 'xAxis'];#}
-    {#                return axis.categories[point[isY ? 'y' : 'x']];#}
-    {#            }#}
-    {##}
-    {#            Highcharts.chart('corr_container', {#}
-    {##}
-    {#                chart: {#}
-    {#                    type: 'heatmap',#}
-    {#                    marginTop: 40,#}
-    {#                    marginBottom: 80,#}
-    {#                    plotBorderWidth: 1#}
-    {#                },#}
-    {##}
-    {##}
-    {#                title: {#}
-    {#                    text: 'Time Series Correlation'#}
-    {#                },#}
-    {##}
-    {#                xAxis: {#}
-    {#                    categories: categories#}
-    {#                },#}
-    {##}
-    {#                yAxis: {#}
-    {#                    categories: categories,#}
-    {#                    title: null,#}
-    {#                    reversed: true#}
-    {#                },#}
-    {##}
-    {#                accessibility: {#}
-    {#                    point: {#}
-    {#                        descriptionFormatter: function (point) {#}
-    {#                            var ix = point.index + 1,#}
-    {#                                xName = getPointCategoryName(point, 'x'),#}
-    {#                                yName = getPointCategoryName(point, 'y'),#}
-    {#                                val = point.value;#}
-    {#                            return 'Corr between' + xName + 'and' + yName + ':' + val;#}
-    {#                        }#}
-    {#                    }#}
-    {#                },#}
-    {##}
-    {#                colorAxis: {#}
-    {#                    stops: [#}
-    {#                        [0,  Highcharts.getOptions().colors[1]],#}
-    {#                        [0.5, '#FFFFFF'],#}
-    {#                        [1,  Highcharts.getOptions().colors[1]]#}
-    {#                    ],#}
-    {#                    min: -1,#}
-    {#                    max: 1,#}
-    {#                    minColor: '#FFFFFF',#}
-    {#                    maxColor: Highcharts.getOptions().colors[1]#}
-    {##}
-    {#                },#}
-    {##}
-    {#                legend: {#}
-    {#                    align: 'right',#}
-    {#                    layout: 'vertical',#}
-    {#                    margin: 0,#}
-    {#                    verticalAlign: 'top',#}
-    {#                    y: 25,#}
-    {#                    symbolHeight: 280#}
-    {#                },#}
-    {##}
-    {#                tooltip: {#}
-    {#                    formatter: function () {#}
-    {#                        return 'Corr(' + getPointCategoryName(this.point, 'x') + ',' +#}
-    {#                            '' + getPointCategoryName(this.point, 'y')#}
-    {#                            + '): <b>' + this.point.value + '</b>';#}
-    {#                    }#}
-    {#                },#}
-    {##}
-    {#                series: [{#}
-    {#                    name: 'Correlation',#}
-    {#                    borderWidth: 0,#}
-    {#                    data: corr_data.map(function (point) {#}
-    {#                        return {#}
-    {#                            x: point[0],#}
-    {#                            y: point[1],#}
-    {#                            value: point[2],#}
-    {#color: 'rgba(0,0,0,' + point[2] + ')'#}
-    {#                        };#}
-    {#                    }),#}
-    {#                    dataLabels: {#}
-    {#                        enabled: true,#}
-    {#color: '#000000',#}
-    {#                        borderWidth: 0,#}
-    {##}
-    {#                    }#}
-    {#                }],#}
-    {##}
-    {#                responsive: {#}
-    {#                    rules: [{#}
-    {#                        condition: {#}
-    {#                            maxWidth: 500#}
-    {#                        },#}
-    {#                        chartOptions: {#}
-    {#                            yAxis: {#}
-    {#                                labels: {#}
-    {#                                    formatter: function () {#}
-    {#                                        return this.value.charAt(0);#}
-    {#                                    }#}
-    {#                                }#}
-    {#                            }#}
-    {#                        }#}
-    {#                    }]#}
-    {#                }#}
-    {##}
-    {#            });#}
-    {#        </script>#}
-    {#    </div>#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#            {{ catch22_html | safe }}#}
+
+    <script src='{% static "js/corr_table.js" %}'></script>
+    <script>
+
+        categories = {{ columns | safe }};
+        var corr_data = {{ corr_data | safe }};
+
+        function getPointCategoryName(point, dimension) {
+            var series = point.series,
+                isY = dimension === 'y',
+                axis = series[isY ? 'yAxis' : 'xAxis'];
+            return axis.categories[point[isY ? 'y' : 'x']];
+        }
+
+        Highcharts.chart('corr_container', {
+            chart: {
+                type: 'heatmap',
+                marginTop: 40,
+                marginBottom: 80,
+                {#plotBorderWidth: 1#}
+            },
+
+
+            title: {
+                text: 'Time Series Correlation'
+            },
+
+            xAxis: {
+                categories: categories
+            },
+
+            yAxis: {
+                categories: categories,
+                reversed: true
+            },
+
+            accessibility: {
+                point: {
+                    descriptionFormatter: function (point) {
+                        var ix = point.index + 1,
+                            xName = getPointCategoryName(point, 'x'),
+                            yName = getPointCategoryName(point, 'y'),
+                            val = point.value;
+                        return 'Corr between' + xName + 'and' + yName + ':' + val;
+                    }
+                }
+            },
+
+            colorAxis: {
+                stops: [
+                    [0, Highcharts.getOptions().colors[1]],
+                    [0.5, '#FFFFFF'],
+                    [1, Highcharts.getOptions().colors[1]]
+                ],
+                min: -1,
+                max: 1,
+                minColor: '#FFFFFF',
+                maxColor: Highcharts.getOptions().colors[1]
+
+            },
+
+            legend: {
+                align: 'right',
+                layout: 'vertical',
+                margin: 0,
+                verticalAlign: 'top',
+                y: 25,
+                symbolHeight: 280
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return 'Corr(' + getPointCategoryName(this.point, 'x') + ',' +
+                        '' + getPointCategoryName(this.point, 'y')
+                        + '): <b>' + this.point.value + '</b>';
+                }
+            },
+
+            series: [{
+                name: 'Correlation',
+                borderWidth: 0,
+                data: corr_data.map(function (point) {
+                    return {
+                        x: point[0],
+                        y: point[1],
+                        value: point[2],
+                        color: 'rgba(0,0,0,' + point[2] + ')'
+                    };
+                }),
+                dataLabels: {
+                    enabled: false,
+                    color: '#000000',
+                    borderWidth: 0,
+
+                }
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        yAxis: {
+                            title: {
+                                enabled: false
+                            },
+                            labels: {
+                                formatter: function () {
+                                    return this.value;
+                                }
+                            }
+                        }
+                    }
+                }]
+            }
+
+        });
+    </script>
+    </div>
 
 
 {% endblock %}

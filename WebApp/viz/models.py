@@ -1,7 +1,7 @@
 from django.db import models
 import pandas as pd
 
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 
 
 class DataSet(models.Model):
@@ -30,28 +30,12 @@ class DataSet(models.Model):
             "description": self.description
         }
 
+score_map = { "mae" : "MAE",
+                "mse" : "MSE",
+                "rmse" : "RMSE",
+                "partial_rmse" : "RMSE on Anomaly"
+                }
 
-# class InjectedDataSet(models.Model):
-#     title = models.CharField(max_length=64, null=False, blank=False, unique=False)
-#     original_series_id = models.ForeignKey(DataSet, on_delete=models.CASCADE)
-#     injectedDataframe = models.JSONField(null=False, blank=False)
-#     description = models.TextField(max_length=200, null=True, blank=True)
-#
-#     @property
-#     def df(self):
-#         return pd.read_json(self.injectedDataframe)
-#
-#     def original_df(self):
-#         return self.original_series_id.df
-#
-#     def get_info(self):
-#         n, m = self.df.shape
-#         return {
-#             "values": n * m,
-#             "ts_nbr": m,
-#             "title": self.title,
-#             "description": self.description
-#         }
 
 
 class InjectedContainer(models.Model):
@@ -65,12 +49,18 @@ class InjectedContainer(models.Model):
         return injected_container_
 
     def get_info(self):
-        n, m = self.injected_container.injected.shape
+        injectedDataContainer : InjectedDataContainer = self.injected_container
+        n, m = injectedDataContainer.injected.shape
+        a_rates = injectedDataContainer.get_a_rate_per_col()
+        scores = injectedDataContainer.original_scores
+        scores = {  score_map[k] : round(v,4) for k,v in scores.items() if k in score_map.keys() }
         return {
             "values": n * m,
             "ts_nbr": m,
             "title": self.title,
-            "description": self.description
+            "description": self.description,
+            "anomaly_rates": a_rates,
+            "scores": scores
         }
 
     def __str__(self):

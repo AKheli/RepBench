@@ -136,6 +136,14 @@ class InjectedDataContainer:
         return Estimator().scores(self.injected, self.truth, self.injected_columns, self.labels,
                                   predicted=self.injected)
 
+
+    def get_a_rate_per_col(self):
+        result = {}
+        cols = self.injected.columns
+        for col in cols:
+            result[col] = np.mean(self.class_df[col].values)
+        return result
+
     def get_truth_correlation(self):
         return self.truth.corr()
 

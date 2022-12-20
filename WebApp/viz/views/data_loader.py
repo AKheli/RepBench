@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.models import DataSet, InjectedContainer
 from WebApp.viz.ts_manager.HighchartsMapper import map_truth_data, map_injected_series
 from data_methods.data_class import DataContainer

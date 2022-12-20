@@ -1,4 +1,4 @@
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.views.dataset_views import DatasetView
 from WebApp.viz.models import  InjectedContainer
 from django.http import JsonResponse
@@ -10,7 +10,7 @@ class SyntheticDatasetView(DatasetView):
     template = 'displayDataSetSynthetic.html'
 
     def data_set_info_context(self, setname):
-        return {}
+        return {"data_info": InjectedContainer.objects.get(title=setname).get_info()}
 
     @staticmethod
     def get_synthetic_data(request, setname):

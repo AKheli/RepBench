@@ -1,4 +1,4 @@
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from algorithms import algo_mapper
 from parameterization.optimizers import BayesianOptimizer
 from testing_frame_work.repair import AnomalyRepairer

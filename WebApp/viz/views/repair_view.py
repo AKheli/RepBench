@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from WebApp.viz.models import InjectedContainer
 from testing_frame_work.repair import AnomalyRepairer
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from WebApp.viz.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
@@ -70,3 +71,10 @@ class RepairView(DatasetView):
         context = {"metrics": output["metrics"]}
         output["html"] = render(request, 'sub/scoreviz.html', context=context).content.decode('utf-8')
         return JsonResponse(output)
+
+    def repair_datasets(request=None):
+        context = {}
+        context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
+                                        for dataSet in InjectedContainer.objects.all() if
+                                        dataSet.title is not None and dataSet.title != ""}
+        return render(request, 'repairDatasets.html', context=context)

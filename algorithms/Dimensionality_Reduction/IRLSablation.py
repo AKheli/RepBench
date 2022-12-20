@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 
 from Injection.Scenarios.scen_gen import build_scenario
-from Injection.injected_data_part import InjectedDataContainer
+from Injection.injected_data_container import InjectedDataContainer
 from RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 import matplotlib
 
