@@ -30,7 +30,7 @@
         <div class="col-md-9" style="position:relative;">
             <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
                 {% block graphbuttons %}
-                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>
+            {% include 'sub/norm_buttons.html' %}
                 {% endblock %}
             </div>
             {% include 'sub/MainChart.html' %}

@@ -64,7 +64,7 @@ def read_data(data_name, folder):
 
 
 class DataContainer():
-    def __init__(self, file_name, type="train", max_n_rows=None, max_n_cols=None):
+    def __init__(self, file_name, type="train", max_n_rows=None, max_n_cols=None,title=None):
 
         if isinstance(file_name, pd.DataFrame):
             data_df = file_name
@@ -85,6 +85,6 @@ class DataContainer():
 
         self.original_data = data_df
         self.type = type
-        self.title = file_name
+        self.title = file_name if title is None else title
         self.norm_data, self.inf_norm_f = normalize_f(self.original_data)
         self.injected = None

@@ -156,6 +156,13 @@ class InjectedDataContainer:
         self._labels_ = generate_df_labels(self.class_, seed=self.relabeled)
         self.check()
 
+
+    def set_to_original_scale(self, mean, std):
+        self.injected_ = self.injected_ * std + mean
+        self.truth_ = self.truth_ * std + mean
+        close = np.isclose(self.truth.values, self.injected.values)
+        assert np.allclose(~close, self.class_df.values)
+
     # dump to json
     def to_json(self):
         import json

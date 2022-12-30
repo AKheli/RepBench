@@ -1,3 +1,5 @@
+import numpy as np
+
 from Injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.views.dataset_views import DatasetView
 from WebApp.viz.models import  InjectedContainer
@@ -16,6 +18,12 @@ class SyntheticDatasetView(DatasetView):
     def get_synthetic_data(request, setname):
         viz = int(request.GET.get("viz", 5))
         injected_data_container = SyntheticDatasetView.load_data_container(setname)
+
+        close = np.isclose(injected_data_container.truth, injected_data_container.injected)
+        assert np.allclose(~close == injected_data_container.labels)
+        print("assertion passed")
+        assert False, "stop here"
+
         df = injected_data_container.truth
         truth_container = DataContainer(df)
         result = map_truth_data(truth_container, viz)

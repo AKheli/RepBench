@@ -99,6 +99,7 @@ const resetSeries = function (showOnlyInjected = false) {
     }
 
     allSeries.forEach(s => {
+        console.log(normalized)
         s.series.data = normalized ? [...s.normData] : [...s.originalData]
     })
     let allInputSeries = allSeries.map(s => s.series)
@@ -111,7 +112,6 @@ const resetSeries = function (showOnlyInjected = false) {
 let injectedString = null
 const stringifyInjectedSeries = function () {
     injectedSeries.forEach(s => {
-        console.log(s.originalData)
         s.series.data = s.originalData
     })
     injectedString = JSON.stringify(injectedSeries.map(s => s.series))
@@ -128,4 +128,23 @@ const loadInjectedSeries = function () {
     }
 
 }
+
+
+$('#rawButton').click(function () {
+    $('#zButton').removeClass('active');
+    // $('#minMaxButton').removeClass('active');
+    $('#rawButton').addClass('active');
+    normalized = false;
+    resetSeries()
+})
+
+$('#zButton').click(function () {
+    $('#rawButton').removeClass('active');
+    // $('#minMaxButton').removeClass('active');
+    $('#zButton').addClass('active');
+    if (!normalized) {
+        normalized = true;
+        resetSeries()
+    }
+});
 

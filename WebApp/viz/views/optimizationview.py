@@ -6,6 +6,7 @@ from django.shortcuts import render
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from WebApp.viz.forms.injection_form import InjectionForm
 from WebApp.viz.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
+from WebApp.viz.models import InjectedContainer
 from WebApp.viz.views.dataset_views import DatasetView
 import WebApp.viz.BenchmarkMaps.Optjob as OptJob
 
@@ -81,6 +82,15 @@ class OptimizationView(DatasetView):
             "setname": setname,
         }
         return JsonResponse(context, encoder=OptimizationView.encoder)
+
+    @staticmethod
+    def optimization_datasets(request=None):
+        context = {}
+        context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
+                                        for dataSet in InjectedContainer.objects.all() if
+                                        dataSet.title is not None and dataSet.title != ""}
+        context["type"] = type
+        return render(request, 'data_set_options/optimizationDatasets.html', context=context)
 
 
 def fetch_opt_results(request):

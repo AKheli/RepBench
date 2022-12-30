@@ -5,6 +5,7 @@ import pandas as pd
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from Injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
 from WebApp.viz.forms.injection_form import store_injection_form, InjectionForm
 from WebApp.viz.models import InjectedContainer
@@ -72,20 +73,24 @@ def inject_data(request, setname):
 
 
 def store_data(request, setname):
-    print("store_data")
     post = request.POST.dict()
     title = post.get("title")
     description = post.get("description")
     post.pop("csrfmiddlewaretoken")
     data_container = load_data_container(setname)
     df_norm = data_container.norm_data  # only work with normalized data
+    df_original = data_container.original_data
     #df_original = data_container.original_data
     injected_series = json.loads(post.pop("injected_series"))
 
-    injected_data_container = injected_container_None_Series(df_norm, injected_series)
+
+    injected_data_container : InjectedDataContainer = injected_container_None_Series(df_norm, injected_series)
+    injected_data_container.set_to_original_scale(df_original.mean(), df_original.std())
 
     if InjectedContainer.objects.filter(title=title).exists():
         InjectedContainer.objects.filter(title=title).delete()
+    info = {} #Set original title of setname
+
     injectedDataframe = injected_data_container.injected.to_json()
     injected_data_set = InjectedContainer(title=title, injectedContainer_json=injected_data_container.to_json(),
                                           description=description)

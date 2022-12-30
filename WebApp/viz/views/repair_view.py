@@ -2,6 +2,7 @@ import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
 from WebApp.viz.models import InjectedContainer
+from WebApp.viz.views.synthetic_dataset_view import SyntheticDatasetView
 from algorithms.estimator import Estimator
 from testing_frame_work.repair import AnomalyRepairer
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
@@ -21,7 +22,7 @@ def parse_param_input(p: str):
         return p
 
 
-class RepairView(DatasetView):
+class RepairView(SyntheticDatasetView):
     template = "repair.html"
     error_map = {"rmse": "RMSE",
                  "mae": "MAE",
@@ -32,12 +33,13 @@ class RepairView(DatasetView):
 
     def get(self, request, setname="BAFU"):
         context, df = self.data_set_default_context(request, setname)
+
         # context.update(self.data_set_repair_and_injection_context(df))
 
         context["alg_forms"] = self.ParamForms
         context["store_form"] = store_injection_form
         context["injection_form"] = InjectionForm(list(df.columns))
-
+        context["injected_data_set_info"] = self.data_set_info_context(setname)
         return render(request, self.template, context=context)
 
     @staticmethod
@@ -57,15 +59,15 @@ class RepairView(DatasetView):
         repair_retval = repairer.repair_data_part(alg_type, injected_data_container, params)
         repair = repair_retval["repair"]
         repair_scores = repair_retval["scores"]
-        print("repair_scores", repair_scores)
-        print("Estimatorscores",Estimator().scores(injected_data_container.injected, df_original, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
-        print("truth scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
-
-        print(np.count_nonzero(np.isclose(injected_data_container.injected, injected_data_container.truth)))
-        print(np.count_nonzero(np.isclose(injected_data_container.injected,repair)))
-        print(np.count_nonzero(np.isclose(injected_data_container.truth,repair)))
-        print("injected scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=injected_data_container.injected))
-        print("repair scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
+        # print("repair_scores", repair_scores)
+        # print("Estimatorscores",Estimator().scores(injected_data_container.injected, df_original, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
+        # print("truth scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
+        #
+        # print(np.count_nonzero(np.isclose(injected_data_container.injected, injected_data_container.truth)))
+        # print(np.count_nonzero(np.isclose(injected_data_container.injected,repair)))
+        # print(np.count_nonzero(np.isclose(injected_data_container.truth,repair)))
+        # print("injected scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=injected_data_container.injected))
+        # print("repair scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
 
         score_data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in repair_scores.items() if
                                k in RepairView.error_map.keys()]}
@@ -93,4 +95,4 @@ class RepairView(DatasetView):
                                         for dataSet in InjectedContainer.objects.all() if
                                         dataSet.title is not None and dataSet.title != ""}
         context["type"] = type
-        return render(request, 'repairDatasets.html', context=context)
+        return render(request, 'data_set_options/repairDatasets.html', context=context)

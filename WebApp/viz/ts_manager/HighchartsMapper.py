@@ -18,13 +18,18 @@ def map_truth_data(data_container: DataContainer, viz=5):
     return data
 
 
-def map_injected_series(injected_series, col_name, data_container):
+def map_injected_series(injected_series, col_name, data_container, is_norm=True):
     # assume normalized data got injected
 
-    data_norm = injected_series
-    print("AAAAAAAAAAAAAA",injected_series)
-    print("AAAAAAAAAAAAAA",injected_series)
-    data = reverse_norm(data_norm, data_container.original_data[col_name])
+
+    if not is_norm:
+        data_norm = injected_series
+        data = data_norm  # everse_norm(data_norm, data_container.original_data[col_name])
+    else:
+        #todo: check if this is correct
+        data_norm = injected_series
+        data = data_norm
+
     injected_series = {"linkedTo": col_name,
                        "id": f"{col_name}_injected",
                        "name": f"{col_name}_injected",
@@ -42,12 +47,12 @@ def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataCont
     injected_data_container: InjectedDataContainer
     data = {
         str(col_name) + "repair": {"linkedTo": links[col_name],
-                              "id": str(col_name) + "repair" + alg_name,
-                              "name": alg_name,
-                              "data": list(reverse_norm(repair[col_name], df_original[col_name])),
-                              "norm_data": list(repair[col_name]),
-                              "original_series_col": col_name,
-                              }
+                                   "id": str(col_name) + "repair" + alg_name,
+                                   "name": alg_name,
+                                   "data": list(reverse_norm(repair[col_name], df_original[col_name])),
+                                   "norm_data": list(repair[col_name]),
+                                   "original_series_col": col_name,
+                                   }
         for (i, col_name) in enumerate(injected_data_container.truth.columns) if
         i in injected_data_container.injected_columns}
 
@@ -56,4 +61,3 @@ def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataCont
 
 def reverse_norm(norm_data, original_data):
     return norm_data * original_data.std() + original_data.mean()
-

@@ -6,6 +6,43 @@ Highcharts.setOptions({
     }
 });
 
+
+// All series that are not part of the original graph have to be linked to some other series
+const events = {
+    // hide linked series elements
+    render: function () {
+        let series = this.series
+
+        if (series.filter(s => s.visible).length === 0) {
+            series[0].show()
+        }
+
+        series.forEach(s => {
+            console.log(s)
+            console.log(s.userOptions)
+            var id = s.userOptions.id,
+                name = s.userOptions.name
+            var boundedId = Array.from(document.getElementsByClassName(id + "-bounded"))
+            var boundedName = Array.from(document.getElementsByClassName(name + "-bounded"));
+            // concatenate boundedId and boudedName
+            var bounded = boundedId.concat(boundedName);
+            if (bounded.length > 0) {
+                if (s.visible) {
+                    bounded.forEach(b => {
+                        b.style.display = "block";
+                    })
+                } else {
+                    bounded.forEach(b => {
+                        b.style.display = "none";
+                    })
+                }
+            }
+
+        })
+    }
+}
+
+
 let tooltip = {
     formatter: function (e) {
         // The first returned item is the header, subsequent items are the
@@ -28,27 +65,6 @@ let tooltip = {
     valueDecimals: 2
 }
 
-let range_selector = {
-    buttons: [{
-        count: 1,
-        text: '1m',
-        events: {
-            click: function () {
-                alert('Clicked button');
-            }
-        }
-    },
-        {
-            count: 3,
-            text: '3m'
-        }
-    ],
-    enabled: true,
-}
-
-let mainChart = null
-let threshold = null
-
 
 let splitMainChart = function () {
 
@@ -58,55 +74,55 @@ let splitMainChart = function () {
         },
         height: '63%',
         lineWidth: 2,
-    }, {
-      //   yAxis: 1,
-      //   title: {
-      //       text: "Normalized Difference"
-      //   },
-      //   top: '67%',
-      //   height: '0%',
-      //   offset: 0,
-      //   lineWidth: 2,
-      //   plotBands: [{
-      //       color: 'rgba(68, 170, 213, 0.1)',
-      //       from: -100,
-      //       to: 100
-      //   },
-      // ]
-    },
-    {
-        yAxis: 2,
-        title: {
-            text: "Normalized Difference"
-        },
-        top: '67%',
-        height: '33%',
-        offset: 0,
-        lineWidth: 2,
-        plotBands: [{
-            color: 'rgba(68, 170, 213, 0.1)',
-            from: -100,
-            to: 100
-        },
-      ]
-    }]
+    }, {},
+        {
+            yAxis: 2,
+            title: {
+                text: "Normalized Difference"
+            },
+            top: '67%',
+            height: '33%',
+            offset: 0,
+            lineWidth: 2,
+            plotBands: [{
+                color: 'rgba(68, 170, 213, 0.1)',
+                from: -100,
+                to: 100
+            },
+            ]
+        }]
 }
 
 
-const initMainChart = function (series  = {} , container = 'highcharts_container') {
+let mainChart = null
+let threshold = null
+
+
+const initMainChart = function (series = {}, container = 'highcharts_container') {
     mainChart = Highcharts.chart(document.getElementById(container), {
         legend: {
             enabled: true,
-
             align: 'right',
             verticalAlign: 'top',
-            y: 30
+            floating: true,
+            y :-20,
+            x : -20,
         },
+        // legend: {
+        //     enabled: true,
+        //
+        //     align: 'right',
+        //     verticalAlign: 'top',
+        //     y: 30
+        // },
         tooltip: tooltip,
         chart: {
             type: 'line',
             zoomType: 'x',
             animation: false,
+            events: events,
+            // spacingTop: 20
+              x : -200,
         },
         yAxis: threshold === null ? [{}, {
             title: {
@@ -156,6 +172,14 @@ const initMainChart = function (series  = {} , container = 'highcharts_container
         },
 
         rangeSelector: {
+            x: 0,
+            // floating: true,
+            style: {
+                color: 'black',
+                fontWeight: 'bold',
+                position: 'relative',
+                "font-family": "Arial"
+            },
             inputDateParser: function (value) {
                 console.log(value)
                 value = value.split(/[:\.]/);
@@ -178,7 +202,7 @@ const initMainChart = function (series  = {} , container = 'highcharts_container
                     type: 'all',
                     text: 'All',
                     align: 'right',
-                    x: 0,
+                    x: 1000,
                     y: 100,
                 }],
         },
@@ -188,20 +212,20 @@ const initMainChart = function (series  = {} , container = 'highcharts_container
 
     });
 
-    if(threshold !== null){
+    if (threshold !== null) {
         mainChart.yAxis[2].addPlotLine(
-        {
-            color: 'black',
-            width: 2,
-            value: threshold,
-            yAxis: 2,
-            label: {
-                text: 'Threshold',
-                align: 'right',
-                x: -10
+            {
+                color: 'black',
+                width: 2,
+                value: threshold,
+                yAxis: 2,
+                label: {
+                    text: 'Threshold',
+                    align: 'right',
+                    x: -10
+                }
             }
-        }
-    )
+        )
     }
 }
 
@@ -215,7 +239,7 @@ fetch(data_url, {
     .then(data => {
         data.series.forEach(x => addOriginalSeries(x))
         console.log(data.injected)
-        if(data.injected){
+        if (data.injected) {
             data.injected.forEach(x => addInjectedSeries(x))
         }
         resetSeries()

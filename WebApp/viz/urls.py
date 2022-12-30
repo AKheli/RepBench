@@ -44,6 +44,7 @@ urlpatterns = [
     path('optimize_data/<str:setname>', optimizationview.OptimizationView.optimize, name='optimize_data'),
     path('fetch_optresults', optimizationview.fetch_opt_results, name='fetch_optresults'),
 
+    path('optimizazionDataSets', optimizationview.OptimizationView().optimization_datasets, name='optimisation_datasets'),
 
     # alg inspection
     path('alg_inspection', dimensionality_reduction_view.DimensionalityReductionView.as_view(),

@@ -63,8 +63,6 @@ class DimensionalityReductionView(RepairView):
         def z_score(x):
             x_abs = np.abs(x)
             x_normalized_diff = (x_abs - np.mean(x_abs)) / np.std(x_abs)
-            print(x_normalized_diff.std())
-            print(sum(x_normalized_diff > float(threshold)))
 
             return x_normalized_diff
         normalized_injected, _ = normalize_f(injected_data_container.injected)
