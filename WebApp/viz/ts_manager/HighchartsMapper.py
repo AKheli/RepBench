@@ -7,8 +7,10 @@ from data_methods.data_class import DataContainer
 
 
 ## mapping to highcharts series
-def map_truth_data(data_container: DataContainer, viz=5):
-    df, df_norm = data_container.original_data, data_container.norm_data
+def map_truth_data(original_data: pd.DataFrame, norm_data: pd.DataFrame = None, viz=5):
+    df, df_norm = original_data, norm_data \
+        if norm_data is not None else (original_data - original_data.mean()) / original_data.std()
+
     data = {
         'series': [{"visible": i < viz, "id": col_name, "name": col_name, "data": list(df[col_name])
                        , "norm_data": list(df_norm[col_name])} for (i, col_name)
@@ -18,26 +20,50 @@ def map_truth_data(data_container: DataContainer, viz=5):
     return data
 
 
-def map_injected_series(injected_series, col_name, data_container, is_norm=True):
-    # assume normalized data got injected
+def map_injected_series(injected_series: pd.Series, injected_series_norm: pd.Series, col_name: str):
+    """
+    map injected pandas series containing values only in anomalies
+    and points next to anomalies to highcharts series
+    """
+    return {"linkedTo": col_name,
+            "id": f"{col_name}_injected",
+            "name": f"{col_name}_injected",
+            "data": injected_series.replace({np.nan: None}).values.tolist(),
+            "norm_data": injected_series_norm.replace({np.nan: None}).values.tolist(),
+            "color": "red",
+            "dashStyle": "ShortDot",
+            }
 
 
-    if not is_norm:
-        data_norm = injected_series
-        data = data_norm  # everse_norm(data_norm, data_container.original_data[col_name])
-    else:
-        #todo: check if this is correct
-        data_norm = injected_series
-        data = data_norm
+def map_injected_data_container(injected_data_container: InjectedDataContainer):
+    truth: pd.DataFrame = injected_data_container.truth
+    injected: pd.DataFrame = injected_data_container.injected
 
-    injected_series = {"linkedTo": col_name,
-                       "id": f"{col_name}_injected",
-                       "name": f"{col_name}_injected",
-                       "data": data.replace({np.nan: None}).values.tolist(),
-                       "norm_data": data_norm.replace({np.nan: None}).values.tolist(),
-                       "color": "red",
-                       }
-    return injected_series
+    # normalize injected data
+    mean, std = truth.mean() , truth.std() #injected.mean(), injected.std()
+    print(mean)
+    print(std)
+    injected_norm = (injected - mean) / std
+    # normalize truth data w.r.t injected series
+    truth_norm = (truth - mean) / std
+
+    truth_series = map_truth_data(truth, truth_norm)
+    injected_series = []
+    injected_data_container.get_none_filled_injected()
+    for i, col_name in enumerate(injected.columns):
+        if i not in injected_data_container.injected_columns:
+            continue
+        injected_col, injected_col_norm = injected[col_name], injected_norm[col_name]
+        class_col = injected_data_container.class_df[col_name].values
+        class_col_extended = ~(np.convolve(class_col, [1, 1, 1], mode="same") > 0)
+        injected_col.loc[class_col_extended] = np.nan
+        injected_col_norm.loc[class_col_extended] = np.nan
+
+        injected_series.append(
+            map_injected_series(injected_col, injected_col_norm, col_name)
+        )
+
+    return {"series": truth_series["series"], "injected": injected_series}
 
 
 def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataContainer, alg_name: str,

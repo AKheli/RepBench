@@ -5,7 +5,7 @@ from WebApp.viz.views.dataset_views import DatasetView
 from WebApp.viz.models import  InjectedContainer
 from django.http import JsonResponse
 from data_methods.data_class import DataContainer
-from WebApp.viz.ts_manager.HighchartsMapper import map_truth_data, map_injected_series
+from WebApp.viz.ts_manager.HighchartsMapper import map_truth_data, map_injected_data_container
 
 
 class SyntheticDatasetView(DatasetView):

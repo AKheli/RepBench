@@ -61,14 +61,16 @@ def inject_data(request, setname):
     else:
         n_anomalies = int(ratio * df.shape[0])
 
-    col_injected, _ = add_anomalies(col_norm,
+    col_injected_norm, _ = add_anomalies(col_norm,
                                     a_type=a_type,
                                     a_factor=factor,
                                     a_len=30,
                                     n_anomalies=n_anomalies,
                                     fill_na=True, seed=seed)
-
-    injected_series = map_injected_series(col_injected, col_name, data_container)
+    #undo normalization w.r.t original_col
+    ## if we would normalize else where we would get problems when adding multiple anomalies
+    col_injected = col_injected_norm * original_col.std() + original_col.mean()
+    injected_series = map_injected_series(col_injected,col_injected_norm,col_name)
     return JsonResponse({"injected_series": injected_series})
 
 

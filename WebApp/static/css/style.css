@@ -415,26 +415,15 @@ h4 {
     }
 }
 
-.btn {
-    background: transparent;
-    outline: none !important;
-    vertical-align: middle;
-}
+/*.btn {*/
+/*    background: transparent;*/
+/*    outline: none !important;*/
+/*    vertical-align: middle;*/
+/*}*/
 
 .btn:focus:not(.btn-elevate) {
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-}
-
-.btn.btn-default {
-    border: 0;
-    background: transparent;
-    color: #a7abc3;
-    border: 1px solid #e8ecfa;
-}
-
-.btn.btn-default i {
-    color: #93a2dd;
 }
 
 .btn.btn-default:active, .btn.btn-default:hover {

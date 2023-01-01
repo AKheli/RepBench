@@ -3,7 +3,7 @@ from django.http import JsonResponse
 
 from Injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.models import DataSet, InjectedContainer
-from WebApp.viz.ts_manager.HighchartsMapper import map_truth_data, map_injected_series
+from WebApp.viz.ts_manager.HighchartsMapper import map_truth_data, map_injected_data_container
 from data_methods.data_class import DataContainer
 
 
@@ -24,20 +24,11 @@ def get_data(request, setname,viz=4):
     viz = int(request.GET.get("viz", viz))
     if DataSet.objects.filter(title=setname).exists():
         df = DataSet.objects.get(title=setname).df
-        return JsonResponse(map_truth_data(DataContainer(df), viz))
+        return JsonResponse(map_truth_data(df,viz=viz))
 
     injected_data_container: InjectedDataContainer = InjectedContainer.objects.get(title=setname).injected_container
 
     close = np.isclose(injected_data_container.truth.values, injected_data_container.injected.values)
     assert np.allclose(~close, injected_data_container.class_df.values)
-    print("get synthetic data assertion passed")
-
-    df = injected_data_container.truth
-    truth_container = DataContainer(df)
-    result = map_truth_data(truth_container, viz)
-    cols = [i for i in df.columns]
-    injected = injected_data_container.get_none_filled_injected()
-    result["injected"] = [map_injected_series(injected[c], cols[i], truth_container) for i, c in enumerate(injected) if
-                          i in
-                          injected_data_container.injected_columns]
-    return JsonResponse(result)
+    results = map_injected_data_container(injected_data_container)
+    return JsonResponse(results)

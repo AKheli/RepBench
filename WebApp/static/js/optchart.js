@@ -47,7 +47,7 @@ let initOptChart = function (params, error, n_init, n_sample) {
                     color: 'rgba(30, 11, 102, 0.2)',// Color value
                     from: n_init + 0.5, // Start of the plot band
                     to: n_init + n_sample, // End of the plot band
-                    y:20,
+                    y: 20,
                     label: {
                         text: 'Maximum Expectation Sampling',
                         verticalAlign: 'middle',
@@ -73,6 +73,7 @@ let initOptChart = function (params, error, n_init, n_sample) {
                 },
                 height: '43%',
                 lineWidth: 2,
+                decimalValues: 2,
             }, {
                 title: {
                     text: error
@@ -80,7 +81,12 @@ let initOptChart = function (params, error, n_init, n_sample) {
                 top: '57%',
                 height: '43%',
                 offset: 0,
-                lineWidth: 2
+                lineWidth: 2,
+                labels: {
+                    formatter: function () {
+                        return this.value.toFixed(2);
+                    },
+                },
             }],
             series: params.map(param => {
                 return {
@@ -111,3 +117,5 @@ let initOptChart = function (params, error, n_init, n_sample) {
         optChart.series[optChart.series.length - 1].addPoint(error)
     }
 }
+
+initOptChart([], 'RMSE', 20, 20)

@@ -101,6 +101,9 @@ const resetSeries = function (showOnlyInjected = false) {
     allSeries.forEach(s => {
         console.log(normalized)
         s.series.data = normalized ? [...s.normData] : [...s.originalData]
+        if(s.chartSeries && !showOnlyInjected){
+            s.series.visible = s.chartSeries.visible
+        }
     })
     let allInputSeries = allSeries.map(s => s.series)
     initMainChart(allInputSeries)
@@ -131,6 +134,7 @@ const loadInjectedSeries = function () {
 
 
 $('#rawButton').click(function () {
+
     $('#zButton').removeClass('active');
     // $('#minMaxButton').removeClass('active');
     $('#rawButton').addClass('active');
@@ -139,6 +143,7 @@ $('#rawButton').click(function () {
 })
 
 $('#zButton').click(function () {
+    console.log("normalized")
     $('#rawButton').removeClass('active');
     // $('#minMaxButton').removeClass('active');
     $('#zButton').addClass('active');

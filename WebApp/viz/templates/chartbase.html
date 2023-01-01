@@ -1,21 +1,21 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block chart %}
-
-
-
-    <div class="row margin-top-20">
-        <div class="col-md-9" style="position:relative;">
-            <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
-                {% block graphbuttons %}
-                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>
-                {% endblock %}
-            </div>
-        {% include 'sub/MainChart.html' %}
-        </div>
-        <div id="chart-right" class="col-md-3" >
-            {% block first_form %}
+{#{% extends "base.html" %}#}
+{#{% load static %}#}
+{##}
+{#{% block chart %}#}
+{##}
+{##}
+{##}
+{#    <div class="row margin-top-20">#}
+{#        <div class="col-md-9" style="position:relative;">#}
+{#            <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">#}
+{#                {% block graphbuttons %}#}
+{#                    <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>#}
+{#                {% endblock %}#}
+{#            </div>#}
+{#        {% include 'sub/MainChart.html' %}#}
+{#        </div>#}
+{#        <div id="chart-right" class="col-md-3" >#}
+{#            {% block first_form %}#}
 {#                <div class="kt-portlet" data-ktportlet="true">#}
 {#                    <div class="kt-portlet__head">#}
 {#                        <div class="kt-portlet__head-label">#}
@@ -30,29 +30,29 @@
 {#                        </div>#}
 {#                    </div>#}
 {#                    <div class="kt-portlet__body kt-portlet__body--fit">#}
-                        {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" %}
+{#                        {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" %}#}
 {#                    </div>#}
 {#                </div>#}
-                        {%  include 'sub/storeForm.html' %}
-            {% endblock %}
-
-            {% block second_form %}
+{#                        {%  include 'sub/storeForm.html' %}#}
+{#            {% endblock %}#}
+{##}
+{#            {% block second_form %}#}
 {#
-                        {% include 'sub/repairForm.html' %}
-
-            {% endblock %}
-            <div class="kt-portlet kt-portlet__body--fit">
-                <div class="kt-portlet__body kt-portlet__body--fit">
-                    <div class="kt-portlet__body">
-                        {% block thirdblock %}
-
-                        {% endblock %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
+{#                        {% include 'sub/repairForm.html' %}#}
+{##}
+{#            {% endblock %}#}
+{#            <div class="kt-portlet kt-portlet__body--fit">#}
+{#                <div class="kt-portlet__body kt-portlet__body--fit">#}
+{#                    <div class="kt-portlet__body">#}
+{#                        {% block thirdblock %}#}
+{##}
+{#                        {% endblock %}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    </div>#}
 {#    <div class="row margin-top-20">#}
 {#      <div class="col-md-9" style="position:relative;">#}
 {#      <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">#}
@@ -63,14 +63,14 @@
 {#            <div id="highcharts_container" class="full-height"></div>#}
 {#        </div>#}
 {#    </div>#}
-{% endblock %}
-
-{% block additional_bottom_js %}
-
-    <script src="{% static 'js/custom/form.extensions.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/page/detection/nouislider-init.js' %}" type="text/javascript"></script>
-
-
-
-{% endblock %}
-
+{#{% endblock %}#}
+{##}
+{#{% block additional_bottom_js %}#}
+{##}
+{#    <script src="{% static 'js/custom/form.extensions.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/page/detection/nouislider-init.js' %}" type="text/javascript"></script>#}
+{##}
+{##}
+{##}
+{#{% endblock %}#}
+{##}

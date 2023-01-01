@@ -59,15 +59,7 @@ class RepairView(SyntheticDatasetView):
         repair_retval = repairer.repair_data_part(alg_type, injected_data_container, params)
         repair = repair_retval["repair"]
         repair_scores = repair_retval["scores"]
-        # print("repair_scores", repair_scores)
-        # print("Estimatorscores",Estimator().scores(injected_data_container.injected, df_original, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
-        # print("truth scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
-        #
-        # print(np.count_nonzero(np.isclose(injected_data_container.injected, injected_data_container.truth)))
-        # print(np.count_nonzero(np.isclose(injected_data_container.injected,repair)))
-        # print(np.count_nonzero(np.isclose(injected_data_container.truth,repair)))
-        # print("injected scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=injected_data_container.injected))
-        # print("repair scores",Estimator().scores(injected_data_container.injected, injected_data_container.truth, columns_to_repair=injected_data_container.injected_columns,labels=injected_data_container.labels,predicted=repair))
+
 
         score_data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in repair_scores.items() if
                                k in RepairView.error_map.keys()]}

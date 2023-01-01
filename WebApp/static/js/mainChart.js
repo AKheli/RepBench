@@ -105,16 +105,10 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             align: 'right',
             verticalAlign: 'top',
             floating: true,
-            y :-20,
-            x : -20,
+            // y :-20,
+            // x : -20,
         },
-        // legend: {
-        //     enabled: true,
-        //
-        //     align: 'right',
-        //     verticalAlign: 'top',
-        //     y: 30
-        // },
+
         tooltip: tooltip,
         chart: {
             type: 'line',
@@ -122,12 +116,13 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             animation: false,
             events: events,
             // spacingTop: 20
-              x : -200,
+            x: -200,
         },
-        yAxis: threshold === null ? [{}, {
+        yAxis: threshold === null ? [{
             title: {
-                text: ""
+                text: "",
             },
+            endOnTick: true,
         }] : splitMainChart(),
         plotOptions: {
             series: {
