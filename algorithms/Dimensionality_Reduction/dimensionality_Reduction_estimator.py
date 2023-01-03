@@ -28,7 +28,7 @@ class DimensionalityReductionEstimator(Estimator):
 
         self.weights_i_ = {}
         self.reduced_i_ = {}
-        self.current_inv_f = None  # lambda x : x
+        self.current_inv_f = None
         self.init_weights_and_reduced()
 
     def init_weights_and_reduced(self):
@@ -36,6 +36,7 @@ class DimensionalityReductionEstimator(Estimator):
         self.reduction_per_classification_iter = []
         self.reduction_per_repair_iter = []
         self.weights_per_repair_iter = []
+        self.reconstructions_per_repair_iter = []
 
     def get_fitted_params(self, deep=False):
         return {"classification_truncation": self.classification_truncation,
@@ -93,10 +94,15 @@ class DimensionalityReductionEstimator(Estimator):
         assert not np.isnan(matrix_inter).any(), "interpolation failed"
 
         reduced = matrix_inter
+
+        n_max_iter_tmp = self.n_max_iter
+        self.n_max_iter = 2 #only 2 iterations for repair phase
         for i in range(self.repair_iter):
             reduced = self.reduce(reduced, self.repair_truncation)
             matrix_to_repair[self.anomaly_matrix] = reduced[self.anomaly_matrix]
             reduced = matrix_to_repair.copy()
+            self.reconstructions_per_repair_iter.append(self.current_inv_f(reduced.copy()))
+        self.n_max_iter = n_max_iter_tmp
 
         final =  self.to_numpy(injected)
         final[:, columns_to_repair] = matrix_to_repair[:, columns_to_repair]
@@ -133,6 +139,8 @@ class DimensionalityReductionEstimator(Estimator):
             errors_raw = np.linalg.norm(diff, axis=1)
             self.errors_raw = errors_raw
             errors_loss = compute_loss(errors_raw, self.delta)
+            print(self.state,n_iter)
+            print("errors_loss", errors_loss.mean())
             weights = compute_weights(errors_raw, self.delta)
             self.weights = weights
 

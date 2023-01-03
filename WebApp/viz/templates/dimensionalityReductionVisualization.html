@@ -1,20 +1,155 @@
-{% extends "repair.html" %}
+{% extends "base.html" %}
 {% load static %}
 
+{% block content %}
+
+    <style>  .full-height {
+        height: 60vh;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .viz-chart-info {
+        padding-left: 50px;
+    }
+
+    .margin-top-20 {
+        margin-top: 55px;
+        left: 0;
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+    }
+
+    .alg-selection {
+        margin-top: 20px;
+        padding-left: 100px;
+        padding-bottom: 30px;
+         justify-content: center;
+    }
+
+    {# all elemnts of class form-group into 1 row of a grid in my grid #}
+    .outer-grid {
+        display: grid;
+        grid-template-columns: 130px  600px;
+        grid-gap: 10px;
+    {# center #}
+    }
 
 
-{% block additional_bottom_js %}
+    </style>
 
-    <script src="{% static 'js/custom/form.extensions.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/page/detection/nouislider-init.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/page/detection/page.init.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/page/detection/form.init.js' %}" type="text/javascript"></script>
+    <div class="row margin-top-20">
+        <div class="kt-portlet alg-selection">
+            <h1>Dimensionality Reduction Visualization</h1>
+        </div>
+        <div class="col-md-12" style="position:relative;">
+         {% include 'sub/MainChart.html' %}
+            <div class="row alg-selection">
+                <div class="outer-grid">
+                    <div class="form-group">
+                        <label>Algorithm<a tabindex="10" class="btn" role="button" data-toggle="kt-popover"
+                                           data-placement="top"
+                                           data-trigger="focus"
+                                           data-content="Select the algorithm you want to use for repair"
+                                           data-original-title="" title=""><i
+                                class="mdi mdi-information-outline mdi-18px"></i></a></label>
+                        <select class="form-control custom-select " name="algorithm" onchange="displayfunc(value)">
+                            {% for key, _ in alg_forms.items %}
+                                <option value={{ key }}> {{ key }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% for key, form in alg_forms.items %}
+                        {% include 'sub/form.html' with form=form form_id=key style="display:none;" button_label="RUN!" onclick="repair('"|add:key|add:"')" %}
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <script>
+                let lastkey = null
+                let displayfunc = function (key) {
+                    var x = document.getElementById(key);
+                    if (key !== lastkey && lastkey != null) {
+                        document.getElementById(lastkey).style.display = "none";
+                    }
+                    if (x.style.display === "none") {
+                        x.style.display = "block";
+                        x.style.display = "grid";
+                        x.style["grid-template-columns"] = "repeat(4, 15%)";
+                        x.style["grid-template-rows"] = "repeat(1, 70px)";
+                        x.style["grid-gap"] = "20px";
+                        x.style["align-items"] = "end";
+                        x.style["margin-left"] = "20px";
+                        x.style["transform"] = "translate(0, 2.5px)";
+                        x.style["max-width"] = "600px";
+                    } else {
+                        x.style.display = "none";
+                    }
+                    lastkey = key
+                }
+                displayfunc("RPCA")
+            </script>
+        </div>
+    </div>
+
+    <div class="row margin-top-20">
+        <div class="col-md-12" style="position:relative;">
+            <div class="viz-chart-info">
+                <h2>Reduced Series update with IRLS Algorithm</h2>
+                Difference of series is dependent on the K and delta. Larger values of K result into better
+                distinguishable series.
+            </div>
+            <div id="classificationReductionChartContainer"></div>
+            <div class="viz-chart-info">
+                <h2>Classification of Anomalies</h2>
+                Normalized absolute differences between the reduced series and the anomalous series to classify the
+                anomalies.
+            </div>
+            <div id="thresholdChartContainer"></div>
+
+            <div class="viz-chart-info">
+                <h2>Repair of Timeseries</h2>
+                Replacing the values above the threshold with the values of the iteratively reduced series.
+            </div>
+            <div id="RepairIterChartContainer"></div>
+
+
+        </div>
+        <div id="menu" class="col-md-3">
+        </div>
+    </div>
+
 
     <script type="text/javascript">
         let injection_url = "{% url 'inject_data' setname=setname %}"
         let repair_url = "{% url 'alg_inspection_repair' setname=setname %}"
+        let store_url = "{% url 'store_data' setname=setname %}"
     </script>
-    <script src="{% static 'js/injection.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/dimensionality_reduction_viz.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/ReductionVizChart.js' %}" type="text/javascript"></script>
+
+    {#          {% include 'sub/scoreBoard.html' %}#}
 
 {% endblock %}
+
+{##}
+{#{% block additional_bottom_js %}#}
+{##}
+{#    <script src="{% static 'js/custom/form.extensions.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/page/detection/nouislider-init.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/page/detection/page.init.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/page/detection/form.init.js' %}" type="text/javascript"></script>#}
+{##}
+{#    <script type="text/javascript">#}
+{#        let injection_url = "{% url 'inject_data' setname=setname %}"#}
+{#        let repair_url = "{% url 'alg_inspection_repair' setname=setname %}"#}
+{#    </script>#}
+{#    <script src="{% static 'js/injection.js' %}" type="text/javascript"></script>#}
+{#    <script src="{% static 'js/dimensionality_reduction_viz.js' %}" type="text/javascript"></script>#}
+{##}
+{#{% endblock %}#}

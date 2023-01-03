@@ -16,17 +16,17 @@ let repair = (alg) => fetch(repair_url, {
 }).then(response => response.json()).then(responseJson => {
     repairResponse = responseJson
 
-     const repSeries = responseJson.repaired_series
+    const repSeries = responseJson.repaired_series
     const scores = responseJson.scores
     repairResult = repSeries
     let color = null
     const chartRepairSeries = Object.keys(repSeries).map(key => {
         let repair = repSeries[key]
-       return addRepairedSeries(repair,color)
+        return addRepairedSeries(repair, color)
     })
     resetSeries()
-    scores["color"] = mainChart.series[mainChart.series.length-2].color
-    addScores(scores,chartRepairSeries)
+    scores["color"] = mainChart.series[mainChart.series.length - 2].color
+    // addScores(scores,chartRepairSeries)
 
     // const repSeries = responseJson.repaired_series
     // const scores = responseJson.scores
@@ -46,30 +46,38 @@ let repair = (alg) => fetch(repair_url, {
     // scores["color"] = mainChart.series[mainChart.series.length - 2].color
     // addScores(scores, chartRepairSeries)
 
-    repairResponse.reductions.forEach((reduction) => {
-        reduction.forEach((series) => {
-            addReducedSeries(series)
-        })
-    })
-
+    // repairResponse.reductions.forEach((reduction) => {
+    //     reduction.forEach((series) => {
+    //         console.log("AAAAAAA")
+    //         addReducedSeries(series)
+    //     })
+    // })
+    //
 
     //lower plot
     const final_reductions = repairResponse.final_reductions
-    threshold = final_reductions[0].threshold
+    // threshold = final_reductions[0].threshold
     final_reductions.forEach(reduction => {
         reduction.data = reduction.diff_norm
-        reduction["yAxis"] = 2
         reduction["lineWidth"] = 2
         reduction["color"] = scores["color"]
-        addRepairedSeries(reduction, null)
     })
-
-      const boxes = document.querySelectorAll('.full-height')
-
-    boxes.forEach(box => {
-      box.style.height = '110vh';
+    var pageHeight = window.innerHeight;
+    window.scrollTo({
+        top: pageHeight * 0.9,
+        left: 0,
+        behavior: 'smooth'
     });
+    console.log(pageHeight)
+    init_threshold_chart(final_reductions)
+    thresholdChart.updateThreshold(final_reductions[0].threshold)
+    initClassificationReductionChart(repairResponse.reductions)
+    const boxes = document.querySelectorAll('.full-height')
 
+    // boxes.forEach(box => {
+    //   box.style.height = '110vh';
+    // });
+    initRepairIterChart(repairResponse.repair_iters)
     resetSeries()
 
     document.getElementById("after-runtime").innerHTML +=
@@ -80,24 +88,23 @@ let repair = (alg) => fetch(repair_url, {
         "</tr> " +
         "<tr>" +
         "<td>TP</td>" +
-        "<td>"+repairResponse.TP+"</td>" +
+        "<td>" + repairResponse.TP + "</td>" +
         "</tr>" +
         "<tr> " +
         "<td>FP</td>" +
-        "<td>"+repairResponse.FP+"</td>" +
+        "<td>" + repairResponse.FP + "</td>" +
         "</tr>" +
         "<tr> " +
         "<td>TN</td>" +
-        "<td>"+repairResponse.TN+"</td>" +
+        "<td>" + repairResponse.TN + "</td>" +
         "</tr>" +
         "<tr> " +
         "<td>FN</td>" +
-        "<td>"+repairResponse.FN+"</td>" +
+        "<td>" + repairResponse.FN + "</td>" +
         "</tr>" +
         "</table>"
 
     // make highcharts_container higher
-
 
 
 })

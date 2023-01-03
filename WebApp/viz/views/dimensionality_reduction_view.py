@@ -54,12 +54,6 @@ class DimensionalityReductionView(RepairView):
         ### Extract Reduced Series
         estimator: DimensionalityReductionEstimator = repair_retval["estimator"]
 
-        ## same way as done by the estimator
-        # def z_score(x, threshold):
-        #     x_abs = np.abs(x)
-        #     x_normalized = (x_abs - np.mean(x_abs)) / np.std(x_abs)
-        #     return x_normalized > threshold
-
         def z_score(x):
             x_abs = np.abs(x)
             x_normalized_diff = (x_abs - np.mean(x_abs)) / np.std(x_abs)
@@ -68,20 +62,23 @@ class DimensionalityReductionView(RepairView):
         normalized_injected, _ = normalize_f(injected_data_container.injected)
 
         reductions = estimator.reduction_per_classification_iter
+
         context["reductions"] = [
             [{"name": f"{col}_red_{r_iter + 1}",
-              "linkedTo": col+"repair"+alg_name,
+              "linkedTo": f"{col}_red_{1}" if i != 0 else None,
               "data": list(reverse_norm(df_reduced[col], df_original[col])),
               "norm_data": list(df_reduced[col]),
-
+              "true_distance": np.mean(np.sqrt(reverse_norm(df_reduced[col], df_original[col]) - df_original[col]))
               }
-             for i, col in enumerate(df_reduced.columns)]
+             for i, col in enumerate(df_reduced.columns) if i in injected_data_container.injected_columns]
             for r_iter, df_reduced in enumerate(reductions) if r_iter in [0,4,9]]
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
+        print([c[0]["true_distance"] for c in context["reductions"]])
 
         df_reduced = reductions[-1]
         context["final_reductions"] = \
             [{"name": f"{col}reduced",
-              "linkedTo": col+"repair"+alg_name,
+              # "linkedTo": col+"repair"+alg_name,
               "data": list(reverse_norm(df_reduced[col], df_original[col])),
               "norm_data": list(df_reduced[col]),
               "diff_norm": list(z_score(df_reduced[col] - normalized_injected[col]))
@@ -103,5 +100,40 @@ class DimensionalityReductionView(RepairView):
         context["FP"] = FP
         context["FN"] = FN
         context["TN"] = TN
+
+        reconstructions_per_repair_iter = estimator.reconstructions_per_repair_iter
+
+        rgba_colors = [ (245, 127, 39) , (245, 226, 39) ,(144, 245, 39), (39, 245, 243),(39, 54, 245, 0.8)]
+        rgba_converter = lambda rgb,a : f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{a})"
+        def zones(class_col):
+            rgb = rgba_colors.pop(0)
+            rgba_colors.append(rgb)
+
+            zones = []
+            in_anomaly = False
+            print(rgba_converter(rgb,0.2))
+            for i, c in enumerate(class_col):
+                if c == 1 and not in_anomaly:
+                    zones.append({"value": i,  "dashStyle": 'dot' , "color": rgba_converter(rgb,0.2)})
+                    in_anomaly = True
+                elif c == 0 and in_anomaly:
+                    zones.append({"value": i, "color": rgba_converter(rgb,1) })
+                    in_anomaly = False
+
+            zones.append({"value": i, "dashStyle": 'dot', "color": rgba_converter(rgb, 0.2)})
+            return zones
+
+
+        context["repair_iters"] = [
+            [{"name": f"{col}_repair_iter{r_iter + 1}",
+              # "linkedTo": f"{col}_red_{1}" if i != 0 else None,
+              "data": list(reverse_norm(df_repair[col], df_original[col])),
+              "norm_data": list(df_repair[col]),
+              "zones" : zones(estimator.anomaly_matrix[:,i]),
+                  "zoneAxis": 'x',
+              }
+             for i, col in enumerate(df_repair.columns) if i in injected_data_container.injected_columns]
+            for r_iter, df_repair in enumerate(reconstructions_per_repair_iter) if r_iter in [0,2,5,9]]
+
 
         return JsonResponse(context, encoder=DimensionalityReductionView.encoder)

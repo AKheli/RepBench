@@ -18,8 +18,6 @@ const events = {
         }
 
         series.forEach(s => {
-            console.log(s)
-            console.log(s.userOptions)
             var id = s.userOptions.id,
                 name = s.userOptions.name
             var boundedId = Array.from(document.getElementsByClassName(id + "-bounded"))
@@ -176,7 +174,6 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
                 "font-family": "Arial"
             },
             inputDateParser: function (value) {
-                console.log(value)
                 value = value.split(/[:\.]/);
                 return 1
             },
@@ -224,21 +221,23 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
     }
 }
 
-fetch(data_url, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token }}'
-    }
-}).then(response => response.json())
-    .then(data => {
-        data.series.forEach(x => addOriginalSeries(x))
-        console.log(data.injected)
-        if (data.injected) {
-            data.injected.forEach(x => addInjectedSeries(x))
+const mainChartFetchPromise = new Promise((resolve, reject) => {
+    fetch(data_url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
         }
-        resetSeries()
-    }).catch(error => console.error(error))
+    }).then(response => response.json())
+        .then(data => {
+            data.series.forEach(x => addOriginalSeries(x))
+            if (data.injected) {
+                data.injected.forEach(x => addInjectedSeries(x))
+            }
+            resetSeries()
+            resolve()
 
+        }).catch(error => console.error(error))
+})
 
 

@@ -14,9 +14,10 @@ from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Seri
 from WebApp.viz.ts_manager.HighchartsMapper import map_injected_series
 from WebApp.viz.views.data_loader import load_data_container
 from WebApp.viz.views.dataset_views import DatasetView
+from WebApp.viz.views.repair_view import RepairView
 
 
-class InjectionView(DatasetView):
+class InjectionView(RepairView):
     template = "injection.html"
     error_map = {"rmse": "RMSE",
                  "mae": "MAE",
@@ -30,6 +31,8 @@ class InjectionView(DatasetView):
         context, df = self.data_set_default_context(request, setname)
         context["store_form"] = store_injection_form
         context["injection_form"] = InjectionForm(list(df.columns))
+        context["alg_forms"] = self.ParamForms
+
         return render(request, self.template, context=context)
 
 

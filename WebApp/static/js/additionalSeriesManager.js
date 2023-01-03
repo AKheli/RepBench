@@ -3,7 +3,7 @@ const repairedSeries = []
 const originalSeries = []
 const reducedSeries = []
 
-let normalized = true
+let normalized = false
 
 
 const addSeries = function (series) {
@@ -85,8 +85,8 @@ const clearAllSeries = function () {
 
 }
 
-const resetSeries = function (showOnlyInjected = false) {
 
+const resetSeries = function (showOnlyInjected = false) {
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
 
     if (showOnlyInjected) {

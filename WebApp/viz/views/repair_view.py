@@ -31,16 +31,15 @@ class RepairView(SyntheticDatasetView):
 
     ParamForms = {"SCREEN": SCREENparamForm(), "RPCA": RPCAparamForm(), "CDrec": CDparamForm(), "IMR": IMRparamField()}
 
+
     def get(self, request, setname="BAFU"):
         context, df = self.data_set_default_context(request, setname)
-
-        # context.update(self.data_set_repair_and_injection_context(df))
-
         context["alg_forms"] = self.ParamForms
         context["store_form"] = store_injection_form
         context["injection_form"] = InjectionForm(list(df.columns))
         context["injected_data_set_info"] = self.data_set_info_context(setname)
         return render(request, self.template, context=context)
+
 
     @staticmethod
     def repair_data(request, setname):

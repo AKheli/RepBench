@@ -15,7 +15,7 @@ let repair = (alg) => fetch(repair_url, {
     const scores = responseJson.scores
     repairResult = repSeries
     let color = null
-
+    repairedSeries.length  = 0
     const chartRepairSeries = Object.keys(repSeries).map(key => {
         let repair = repSeries[key]
        return addRepairedSeries(repair,color)
