@@ -11,14 +11,36 @@ This benchmark implements four different anomaly repair techniques in time serie
 ___
 
 ## Prerequisites
-- Ubuntu 16 or Ubuntu 18 (including Ubuntu derivatives, e.g., Xubuntu).
+- Ubuntu 18 or Ubuntu 20 (including Ubuntu derivatives, e.g., Xubuntu).
 - Clone this repository.
 
 ___
 
+
 ## Build
+
+install python and pip
+```bash
+sudo apt install python-dev
+sudo apt install python3-pip
+```
+
+create a activate a virtual environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+install the requirements for the Benchmark
 ```bash
     $ sh install.sh
+```
+
+install the requirements for the WebApp
+```bash
+    $ cd WebApp
+    $ pip3 install -r requirements.txt
+    $ cd ..
 ```
 ___
 ## Execution
