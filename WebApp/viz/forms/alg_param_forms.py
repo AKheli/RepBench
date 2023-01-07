@@ -11,9 +11,10 @@ type_form_mapper = {
     float: forms.FloatField,
     int: forms.IntegerField,
     str: forms.CharField,
-    np.int : forms.IntegerField,
-    np.float : forms.FloatField,
-    np.float64 : forms.IntegerField,
+    np.int32 : forms.IntegerField,
+    np.int64 : forms.IntegerField,
+    np.float32 : forms.FloatField,
+    np.float64 : forms.FloatField,
 }
 
 def hidden(initial):

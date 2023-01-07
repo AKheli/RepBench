@@ -21,14 +21,14 @@ ___
 
 install python and pip
 ```bash
-sudo apt install python-dev
-sudo apt install python3-pip
+$ sudo apt install python-dev
+$ sudo apt install python3-pip
 ```
 
 create a activate a virtual environment
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+$ python3 -m venv venv
+$ source venv/bin/activate
 ```
 
 install the requirements for the Benchmark
@@ -36,7 +36,8 @@ install the requirements for the Benchmark
     $ sh install.sh
 ```
 
-install the requirements for the WebApp
+To use the WebApp, you need to install additional requirements
+
 ```bash
     $ cd WebApp
     $ pip3 install -r requirements.txt
