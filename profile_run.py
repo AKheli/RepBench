@@ -1,7 +1,7 @@
 import TestingFramework as run
 import Injection.injection_config as ic
 
-ic.MAX_N_ROWS = 10000
+ic.MAX_N_ROWS = 1000
 
 import matplotlib
 matplotlib.use('TKAgg')
@@ -11,11 +11,15 @@ matplotlib.use('TKAgg')
 # ic.label_seed = 20
 # run.main(input)
 
-
-input = "-scen  a_rate,a_factor  -data elec  -rn all_ts_cont -anom shift,outlier -alg all -ts all" # "
+input = "-scen  all  -data humidity  -anom all -alg all" # "
 ic.MAX_N_COLS = 10
 ic.label_seed = 20
 run.main(input)
+
+# input = "-scen  all  -data humidity  -anom all -alg all " # "
+# ic.MAX_N_COLS = 10
+# ic.label_seed = 20
+# run.main(input)
 
 # input = "-scen  cts_nbr,a_factor  -data all  -rn screen_test2 -anom shift,outlier -alg screen -ts all" # "
 # ic.MAX_N_COLS = 10
