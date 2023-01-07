@@ -2,72 +2,107 @@
 {% load static %}
 
 {% block content %}
+    <div class="container margin-top-20">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1><strong>{{ Title }}</strong>
+                    {#                    <small>Anpmaly Repair</small>#}
+                </h1>
+            </div>
+            <p>
+                {{ Title }} is an online tool to Visualize The Repair of Anomaly Repair Techniques.
+            </p>
+            <p>
+                This tool was created at the <a href="http://exascale.info/">eXascale Infolab</a>, a research group
+                at the <a href="http://www.unifr.ch/">University of Fribourg</a>, Switzerland.
+            </p>
+        </div>
+    </div>
 
-{#                <div class="accordion" id="seriesAccordion">#}
-{#                        <div class="card dropdown">#}
-{#                            <div class="card-header" id="headingOne">#}
-{#                            <h2 class="mb-0">#}
-{#                                <button class="btn collapsed dropdown-toggle" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">#}
-{#                                    <span>Recover missing values for: <i class="fa fa-chevron-down"></i></span>#}
-{#                                </button>#}
-{#                            </h2>#}
-{#                            </div>#}
-{#                            <div id="collapseOne" class="collapse in" aria-labelledby="headingOne" data-parent="#seriesAccordion">#}
-{#                                <div class="" style="max-height: 100px; overflow-y: auto;">#}
-{#                                    <ul style="list-style: none;">#}
-{#                                        <li>#}
-{#                                                        <label for="15400">#}
-{#                                                            <input id="15400" type="checkbox" name="series" value="15400">#}
-{#                                                            <span> 0-6_EMAi0.1_0</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15401">#}
-{#                                                            <input id="15401" type="checkbox" name="series" value="15401">#}
-{#                                                            <span> 1-10_|DR|_1</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15402">#}
-{#                                                            <input id="15402" type="checkbox" name="series" value="15402">#}
-{#                                                            <span> 2-28_EMAi0.01_3</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15403">#}
-{#                                                            <input id="15403" type="checkbox" name="series" value="15403" checked="">#}
-{#                                                            <span> 3-18_|DR|_2</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15404">#}
-{#                                                            <input id="15404" type="checkbox" name="series" value="15404">#}
-{#                                                            <span> 4-58_|DR|_7</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15405">#}
-{#                                                            <input id="15405" type="checkbox" name="series" value="15405">#}
-{#                                                            <span> 5-21_EMAi0.001_2</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15406">#}
-{#                                                            <input id="15406" type="checkbox" name="series" value="15406">#}
-{#                                                            <span> 6-52_EMAi0.01_6</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15407">#}
-{#                                                            <input id="15407" type="checkbox" name="series" value="15407">#}
-{#                                                            <span> 7-124_EMAi0.01_15</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15408">#}
-{#                                                            <input id="15408" type="checkbox" name="series" value="15408">#}
-{#                                                            <span> 8-110_EMAi0.1_13</span>#}
-{#                                                        </label>#}
-{#                                                    </li><li>#}
-{#                                                        <label for="15409">#}
-{#                                                            <input id="15409" type="checkbox" name="series" value="15409">#}
-{#                                                            <span> 9-36_EMAi0.01_4</span>#}
-{#                                                        </label>#}
-{#                                                    </li>                                    </ul>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
+    {#        <div class="row">#}
+    {#            <div class="col-md-8">#}
+    {#                <hr/>#}
+    {#                <h3><strong>Centroid Decomposition</strong></h3>#}
+    {##}
+    {#                <p>The <a href="https://ieeexplore.ieee.org/document/6816643/">Centroid Decomposition</a> (CD) is a#}
+    {#                    matrix#}
+    {#                    decomposition technique that decomposes an input matrix <b>X</b> (consisting of multiple time-series#}
+    {#                    as columns) into the product of two matrices <b>L</b> (loading matrix) and <b>R</b>#}
+    {#                    (relevance matrix), such that <b>X</b> = <b>L</b> * <b>R<sup>T</sup></b>. CD allows to efficiently#}
+    {#                    perform recovery of missing values in large time series, both in batch mode and streaming mode.#}
+    {#                </p>#}
+    {#                <p>#}
+    {#                    In addition to the recovery, ReVival can be used as an online calculator to compute the Centroid#}
+    {#                    Cecomposition and to visualize different sign vector maximization strategies that can be used by CD.#}
+    {#                </p>#}
+    {#                <hr/>#}
+    {##}
+    <h3><strong>Features</strong></h3><br>
+
+    <div class="row">
+        <div class="col-md-3">
+            <p><b>Display:</b></p>
+            <ul>
+                <li><a href="{ url 'datasets' }">Datasets</a></li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <p><b>Repair:</b></p>
+            <ul>
+                <li><a href="{% url 'repair_datasets' %}">Repair Synthetic Datasets</a></li>
+                <li><a href="{% url 'display_datasets' %}">Inject Data and Repair</a></li>
+                <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Detailed Repair of Matrix
+                    decomposition Techniques</a></li>
+
+            </ul>
+        </div>
+        <div class="col-md-5">
+            <p><b>Optimization:</b></p>
+            <ul>
+                <li><a href=" {% url 'optimisation_datasets' %}">Display Parameter Search using Bayesian Optimization</a></li>
+            </ul>
+        </div>
+    </div>
+    {#                <hr/>#}
+    {##}
+    {#                <h3><strong>Publications</strong></h3>#}
+    {##}
+    {#                <ol>#}
+    {#                    <li>Mourad Khayati, Ines Arous, Zakhar Tymchenko, and Philippe Cudré-Mauroux. <strong>“ORBITS:#}
+    {#                        Online Recovery of Missing Blocks in Multiple Time Series Streams.”</strong> In <i>Proceedings#}
+    {#                        of the VLDB Endowment</i>, Vol. 14, 2021#}
+    {#                    </li>#}
+    {#                    <li>Mourad Khayati, Alberto Lerner, Zakhar Tymchenko, and Philippe Cudré-Mauroux. <strong>“Mind the#}
+    {#                        Gap: An Experimental Evaluation of Imputation of Missing Values Techniques in Time#}
+    {#                        Series.”</strong> In <i>Proceedings of the VLDB Endowment</i>, Vol. 13, 2020.#}
+    {#                    </li>#}
+    {#                    <li>Ines Arous, Mourad Khayati, Philippe Cudré-Mauroux, Ying Zhang, Martin Kersten, and Svetlin#}
+    {#                        Stalinlov. <strong>“RecovDB: Accurate and Efficient Missing Blocks Recovery for Large Time#}
+    {#                            Series.”</strong> In <i>35th IEEE International Conference on Data Engineering (ICDE#}
+    {#                            2019)</i>. Macau, China, 2019.#}
+    {#                    </li>#}
+    {#                    <li>Mourad Khayati, Michael H. Böhlen, and Johann Gamper. <strong>“Memory-Efficient Centroid#}
+    {#                        Decomposition for Long Time Series.”</strong> In <i>IEEE 30th International Conference on Data#}
+    {#                        Engineering (ICDE 2014)</i>, Chicago, ICDE 2014, IL, USA, March 31 - April 4, 2014, 100–111,#}
+    {#                        2014.#}
+    {#                    </li>#}
+    {#                </ol>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {#    <div class="container-fluid">#}
+    {#        <div class="row">#}
+    {#            <hr>#}
+    {#        </div>#}
+    {#    </div>#}
+    {#    <div class="container">#}
+    {#    <div class="row">#}
+    {#        <div class="col-md-6">#}
+    {#            <p><a href="https://exascale.info">eXascale Infolab</a></p>#}
+    {#        </div>#}
+    {#        <div class="col-md-6">#}
+    {#            <p class="muted pull-right">March 2021</p>#}
+    {#        </div>#}
+    {#    </div>#}
 {% endblock %}

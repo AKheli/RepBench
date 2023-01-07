@@ -50,6 +50,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'WebApp.urls'
 
+def title(request):
+    # return the value you want as a dictionnary. you may add multiple values in there.
+    return {'Title': "RepBench"}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -61,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'WebApp.settings.title',
             ],
         },
     },
