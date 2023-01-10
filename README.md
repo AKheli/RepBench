@@ -1,4 +1,4 @@
-# Anomaly Repair Benchmark 
+# Anomaly Repair 
 This benchmark implements four different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
 - The benchmark implements the following algorithms: [IMR](https://www.vldb.org/pvldb/vol10/p1046-song.pdf), [SCREEN](https://dl.acm.org/doi/pdf/10.1145/2723372.2723730), Robust PCA and CDrep.
@@ -90,3 +90,8 @@ python3 TestingFramework.py -scen all -data all -anom all -alg all
 #### Parameters
 The Parameters of the algorithms can be modified in [here](https://github.com/althausLuca/RepairBenchmark/blob/master/parameters.toml)
  
+ 
+ # Anomaly Injection
+ 
+ # Web Tool
+
