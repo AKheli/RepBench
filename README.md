@@ -1,3 +1,5 @@
+Add a global intro about the whole benchmark that allows to repair anomalies, create synthetic time series and graphically visualize the output of the repair, parameterization and injection.
+
 # Anomaly Repair 
 This benchmark implements four different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
