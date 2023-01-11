@@ -1,12 +1,12 @@
 from algorithms import algo_mapper
-from parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
-from parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
-from parameterization.optimizers.bayesian_optimization import BayesianOptimizer
+from algorithms.parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
+from algorithms.parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer
+from algorithms.parameterization.optimizers.bayesian_optimization import BayesianOptimizer
 import toml
 
 
 ### Parameters from toml file
-file_name = "parameters.toml"
+file_name = "algorithms/parameters.toml"
 def load_params_from_toml(alg_type):
     param_dict = toml.load(file_name)
     assert alg_type in param_dict or alg_type.split("_")[0] in param_dict , f"{alg_type} not in {param_dict.keys()}"

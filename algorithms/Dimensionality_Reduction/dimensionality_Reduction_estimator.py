@@ -4,7 +4,7 @@ from algorithms.Dimensionality_Reduction.interpolation import interpolate
 from algorithms.estimator import Estimator
 from sklearn.utils import check_array
 
-from data_methods.data_class import normalize_f
+from testing_frame_work.data_methods.data_class import normalize_f
 
 
 class DimensionalityReductionEstimator(Estimator):

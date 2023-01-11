@@ -15,7 +15,6 @@ injected = df.iloc[:,1].values
 truth = df.iloc[:,3].values
 y_0 = df.iloc[:,2].values
 labels = df.iloc[:,4].values
-print(labels)
 repairer = alg_runner.AnomalyRepairer(1, 1)
 
 #####

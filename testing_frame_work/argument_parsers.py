@@ -1,9 +1,10 @@
+import argparse
 import os
 from testing_frame_work.parse_toml import load_toml_file
-import Injection.injection_config as ic
+import injection.injection_config as ic
 from run_ressources.parser_init import init_parser
 import algorithms.algorithms_config as algc
-import Injection.injection_config as at
+import injection.injection_config as at
 
 
 repair_estimators = algc.ALGORITHM_TYPES
@@ -19,15 +20,12 @@ error_scores = ["rmse_full","rmse_partial","mae","mutual_info"]
 
 
 def init_checked_parser(input):
-    data_dir = os.listdir("data")
-    data_dir_trim = [txt.split(".")[0] for txt in data_dir]
     args = init_parser(input=input,
                        estimator_choices=estimator_choices,
                        scenario_choices=scenario_choices,
                        anomaly_choices=anomaly_choices)
 
     return args
-
 
 def parse_scen_names(args):
     scen_params = args.scenario
@@ -68,6 +66,5 @@ def parse_anomaly_types(args):
 def parse_training_arguments(args):
     train_method = args.train
     train_error = args.train_error
-
     return train_method, train_error
 

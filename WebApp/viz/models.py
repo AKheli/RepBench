@@ -3,7 +3,7 @@ import json
 from django.db import models
 import pandas as pd
 
-from Injection.injected_data_container import InjectedDataContainer
+from injection.injected_data_container import InjectedDataContainer
 
 
 class DataSet(models.Model):

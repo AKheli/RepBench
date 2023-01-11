@@ -1,11 +1,16 @@
-Add a global intro about the whole benchmark that allows to repair anomalies, create synthetic time series and graphically visualize the output of the repair, parameterization and injection.
+# RepBench 
+RepBench is a Benchmark tool for Anomaly Repair and Injection. RepBench provides a variate of of algorithms and metrics 
+of anomaly [**Repair**](#anomaly-repair)  evaluated on different contamination scenarios,
+You can [**inject**](#anomaly-injection) different types of  anomalies into a dataset.
+With the  [**RepBench Wep Application**](#web-tool) you can visualize the datasets and the repair results of the algorithms and specify your own parameterization. 
+
 
 # Anomaly Repair 
 This benchmark implements four different anomaly repair techniques in time series and evaluates their precision and runtime on various real-world time series datasets using different repair scenarios.
 
 - The benchmark implements the following algorithms: [IMR](https://www.vldb.org/pvldb/vol10/p1046-song.pdf), [SCREEN](https://dl.acm.org/doi/pdf/10.1145/2723372.2723730), Robust PCA and CDrep.
-- All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/Data).
-- The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/blob/master/Scenarios/README.md).
+- All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/data).
+- The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/scenarios/README.md).
 
 
 [**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) | [**Examples**](#examples)
@@ -63,7 +68,6 @@ $ python3 TestingFramework.py -d dataset -a anomaly_type -scen scenario_type - a
 
 
 ### Data
-
 - The data has to have a csv format.
 - The data argument expects the Data to be in the data folder.
 
@@ -76,24 +80,83 @@ All results and plots will be added to `Results` folder. The accuracy results of
 1.  Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
 
 ```bash
-python3 TestingFramework.py -scen ts_nbr -data bafu5k -anom shift -alg cdrec
+python3 TestingFramework.py -d bafu5k -scen ts_nbr  -anom shift -alg cdrec
 ```
 2. Run two algorithms (cdrec, rpca) on two dataset (bafu5k,msd) using one scenario (a_rate) and two anomalies (shift,outlier)
 
 ```bash
-python3 TestingFramework.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -alg cdrec,rpca
+python3 TestingFramework.py  -d bafu5k,msd -scen ts_nbr -anom shift,outlier -alg cdrec,rpca
 ```
  3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies (takes 24 hours)
 
 ```bash
-python3 TestingFramework.py -scen all -data all -anom all -alg all
+python3 TestingFramework.py -d all -scen all  -anom all -alg all
 ```
 
 #### Parameters
 The Parameters of the algorithms can be modified in [here](https://github.com/althausLuca/RepairBenchmark/blob/master/parameters.toml)
  
- 
- # Anomaly Injection
- 
- # Web Tool
+
+
+
+
+# Anomaly Injection
+## Execution
+```bash
+$ python3 inject.py -d dataset -a anomaly_type -f factor/amplitude -r rate -ts time_series [-l lenght ]
+```
+
+## Arguments
+- `-d` : Required. Dataset to inject anomalies into.
+- `-a` :   Required. Anomaly type to be injected. Choices are shift,distortion,outlier
+- `-f`  :   Required. Factor to control the strength of the anomaly.
+- `-r`  :   Required. Ratio of data points affected by the anomaly.
+- `-ts` :   Required ts index to be injected starting from 1 , multiple indices can be specified separated by comma e.g -ts `1,2,3`
+- `-l` : Optional. The length of the time series. Default value is 30.
+
+The  Resulting Injected Data set is stored in `injection/Results`.
+The input file must be in csv format without timestamps and  the data folder is `data/full`.
+
+## Examples
+1. Inject a shift anomaly with factor 4 and ratio 0.1 into the first time series of the dataset bafu5k with length 30.
+
+```bash
+python3 inject.py -d bafu5k -a shift -f 4 -r 0.1 -ts 1  -l 30
+```
+2. Inject a distortion anomaly with factor 2 and ratio 0.2 into the first and second time series of the dataset: elec with length 10.
+
+```bash
+python3 inject.py - -d elec a distortion -f 2 -r 0.2 -ts 1,2 -l 10
+```
+
+3. Inject an outlier anomaly with factor 3 and ratio 0.25 into the first, second and third time series of the dataset humidity.
+
+```bash
+python3 inject.py -d humidity -a outlier -f 3 -r 0.25 -ts 1,2,3 
+```
+
+
+
+# Web Tool
+
+## Execution
+### First time
+```bash
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+### Run
+```bash
+python3 manage.py runserver
+```
+## Injection
+
+
+## Repair 
+<img img align="center" width="500" height="400" src="WebApp/screenshots/repair.png" >
+
+
+
+
+
 

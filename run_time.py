@@ -1,5 +1,5 @@
 import TestingFramework as run
-import Injection.injection_config as sc
+import injection.injection_config as sc
 # cts_nbr,ts_nbr,ts_len
 import timeit
 

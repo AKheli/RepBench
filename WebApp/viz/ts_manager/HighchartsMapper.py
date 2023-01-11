@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-from Injection.injected_data_container import InjectedDataContainer
-from data_methods.data_class import DataContainer
+from injection.injected_data_container import InjectedDataContainer
+from testing_frame_work.data_methods.data_class import DataContainer
 
 
 ## mapping to highcharts series

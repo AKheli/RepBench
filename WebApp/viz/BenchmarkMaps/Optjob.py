@@ -1,6 +1,6 @@
-from Injection.injected_data_container import InjectedDataContainer
+from injection.injected_data_container import InjectedDataContainer
 from algorithms import algo_mapper
-from parameterization.optimizers import BayesianOptimizer
+from algorithms.parameterization.optimizers import BayesianOptimizer
 from testing_frame_work.repair import AnomalyRepairer
 from WebApp.viz.ts_manager.HighchartsMapper import map_repair_data
 

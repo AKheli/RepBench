@@ -5,15 +5,14 @@ import pandas as pd
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from Injection.injected_data_container import InjectedDataContainer
+from injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
 from WebApp.viz.forms.injection_form import store_injection_form, InjectionForm
 from WebApp.viz.models import InjectedContainer
-from Injection.injection_methods.basic_injections import add_anomalies
+from injection.injection_methods.basic_injections import add_anomalies
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from WebApp.viz.ts_manager.HighchartsMapper import map_injected_series
 from WebApp.viz.views.data_loader import load_data_container
-from WebApp.viz.views.dataset_views import DatasetView
 from WebApp.viz.views.repair_view import RepairView
 
 

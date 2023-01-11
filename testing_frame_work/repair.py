@@ -3,7 +3,7 @@ import time
 import numpy as np
 from pandas import DataFrame
 
-from Injection.injected_data_container import InjectedDataContainer
+from injection.injected_data_container import InjectedDataContainer
 from algorithms.algorithm_mapper import algo_mapper
 from algorithms.estimator import Estimator
 
