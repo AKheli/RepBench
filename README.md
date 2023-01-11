@@ -76,6 +76,9 @@ $ python3 TestingFramework.py -d dataset -a anomaly_type -scen scenario_type - a
 ### Results
 All results and plots will be added to `Results` folder. The accuracy results of all algorithms will be sequentially added for each scenario, dataset and anomaly type to: `Results/.../.../precision/error/`. The runtime results of all algorithms will be added to: `Results/.../.../runtime/`. The plots of some anomaylous parts of the time series together with its repair will be added to the folder `Results/.../precision/repair/`.
 
+#### Parameters
+The Parameters of the algorithms can be modified in [here](https://github.com/althausLuca/RepairBenchmark/blob/master/algorithms/parameters.toml)
+
 
 ### Examples
 1.  Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
@@ -94,12 +97,8 @@ python3 TestingFramework.py  -d bafu5k,msd -scen ts_nbr -anom shift,outlier -alg
 python3 TestingFramework.py -d all -scen all  -anom all -alg all
 ```
 
-#### Parameters
-The Parameters of the algorithms can be modified in [here](https://github.com/althausLuca/RepairBenchmark/blob/master/parameters.toml)
+
  
-
-
-
 
 # Anomaly Injection
 ## Execution
