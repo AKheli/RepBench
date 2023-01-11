@@ -21,5 +21,5 @@ def bayesian_opt_param_forms_inputs(df):
     b_param_forms = {}
     alg_input_map = {alg_name: alg().suggest_param_range(df) for alg_name, alg in algo_mapper.items()}
     for alg, param_range in alg_input_map.items():
-        b_param_forms[alg] = [{"param_name": k, "min": min(v), "max": max(v)} for k, v in param_range.items()]
+        b_param_forms[alg] = [ { "param_name": k, "min": min(v), "max": max(v)} for k, v in param_range.items()]
     return b_param_forms

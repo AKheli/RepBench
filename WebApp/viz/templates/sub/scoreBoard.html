@@ -1,15 +1,15 @@
 {% load static %}
 <style>
-    .outer {
-        width: 100%;
-        text-align: center;
-    }
+    {#.outer {#}
+    {#    width: 100%;#}
+    {#    text-align: center;#}
+    {# }#}
+    {##}
+    {#.inner {#}
+    {#    display: inline-block;#}
+    {# }#}
 
-    .inner {
-        display: inline-block;
-    }
-
-    .rs-tooltip-text{
+    .rs-tooltip-text {
         color: #000 !important;
         font-size: 20px !important;
         font-weight: 900 !important;
@@ -23,23 +23,37 @@
 <script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
 
 <style>
-    .roundslider normal{
+    .roundslider normal {
         padding-left: 100px;
     }
+
+    .slider-grid {
+        margin-top : 15px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 200fr));
+        {#grid-auto-rows: 20px;#}
+        grid-gap: 40px;
+
+    }
+    .rs-title {
+        font-size: 17px;
+        font-weight: 900;
+        z-index: 800;
+    }
 </style>
+
+
 <div class="outer">
     <div class="inner">
-        <div class="slider-container inner">
-            <div class="row">
-                <div id="RMSE-slider" class="roundslider normal"
-                     title="RMSE">
-                </div>
-                <div id="MAE-slider" class="roundslider normal"
-                     title="MAE">
-                </div>
-                <div id="RMSE-Anomaly-slider" class="roundslider normal"
-                     title="RMSE on Anomaly">
-                </div>
+        <div class="slider-container slider-grid">
+            <div id="RMSE-slider" class="roundslider normal"
+                 title="RMSE">
+            </div>
+            <div id="MAE-slider" class="roundslider normal"
+                 title="MAE">
+            </div>
+            <div id="RMSE-Anomaly-slider" class="roundslider normal"
+                 title="RMSE on Anomaly">
             </div>
         </div>
     </div>

@@ -11,7 +11,8 @@ const addSeries = function (series) {
         series: series,
         chartSeries: null,
         originalData: series.data.map(s => s),
-        normData: series.norm_data.map(s => s)
+        normData: series.norm_data.map(s => s),
+        name : series.name
     }
     return ser
 }
@@ -152,4 +153,6 @@ $('#zButton').click(function () {
         resetSeries()
     }
 });
+
+
 

@@ -3,11 +3,11 @@ from WebApp.viz.catch22.features import features
 register = template.Library()
 
 WebAppTitle = "WebApp"
+algo_names = { "rpca" : "RPCA", "cdrec" : "CDrep", "screen" : "SCREEN", "imr" : "IMR" }
 
 
 
 ## catch22 filters
-
 paper_link = "https://www.biorxiv.org/content/10.1101/532259v1.full.pdf"
 @register.filter()
 def c22_description(feature_name):
@@ -25,3 +25,8 @@ def c22_abr(feature_name):
 @register.filter()
 def title():
     return WebAppTitle
+
+
+@register.filter()
+def parse_alg_name(alg_name):
+    return algo_names[alg_name]

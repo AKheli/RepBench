@@ -11,9 +11,6 @@ from WebApp.viz.views.dataset_views import DatasetView
 import WebApp.viz.BenchmarkMaps.Optjob as OptJob
 
 
-
-
-
 def parse_param_input(p: str):
     if p.isdigit():
         return int(p)
@@ -26,8 +23,6 @@ class opt_JSONRespnse(JsonResponse):
     def __init__(self, data, callback=None, **kwargs):
         self.callback = callback
         super().__init__(data, encoder=self.NpEncoder, **kwargs)
-
-
 
 class OptimizationView(DatasetView):
     template = "optimization.html"

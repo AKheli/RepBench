@@ -3,7 +3,7 @@
 
 
 {% block content %}
-    <div class="row margin-top-20">
+    <div class="row">
         <div class="row " style="display: none">
             <div class="col-md-9" style="position:relative;">
                 <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
@@ -32,7 +32,6 @@
         <!-- page title -->
         <div class="col-md-12">
             <div class="page-title" style="margin-left: 40px">
-                <h1>Optimize Data</h1>
             </div>
         </div>
         <div id="optChartContainer" class="col-lg-9 col-md-12 col-sm-12 col-xs-12" style="height:800px">
@@ -42,14 +41,9 @@
                 <tbody id="testBody"></tbody>
             </table>
         </div>
-        <div id="optChartContainer2" class="col-md-3 margin-top-20">
-<table id="myTable">
-                <thead>
-                </thead>
-                <tbody id="testBody"></tbody>
-            </table>
+        <div id="optChartContainer2" class="col-md-3 pad-15px">
+                            <h1>Bayesian Optimization</h1>
             {% include 'sub/bayesianOptForm.html' %}
-
         </div>
 
 
