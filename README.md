@@ -48,7 +48,7 @@ To use the WebApp, you need to install additional requirements
 ___
 ## Execution
 ```bash
-$ python3 TestingFramework.py -d dataset_name -a anomaly_type -scen scenario_type - alg algorithm
+$ python3 TestingFramework.py -d dataset -a anomaly_type -scen scenario_type - alg algorithm
 ```
 ### Arguments
 
@@ -83,7 +83,7 @@ python3 TestingFramework.py -scen ts_nbr -data bafu5k -anom shift -alg cdrec
 ```bash
 python3 TestingFramework.py -scen ts_nbr -data bafu5k,msd -anom shift,outlier -alg cdrec,rpca
 ```
- 3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies
+ 3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies (takes 24 hours)
 
 ```bash
 python3 TestingFramework.py -scen all -data all -anom all -alg all
