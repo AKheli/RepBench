@@ -48,11 +48,11 @@ To use the WebApp, you need to install additional requirements
 ___
 ## Execution
 ```bash
-$ python3 TestingFramework.py [arguments]
+$ python3 TestingFramework.py -d dataset_name -a anomaly_type -scen scenario_type - alg algorithm
 ```
 ### Arguments
 
- | -d  | -a  | -scen | -alg | 
+ | dataset  | anonaly_type  | scenario_type | algorithm | 
  | -------- | -------- | -------- | -------- | 
  | bafu5k     | shift   |ts_len     | rpca
  | humidity   |distortion  |  a_size | screen
