@@ -109,10 +109,10 @@ $ python3 inject.py -d dataset -a anomaly_type -f factor/amplitude -r rate -ts t
 
 ## Arguments
 - `-d` : Required. Dataset to inject anomalies into.
-- `-a` :   Required. Anomaly type to be injected. Choices are shift,distortion,outlier
-- `-f`  :   Required. Factor to control the strength of the anomaly.
-- `-r`  :   Required. Ratio of data points affected by the anomaly.
-- `-ts` :   Required ts index to be injected starting from 1 , multiple indices can be specified separated by comma e.g -ts `1,2,3`
+- `-a` : Required. Anomaly type to be injected. Choices are shift,distortion,outlier
+- `-f` : Required. Factor to control the strength of the anomalies.
+- `-r` : Required. Ratio of data points affected by the anomalies.
+- `-ts`: Required ts index to be injected starting from 1 , multiple indices can be specified separated by comma e.g -ts `1,2,3`
 - `-l` : Optional. The length of the time series. Default value is 30.
 
 The  Resulting Injected Data set is stored in `injection/Results`.
