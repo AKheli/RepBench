@@ -84,17 +84,17 @@ The Parameters of the algorithms can be modified in [here](https://github.com/al
 1.  Run a single algorithm (cdrec) on a single dataset (bafu5k) using one scenario (number of time series) and one anomaly (shift)
 
 ```bash
-python3 TestingFramework.py -d bafu5k -scen ts_nbr  -anom shift -alg cdrec
+python3 TestingFramework.py -d bafu5k -scen ts_nbr  -a shift -alg cdrec
 ```
 2. Run two algorithms (cdrec, rpca) on two dataset (bafu5k,msd) using one scenario (a_rate) and two anomalies (shift,outlier)
 
 ```bash
-python3 TestingFramework.py  -d bafu5k,msd -scen ts_nbr -anom shift,outlier -alg cdrec,rpca
+python3 TestingFramework.py  -d bafu5k,msd -scen ts_nbr -a shift,outlier -alg cdrec,rpca
 ```
  3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies (takes 24 hours)
 
 ```bash
-python3 TestingFramework.py -d all -scen all  -anom all -alg all
+python3 TestingFramework.py -d all -scen all  -a all -alg all
 ```
 
 
