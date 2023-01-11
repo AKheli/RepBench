@@ -26,7 +26,7 @@ def init_checked_parser(input):
     return args
 
 def parse_scen_names(args):
-    scen_params = args.scenario
+    scen_params = args.scen
     scen_names = scenarios if "all" in scen_params else scen_params
     return scen_names
 
@@ -55,7 +55,7 @@ def parse_repair_algorithms_x(args):
 
 
 def parse_anomaly_types(args):
-    anomaly_types_param = args.a_type
+    anomaly_types_param = args.a
     anomalies = [at.parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
         else all_anomalies
     return anomalies
