@@ -13,7 +13,7 @@ This benchmark implements four different anomaly repair techniques in time serie
 
 - The benchmark implements the following algorithms: [IMR](https://www.vldb.org/pvldb/vol10/p1046-song.pdf), [SCREEN](https://dl.acm.org/doi/pdf/10.1145/2723372.2723730), Robust PCA and CDrep.
 - All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/data).
-- The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/scenarios/README.md).
+- The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/injection/scenarios/README.md).
 
 
 ___
