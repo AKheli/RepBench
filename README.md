@@ -126,7 +126,7 @@ python3 inject.py -d bafu5k -a shift -f 4 -r 0.1 -ts 1  -l 30
 2. Inject a distortion anomaly with factor 2 and ratio 0.2 into the first and second time series of the dataset: elec with length 10.
 
 ```bash
-python3 inject.py - -d elec a distortion -f 2 -r 0.2 -ts 1,2 -l 10
+python3 inject.py - -d elec -a distortion -f 2 -r 0.2 -ts 1,2 -l 10
 ```
 
 3. Inject an outlier anomaly with factor 3 and ratio 0.25 into the first, second and third time series of the dataset humidity.
