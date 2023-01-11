@@ -153,7 +153,7 @@ python3 manage.py runserver
 
 
 ## Repair 
-<img img align="center" width="500" height="400" src="WebApp/screenshots/repair.png" >
+<img img align="center" width="1000" height="400" src="WebApp/screenshots/repair.png" >
 
 
 
