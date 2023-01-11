@@ -1,5 +1,5 @@
 # RepBench 
-RepBench is a Benchmark tool for Anomaly Repair and Injection. RepBench provides a variety of  algorithms and metrics 
+RepBench is a benchmark tool for Anomaly Repair and Injection. RepBench provides a variety of  algorithms and metrics 
 of anomaly [**Repair**](#anomaly-repair)  evaluated on different contamination scenarios,
 You can [**inject**](#anomaly-injection) different types of anomalies into a dataset.
 With the  [**RepBench Web Application**](#web-tool) you can visualize the datasets and the repair results of the algorithms and specify your parameterization. 
