@@ -1,7 +1,6 @@
 
 import inject
 
-print("Hallo")
 
 import os
 curr_wd = os.getcwd()

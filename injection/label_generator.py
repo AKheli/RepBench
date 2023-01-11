@@ -43,19 +43,10 @@ def generate_column_labels(class_column, seed=None):
         #starts = [min(r) for r in get_anomaly_ranges(class_column) if len(r) > 1]
         m = len(class_column)
         r_number = np.random.uniform(size=m)
-        #r_number[starts] = r_number[starts] < label_anom_start
         r_number = r_number < label_rate
         labels = r_number.astype(bool)
 
         if np.any(class_column.astype(int)):
-            # print("amoulaous column")
-            # print(np.sum(class_column))
-            # print(np.sum(labels))
-            # print("length:", len(labels), len(class_column))
-            ## check labeled anomalies
-            # for row in arr:
-            #     if row[2]:
-            #         print(row)
             labels_in_anomalies = labels[class_column]
             labeled_anoms = np.any(np.invert(labels_in_anomalies))
             non_labeled_anoms=  np.any(labels_in_anomalies)

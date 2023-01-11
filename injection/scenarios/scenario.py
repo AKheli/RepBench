@@ -200,7 +200,7 @@ class Scenario:
                 plt.clf()
                 plt.close()
             except:
-                print(metric, "could not be plotted")
+                pass
             metric_df.columns = [name for name,type in metric_df.columns]
             metric_df.to_csv(f'{error_path}/{metric}.txt')
 
