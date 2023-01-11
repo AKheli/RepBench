@@ -1,8 +1,11 @@
 # RepBench 
-RepBench is a Benchmark tool for Anomaly Repair and Injection. RepBench provides a variate of of algorithms and metrics 
+RepBench is a Benchmark tool for Anomaly Repair and Injection. RepBench provides a variety of  algorithms and metrics 
 of anomaly [**Repair**](#anomaly-repair)  evaluated on different contamination scenarios,
-You can [**inject**](#anomaly-injection) different types of  anomalies into a dataset.
-With the  [**RepBench Wep Application**](#web-tool) you can visualize the datasets and the repair results of the algorithms and specify your own parameterization. 
+You can [**inject**](#anomaly-injection) different types of anomalies into a dataset.
+With the  [**RepBench Web Application**](#web-tool) you can visualize the datasets and the repair results of the algorithms and specify your parameterization. 
+
+
+[**Prerequisites**](#prerequisites) | [**Build**](#build) |[**Repair**](#anomaly-repair) | [**Injection**](#anomaly-injection)|[**RepBench Web Application**](#web-tool) 
 
 
 # Anomaly Repair 
@@ -12,8 +15,6 @@ This benchmark implements four different anomaly repair techniques in time serie
 - All the datasets used in this benchmark can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/data).
 - The full list of repair scenarios can be found [here](https://github.com/althausLuca/RepairBenchmark/tree/master/scenarios/README.md).
 
-
-[**Prerequisites**](#prerequisites) | [**Build**](#build) | [**Execution**](#execution) | [**Examples**](#examples)
 
 ___
 
@@ -140,6 +141,7 @@ python3 inject.py -d humidity -a outlier -f 3 -r 0.25 -ts 1,2,3
 # Web Tool
 
 ## Execution
+
 ### First time
 ```bash
 python3 manage.py makemigrations
@@ -149,11 +151,32 @@ python3 manage.py migrate
 ```bash
 python3 manage.py runserver
 ```
-## Injection
 
 
 ## Repair 
-<img img align="center" width="1000" height="400" src="WebApp/screenshots/repair.png" >
+Directly repair a synthetic data set with anomalies and compare the repaired time series together with the original and injected series.
+We show the conventional metrics for anomaly repair: root mean square error (RMSE) and mean absolute error (MAE).
+
+<img align="center" width="600" height="400" src="WebApp/screenshots/repair.png" >
+
+## Injection 
+Inject real-world data with anomalies. Select the time series and anomaly type to inject. Multiple injections are possible allowing for different anomaly types in a time series. Once one time series is injected one can toggle the repair view and repair the contaminated data as with the synthetic data. 
+
+
+<img align="center" width="600"  height="400" src="WebApp/screenshots/injection.png">
+
+## Optimization
+Try out Bayesian optimization on synthetic data specifying a parameter space and algorithm. The different steps of Bayesian optimization are visualized displaying the error to minimize and the parameter combination.
+
+
+<img align="center" width="600"  height="400" src="WebApp/screenshots/optimization.png">
+
+
+
+
+
+
+
 
 
 
