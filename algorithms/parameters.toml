@@ -2,7 +2,7 @@
     threshold = 1.2
     classification_truncation = 2
     repair_truncation = 3
-    n_max_iter = 20
+    n_max_iter = 10
     repair_iter = 10
 
 
@@ -16,7 +16,7 @@
 [imr]
      p = 3
      tau = 0.02
-     n_max_itr=100000
+     n_max_itr= 20000
 
 [screen]
      t = 1

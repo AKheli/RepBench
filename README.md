@@ -91,7 +91,7 @@ python3 TestingFramework.py -d bafu5k -scen ts_nbr  -a shift -alg cdrec
 ```bash
 python3 TestingFramework.py  -d bafu5k,msd -scen ts_nbr -a shift,outlier -alg cdrec,rpca
 ```
- 3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies (takes 24 hours)
+ 3. Run the whole benchmark: all the algorithms , all the dataset on all scenarios with all anomalies (takes 6 hours)
 
 ```bash
 python3 TestingFramework.py -d all -scen all  -a all -alg all

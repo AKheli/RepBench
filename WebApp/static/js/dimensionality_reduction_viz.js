@@ -68,10 +68,11 @@ let repair = (alg) => fetch(repair_url, {
         left: 0,
         behavior: 'smooth'
     });
-    console.log(pageHeight)
-    init_threshold_chart(final_reductions)
+    console.log(repairResponse)
+    init_threshold_chart(repairResponse.injected_diff)
     thresholdChart.updateThreshold(final_reductions[0].threshold)
-    initClassificationReductionChart(repairResponse.reductions)
+    initClassificationReductionChart(repairResponse.injected_series.concat(repairResponse.reductions))
+
     const boxes = document.querySelectorAll('.full-height')
 
     // boxes.forEach(box => {
@@ -80,29 +81,29 @@ let repair = (alg) => fetch(repair_url, {
     initRepairIterChart(repairResponse.repair_iters)
     resetSeries()
 
-    document.getElementById("after-runtime").innerHTML +=
-        "<table class='table'> " +
-        "<tr> " +
-        "<th> Metric </th> " +
-        "<th> Value </th>" +
-        "</tr> " +
-        "<tr>" +
-        "<td>TP</td>" +
-        "<td>" + repairResponse.TP + "</td>" +
-        "</tr>" +
-        "<tr> " +
-        "<td>FP</td>" +
-        "<td>" + repairResponse.FP + "</td>" +
-        "</tr>" +
-        "<tr> " +
-        "<td>TN</td>" +
-        "<td>" + repairResponse.TN + "</td>" +
-        "</tr>" +
-        "<tr> " +
-        "<td>FN</td>" +
-        "<td>" + repairResponse.FN + "</td>" +
-        "</tr>" +
-        "</table>"
+    // document.getElementById("after-runtime").innerHTML +=
+    //     "<table class='table'> " +
+    //     "<tr> " +
+    //     "<th> Metric </th> " +
+    //     "<th> Value </th>" +
+    //     "</tr> " +
+    //     "<tr>" +
+    //     "<td>TP</td>" +
+    //     "<td>" + repairResponse.TP + "</td>" +
+    //     "</tr>" +
+    //     "<tr> " +
+    //     "<td>FP</td>" +
+    //     "<td>" + repairResponse.FP + "</td>" +
+    //     "</tr>" +
+    //     "<tr> " +
+    //     "<td>TN</td>" +
+    //     "<td>" + repairResponse.TN + "</td>" +
+    //     "</tr>" +
+    //     "<tr> " +
+    //     "<td>FN</td>" +
+    //     "<td>" + repairResponse.FN + "</td>" +
+    //     "</tr>" +
+    //     "</table>"
 
     // make highcharts_container higher
 
