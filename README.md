@@ -1,8 +1,5 @@
 # RepBench 
-RepBench is a benchmark tool for Anomaly Repair and Injection. RepBench provides a variety of  algorithms and metrics 
-of anomaly [**Repair**](#anomaly-repair)  evaluated on different contamination scenarios,
-You can [**inject**](#anomaly-injection) different types of anomalies into a dataset.
-With the  [**RepBench Web Application**](#web-tool) you can visualize the datasets and the repair results of the algorithms and specify your parameterization. 
+RepBench is a tool for measuring and comparing the performance of algorithms repairing anomalies in datasets. It offers various algorithms and metrics for evaluating the effectiveness of anomaly repair under different contamination conditions. Users can introduce different types of anomalies into datasets and use the RepBench web application to view the data, repair results, and experiment with algorithm parameters.
 
 
 [**Prerequisites**](#prerequisites) | [**Build**](#build) |[**Repair**](#anomaly-repair) | [**Injection**](#anomaly-injection)|[**RepBench Web Application**](#web-tool) 
@@ -159,14 +156,13 @@ We show the conventional metrics for anomaly repair: root mean square error (RMS
 <img align="center" width="600" height="400" src="WebApp/screenshots/repair.png" >
 
 ## Injection 
-Inject real-world data with anomalies. Select the time series and anomaly type to inject. Multiple injections are possible allowing for different anomaly types in a time series. Once one time series is injected one can toggle the repair view and repair the contaminated data as with the synthetic data. 
+Inject real-world data with anomalies. Select the time series and anomaly type to inject. Multiple injections are possible allowing for different anomaly types in a time series.  After contamination, it is possible to switch to the repair view to try out the a repair technique on the affected data, similar to the process used for synthetic data.
 
 
 <img align="center" width="600"  height="400" src="WebApp/screenshots/injection.png">
 
 ## Optimization
-Try out Bayesian optimization on synthetic data specifying a parameter space and algorithm. The different steps of Bayesian optimization are visualized displaying the error to minimize and the parameter combination.
-
+Run an experiment using Bayesian optimization on a set of synthetic data by defining the range of parameters to test and the optimization algorithm. Visualize the results by plotting the error being minimized and the specific parameter values used in each step of the optimization process.
 
 <img align="center" width="600"  height="400" src="WebApp/screenshots/optimization.png">
 
