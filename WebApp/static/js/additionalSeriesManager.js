@@ -1,10 +1,24 @@
+let normalized = false
+
 let injectedSeries = []
 const repairedSeries = []
 const originalSeries = []
+
+
 const reducedSeries = []
 
-let normalized = false
 
+//large color palette excluding red good visible with white background
+const colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
+    '#50394c', '#e4d354', '#8085e8', '#8d4653', '#91e8e1', '#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9']
+// color palette for repaired series,different from the one used for original series
+const repairedColors = ['#4040a1', '#405d27', '#f18973', '#36486b']
+const getRepairedColor = function () {
+    return repairedColors[repairedSeries.length % repairedColors.length]
+}
+const getColor = function () {
+        return colors[originalSeries.length % colors.length]
+}
 
 const addSeries = function (series) {
     let ser = {
@@ -38,6 +52,9 @@ const get_injected_norm_data = function () {
 }
 
 const addOriginalSeries = function (series) {
+    if(series.color == null){
+        series.color = getColor()
+    }
     const retval = addSeries(series)
     originalSeries.push(addSeries(series))
     return retval
@@ -69,6 +86,9 @@ const addInjectedSeries = function (series, previously_injected) {
 const addRepairedSeries = function (series, col) {
     if (col != null) {
         series.color = col
+    }
+     if(series.color == null){
+        series.color = getRepairedColor()
     }
     const retval = addSeries(series)
     repairedSeries.push(retval)

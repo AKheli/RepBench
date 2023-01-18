@@ -73,8 +73,6 @@ class DimensionalityReductionView(RepairView):
               }
              for i, col in enumerate(df_reduced.columns) if i in injected_data_container.injected_columns]
             for r_iter, df_reduced in enumerate(reductions) if r_iter in [0, 4, 9]]
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
-        print([c[0]["true_distance"] for c in context["reductions"]])
 
         df_reduced = reductions[-1]
         context["final_reductions"] = \
@@ -90,9 +88,6 @@ class DimensionalityReductionView(RepairView):
              for i, col in enumerate(df_reduced.columns) if
              i in injected_data_container.injected_columns]
 
-
-        print(df_reduced)
-        print(injected_data_container.injected)
         Anomalies = injected_data_container.class_df.values
         classified = estimator.anomaly_matrix
         TP = np.sum(np.logical_and(classified, Anomalies))

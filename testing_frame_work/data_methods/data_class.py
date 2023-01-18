@@ -49,8 +49,9 @@ def infer_data_file(file_name, folder):
 
 def read_data(data_name, folder):
     curr_wd = os.getcwd()
-    root_dir = "RepairBenchmark"
-    os.chdir("".join(curr_wd.split(root_dir)[:-1]) + root_dir)
+    current_file_directory = os.path.dirname(os.path.abspath(__file__))
+    two_levels_up = os.path.dirname(os.path.dirname(current_file_directory))
+    os.chdir(two_levels_up)
     file_path = infer_data_file(data_name, folder)
     ## check if first row are headrs or numerical values belongin to the dataset
     first_row = pd.read_csv(file_path, nrows=1, header=None, sep=",")

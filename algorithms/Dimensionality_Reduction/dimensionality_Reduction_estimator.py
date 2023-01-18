@@ -70,7 +70,6 @@ class DimensionalityReductionEstimator(Estimator):
         return np.dot(matrix - self.weighted_mean, self.transform_matrix) + self.weighted_mean
 
     def repair(self, injected, truth, columns_to_repair, labels=None):
-        print("repair",injected.iloc[0,0])
         truth = None
         self.init_weights_and_reduced()
         injected, self.current_inv_f = normalize_f(injected)

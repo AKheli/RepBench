@@ -26,12 +26,13 @@ ___
 
 install python and pip
 ```bash
-$ sudo apt install python-dev
+$ sudo apt install python3-dev
 $ sudo apt install python3-pip
 ```
 
 create a activate a virtual environment
 ```bash
+$ sudo apt install python3-venv
 $ python3 -m venv venv
 $ source venv/bin/activate
 ```
@@ -51,7 +52,7 @@ To use the WebApp, you need to install additional requirements
 ___
 ## Execution
 ```bash
-$ python3 TestingFramework.py -d dataset -a anomaly_type -scen scenario_type - alg algorithm
+$ python3 TestingFramework.py -d dataset -a anomaly_type -scen scenario_type -alg algorithm
 ```
 ### Arguments
 
