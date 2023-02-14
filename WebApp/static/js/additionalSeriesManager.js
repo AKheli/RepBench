@@ -108,6 +108,7 @@ const clearAllSeries = function () {
 
 
 const resetSeries = function (showOnlyInjected = false) {
+
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
 
     if (showOnlyInjected) {

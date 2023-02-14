@@ -37,7 +37,8 @@ const events = {
             }
 
         })
-    }
+    },
+
 }
 
 
@@ -94,6 +95,7 @@ let splitMainChart = function () {
 
 let mainChart = null
 let threshold = null
+
 
 
 const initMainChart = function (series = {}, container = 'highcharts_container') {
@@ -199,26 +201,30 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
                 }],
         },
 
-        series: series,
-
+        series: [{data:[], name: 'empty', visible: false, showInLegend: false}],
 
     });
+    mainChart.showLoading('Loading data from server...');
+    //pause for 1 second to allow the loading screen to show
+    series.forEach(s => {mainChart.addSeries(s, false, false)})
+    mainChart.redraw();
+    mainChart.hideLoading();
+    // if (threshold !== null) {
+    //     mainChart.yAxis[2].addPlotLine(
+    //         {
+    //             color: 'black',
+    //             width: 2,
+    //             value: threshold,
+    //             yAxis: 2,
+    //             label: {
+    //                 text: 'Threshold',
+    //                 align: 'right',
+    //                 x: -10
+    //             }
+    //         }
+    //     )
+    // }
 
-    if (threshold !== null) {
-        mainChart.yAxis[2].addPlotLine(
-            {
-                color: 'black',
-                width: 2,
-                value: threshold,
-                yAxis: 2,
-                label: {
-                    text: 'Threshold',
-                    align: 'right',
-                    x: -10
-                }
-            }
-        )
-    }
 }
 
 const mainChartFetchPromise = new Promise((resolve, reject) => {

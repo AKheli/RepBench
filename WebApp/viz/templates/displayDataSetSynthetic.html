@@ -1,12 +1,13 @@
 {% extends "displayDataset.html" %}
 {% load static %}
 
+
 {% block chartContainer %}
     <style>  .full-height {
-    height: 90vh;
-}
+        height: 90vh;
+    }
 
-</style>
+    </style>
 
     <div class="col-md-9" style=" height: 90vh;">
         {% include 'sub/MainChart.html' %}
@@ -14,12 +15,8 @@
 {% endblock %}
 
 {% block datasetInfo %}
-    <h2>{{ data_info.title }}</h2>
-    {#    <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>#}
-    <p>{{ data_info.description }}</p>
-    <p>Number of Values: {{ data_info.values }}</p>
-    <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
-    <!-- pretty table displaying anomaly rates per time series -->
+
+    {% include 'syntheticDataDescription.html' %}
     <table class="table table-striped" style="margin-bottom: 0 !important;">
 
         <thead>

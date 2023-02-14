@@ -1,20 +1,10 @@
 {% load static %}
 <style>
-    {#.outer {#}
-    {#    width: 100%;#}
-    {#    text-align: center;#}
-    {# }#}
-    {##}
-    {#.inner {#}
-    {#    display: inline-block;#}
-    {# }#}
-
     .rs-tooltip-text {
         color: #000 !important;
         font-size: 20px !important;
         font-weight: 900 !important;
     }
-
 </style>
 
 <script src="{% static  'js/scoreboard.js' %} " type="text/javascript"></script>
@@ -24,15 +14,15 @@
 
 <style>
     .roundslider normal {
-        padding-left: 100px;
+        {#padding-left: 100px;#}
     }
 
     .slider-grid {
         margin-top : 15px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 200fr));
+        grid-template-columns: repeat(auto-fit, minmax(119px, 150fr));
         {#grid-auto-rows: 20px;#}
-        grid-gap: 40px;
+        grid-gap: 20px;
 
     }
     .rs-title {

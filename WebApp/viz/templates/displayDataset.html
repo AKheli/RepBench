@@ -14,19 +14,18 @@
                 <p>{{ data_info.description }}</p>
                 <p>Number of Values: {{ data_info.values }}</p>
                 <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
-                {#    {% include "sub/corr.html" %}#}
 
             {% endblock %}
             <div id="corr_container" style="max-height: 600px;"></div>
         </div>
     </div>
     {% block sliders %}
-{#    <div class="row margin-top-20 margin-bot-20 ">#}
-{#        <div class="col-md-9" style="position:relative;">#}
+    <div class="row margin-top-20 margin-bot-20 ">
+        <div class="col-md-9" style="position:relative;">
 {#            {% include "sub/catch22sliders.html" %}#}
-{#        </div>#}
-{##}
-{#    </div>#}
+        </div>
+
+    </div>
     {% endblock %}
 
 

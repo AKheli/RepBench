@@ -97,6 +97,6 @@ def store_data(request, setname):
 
     injectedDataframe = injected_data_container.injected.to_json()
     injected_data_set = InjectedContainer(title=title, injectedContainer_json=injected_data_container.to_json(),
-                                          description=description)
+                                          description=description,original_data_set=setname)
     injected_data_set.save()
     return JsonResponse({"success": True})

@@ -72,7 +72,7 @@ class InjectedContainer(models.Model):
     injectedContainer_json = models.JSONField(null=False, blank=False)
     description = models.TextField(max_length=200, null=True, blank=True)
     info = models.JSONField(blank=False,null=True)# orginal data titel
-
+    original_data_set = models.CharField(max_length=100, null=True)
 
     @property
     def injected_container(self):
@@ -92,7 +92,8 @@ class InjectedContainer(models.Model):
             "description": self.description,
             "anomaly_rates": a_rates,
             "injected_rates": {ts:r for ts,r in a_rates.items() if r >0},
-            "scores": scores
+            "scores": scores,
+            "original_data_set": self.original_data_set
         }
 
     def __str__(self):
@@ -108,4 +109,8 @@ Select the title to delete
 InjectedContainer.objects.all()
 
 InjectedContainer.objects.filter(title="test").delete()
+"""
+
+""" how to add a new field without reinitlalizing the whole table
+https://stackoverflow.com/questions/24311993/how-to-add-a-new-field-to-a-model-with-new-django-migrations
 """
