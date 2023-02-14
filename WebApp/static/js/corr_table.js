@@ -1,45 +1,114 @@
-const highlightSeries = function (col, row, chart) {
-    const highlighed_before = chart.series.filter((series, scounter) => {
-        let retval = series.visible
-        series.setVisible(scounter == col || scounter == row)
-        return retval
-    })
-}
-let initial_highlighted_series = null;
 
-const reset_series_highlighted = function () {
-    setTimeout(_ => {
-        initial_highlighted_series.forEach(series => series.setVisible(true))
-        initial_highlighted_series = null
 
-    }, 50)
-}
-const set_series_highlighted = function () {
-    if (initial_highlighted_series === null) {
-        initial_highlighted_series = mainChart.series.filter(series => series.visible)
-    }
+function getPointCategoryName(point, dimension) {
+            var series = point.series,
+                isY = dimension === 'y',
+                axis = series[isY ? 'yAxis' : 'xAxis'];
+            return axis.categories[point[isY ? 'y' : 'x']];
 }
 
-const corrTable = document.getElementById("correlation_table")
-const corr_div = document.getElementById("correlationMatrix")
+initCorrTable = function(categories, data , id) {
+        Highcharts.chart(id, {
+            chart: {
+                type: 'heatmap',
+                marginTop: 40,
+                marginBottom: 80,
+            },
 
-corr_div.setAttribute("onmouseleave", 'reset_series_highlighted()')
-corr_div.setAttribute("onmouseover", 'set_series_highlighted()')
 
-const init_corr_table = function () {
-    let r_i = -1;
-    for (let row of corrTable.rows) {
-        let r_j = -1;
-        for (let cell of row.cells) {
-            cell.style.cssText += 'text-align:center;';
-            if (r_i !== -1 || r_j !== -1) {
-                cell.setAttribute("onclick" +
-                    "", 'highlightSeries("' + r_i + '","' + r_j + '",mainChart)');
+            title: {
+                text: 'Time Series Correlation'
+            },
+
+            xAxis: {
+                categories: categories
+            },
+
+            yAxis: {
+                categories: categories,
+                reversed: true
+            },
+
+            accessibility: {
+                point: {
+                    descriptionFormatter: function (point) {
+                        var ix = point.index + 1,
+                            xName = getPointCategoryName(point, 'x'),
+                            yName = getPointCategoryName(point, 'y'),
+                            val = point.value;
+                        return 'Corr between' + xName + 'and' + yName + ':' + val;
+                    }
+                }
+            },
+
+            colorAxis: {
+                stops: [
+                    [0, Highcharts.getOptions().colors[1]],
+                    [0.5, '#FFFFFF'],
+                    [1, Highcharts.getOptions().colors[1]]
+                ],
+                min: -1,
+                max: 1,
+                minColor: '#FFFFFF',
+                maxColor: Highcharts.getOptions().colors[1]
+
+            },
+
+            legend: {
+                align: 'right',
+                layout: 'vertical',
+                margin: 0,
+                verticalAlign: 'top',
+                y: 25,
+                symbolHeight: 280
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return 'Corr(' + getPointCategoryName(this.point, 'x') + ',' +
+                        '' + getPointCategoryName(this.point, 'y')
+                        + '): <b>' + this.point.value + '</b>';
+                }
+            },
+
+            series: [{
+                name: 'Correlation',
+                borderWidth: 0,
+                data: corr_data.map(function (point) {
+                    return {
+                        x: point[0],
+                        y: point[1],
+                        value: point[2],
+                        color: 'rgba(0,0,0,' + point[2] + ')'
+                    };
+                }),
+                dataLabels: {
+                    enabled: false,
+                    color: '#000000',
+                    borderWidth: 0,
+
+                }
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        yAxis: {
+                            title: {
+                                enabled: false
+                            },
+                            labels: {
+                                formatter: function () {
+                                    return this.value;
+                                }
+                            }
+                        }
+                    }
+                }]
             }
-            r_j += 1;
-        }
-        r_i += 1;
-    }
-}
 
-init_corr_table()
+        });
+}

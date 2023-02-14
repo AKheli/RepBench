@@ -28,18 +28,17 @@
     }
     </style>
 
-    <div class="row margin-top-20">
-        <div class="col-md-9" style="position:relative;">
-            {% include 'sub/MainChart.html' %}
-        </div>
-        <div id="injection-menu" class="col-md-3">
-            {% block first_form %}
-                <h2>Anomaly Injection</h2>
-                Inject the dataset with anomalies
-                {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" %}
+    <div class="col-md-9" style="position:relative;">
+        {% include 'sub/MainChart.html' %}
+    </div>
+    <div id="injection-menu" class="col-md-3">
+        {% block first_form %}
+            <h2>Anomaly Injection</h2>
+            Inject the dataset with anomalies
+            {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" %}
 
-                {% include 'sub/storeForm.html' %}
-                <div class="bottom-button">
+{#            {% include 'sub/storeForm.html' %}#}
+            <div class="bottom-button">
                 <div class="button-grid">
 
                     <div class="grid-item">
@@ -48,32 +47,31 @@
                                 style="display:none">Switch To Repair
                         </button>
                     </div>
-                     <div class="grid-item" >
+                    <div class="grid-item">
                         <button id="clear-series" onclick="clearAllSeries();" class="btn btn-default btn-sm swap-button"
                                 style="display:none">Clear
                         </button>
                     </div>
-                    </div>
                 </div>
-            {% endblock %}
             </div>
-        </div>
-        <div id="repair-menu" class="col-md-3" style="display:none">
-            <h2>Anomaly Repair</h2>
-            Repair your Custom Anomalies by selecting an algorithm.
-            {% include 'sub/repairForm.html' %}
-            {% include 'sub/scoreBoard.html' %}
-            <div class="bottom-button">
-
-                <button id="swap-injection" onclick="swap()" class="btn btn-default swap-button">Switch To Injection
-                </button>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <!--  button to switch beteen repair-menu and repair-menu -->
-        </div>
-
+        {% endblock %}
     </div>
+    </div>
+    <div id="repair-menu" class="col-md-3" style="display:none">
+        <h2>Anomaly Repair</h2>
+        Repair your custom Anomalies by selecting an algorithm.
+        {% include 'sub/repairForm.html' %}
+        {% include 'sub/scoreBoard.html' %}
+        <div class="bottom-button">
+
+            <button id="swap-injection" onclick="swap()" class="btn btn-default swap-button">Switch To Injection
+            </button>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <!--  button to switch beteen repair-menu and repair-menu -->
+    </div>
+
 
     <script type="text/javascript">
         let injection_url = "{% url 'inject_data' setname=setname %}"

@@ -7,28 +7,19 @@
         height: 90vh;
     }
 
-    .margin-top-20 {
-        margin-top: 55px;
-        left: 0;
-        padding-right: 15px !important;
-        padding-left: 15px !important;
-        margin-right: auto !important;
-        margin-left: auto !important;
-    }
     </style>
 
-    <div class="row margin-top-20">
-        <div class="col-md-9" style="position:relative;">
-            {% include 'sub/MainChart.html' %}
-        </div>
-        <div id="menu" class="col-md-3">
-            {% block first_form %}
-                <h2>Anomaly Repair</h2>
-                {% include 'sub/repairForm.html' %}
-                {% include 'sub/scoreBoard.html' %}
-            {% endblock %}
-        </div>
+    <div class="col-md-9" style="position:relative;">
+        {% include 'sub/MainChart.html' %}
     </div>
+    <div id="menu" class="col-md-3">
+        {% block first_form %}
+            <h2>Anomaly Repair</h2>
+            {% include 'sub/repairForm.html' %}
+            {% include 'sub/scoreBoard.html' %}
+        {% endblock %}
+    </div>
+
     <script type="text/javascript">
         let injection_url = "{% url 'inject_data' setname=setname %}"
         let repair_url = "{% url 'repair_data' setname=setname %}"

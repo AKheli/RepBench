@@ -2,178 +2,43 @@
 {% load static %}
 
 {% block content %}
-
-{#    <style>  .full-height {#}
-{#        height: 90vh;#}
-{#    }#}
-{##}
-{#    .margin-top-20 {#}
-{#        margin-top: 55px;#}
-{#        left: 0;#}
-{#        padding-right: 15px !important;#}
-{#        padding-left: 15px !important;#}
-{#        margin-right: auto !important;#}
-{#        margin-left: auto !important;#}
-{#    }#}
-{##}
-{#    .margin-bot-20 {#}
-{#        margin-bottom: 55px;#}
-{#        left: 0;#}
-{#        padding-right: 15px !important;#}
-{#        padding-left: 15px !important;#}
-{#        margin-right: auto !important;#}
-{#        margin-left: auto !important;#}
-{#    }#}
-{#    </style>#}
-
-    <div class="row margin-top-20">
+            {% block chartContainer %}
         <div class="col-md-9" style="position:relative;">
             {% include 'sub/MainChart.html' %}
         </div>
+            {% endblock %}
         <div id="chart-right" class="col-md-3">
             {% block datasetInfo %}
-                <h2>{{ data_info.name }}</h2>
+                <h2>{{ data_info.title }}</h2>
                 <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>
                 <p>{{ data_info.description }}</p>
                 <p>Number of Values: {{ data_info.values }}</p>
                 <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
                 {#    {% include "sub/corr.html" %}#}
 
-
             {% endblock %}
             <div id="corr_container" style="max-height: 600px;"></div>
-
         </div>
     </div>
-    <div class="row margin-top-20 margin-bot-20 ">
-        <div class="col-md-9" style="position:relative;">
-            {% include "sub/catch22sliders.html" %}
-        </div>
-
-    </div>
+    {% block sliders %}
+{#    <div class="row margin-top-20 margin-bot-20 ">#}
+{#        <div class="col-md-9" style="position:relative;">#}
+{#            {% include "sub/catch22sliders.html" %}#}
+{#        </div>#}
+{##}
+{#    </div>#}
+    {% endblock %}
 
 
 
     <script src='{% static "js/corr_table.js" %}'></script>
+
     <script>
 
-        categories = {{ columns | safe }};
+        var categories = {{ columns | safe }};
         var corr_data = {{ corr_data | safe }};
-
-        function getPointCategoryName(point, dimension) {
-            var series = point.series,
-                isY = dimension === 'y',
-                axis = series[isY ? 'yAxis' : 'xAxis'];
-            return axis.categories[point[isY ? 'y' : 'x']];
-        }
-
-        Highcharts.chart('corr_container', {
-            chart: {
-                type: 'heatmap',
-                marginTop: 40,
-                marginBottom: 80,
-                {#plotBorderWidth: 1#}
-            },
-
-
-            title: {
-                text: 'Time Series Correlation'
-            },
-
-            xAxis: {
-                categories: categories
-            },
-
-            yAxis: {
-                categories: categories,
-                reversed: true
-            },
-
-            accessibility: {
-                point: {
-                    descriptionFormatter: function (point) {
-                        var ix = point.index + 1,
-                            xName = getPointCategoryName(point, 'x'),
-                            yName = getPointCategoryName(point, 'y'),
-                            val = point.value;
-                        return 'Corr between' + xName + 'and' + yName + ':' + val;
-                    }
-                }
-            },
-
-            colorAxis: {
-                stops: [
-                    [0, Highcharts.getOptions().colors[1]],
-                    [0.5, '#FFFFFF'],
-                    [1, Highcharts.getOptions().colors[1]]
-                ],
-                min: -1,
-                max: 1,
-                minColor: '#FFFFFF',
-                maxColor: Highcharts.getOptions().colors[1]
-
-            },
-
-            legend: {
-                align: 'right',
-                layout: 'vertical',
-                margin: 0,
-                verticalAlign: 'top',
-                y: 25,
-                symbolHeight: 280
-            },
-
-            tooltip: {
-                formatter: function () {
-                    return 'Corr(' + getPointCategoryName(this.point, 'x') + ',' +
-                        '' + getPointCategoryName(this.point, 'y')
-                        + '): <b>' + this.point.value + '</b>';
-                }
-            },
-
-            series: [{
-                name: 'Correlation',
-                borderWidth: 0,
-                data: corr_data.map(function (point) {
-                    return {
-                        x: point[0],
-                        y: point[1],
-                        value: point[2],
-                        color: 'rgba(0,0,0,' + point[2] + ')'
-                    };
-                }),
-                dataLabels: {
-                    enabled: false,
-                    color: '#000000',
-                    borderWidth: 0,
-
-                }
-            }],
-
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        yAxis: {
-                            title: {
-                                enabled: false
-                            },
-                            labels: {
-                                formatter: function () {
-                                    return this.value;
-                                }
-                            }
-                        }
-                    }
-                }]
-            }
-
-        });
+        console.log(corr_data);
+        initCorrTable(categories,corr_data,'corr_container')
     </script>
-    </div>
-
-
 {% endblock %}
 

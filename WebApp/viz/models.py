@@ -24,7 +24,19 @@ class DataSet(models.Model):
 
 
     def get_info(self):
-        n, m = self.df.shape
+        shape = None
+        print(self.additional_info)
+        additional_info =  json.loads(str(self.additional_info))
+
+        if shape in additional_info:
+            shape = self.additional_info["shape"]
+            print("storing shape")
+        else:
+            shape = tuple(self.df.shape)
+            additional_info["shape"] = shape
+        self.additional_info = json.dumps(additional_info)
+
+        n, m = shape
         return {
             "values": n * m,
             "ts_nbr": m,
@@ -52,6 +64,8 @@ score_map = { "mae" : "MAE",
 #     injectedContainer_json = models.JSONField(null=False, blank=False)
 #     description = models.TextField(max_length=200, null=True, blank=True)
 #
+
+
 
 class InjectedContainer(models.Model):
     title = models.CharField(max_length=64, null=False, blank=False, unique=False)
@@ -83,3 +97,15 @@ class InjectedContainer(models.Model):
 
     def __str__(self):
         return self.title
+
+""" how to delete a model in shell
+
+python3 manage.py shell
+
+from WebApp.viz.models import InjectedContainer
+
+Select the title to delete
+InjectedContainer.objects.all()
+
+InjectedContainer.objects.filter(title="test").delete()
+"""

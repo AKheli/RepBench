@@ -24,7 +24,7 @@ SECRET_KEY = 'im=*)w_jkxx5^3-lc*cm%g^)nej^+vu8q2z3^e(_h2#s1q8b&j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] # todo: check this
 
 # Application definition
 
@@ -125,3 +125,9 @@ STATICFILES_DIRS = [
 
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+###
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/javascript", ".js", True)
+mimetypes.add_type("text/html", ".html", True)

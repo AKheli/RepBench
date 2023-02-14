@@ -2,107 +2,49 @@
 {% load static %}
 
 {% block content %}
-    <div class="container margin-top-20">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="page-header">
-                <h1><strong>{{ Title }}</strong>
-                    {#                    <small>Anpmaly Repair</small>#}
-                </h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1><strong>{{ Title }}</strong> </h1>
+                </div>
+                <p>
+                    {{ Title }} is an online tool to Visualize The Repair of Anomaly Repair Techniques.
+                </p>
+                <p>
+                    This tool was created at the <a href="http://exascale.info/">eXascale Infolab</a>, a research group
+                    at the <a href="http://www.unifr.ch/">University of Fribourg</a>, Switzerland.
+                </p>
             </div>
-            <p>
-                {{ Title }} is an online tool to Visualize The Repair of Anomaly Repair Techniques.
-            </p>
-            <p>
-                This tool was created at the <a href="http://exascale.info/">eXascale Infolab</a>, a research group
-                at the <a href="http://www.unifr.ch/">University of Fribourg</a>, Switzerland.
-            </p>
         </div>
+
+        <h3><strong>Features</strong></h3><br>
+
+        <div class="row">
+            <div class="col-md-3">
+                <p><b>Display:</b></p>
+                <ul>
+                    <li><a href="{% url 'display_datasets' %}">Datasets</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <p><b>Repair:</b></p>
+                <ul>
+                    <li><a href="{% url 'repair_datasets' %}">Repair Synthetic Datasets</a></li>
+                    <li><a href="{% url 'display_datasets' %}">Inject Data and Repair</a></li>
+                    <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Detailed Repair of Matrix
+                        decomposition Techniques</a></li>
+
+                </ul>
+            </div>
+            <div class="col-md-5">
+                <p><b>Optimization:</b></p>
+                <ul>
+                    <li><a href=" {% url 'optimisation_datasets' %}">Display Parameter Search using Bayesian
+                        Optimization</a></li>
+                </ul>
+            </div>
+        </div>
+
     </div>
-
-    {#        <div class="row">#}
-    {#            <div class="col-md-8">#}
-    {#                <hr/>#}
-    {#                <h3><strong>Centroid Decomposition</strong></h3>#}
-    {##}
-    {#                <p>The <a href="https://ieeexplore.ieee.org/document/6816643/">Centroid Decomposition</a> (CD) is a#}
-    {#                    matrix#}
-    {#                    decomposition technique that decomposes an input matrix <b>X</b> (consisting of multiple time-series#}
-    {#                    as columns) into the product of two matrices <b>L</b> (loading matrix) and <b>R</b>#}
-    {#                    (relevance matrix), such that <b>X</b> = <b>L</b> * <b>R<sup>T</sup></b>. CD allows to efficiently#}
-    {#                    perform recovery of missing values in large time series, both in batch mode and streaming mode.#}
-    {#                </p>#}
-    {#                <p>#}
-    {#                    In addition to the recovery, ReVival can be used as an online calculator to compute the Centroid#}
-    {#                    Cecomposition and to visualize different sign vector maximization strategies that can be used by CD.#}
-    {#                </p>#}
-    {#                <hr/>#}
-    {##}
-    <h3><strong>Features</strong></h3><br>
-
-    <div class="row">
-        <div class="col-md-3">
-            <p><b>Display:</b></p>
-            <ul>
-                <li><a href="{ url 'datasets' }">Datasets</a></li>
-            </ul>
-        </div>
-        <div class="col-md-4">
-            <p><b>Repair:</b></p>
-            <ul>
-                <li><a href="{% url 'repair_datasets' %}">Repair Synthetic Datasets</a></li>
-                <li><a href="{% url 'display_datasets' %}">Inject Data and Repair</a></li>
-                <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Detailed Repair of Matrix
-                    decomposition Techniques</a></li>
-
-            </ul>
-        </div>
-        <div class="col-md-5">
-            <p><b>Optimization:</b></p>
-            <ul>
-                <li><a href=" {% url 'optimisation_datasets' %}">Display Parameter Search using Bayesian Optimization</a></li>
-            </ul>
-        </div>
-    </div>
-    {#                <hr/>#}
-    {##}
-    {#                <h3><strong>Publications</strong></h3>#}
-    {##}
-    {#                <ol>#}
-    {#                    <li>Mourad Khayati, Ines Arous, Zakhar Tymchenko, and Philippe Cudré-Mauroux. <strong>“ORBITS:#}
-    {#                        Online Recovery of Missing Blocks in Multiple Time Series Streams.”</strong> In <i>Proceedings#}
-    {#                        of the VLDB Endowment</i>, Vol. 14, 2021#}
-    {#                    </li>#}
-    {#                    <li>Mourad Khayati, Alberto Lerner, Zakhar Tymchenko, and Philippe Cudré-Mauroux. <strong>“Mind the#}
-    {#                        Gap: An Experimental Evaluation of Imputation of Missing Values Techniques in Time#}
-    {#                        Series.”</strong> In <i>Proceedings of the VLDB Endowment</i>, Vol. 13, 2020.#}
-    {#                    </li>#}
-    {#                    <li>Ines Arous, Mourad Khayati, Philippe Cudré-Mauroux, Ying Zhang, Martin Kersten, and Svetlin#}
-    {#                        Stalinlov. <strong>“RecovDB: Accurate and Efficient Missing Blocks Recovery for Large Time#}
-    {#                            Series.”</strong> In <i>35th IEEE International Conference on Data Engineering (ICDE#}
-    {#                            2019)</i>. Macau, China, 2019.#}
-    {#                    </li>#}
-    {#                    <li>Mourad Khayati, Michael H. Böhlen, and Johann Gamper. <strong>“Memory-Efficient Centroid#}
-    {#                        Decomposition for Long Time Series.”</strong> In <i>IEEE 30th International Conference on Data#}
-    {#                        Engineering (ICDE 2014)</i>, Chicago, ICDE 2014, IL, USA, March 31 - April 4, 2014, 100–111,#}
-    {#                        2014.#}
-    {#                    </li>#}
-    {#                </ol>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-    {#    <div class="container-fluid">#}
-    {#        <div class="row">#}
-    {#            <hr>#}
-    {#        </div>#}
-    {#    </div>#}
-    {#    <div class="container">#}
-    {#    <div class="row">#}
-    {#        <div class="col-md-6">#}
-    {#            <p><a href="https://exascale.info">eXascale Infolab</a></p>#}
-    {#        </div>#}
-    {#        <div class="col-md-6">#}
-    {#            <p class="muted pull-right">March 2021</p>#}
-    {#        </div>#}
-    {#    </div>#}
 {% endblock %}

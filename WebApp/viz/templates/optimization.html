@@ -3,14 +3,13 @@
 
 
 {% block content %}
-    <div class="row">
         <div class="row " style="display: none">
             <div class="col-md-9" style="position:relative;">
-                <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">
-                    {% block graphbuttons %}
-                        <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>
-                    {% endblock %}
-                </div>
+{#                <div style="text-align:right;position:absolute;right:0%;top:2%;z-index: 1;">#}
+{#                    {% block graphbuttons %}#}
+{#                        <button id="swap_norm" onclick="swap_norm()" class="btn btn-primary">Normalize Data</button>#}
+{#                    {% endblock %}#}
+{#                </div>#}
                 {% include 'sub/MainChart.html' %}
                 {% include 'sub/scoreBoard.html' %}
 
@@ -28,7 +27,7 @@
         </script>
         <script src="{% static 'js/repair.js' %}" type="text/javascript"></script>
     </div>
-    <div class="row margin-top-20">
+    <div class="row">
         <!-- page title -->
         <div class="col-md-12">
             <div class="page-title" style="margin-left: 40px">

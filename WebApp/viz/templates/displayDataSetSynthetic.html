@@ -1,14 +1,21 @@
 {% extends "displayDataset.html" %}
 {% load static %}
 
-<style>
-
+{% block chartContainer %}
+    <style>  .full-height {
+    height: 90vh;
+}
 
 </style>
-AAAAAA
+
+    <div class="col-md-9" style=" height: 90vh;">
+        {% include 'sub/MainChart.html' %}
+    </div>
+{% endblock %}
+
 {% block datasetInfo %}
-    <h2>{{ data_info.name }}</h2>
-{#    <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>#}
+    <h2>{{ data_info.title }}</h2>
+    {#    <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>#}
     <p>{{ data_info.description }}</p>
     <p>Number of Values: {{ data_info.values }}</p>
     <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
@@ -46,24 +53,27 @@ AAAAAA
         </tr>
 
         </thead>
-          <tbody>
-            {% for score,value in data_info.scores.items %}
-                <tr>
-                    <td>{{ score }}</td>
-                    <td>{{ value }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
+        <tbody>
+        {% for score,value in data_info.scores.items %}
+            <tr>
+                <td>{{ score }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
     </table>
- <!-- repair button that goes to repair page with this dataset -->
+    <!-- repair button that goes to repair page with this dataset -->
     <!-- style href> -->
     <style>
-    .grey {
-        background: #5c5c62;
-    }
+        .grey {
+            background: #5c5c62;
+        }
     </style>
-    <a href="{% url 'repair'  setname=setname %}" class="btn btn-primary grey" style="margin-top: 10px;">Go to Repair</a>
+    <a href="{% url 'repair'  setname=setname %}" class="btn btn-primary grey" style="margin-top: 10px;">Go to
+        Repair</a>
     <!-- fancy button that goes to repair page with this dataset -->
 
 
+    {% block sliders %}
+    {% endblock %}
 {% endblock %}

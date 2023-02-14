@@ -4,25 +4,24 @@
 
 
 <head>
-    <title id="title-id">    {{ Title }} </title>
+    <title id="title-id">  {{ Title }} </title>
 
     {% block css %}
         <style>  .full-height {
             height: 90vh;
         }
 
-        .margin-top-20 {
-            margin-top: 55px;
+        {#.margin-top-20 {#}
+        {#    margin-top: 55px;#}
+        {#    left: 0;#}
+        {#    padding-right: 15px !important;#}
+        {#    padding-left: 15px !important;#}
+        {#    margin-right: auto !important;#}
+        {#    margin-left: auto !important;#}
+        {# }#}
+        .pad-15px {
             left: 0;
             padding-right: 15px !important;
-            padding-left: 15px !important;
-            margin-right: auto !important;
-            margin-left: auto !important;
-        }
-
-        .pad-15px {
-                        left: 0;
-             padding-right: 15px !important;
             padding-left: 15px !important;
             margin-right: auto !important;
             margin-left: auto !important;
@@ -88,44 +87,44 @@
 <!-- begin: Body -->
 <!-- begin: Body -->
 
- <style>  .full-height {
-        height: 60vh;
-    }
+<style>  .full-height {
+    height: 60vh;
+}
 
-    .form-group {
-        margin-bottom: 0;
-    }
+.form-group {
+    margin-bottom: 0;
+}
 
-    .viz-chart-info {
-        padding-left: 50px;
-    }
+.viz-chart-info {
+    padding-left: 50px;
+}
 
-    .margin-top-20 {
-        margin-top: 55px;
-        left: 0;
-        padding-right: 15px !important;
-        padding-left: 15px !important;
-        margin-right: auto !important;
-        margin-left: auto !important;
-    }
+.margin-top-20 {
+    margin-top: 55px;
+    left: 0;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+}
 
-    .alg-selection {
-        margin-top: 20px;
-        padding-left: 100px;
-        padding-bottom: 30px;
-         justify-content: center;
-    }
+.alg-selection {
+    margin-top: 20px;
+    padding-left: 100px;
+    padding-bottom: 30px;
+    justify-content: center;
+}
 
-    {# all elemnts of class form-group into 1 row of a grid in my grid #}
-    .outer-grid {
-        display: grid;
-        grid-template-columns: 130px  600px;
-        grid-gap: 10px;
-    {# center #}
-    }
+{# all elemnts of class form-group into 1 row of a grid in my grid #}
+.outer-grid {
+    display: grid;
+    grid-template-columns: 130px  600px;
+    grid-gap: 10px;
+{# center #}
+}
 
 
-    </style>
+</style>
 
 <body style="padding-top: 0px">
 
@@ -171,7 +170,7 @@
 
 
                 <li class="nav-item">
-                    <a class="nav-link"href="{% url 'optimisation_datasets' %}">
+                    <a class="nav-link" href="{% url 'optimisation_datasets' %}">
                         Optimization
                     </a>
                 </li>
@@ -195,8 +194,10 @@
         {% endblock %}
         {% block chart %}
         {% endblock %}
-        {% block content %}
-        {% endblock %}
+        <div class="row margin-top-20">
+            {% block content %}
+            {% endblock %}
+        </div>
         <!-- end: Main Content -->
     </div>
     <!-- end: Content -->
