@@ -1,12 +1,42 @@
-
 <style>
-    .graph-button{
+    .graph-button {
         font-size: 12px;
-       font-weight: bolder;
+        font-weight: bolder;
     }
-</style>
-<div class="btn-group" role="group">
-    <button id="rawButton" type="button" class="btn-sm btn btn-default graph-button active">Raw</button>
-    <button id="zButton" type="button" class="btn btn-default btn-sm graph-button">Z-Score</button>
 
+    .linkButton {
+        font-size: 13px;
+        background: none !important;
+        border: none;
+        padding: 4px !important;
+        cursor: pointer;
+    }
+
+    {#.dropdown-menu {#}
+    {#    width: 10px !important;#}
+    {#    text-align: center;#}
+    {# }#}
+</style>
+
+<div class="btn-group" role="group">
+    <div class="row">
+        <button id="rawButton" type="button" class="btn-sm btn btn-default graph-button active">Raw</button>
+        <button id="zButton" type="button" class="btn btn-default btn-sm graph-button">Z-Score</button>
+        <div class="dropdown">
+            <button class="btn-sm btn btn-default graph-button dropdown-toggle" type="button"
+                    data-toggle="dropdown">
+                Export
+                <span class="caret"></span>
+            </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <button id="exportOriginalData" class="linkButton btn-default graph-button">Original Data</button>
+                    </li>
+                    <li>
+                        <button id="exportInjectedData" class="linkButton  btn-default graph-button">Injected Data</button>
+                    </li>
+                </ul>
+        </div>
+    </div>
 </div>
+

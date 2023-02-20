@@ -3,10 +3,7 @@ let normalized = false
 let injectedSeries = []
 const repairedSeries = []
 const originalSeries = []
-
-
 const reducedSeries = []
-
 
 //large color palette excluding red good visible with white background
 const colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
@@ -17,7 +14,7 @@ const getRepairedColor = function () {
     return repairedColors[repairedSeries.length % repairedColors.length]
 }
 const getColor = function () {
-        return colors[originalSeries.length % colors.length]
+    return colors[originalSeries.length % colors.length]
 }
 
 const addSeries = function (series) {
@@ -26,7 +23,7 @@ const addSeries = function (series) {
         chartSeries: null,
         originalData: series.data.map(s => s),
         normData: series.norm_data.map(s => s),
-        name : series.name
+        name: series.name
     }
     return ser
 }
@@ -52,7 +49,7 @@ const get_injected_norm_data = function () {
 }
 
 const addOriginalSeries = function (series) {
-    if(series.color == null){
+    if (series.color == null) {
         series.color = getColor()
     }
     const retval = addSeries(series)
@@ -87,7 +84,7 @@ const addRepairedSeries = function (series, col) {
     if (col != null) {
         series.color = col
     }
-     if(series.color == null){
+    if (series.color == null) {
         series.color = getRepairedColor()
     }
     const retval = addSeries(series)
@@ -108,7 +105,6 @@ const clearAllSeries = function () {
 
 
 const resetSeries = function (showOnlyInjected = false) {
-
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
 
     if (showOnlyInjected) {
@@ -123,12 +119,24 @@ const resetSeries = function (showOnlyInjected = false) {
     allSeries.forEach(s => {
         console.log(normalized)
         s.series.data = normalized ? [...s.normData] : [...s.originalData]
-        if(s.chartSeries && !showOnlyInjected){
+        if (s.chartSeries && !showOnlyInjected) {
             s.series.visible = s.chartSeries.visible
         }
     })
     let allInputSeries = allSeries.map(s => s.series)
-    initMainChart(allInputSeries)
+
+    const axis0isDefined = mainChart !== null && mainChart.xAxis !== undefined && mainChart.xAxis[0] !== undefined
+    if (axis0isDefined) {
+        const chartMin = mainChart.xAxis[0].min+0
+        const chartMax = mainChart.xAxis[0].max+0
+        initMainChart(allInputSeries)
+        mainChart.xAxis[0].setExtremes(chartMin, chartMax)
+    }
+    else {
+        initMainChart(allInputSeries)
+    }
+
+
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
 
 }

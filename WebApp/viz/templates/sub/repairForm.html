@@ -8,7 +8,7 @@
         <select class="form-control custom-select " name="algorithm" onchange="displayfunc(value)">
             <option value="" selected="">----</option>
             {% for key, _ in alg_forms.items %}
-                <option value={{ key }}> {{ key }}</option>
+                <option value={{ key }}>{{ key }}</option>
             {% endfor %}
         </select>
         {% for key, form in alg_forms.items %}
