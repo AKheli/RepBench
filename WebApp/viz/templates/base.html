@@ -184,27 +184,11 @@
 
 <!-- begin: Content -->
 <div id="content">
-
-    <div class="kt-content kt-grid__item kt-grid__item--fluid" id="kt_content">
-        <div id="message-container">
-            {#                                {% include 'vadetisweb/parts/messages.html' %}#}
-        </div>
-        <!-- begin: Main Content -->
-        {% block chartScript %}
-        {% endblock %}
-        {% block chart %}
-        {% endblock %}
-        <div class="row margin-top-20">
+<!-- begin: Main Content -->
+        <div class="margin-top-20">
             {% block content %}
             {% endblock %}
         </div>
-        <!-- end: Main Content -->
-    </div>
-    <!-- end: Content -->
-    {#                    </div>#}
-    {#                </div>#}
-    {#            </div>#}
-    <!-- begin: Footer -->
     {% block footer %}
         {#                {% include 'vadetisweb/parts/footer/footer.html' %}#}
     {% endblock %}

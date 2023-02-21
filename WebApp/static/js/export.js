@@ -31,12 +31,20 @@ const exportSyntheticData = function () {
 
 // bind exportData to the button with id exportOriginalData
 const exportDataBtn = document.getElementById("exportOriginalData")
-exportDataBtn.addEventListener("click",exportData)
+exportDataBtn.addEventListener("click", exportData)
 
 //todo check order of creation of synthetic series
 const exportInjectedDataBtn = document.getElementById("exportInjectedData")
-exportInjectedDataBtn.addEventListener("click",exportSyntheticData)
-if(injectedSeries === null || injectedSeries.length===0){
-    console.log(injectedSeries,"AAAA")
-    exportInjectedDataBtn.style.display="none"
+exportInjectedDataBtn.addEventListener("click", exportSyntheticData)
+
+const updateExportInjectedButton = function (injectedSeries) {
+    if (injectedSeries === null || injectedSeries.length === 0) {
+        console.log(injectedSeries, "AAAA")
+        exportInjectedDataBtn.style.display = "none"
+    }
+    else {
+        exportInjectedDataBtn.style.display = "block"
+
+    }
 }
+updateExportInjectedButton(injectedSeries)

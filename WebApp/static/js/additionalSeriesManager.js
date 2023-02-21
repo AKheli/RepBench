@@ -138,7 +138,8 @@ const resetSeries = function (showOnlyInjected = false) {
 
 
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
-
+    updateExportInjectedButton(injectedSeries)
+    console.log(injectedSeries)
 }
 
 
@@ -170,6 +171,7 @@ $('#rawButton').click(function () {
     $('#rawButton').addClass('active');
     normalized = false;
     resetSeries()
+
 })
 
 $('#zButton').click(function () {
