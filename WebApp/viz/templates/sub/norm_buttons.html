@@ -2,17 +2,15 @@
     .graph-button {
         font-size: 12px;
         font-weight: bolder;
-        padding-top: 2px;
-        padding-bottom: 2px;
+        padding-top: 4px;
+        padding-bottom: 4px;
     }
-
     .before-button-text {
         font-size: 12px;
         font-weight: bolder;
         padding-top: 5px;
         padding-right: 5px;
     }
-
     .linkButton {
         font-size: 13px;
         background: none !important;
@@ -20,19 +18,20 @@
         padding: 5px !important;
         cursor: pointer;
     }
-
     .dropdown-menu {
     {#width: 94px !important;#} min-width: 0px !important;
         padding: 0px !important;
     }
-
-
 </style>
 <div class="row"
      style="position:absolute;right:0%;top:0%;z-index:1;padding-right: 20px;padding-bottom: 10px;padding-top: 10px">
     <div class="before-button-text">Data:</div>
     <button id="rawButton" type="button" class="btn-sm btn btn-default graph-button active">Raw</button>
     <button id="zButton" type="button" class="btn btn-default btn-sm graph-button">Z-Score</button>
+
+    <div class="before-button-text" style="width:15px"></div>
+
+
     <div class="dropdown">
         <button class="btn-sm btn btn-default graph-button dropdown-toggle" type="button"
                 data-toggle="dropdown">

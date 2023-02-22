@@ -74,6 +74,7 @@ class InjectedContainer(models.Model):
     info = models.JSONField(blank=False,null=True)# orginal data titel
     original_data_set = models.CharField(max_length=100, null=True)
 
+
     @property
     def injected_container(self):
         injected_container_ : InjectedDataContainer = InjectedDataContainer.from_json(self.injectedContainer_json)
