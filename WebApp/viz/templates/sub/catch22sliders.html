@@ -1,30 +1,7 @@
 {% load static %}
 {% load filters %}
 
-<link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
-<script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>
-<script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
-
-
-<script>
-    const step = 600
-    const total_scroll = 22 * 200
-    const scroll_right = function (id) {
-        let s_left = document.getElementById(id).scrollLeft
-        document.getElementById(id).scrollLeft += step
-    };
-    const scroll_left = function (id) {
-        document.getElementById(id).scrollLeft -= step;
-    };
-</script>
-
 <style>
-    .rs-container {
-    {#padding-top: 1px;#}{#padding-left: 5px;#}{#padding-right: 5px;#}
-
-
-    }
-
     .rs-tooltip-text {
         font-size: 12px;
         color: #0f0f16;
@@ -47,6 +24,18 @@
     }
 </style>
 
+<script>
+    const step = 600
+    const total_scroll = 22 * 200
+    const scroll_right = function (id) {
+        let s_left = document.getElementById(id).scrollLeft
+        document.getElementById(id).scrollLeft += step
+    };
+    const scroll_left = function (id) {
+        document.getElementById(id).scrollLeft -= step;
+    };
+</script>
+
 <div class="slider-container">
     {% for ts,features in catch22.items %}
         <div class="{{ ts }}-bounded">
@@ -57,7 +46,6 @@
                 <div id="{{ ts }}-sliders" class="rs-wrapper"
                      style="overflow-x: hidden;max-height: 250px;overflow-y:hidden;">
                     {% with outer_counter=forloop.counter %}
-
                         {% for name,value in features.items %}
                             <div id="roundslider_{{ outer_counter }}_{{ name }}" class="roundslider normal"
                                  title="{{ name|c22_abr }}" content="aaaaa" data-popup="aaaa" aria-haspopup="asdsadad">
@@ -121,12 +109,10 @@
     }
 </style>
 
-
 <script>
     RoundSliders.init(3)
     let round_id = null
 </script>
-
 {% for ts,features in catch22.items %}
     {% with outer_counter=forloop.counter %}
         {% for name,value in features.items %}
@@ -134,8 +120,6 @@
                 round_id = "roundslider_{{ outer_counter }}_{{name}}"
                 RoundSliders.updateValue("#" + round_id, {{ value.value }}, {{ value.min }}, {{ value.max }})
                 document.getElementById(round_id).title = "{{ name|c22_description }}"//+{{ name }}"
-
-
             </script>
         {% endfor %}
     {% endwith %}

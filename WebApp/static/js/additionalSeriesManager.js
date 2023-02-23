@@ -108,9 +108,10 @@ const clearAllSeries = function () {
 
 
 const resetSeries = function (showOnlyInjected = false) {
-    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible")
+    if (mainChart !== null) {
+        mainChart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
+    }
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
-    console.log(originalSeries.map(s => s.series.visible))
     if (showOnlyInjected) {
         const repairLinks = injectedSeries.map(s => {
             return s.series.linkedTo
@@ -139,12 +140,13 @@ const resetSeries = function (showOnlyInjected = false) {
     else {
         initMainChart(allInputSeries)
     }
+    console.log("afterresetSeries")
+    document.getElementById("highcharts_container_wrapper").style.display = "block"
 
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
-    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "after init chartSeries")
 
     updateExportInjectedButton(injectedSeries)
-    console.log(injectedSeries)
+    mainChart.hideLoading()
 }
 
 
@@ -183,7 +185,7 @@ $('#rawButton').click(function () {
 })
 
 $('#zButton').click(function () {
-    console.log("normalized")
+
     $('#rawButton').removeClass('active');
     // $('#minMaxButton').removeClass('active');
     $('#zButton').addClass('active');

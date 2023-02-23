@@ -49,6 +49,9 @@ class DatasetView(View):
         context.update(dataSet.get_catch_22_features())
         return context
 
+
+
+
     def data_set_default_context(self, request, setname=datasetsConfig.default_set):
         data_container = data_loader.load_data_container(setname)
         df = data_container.original_data
@@ -62,6 +65,12 @@ class DatasetView(View):
         context.update(self.data_set_info_context(setname))
         return render(request, self.template, context=context)
 
+
+def sliders_view(request,setname="BAFU"):
+    template = "sub/catch22sliders.html"
+    dataSet = DataSet.objects.get(title=setname)
+    context =   dataSet.get_catch_22_features()
+    return render(request, template,context)
 
 
 def display_datasets(request=None):

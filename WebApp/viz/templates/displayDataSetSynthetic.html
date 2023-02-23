@@ -9,7 +9,9 @@
 
     </style>
 
-    <div id="chart" class="col-md-9" style=" height: 90vh;">
+    <div id="chart" class="col-md-9" style="position:relative;">
+        <div id="load_chart" class="overlay full-height">
+        </div>
         {% include 'sub/MainChart.html' %}
     </div>
 {% endblock %}

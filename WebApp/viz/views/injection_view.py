@@ -8,12 +8,13 @@ from django.shortcuts import render
 from injection.injected_data_container import InjectedDataContainer
 from WebApp.viz.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
 from WebApp.viz.forms.injection_form import store_injection_form, InjectionForm
-from WebApp.viz.models import InjectedContainer
+from WebApp.viz.models import InjectedContainer, DataSet
 from injection.injection_methods.basic_injections import add_anomalies
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from WebApp.viz.ts_manager.HighchartsMapper import map_injected_series
 from WebApp.viz.views.data_loader import load_data_container
 from WebApp.viz.views.repair_view import RepairView
+from testing_frame_work.data_methods.data_class import DataContainer
 
 
 class InjectionView(RepairView):
@@ -25,9 +26,12 @@ class InjectionView(RepairView):
 
     ParamForms = {"SCREEN": SCREENparamForm(), "RPCA": RPCAparamForm(), "CDrec": CDparamForm(), "IMR": IMRparamField()}
 
-
     def get(self, request, setname="BAFU"):
-        context, df = self.data_set_default_context(request, setname)
+        data_object = DataSet.objects.get(title=setname)
+        df = data_object.df
+        context = {"setname": setname}
+        context["viz"] = int(request.GET.get("viz", self.default_nbr_of_ts_to_display))
+        context["data_fetch_url_name"] = self.data_fetch_url_name
         context["store_form"] = store_injection_form
         context["injection_form"] = InjectionForm(list(df.columns))
         context["alg_forms"] = self.ParamForms
@@ -39,7 +43,11 @@ def inject_data(request, setname):
     post = request.POST
     col_name = post.get("data_columns")
 
-    data_container = load_data_container(setname)
+    data_object = DataSet.objects.get(title=setname)
+    df = data_object.df
+    title = data_object.title
+    data_container =  DataContainer(df, title=title)
+
     df = data_container.norm_data
     if isinstance(df.columns, pd.Int64Index):
         col_name = int(col_name)
@@ -69,8 +77,6 @@ def inject_data(request, setname):
                                     a_len=30,
                                     n_anomalies=n_anomalies,
                                     fill_na=True, seed=seed)
-    #undo normalization w.r.t original_col
-    ## if we would normalize else where we would get problems when adding multiple anomalies
     col_injected = col_injected_norm * original_col.std() + original_col.mean()
     injected_series = map_injected_series(col_injected,col_injected_norm,col_name)
     return JsonResponse({"injected_series": injected_series})

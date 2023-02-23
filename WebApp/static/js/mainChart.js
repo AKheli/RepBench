@@ -6,19 +6,18 @@ Highcharts.setOptions({
     }
 });
 
-
-const navigator =  {
-            xAxis: {
-                labels: {
-                    formatter: function () {
-                        return this.value.toString();
-                    }
-                }
-            },
-            enabled: true,
-            adaptToUpdatedData: true,
-            height: 60
+const chartNavigator = { // do not use navigator since it is used by another script
+    xAxis: {
+        labels: {
+            formatter: function () {
+                return this.value.toString();
+            }
         }
+    },
+    enabled: true,
+    adaptToUpdatedData: true,
+    height: 60
+}
 
 // All series that are not part of the original graph have to be linked to some other series
 const events = {
@@ -77,37 +76,55 @@ let tooltip = {
     valueDecimals: 2
 }
 
-
-let splitMainChart = function () {
-
-    return [{ // Primary yAxis
-        title: {
-            text: 'Parameters'
-        },
-        height: '63%',
-        lineWidth: 2,
-    }, {},
-        {
-            yAxis: 2,
-            title: {
-                text: "Normalized Difference"
-            },
-            top: '67%',
-            height: '33%',
-            offset: 0,
-            lineWidth: 2,
-            plotBands: [{
-                color: 'rgba(68, 170, 213, 0.1)',
-                from: -100,
-                to: 100
-            },
-            ]
-        }]
-}
-
+// let splitMainChart = function () {
+//
+//     return [{ // Primary yAxis
+//         title: {
+//             text: 'Parameters'
+//         },
+//         height: '63%',
+//         lineWidth: 2,
+//     }, {},
+//         {
+//             yAxis: 2,
+//             title: {
+//                 text: "Normalized Difference"
+//             },
+//             top: '67%',
+//             height: '33%',
+//             offset: 0,
+//             lineWidth: 2,
+//             plotBands: [{
+//                 color: 'rgba(68, 170, 213, 0.1)',
+//                 from: -100,
+//                 to: 100
+//             },
+//             ]
+//         }]
+// }
 
 let mainChart = null
 let threshold = null
+
+let load_chart = null
+const loadChart = function (series = {}, container = 'load_chart') {
+    if (load_chart !== null) {
+        load_chart = null
+    }
+    load_chart = Highcharts.chart(document.getElementById("load_chart"), {
+        series: [{data: [] , showInLegend: false}],
+         title: {
+            text: chart_title,
+            style: {
+                color: 'black',
+                fontWeight: 'bold',
+                "font-size": "30px"
+            }
+        },
+    })
+    load_chart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
+}
+loadChart()
 
 
 const initMainChart = function (series = {}, container = 'highcharts_container') {
@@ -164,7 +181,7 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             }
         },
 
-        navigator: navigator,
+        navigator: chartNavigator,
         rangeSelector: {
             x: 0,
             // floating: true,
@@ -200,35 +217,8 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
                 }],
         },
 
-        series: [series[0]], // add an empty series other wise it does not work
-
+        series: series, // add a series otherwise it does not work
     });
-    mainChart.showLoading('Loading data from server...');
-    series.forEach((s,i) => {
-        if(i>0){
-            mainChart.addSeries(s)
-        }
-    })
-    mainChart.redraw();
-    // mainChart.update({navigator: navigator})
-
-    mainChart.hideLoading();
-    // if (threshold !== null) {
-    //     mainChart.yAxis[2].addPlotLine(
-    //         {
-    //             color: 'black',
-    //             width: 2,
-    //             value: threshold,
-    //             yAxis: 2,
-    //             label: {
-    //                 text: 'Threshold',
-    //                 align: 'right',
-    //                 x: -10
-    //             }
-    //         }
-    //     )
-    // }
-
 }
 
 const mainChartFetchPromise = new Promise((resolve, reject) => {
@@ -243,9 +233,15 @@ const mainChartFetchPromise = new Promise((resolve, reject) => {
             data.series.forEach(x => addOriginalSeries(x))
             if (data.injected) {
                 data.injected.forEach(x => addInjectedSeries(x))
+                // initMainChart(data.series.concat(data.injected))
+
+            } else {
+                // initMainChart(data.series)
+
             }
             resetSeries()
             resolve()
+            load_chart.hideLoading()
 
         }).catch(error => console.error(error))
 })

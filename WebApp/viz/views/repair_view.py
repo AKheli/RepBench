@@ -2,8 +2,11 @@ import numpy as np
 from django.http import JsonResponse
 from django.shortcuts import render
 from WebApp.viz.models import InjectedContainer
+from WebApp.viz.views import data_loader
 from WebApp.viz.views.synthetic_dataset_view import SyntheticDatasetView
 from algorithms.estimator import Estimator
+from injection.injected_data_container import InjectedDataContainer
+from testing_frame_work.data_methods.data_class import DataContainer
 from testing_frame_work.repair import AnomalyRepairer
 from WebApp.viz.BenchmarkMaps.repairCreation import injected_container_None_Series
 from WebApp.viz.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
@@ -33,7 +36,14 @@ class RepairView(SyntheticDatasetView):
 
 
     def get(self, request, setname="BAFU"):
-        context, df = self.data_set_default_context(request, setname)
+        data_object = InjectedContainer.objects.get(title=setname)
+        injected_data_container: InjectedDataContainer = data_object.injected_container
+        data_container = DataContainer(injected_data_container.truth)
+        df = data_container.original_data
+        context = {"setname": setname}
+        context["data_info"] =  InjectedContainer.objects.get(title=setname).get_info()
+        context["viz"] = int(request.GET.get("viz", self.default_nbr_of_ts_to_display))
+        context["data_fetch_url_name"] = self.data_fetch_url_name
         context["alg_forms"] = self.ParamForms
         context["store_form"] = store_injection_form
         context["injection_form"] = InjectionForm(list(df.columns))
