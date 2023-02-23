@@ -7,6 +7,19 @@ Highcharts.setOptions({
 });
 
 
+const navigator =  {
+            xAxis: {
+                labels: {
+                    formatter: function () {
+                        return this.value.toString();
+                    }
+                }
+            },
+            enabled: true,
+            adaptToUpdatedData: true,
+            height: 60
+        }
+
 // All series that are not part of the original graph have to be linked to some other series
 const events = {
     // hide linked series elements
@@ -97,7 +110,6 @@ let mainChart = null
 let threshold = null
 
 
-
 const initMainChart = function (series = {}, container = 'highcharts_container') {
     mainChart = Highcharts.chart(document.getElementById(container), {
         legend: {
@@ -152,20 +164,7 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             }
         },
 
-
-        navigator: {
-            xAxis: {
-                labels: {
-                    formatter: function () {
-                        return this.value.toString();
-                    }
-                }
-            },
-            enabled: true,
-            adaptToUpdatedData: true,
-            height: 60
-        },
-
+        navigator: navigator,
         rangeSelector: {
             x: 0,
             // floating: true,
@@ -201,13 +200,18 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
                 }],
         },
 
-        series: [{data:[], name: 'empty', visible: false, showInLegend: false}],
+        series: [series[0]], // add an empty series other wise it does not work
 
     });
     mainChart.showLoading('Loading data from server...');
-    //pause for 1 second to allow the loading screen to show
-    series.forEach(s => {mainChart.addSeries(s, false, false)})
+    series.forEach((s,i) => {
+        if(i>0){
+            mainChart.addSeries(s)
+        }
+    })
     mainChart.redraw();
+    // mainChart.update({navigator: navigator})
+
     mainChart.hideLoading();
     // if (threshold !== null) {
     //     mainChart.yAxis[2].addPlotLine(

@@ -30,6 +30,9 @@ const addSeries = function (series) {
 
 
 const swap_norm = function () {
+    console.log("norm swap")
+    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible")
+
     normalized = !normalized
     document.getElementById("swap_norm").innerHTML = normalized ? "Show Original Data" : "Normalize Data"
     resetSeries()
@@ -105,8 +108,9 @@ const clearAllSeries = function () {
 
 
 const resetSeries = function (showOnlyInjected = false) {
+    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible")
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
-
+    console.log(originalSeries.map(s => s.series.visible))
     if (showOnlyInjected) {
         const repairLinks = injectedSeries.map(s => {
             return s.series.linkedTo
@@ -136,8 +140,9 @@ const resetSeries = function (showOnlyInjected = false) {
         initMainChart(allInputSeries)
     }
 
-
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
+    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "after init chartSeries")
+
     updateExportInjectedButton(injectedSeries)
     console.log(injectedSeries)
 }
@@ -170,7 +175,10 @@ $('#rawButton').click(function () {
     // $('#minMaxButton').removeClass('active');
     $('#rawButton').addClass('active');
     normalized = false;
+    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible before")
     resetSeries()
+    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible after")
+
 
 })
 
