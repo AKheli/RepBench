@@ -5,6 +5,10 @@ let createStoreFormData = function () {
     const storeFormData = new FormData(form)
     storeFormData.append('csrfmiddlewaretoken', csrftoken)
     storeFormData.append("injected_series", JSON.stringify(get_injected_norm_data()))
+
+    let { min, max } = mainChart.series[0].xAxis.getExtremes();
+    storeFormData.append("min", min)
+    storeFormData.append("max", max)
     return storeFormData
 }
 

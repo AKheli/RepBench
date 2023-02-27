@@ -49,9 +49,6 @@ class DatasetView(View):
         context.update(dataSet.get_catch_22_features())
         return context
 
-
-
-
     def data_set_default_context(self, request, setname=datasetsConfig.default_set):
         data_container = data_loader.load_data_container(setname)
         df = data_container.original_data

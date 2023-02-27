@@ -112,8 +112,8 @@ const loadChart = function (series = {}, container = 'load_chart') {
         load_chart = null
     }
     load_chart = Highcharts.chart(document.getElementById("load_chart"), {
-        series: [{data: [] , showInLegend: false}],
-         title: {
+        series: [{data: [], showInLegend: false}],
+        title: {
             text: chart_title,
             style: {
                 color: 'black',
@@ -230,14 +230,16 @@ const mainChartFetchPromise = new Promise((resolve, reject) => {
         }
     }).then(response => response.json())
         .then(data => {
-            data.series.forEach(x => addOriginalSeries(x))
             if (data.injected) {
-                data.injected.forEach(x => addInjectedSeries(x))
-                // initMainChart(data.series.concat(data.injected))
-
+                initMainChart(data.series.concat(data.injected))
             } else {
-                // initMainChart(data.series)
+                initMainChart(data.series)
+            }
 
+            // Store data
+            data.series.forEach(s => addOriginalSeries(s))
+            if (data.injected) {
+                data.injected.forEach(s => addInjectedSeries(s))
             }
             resetSeries()
             resolve()

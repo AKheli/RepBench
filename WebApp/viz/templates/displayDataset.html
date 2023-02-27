@@ -38,7 +38,9 @@
         }
     </style>
     <div style="position:relative">
-        {% include "sub/norm_buttons.html" %}
+        {%  block graphbuttons %}
+                    {% include "sub/norm_buttons.html" %}
+        {%  endblock %}
         {% block chartContainer %}
             {#            <div class="container">#}
             <div id="chart" class="col-md-9" style="position:relative;">

@@ -17,26 +17,29 @@ const getColor = function () {
     return colors[originalSeries.length % colors.length]
 }
 
-const addSeries = function (series) {
-    let ser = {
-        series: series,
-        chartSeries: null,
-        originalData: series.data.map(s => s),
-        normData: series.norm_data.map(s => s),
-        name: series.name
-    }
-    return ser
+
+
+const chartSeriesMap = function (){
+    let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
+    var myDict = {};
+    allSeries.forEach(s => {
+        myDict[s.chartSeries.name] = s
+    })
+    return myDict
 }
 
-
+const normDataSelection = function (series) {
+    return normalized ? [...series.normData] : [...series.originalData]
+}
 const swap_norm = function () {
-    console.log("norm swap")
-    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible")
-
-    normalized = !normalized
-    document.getElementById("swap_norm").innerHTML = normalized ? "Show Original Data" : "Normalize Data"
-    resetSeries()
-
+    const seriesMap = chartSeriesMap()
+    mainChart.series.forEach(s => {
+        if(s.name in seriesMap){
+            const series = seriesMap[s.name]
+            s.setData(normDataSelection(series),false)
+        }
+    })
+    mainChart.redraw()
 }
 
 
@@ -51,22 +54,28 @@ const get_injected_norm_data = function () {
     })
 }
 
-const addOriginalSeries = function (series) {
+const addSeries = function (series) {
+    let ser = {
+        series: series,
+        originalData: series.data.map(s => s),
+        normData: series.norm_data.map(s => s),
+        name: series.name,
+        chartSeries: null,
+    }
+    return ser
+}
+const addOriginalSeries = function (series , add_to_chart = false) {
     if (series.color == null) {
         series.color = getColor()
     }
     const retval = addSeries(series)
-    originalSeries.push(addSeries(series))
+    originalSeries.push(retval)
     return retval
 }
 
-const addReducedSeries = function (series) {
-    const retval = addSeries(series)
-    reducedSeries.push(retval)
-    return retval
-}
 
 const addInjectedSeries = function (series, previously_injected) {
+    console.log("ADD INJECTED SERIES")
     if (previously_injected) {
         series.data.forEach((p, i) => {
             if (series.data[i] === null) {
@@ -100,14 +109,13 @@ const clearAllSeries = function () {
     repairedSeries.length = 0
     injectedSeries.length = 0
     reducedSeries.length = 0
-    threshold = null
     resetSeries()
     removeScores()
-
 }
 
 
 const resetSeries = function (showOnlyInjected = false) {
+    console.log("resetSeries")
     if (mainChart !== null) {
         mainChart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
     }
@@ -122,15 +130,15 @@ const resetSeries = function (showOnlyInjected = false) {
     }
 
     allSeries.forEach(s => {
-        console.log(normalized)
-        s.series.data = normalized ? [...s.normData] : [...s.originalData]
         if (s.chartSeries && !showOnlyInjected) {
             s.series.visible = s.chartSeries.visible
         }
     })
-    let allInputSeries = allSeries.map(s => s.series)
 
+    let allInputSeries = allSeries.map(s => s.series)
     const axis0isDefined = mainChart !== null && mainChart.xAxis !== undefined && mainChart.xAxis[0] !== undefined
+
+
     if (axis0isDefined) {
         const chartMin = mainChart.xAxis[0].min+0
         const chartMax = mainChart.xAxis[0].max+0
@@ -140,14 +148,12 @@ const resetSeries = function (showOnlyInjected = false) {
     else {
         initMainChart(allInputSeries)
     }
-    console.log("afterresetSeries")
     document.getElementById("highcharts_container_wrapper").style.display = "block"
-
     allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
-
     updateExportInjectedButton(injectedSeries)
     mainChart.hideLoading()
 }
+
 
 
 let injectedString = null
@@ -177,11 +183,7 @@ $('#rawButton').click(function () {
     // $('#minMaxButton').removeClass('active');
     $('#rawButton').addClass('active');
     normalized = false;
-    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible before")
-    resetSeries()
-    console.log(originalSeries.filter(s=> s.chartSeries).map(s => s.chartSeries.visible) , "chartSeries visible after")
-
-
+    swap_norm()
 })
 
 $('#zButton').click(function () {
@@ -191,7 +193,7 @@ $('#zButton').click(function () {
     $('#zButton').addClass('active');
     if (!normalized) {
         normalized = true;
-        resetSeries()
+        swap_norm()
     }
 });
 

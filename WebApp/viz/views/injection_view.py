@@ -84,7 +84,7 @@ def inject_data(request, setname):
 
 def store_data(request, setname):
     post = request.POST.dict()
-    title = post.get("title")
+    title , min , max = post.get("title") , int(float(post.get("min"))) , int(float(post.get("max")))
     description = post.get("description")
     post.pop("csrfmiddlewaretoken")
     data_container = load_data_container(setname)
@@ -93,6 +93,10 @@ def store_data(request, setname):
     #df_original = data_container.original_data
     injected_series = json.loads(post.pop("injected_series"))
 
+    df_norm = df_norm.iloc[min:max]
+
+    for series_dict in injected_series:
+        series_dict["data"] = series_dict["data"][min:max]
 
     injected_data_container : InjectedDataContainer = injected_container_None_Series(df_norm, injected_series)
     injected_data_container.set_to_original_scale(df_original.mean(), df_original.std())

@@ -87,6 +87,7 @@ class InjectedContainer(models.Model):
         scores = injectedDataContainer.original_scores
         scores = {  score_map[k] : round(v,4) for k,v in scores.items() if k in score_map.keys() }
         return {
+            "length": n,
             "values": n * m,
             "ts_nbr": m,
             "title": self.title,

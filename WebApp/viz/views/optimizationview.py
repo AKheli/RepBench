@@ -39,7 +39,7 @@ class OptimizationView(DatasetView):
         return render(request, self.template, context=context)
 
     @staticmethod
-    def optimize(request, setname="BAFU"):
+    def optimize(request, setname):
         token = request.POST.get("csrfmiddlewaretoken")
         job_id = OptJob.add_job(token)
         post = request.POST.dict()
@@ -51,6 +51,7 @@ class OptimizationView(DatasetView):
         alg_type = post.pop("alg_type")
 
         injected_series = json.loads(post.pop("injected_series"))
+        print(post  )
         param_ranges = {}
         for key, v in post.items():
             if key.endswith("-min"):
@@ -83,7 +84,7 @@ class OptimizationView(DatasetView):
         context = {}
         context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
                                         for dataSet in InjectedContainer.objects.all() if
-                                        dataSet.title is not None and dataSet.title != ""}
+                                        dataSet.title is not None and dataSet.title != "" and dataSet.get_info()["length"] < 1000}
         context["type"] = type
         return render(request, 'data_set_options/optimizationDatasets.html', context=context)
 

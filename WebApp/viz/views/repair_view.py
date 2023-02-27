@@ -94,6 +94,6 @@ class RepairView(SyntheticDatasetView):
         context = {}
         context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
                                         for dataSet in InjectedContainer.objects.all() if
-                                        dataSet.title is not None and dataSet.title != ""}
+                                        dataSet.title is not None and dataSet.title != "" }
         context["type"] = type
         return render(request, 'data_set_options/repairDatasets.html', context=context)
