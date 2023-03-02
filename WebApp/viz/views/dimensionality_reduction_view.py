@@ -66,10 +66,10 @@ class DimensionalityReductionView(RepairView):
 
         context["reductions"] = [
             [{"name": f"{col}_red_{r_iter + 1}",
-              "linkedTo": f"{col}_red_{1}" if i != 0 else None,
+              # "linkedTo": f"{col}_red_{1}" if i != 0 else None,
               "data": list(reverse_norm(df_reduced[col], df_original[col])),
               "norm_data": list(df_reduced[col]),
-              "true_distance": np.mean(np.sqrt(reverse_norm(df_reduced[col], df_original[col]) - df_original[col]))
+              # "true_distance":  float(np.mean(np.sqrt(reverse_norm(df_reduced[col], df_original[col]) - df_original[col])))
               }
              for i, col in enumerate(df_reduced.columns) if i in injected_data_container.injected_columns]
             for r_iter, df_reduced in enumerate(reductions) if r_iter in [0, 4, 9]]
@@ -79,8 +79,8 @@ class DimensionalityReductionView(RepairView):
             [{"name": f"{col}reduced",
               # "linkedTo": col+"repair"+alg_name,
               "data": list(reverse_norm(df_reduced[col], df_original[col])),
-              "norm_data": list(df_reduced[col]),
-              "diff_norm": list(z_score(df_reduced[col] - normalized_injected[col]))
+              "norm_data": list(df_reduced[col])
+              # "diff_norm": list(z_score(df_reduced[col] - normalized_injected[col]))
               if i in injected_data_container.injected_columns else None,
               "threshold": threshold,
               "classified": list(estimator.anomaly_matrix[:, i] * 1)
@@ -111,10 +111,9 @@ class DimensionalityReductionView(RepairView):
 
             zones = []
             in_anomaly = False
-            print(rgba_converter(rgb, 0.2))
             for i, c in enumerate(class_col):
                 if c == 1 and not in_anomaly:
-                    zones.append({"value": i, "dashStyle": 'dot', "color": rgba_converter(rgb, 0.2)})
+                    zones.append({"value": i, "dashStyle": 'dot', "color": rgba_converter(rgb, 0.4)})
                     in_anomaly = True
                 elif c == 0 and in_anomaly:
                     zones.append({"value": i, "color": rgba_converter(rgb, 1)})
@@ -154,4 +153,18 @@ class DimensionalityReductionView(RepairView):
               }
              for i, col in enumerate(df_reduced.columns) if
              i in injected_data_container.injected_columns]
+
+
+        # context["repaired_series"] = ""
+
+        # print(context["reductions"])
+        # print(context["final_reductions"])
+        # context["reductions"] = ""
+        # # context["injected_series"] = ""
+        # # context["injected_diff"] = ""
+        # # context["repair_iters"] = ""
+        # context["final_reductions"] = ""
+
+
+
         return JsonResponse(context, encoder=DimensionalityReductionView.encoder)
