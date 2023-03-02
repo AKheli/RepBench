@@ -7,23 +7,33 @@ const addHeader = (Array) => {
     return Array;
 }
 
+const addHeaderSynthetic = (Array) => {
+    header = injectedSeries.map(s => s.series.name).join(",") + "\n"
+    Array.unshift(header);
+    return Array;
+}
+
+
 const exportData = function () {
-    console.log("exporting original series")
     let blob = new Blob(addHeader(CSVzip(...originalSeries.map(s => s.originalData))), {type: 'text/csv'});
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'myFile.csv';
+    a.download = dataTitle + ".csv";
     document.body.appendChild(a);
     a.click();
 }
 
 const exportSyntheticData = function () {
-    console.log(injectedSeries.map(s => s.originalData))
-    console.log("exporting injected series")
-    let blob = new Blob(addHeader(CSVzip(...injectedSeries.map(s => s.originalData))), {type: 'text/csv'});
+    let exportData = injectedSeries.map(s => {
+        console.log(s)
+        originalData = getOriginalData(s.series.linkedTo)
+        return s.originalData.map((v, i) => v !== null ? v : originalData[i])
+    })
+
+    let blob = new Blob(addHeaderSynthetic(CSVzip(...exportData), {type: 'text/csv'}));
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'myFile.csv';
+    a.download = dataTitle + "Synthetic.csv";
     document.body.appendChild(a);
     a.click();
 }
@@ -33,16 +43,15 @@ const exportSyntheticData = function () {
 const exportDataBtn = document.getElementById("exportOriginalData")
 exportDataBtn.addEventListener("click", exportData)
 
-//todo check order of creation of synthetic series
 const exportInjectedDataBtn = document.getElementById("exportInjectedData")
 exportInjectedDataBtn.addEventListener("click", exportSyntheticData)
+
 
 const updateExportInjectedButton = function (injectedSeries) {
     if (injectedSeries === null || injectedSeries.length === 0) {
         console.log(injectedSeries, "AAAA")
         exportInjectedDataBtn.style.display = "none"
-    }
-    else {
+    } else {
         exportInjectedDataBtn.style.display = "block"
 
     }

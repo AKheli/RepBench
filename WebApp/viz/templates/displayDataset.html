@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
     <style>
-            .rs-tooltip-text {
-                font-size: 12px;
-                color: #0f0f16;
-                font-weight: 900;
-            }
+        .rs-tooltip-text {
+            font-size: 12px;
+            color: #0f0f16;
+            font-weight: 900;
+        }
 
-            .rs-wrapper {
-                display: grid;
-                grid-template-columns: repeat(22, 200px);
-            }
+        .rs-wrapper {
+            display: grid;
+            grid-template-columns: repeat(22, 200px);
+        }
 
-            .slider-container {
-                max-height: 500px;
-                overflow-y: scroll;
-            }
+        .slider-container {
+            max-height: 500px;
+            overflow-y: scroll;
+        }
 
-            .center {
-                display: flex;
-                justify-content: center;
-            }
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+
         .overlay {
             position: absolute; /* position the overlay element absolutely */
             top: 0; /* position it at the top of the container */
@@ -38,9 +38,9 @@
         }
     </style>
     <div style="position:relative">
-        {%  block graphbuttons %}
-                    {% include "sub/norm_buttons.html" %}
-        {%  endblock %}
+        {% block graphbuttons %}
+            {% include "sub/norm_buttons.html" %}
+        {% endblock %}
         {% block chartContainer %}
             {#            <div class="container">#}
             <div id="chart" class="col-md-9" style="position:relative;">
@@ -82,23 +82,22 @@
 
 
 
-    <script src='{% static "js/corr_table.js" %}'></script>
+    <script>
+        // Javascript needed for all graph pages
+        const dataTitle = '{{ data_info.title }}'
+    </script>
 
     {% block js %}
+        <script src='{% static "js/corr_table.js" %}'></script>
         <link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
         <script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>
         <script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
-
-
         <script>
             var categories = {{ columns | safe }};
             var corr_data = {{ corr_data | safe }};
-            console.log(corr_data);
             initCorrTable(categories, corr_data, 'corr_container')
 
-            /// addsliders
-
-
+            /// add the sliders After the rest of the page has loaded
             function setInnerHTML(elm, html) {
                 elm.innerHTML = html;
                 Array.from(elm.querySelectorAll("script"))

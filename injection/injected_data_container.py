@@ -137,11 +137,11 @@ class InjectedDataContainer:
                                   predicted=self.injected)
 
 
-    def get_a_rate_per_col(self):
+    def get_a_rate_per_col(self,rounding=3):
         result = {}
         cols = self.injected.columns
         for col in cols:
-            result[col] = np.mean(self.class_df[col].values)
+            result[col] = round(np.mean(self.class_df[col].values),rounding)
         return result
 
     def get_truth_correlation(self):

@@ -24,6 +24,7 @@ class opt_JSONRespnse(JsonResponse):
         self.callback = callback
         super().__init__(data, encoder=self.NpEncoder, **kwargs)
 
+
 class OptimizationView(DatasetView):
     template = "optimization.html"
 

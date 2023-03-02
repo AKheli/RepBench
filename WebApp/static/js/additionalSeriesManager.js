@@ -1,5 +1,4 @@
 let normalized = false
-
 let injectedSeries = []
 const repairedSeries = []
 const originalSeries = []
@@ -9,7 +8,8 @@ const reducedSeries = []
 const colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
     '#50394c', '#e4d354', '#8085e8', '#8d4653', '#91e8e1', '#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9']
 // color palette for repaired series,different from the one used for original series
-const repairedColors = ['#4040a1', '#405d27', '#f18973', '#36486b']
+const repairedColors = ['#ff7f0e','#1f77b4', '#2ca02c', '#d62728', '#9467bd',
+'#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#2ca02c', '#d62728', '#9467bd', '#e377c2', '#7f7f7f']
 const getRepairedColor = function () {
     return repairedColors[repairedSeries.length % repairedColors.length]
 }
@@ -17,7 +17,9 @@ const getColor = function () {
     return colors[originalSeries.length % colors.length]
 }
 
-
+const getOriginalData = function (id, norm= false) {
+    return originalSeries.filter(s => s.series.id === id)[0].originalData
+}
 
 const chartSeriesMap = function (){
     let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
@@ -76,6 +78,7 @@ const addOriginalSeries = function (series , add_to_chart = false) {
 
 const addInjectedSeries = function (series, previously_injected) {
     console.log("ADD INJECTED SERIES")
+    console.log("PREVIOUSLY INJECTED: ", previously_injected) // merge the two injected series
     if (previously_injected) {
         series.data.forEach((p, i) => {
             if (series.data[i] === null) {

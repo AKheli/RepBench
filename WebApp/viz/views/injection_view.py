@@ -46,7 +46,7 @@ def inject_data(request, setname):
     data_object = DataSet.objects.get(title=setname)
     df = data_object.df
     title = data_object.title
-    data_container =  DataContainer(df, title=title)
+    data_container = DataContainer(df, title=title)
 
     df = data_container.norm_data
     if isinstance(df.columns, pd.Int64Index):
@@ -72,41 +72,52 @@ def inject_data(request, setname):
         n_anomalies = int(ratio * df.shape[0])
 
     col_injected_norm, _ = add_anomalies(col_norm,
-                                    a_type=a_type,
-                                    a_factor=factor,
-                                    a_len=30,
-                                    n_anomalies=n_anomalies,
-                                    fill_na=True, seed=seed)
+                                         a_type=a_type,
+                                         a_factor=factor,
+                                         a_len=30,
+                                         n_anomalies=n_anomalies,
+                                         fill_na=True, seed=seed)
     col_injected = col_injected_norm * original_col.std() + original_col.mean()
-    injected_series = map_injected_series(col_injected,col_injected_norm,col_name)
+    injected_series = map_injected_series(col_injected, col_injected_norm, col_name)
     return JsonResponse({"injected_series": injected_series})
 
 
 def store_data(request, setname):
     post = request.POST.dict()
-    title , min , max = post.get("title") , int(float(post.get("min"))) , int(float(post.get("max")))
+    title = post.get("title")
+    min, max = int(float(post.get("min"))), int(float(post.get("max")))
+    if min < 0:
+        min = 0
+
+    print(post.get("visible_series"))
+    visible = json.loads(post.get("visible_series"))
     description = post.get("description")
     post.pop("csrfmiddlewaretoken")
     data_container = load_data_container(setname)
     df_norm = data_container.norm_data  # only work with normalized data
     df_original = data_container.original_data
-    #df_original = data_container.original_data
+    # df_original = data_container.original_data
     injected_series = json.loads(post.pop("injected_series"))
 
-    df_norm = df_norm.iloc[min:max]
 
-    for series_dict in injected_series:
-        series_dict["data"] = series_dict["data"][min:max]
+    if post.pop("selectionOnly"):
+        # cut min and max
+        df_norm = df_norm.iloc[min:max]
+        for series_dict in injected_series:
+            series_dict["data"] = series_dict["data"][min:max]
+            # only select visible series
+            df_norm = df_norm[visible]
+            df_original = df_original[visible]
 
-    injected_data_container : InjectedDataContainer = injected_container_None_Series(df_norm, injected_series)
+    injected_data_container: InjectedDataContainer = injected_container_None_Series(df_norm, injected_series)
     injected_data_container.set_to_original_scale(df_original.mean(), df_original.std())
 
     if InjectedContainer.objects.filter(title=title).exists():
         InjectedContainer.objects.filter(title=title).delete()
-    info = {} #Set original title of setname
+    info = {}  # Set original title of setname
 
     injectedDataframe = injected_data_container.injected.to_json()
     injected_data_set = InjectedContainer(title=title, injectedContainer_json=injected_data_container.to_json(),
-                                          description=description,original_data_set=setname)
+                                          description=description, original_data_set=setname)
     injected_data_set.save()
     return JsonResponse({"success": True})

@@ -25,6 +25,7 @@ const inject = function () {
                 let previously_injected = null
                 if (mainChart.get(s["id"])) {
                     // remove element from injectedSeries list the item with the same id as s["id"]
+                    previously_injected = injectedSeries.filter(inj_s => inj_s.series.id === s["id"])[0]
                     injectedSeries = injectedSeries.filter(inj_s => inj_s.series.id !== s["id"])
                     mainChart.get(s["id"]).remove();
                 }
