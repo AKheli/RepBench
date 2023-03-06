@@ -6,7 +6,6 @@ from sklearn.utils import check_array
 
 from testing_frame_work.data_methods.data_class import normalize_f
 
-
 class DimensionalityReductionEstimator(Estimator):
     def __init__(self, classification_truncation=2
                  , repair_truncation=4

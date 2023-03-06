@@ -1,0 +1,46 @@
+{#<form id="retrieveForm">#}
+{#    {% for field in injection_form.visible_fields %}#}
+{#        <div class="form-group {{ style.class }}">#}
+{#            <label>{{ field.label }}{% if True %}#}
+{#                <a href="#" class="btn" role="button" data-toggle="popover" data-placement="top"#}
+{#                   title="Tooltip on top" data-trigger="focus" data-content="helptext" onclick="return false"><i#}
+{#                        class="mdi mdi-information-outline mdi-18px"></i></a>{% endif %}#}
+{##}
+{#            </label>#}
+{#            <!--check if field.field.widget.input_type is number todo check min and max-->#}
+{#            {% if field.field.widget.input_type == 'number' %}#}
+{#                <input type="number" name="{{ field.name }}" value="{{ field.value }}" class="form-control"#}
+{#                       placeholder="{{ field.label }}"#}
+{#                       min={{ field.field.widget.minimum }} max={{ field.field.widget.max }} step="0.1">#}
+{#                <!--check if field.field.widget.input_type is select-->#}
+{#            {% elif field.field.widget.input_type == 'select' %}#}
+{#                <select name="{{ field.name }}" class="form-control custom-select">#}
+{#                    {% for v,e in field.field.widget.choices %}#}
+{#                        <option value="{{ v }}">{{ e }}</option>#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{##}
+{#            {% elif field.field.widget.input_type == 'checkbox' %}#}
+{#                <input type="checkbox" name="{{ field.name }}" value="{{ field.value }}" class="form-control"#}
+{#                       placeholder="{{ field.label }}">#}
+{#            {% else %}#}
+{##}
+{#                {{ field }}#}
+{#            {% endif %}#}
+{#        </div>#}
+{##}
+{#    {% endfor %}#}
+{#    {% for hidden in form.hidden_fields %}#}
+{#        {{ hidden }}#}
+{#    {% endfor %}#}
+{#    <button id="injection_button" onclick="return false" type="submit" class="btn btn-primary">#}
+{#        Inject#}
+{#    </button>#}
+{#</form>#}
+{##}
+{##}
+{#<script>#}
+{#    $(document).ready(function () {#}
+{#        $('[data-toggle="popover"]').popover();#}
+{#    });#}
+{#</script>#}

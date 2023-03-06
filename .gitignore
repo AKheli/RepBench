@@ -13,4 +13,3 @@ build
 share
 etc
 include
-web/mysite/db.sqlite3

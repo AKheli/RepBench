@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- import style sheet -->
+    <link rel="stylesheet" href="{% static 'css/revival/datasets.css' %}">
+    <div class="container" style="padding-top: 50px">
+        <h2>Datasets to optimize on</h2>
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>Title</th>
+                <th style="text-align: right">Time series</th>
+                <th style="text-align: right">Values</th>
+                <th style="text-align: right">Action</th>
+            </tr>
+            <tr>
+
+                {% for name,attr in  syntheticDatasets.items %}
+                    <tr>
+                        <td><a href="{% url 'synthetic_dataset_view' setname=name %}">{{ attr.title }}</a>
+                        <td style="text-align: right">{{ attr.ts_nbr }}</td>
+                        <td style="text-align: right">{{ attr.values }}</td>
+                        <td style="text-align: right"><a href="{% url 'opt' setname=attr.title %}">Optimize</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

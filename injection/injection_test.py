@@ -1,6 +1,4 @@
-
-import inject
-
+from TerminalTool import inject
 
 import os
 curr_wd = os.getcwd()

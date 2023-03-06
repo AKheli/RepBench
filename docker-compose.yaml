@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  django_gunicorn:
+    volumes:
+      - static:/RepairBenchWeb/static
+    env_file:
+      - .env
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static:/RepairBenchWeb/static
+    depends_on:
+      - django_gunicorn
+volumes:
+  static:

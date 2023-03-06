@@ -45,7 +45,7 @@ install the requirements for the Benchmark
 To use the WebApp, you need to install additional requirements
 
 ```bash
-    $ cd WebApp
+    $ cd RepBenchWeb
     $ pip3 install -r requirements.txt
     $ cd ..
 ```
@@ -154,18 +154,18 @@ python3 manage.py runserver
 Directly repair a synthetic data set with anomalies and compare the repaired time series together with the original and injected series.
 We show the conventional metrics for anomaly repair: root mean square error (RMSE) and mean absolute error (MAE).
 
-<img align="center" width="600" height="400" src="WebApp/screenshots/repair.png" >
+<img align="center" width="600" height="400" src="screenshots/repair.png" >
 
 ## Injection 
 Inject real-world data with anomalies. Select the time series and anomaly type to inject. Multiple injections are possible allowing for different anomaly types in a time series.  After contamination, it is possible to switch to the repair view to try out the a repair technique on the affected data, similar to the process used for synthetic data.
 
 
-<img align="center" width="600"  height="400" src="WebApp/screenshots/injection.png">
+<img align="center" width="600"  height="400" src="screenshots/injection.png">
 
 ## Optimization
 Run an experiment using Bayesian optimization on a set of synthetic data by defining the range of parameters to test and the optimization algorithm. Visualize the results by plotting the error being minimized and the specific parameter values used in each step of the optimization process.
 
-<img align="center" width="600"  height="400" src="WebApp/screenshots/optimization.png">
+<img align="center" width="600"  height="400" src="screenshots/optimization.png">
 
 
 

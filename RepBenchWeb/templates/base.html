@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+
+<head>
+    <title id="title-id">  {{ Title }} </title>
+    {% block css %}
+        <style>  .full-height {
+            height: 90vh;
+        }
+
+        {#.margin-top-20 {#}
+        {#    margin-top: 55px;#}
+        {#    left: 0;#}
+        {#    padding-right: 15px !important;#}
+        {#    padding-left: 15px !important;#}
+        {#    margin-right: auto !important;#}
+        {#    margin-left: auto !important;#}
+        {# }#}
+        .pad-15px {
+            left: 0;
+            padding-right: 15px !important;
+            padding-left: 15px !important;
+            margin-right: auto !important;
+            margin-left: auto !important;
+        }
+        </style>
+        {#        <link href="{% static 'css/lib/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" type="text/css"/>#}
+        {#        <!-- end: Global Styles Plugins -->#}
+        {#        <!-- begin:Global Styles -->#}
+        <link href="{% static 'css/fonts/materialdesignicons/materialdesignicons.min.css' %}" rel="stylesheet"
+              type="text/css"/>
+        <link href="{% static 'css/messages.css' %}" rel="stylesheet" type="text/css"/>
+        <script src="{% static "css/revival/jquery-1.10.2.js" %}"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+                integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+                crossorigin="anonymous"></script>
+        <script src="{% static "css/revival/jquery-ui.js" %}"></script>
+        <!-- CSS sources -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+              integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+              crossorigin="anonymous">
+
+
+        {#        <link rel="stylesheet" href="{% static "css/revival/jquery-ui.css" %}">#}
+        {#        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"#}
+        {#              integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"#}
+        {#              crossorigin="anonymous">#}
+
+        <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="{% static "css/revival/custom.css" %}">
+        <link rel="stylesheet" href="{% static "css/fonts.css" %}">
+    {% endblock %}
+    {% block head_js %}
+        {#                    <script src="{% static 'js/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>#}
+
+    {% endblock %}
+
+
+    <script>function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+    </script>
+
+</head>
+
+
+<!-- begin: Body -->
+<!-- begin: Body -->
+
+<style>  .full-height {
+    height: 60vh;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.viz-chart-info {
+    padding-left: 50px;
+}
+
+.margin-top-20 {
+    margin-top: 55px;
+    left: 0;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+}
+
+.alg-selection {
+    margin-top: 20px;
+    padding-left: 100px;
+    padding-bottom: 30px;
+    justify-content: center;
+}
+
+{# all elemnts of class form-group into 1 row of a grid in my grid #}
+.outer-grid {
+    display: grid;
+    grid-template-columns: 130px  600px;
+    grid-gap: 10px;
+{# center #}
+}
+
+
+</style>
+
+<body style="padding-top: 0px">
+
+<!-- begin: Page -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'index' %}">{{ Title }}</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Display<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'display_datasets' %}">Datasets</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Repair<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'repair_datasets' %}">Repair Anomalies</a></li>
+                        <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Dimensionality
+                            Reduction Viz</a></li>
+
+                    </ul>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'optimisation_datasets' %}">
+                        Optimization
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+<!-- begin: Content -->
+<div id="content">
+<!-- begin: Main Content -->
+        <div class="margin-top-20">
+            {% block content %}
+            {% endblock %}
+        </div>
+    {% block footer %}
+        {#                {% include 'vadetisweb/parts/footer/footer.html' %}#}
+    {% endblock %}
+    <!-- end: Footer -->
+
+    <!-- end: Page -->
+
+    {#<!-- begin: Scrolltop -->#}
+    {#<div id="kt_scrolltop" class="kt-scrolltop">#}
+    {#    <i class="mdi mdi-arrow-up-bold mdi-24px"></i>#}
+    {#</div>#}
+    {#<!-- end: Scrolltop -->#}
+
+
+    <script src="{% static  'js/helpers.js' %} " type="text/javascript"></script>
+
+    {% block scripts %}
+    {% endblock %}
+
+
+    <!-- begin: Scrolltop -->
+    <div id="kt_scrolltop" class="kt-scrolltop">
+        <i class="mdi mdi-arrow-up-bold mdi-24px"></i>
+    </div>
+    <!-- end: Scrolltop -->
+
+
+    <!-- begin: Global Plugins Scripts -->
+    {#    <script src="{% static 'js/lib/popper-js/popper.min.js' %}" type="text/javascript"></script>#}
+    {#    <script src="{% static 'js/lib/bootstrap/bootstrap.min.js' %}" type="text/javascript"></script>#}
+    <script src="{% static 'js/lib/js-cookie/js-cookie.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/tooltip-js/tooltip.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/lib/sticky/sticky.min.js' %}" type="text/javascript"></script>
+    <!-- end: Global Plugins Scripts -->
+    <!-- begin:Global Scripts -->
+    <script src="{% static 'js/custom/utils.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>
+    <!-- end:Global Script -->
+
+    <style>
+        .button-group {
+            margin: 50px;
+        }
+
+        .booked {
+            background: blue;
+            color: white;
+        }
+
+        .popover-content {
+            color: black;
+            font-size: 10px;
+            z-index: 1000;
+
+        }
+
+        .form-group label {
+            font-size: 15px;
+        }
+
+        .kt-portlet__head-title {
+            font-size: 17px !important;
+        }
+
+        #chart-right {
+            margin-top: 10px;
+        }
+    </style>
+
+    <script>
+        $('[data-toggle="kt-popover"]').popover({
+            html: true,
+            zIndex: 9999,
+            container: 'body'
+        });
+    </script>
+
+    <script>
+        // handle on or multiple classes
+        document.querySelectorAll('.move-after-accordion').forEach(function (el) {
+            console.log(el)
+            // get child with id move-in
+            var moveIn = el.querySelector('#move-in');
+            var nextElement = el.nextElementSibling;
+            // move nextElement into moveIn
+            moveIn.appendChild(nextElement);
+        });
+    </script>
+    {% block additional_bottom_js %}
+    {% endblock %}
+</div>
+
+</body>
+</html>

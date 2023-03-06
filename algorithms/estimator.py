@@ -123,7 +123,6 @@ class Estimator(ABC, BaseEstimator):
     def get_param_info(self, X=None):
         """
         return : dictionary with the parameters of the estimator
-        that we vary to find the best estimator for a given dataset
         each key is a parameter name and the value is a tuples of values:
         (type,min,max,default,range)
         """

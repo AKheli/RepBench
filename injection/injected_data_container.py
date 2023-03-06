@@ -189,3 +189,20 @@ class InjectedDataContainer:
             class_df=pd.read_json(result["class_df"]),
             name=result["name"],
         )
+
+    def save(self, folder="data"):
+        import os
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        self.truth.to_csv(f"{folder}/{self.name}_truth.csv")
+        self.injected.to_csv(f"{folder}/{self.name}_injected.csv")
+        self.labels.to_csv(f"{folder}/{self.name}_labels.csv")
+        self.class_df.to_csv(f"{folder}/{self.name}_class_df.csv")
+        # dict to csv
+        import csv
+        with open(f"{folder}/{self.name}_repairs.csv", 'w') as f:
+            w = csv.writer(f)
+            w.writerows(self.repairs.items())
+
+

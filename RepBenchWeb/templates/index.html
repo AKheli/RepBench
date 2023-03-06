@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1><strong>{{ Title }}</strong> </h1>
+                </div>
+                <p>
+                    {{ Title }} is an online tool to Visualize The Repair of Anomaly Repair Techniques.
+                </p>
+                <p>
+                    This tool was created at the <a href="http://exascale.info/">eXascale Infolab</a>, a research group
+                    at the <a href="http://www.unifr.ch/">University of Fribourg</a>, Switzerland.
+                </p>
+            </div>
+        </div>
+
+        <h3><strong>Features</strong></h3><br>
+
+        <div class="row">
+            <div class="col-md-3">
+                <p><b>Display:</b></p>
+                <ul>
+                    <li><a href="{% url 'display_datasets' %}">Datasets</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <p><b>Repair:</b></p>
+                <ul>
+                    <li><a href="{% url 'repair_datasets' %}">Repair Synthetic Datasets</a></li>
+                    <li><a href="{% url 'display_datasets' %}">Inject Data and Repair</a></li>
+                    <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Detailed Repair of Matrix
+                        decomposition Techniques</a></li>
+
+                </ul>
+            </div>
+            <div class="col-md-5">
+                <p><b>Optimization:</b></p>
+                <ul>
+                    <li><a href=" {% url 'optimisation_datasets' %}">Display Parameter Search using Bayesian
+                        Optimization</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
