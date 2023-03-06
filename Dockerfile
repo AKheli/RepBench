@@ -1,26 +1,33 @@
-# pull the official base image
-FROM python:3.9-alpine
+FROM python:3.7
 
-# set work directory
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache postgresql-dev
-RUN apk add --no-cache build-base
-RUN apk add --no-cache gfortran openblas-dev lapack-dev
-RUN apk add --no-cache jpeg-dev zlib-dev
-RUN apk add --no-cache libffi-dev openssl-dev python3-dev
-RUN apk add --no-cache zeromq zeromq-dev
-
-# set environment variables
+# https://ruddra.com/docker-reduce-build-time-for-data-science-packages/
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install dependencies
-COPY ./requirements_slow.txt /usr/src/app
-RUN pip install -r requirements_slow.txt
+
+# Installing scipy
+RUN pip3 install --no-cache-dir --disable-pip-version-check scipy==1.3.1
+
+# Installing
+RUN pip3 install --no-cache-dir \
+    pandas==0.25.2 \
+    numpy==1.17.3 \
+    psycopg2==2.8.4 \
+    scikit-learn==0.21.3 \
+    matplotlib==3.1.1 \
+    scikit-optimize
+
+
+
 
 COPY ./requirements.txt /usr/src/app
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # copy project
 COPY . /usr/src/app
+
+COPY ./entrypoint.sh /usr/src/app
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
