@@ -36,7 +36,7 @@ def main(input=None):
         data_paths = [infer_data_file(file_name, folder="data/test") for file_name in test_data_dir]
 
     data_set_names = [s.split(os.sep)[-1].replace(".csv", "") for s in data_paths]
-    print("running on ", data_set_names)
+    print("running on", data_set_names)
     anomaly_types = arg_parser.parse_anomaly_types(args)
     cols = args.cols
     for (scen_name, data_name, anomaly_type) in itertools.product(scen_names, data_set_names, anomaly_types):
@@ -52,11 +52,11 @@ def main(input=None):
 
         for name, test_part in scenario.name_container_iter:
             for repair_type in algorithms:
-                print(f"running repair on {data_name} , {scen_name} with {repair_type} on {anomaly_type} anomalies")
+                print(f"running repair on {data_name}  {scen_name} with {repair_type} on {anomaly_type} anomalies")
                 params = load_params_from_toml(repair_type)
                 repair_info = repairer.repair_data_part(repair_type, test_part, params)
-            test_part.save(folder="Results/Generated")
-    save_scenario(scenario, repair_plot=True, res_name=args.rn)
+            test_part.save(folder=f"Results/DataSets/{scen_name}_{anomaly_type}_{name}")
+        save_scenario(scenario, repair_plot=False, res_name=args.rn)
 
 
 if __name__ == '__main__':

@@ -197,7 +197,7 @@ class InjectedDataContainer:
 
         self.truth.to_csv(f"{folder}/{self.name}_truth.csv")
         self.injected.to_csv(f"{folder}/{self.name}_injected.csv")
-        self.labels.to_csv(f"{folder}/{self.name}_labels.csv")
+        # self.labels.to_csv(f"{folder}/{self.name}_labels.csv")
         self.class_df.to_csv(f"{folder}/{self.name}_class_df.csv")
         # dict to csv
         import csv

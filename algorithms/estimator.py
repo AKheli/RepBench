@@ -33,6 +33,8 @@ class Estimator(ABC, BaseEstimator):
         if predicted is None:
             predicted = self.repair(injected, truth, columns_to_repair, labels).values
 
+        if labels is None:
+            labels = np.zeros_like(injected)
         labels = labels.values if isinstance(labels, pd.DataFrame) else labels
         X = injected.values if isinstance(injected, pd.DataFrame) else injected
         y = truth.values if isinstance(truth, pd.DataFrame) else truth
