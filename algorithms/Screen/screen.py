@@ -1,10 +1,7 @@
 import numpy as np
 import statistics
 
-from matplotlib import pyplot as plt
-
 from algorithms.Screen.globallp import LPconstrainedAE
-
 
 def screen(x, w, smax, smin=None, timestamps=None):
     if timestamps is None:

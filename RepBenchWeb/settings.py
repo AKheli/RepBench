@@ -23,6 +23,8 @@ import os
 
 SECRET_KEY = os.getenv("SECRET_KEY","AFR*VT%*RVTG&TE*TRE*DERG%TR") # todo make sure env_file is in gjango_gunicorn -> enf_file: .env
 DEBUG = os.getenv("DEBUG",True)
+print("DEBUG: ",DEBUG)
+
 
 ALLOWED_HOSTS = ['*'] # todo: check this
 
@@ -120,14 +122,17 @@ USE_TZ = True
 STATIC_URL = 'RepBenchWeb/static/'
 
 import os
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'RepBenchWeb/static') # this is the directory where the static files are stored,
-
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'RepBenchWeb/static') # this is the directory where the static files are stored,
+#
+# ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-###
-import mimetypes
-mimetypes.add_type("text/css", ".css", True)
-mimetypes.add_type("text/javascript", ".js", True)
-mimetypes.add_type("text/html", ".html", True)
+
+
+
+# ###
+# import mimetypes
+# mimetypes.add_type("text/css", ".css", True)
+# mimetypes.add_type("text/javascript", ".js", True)
+# mimetypes.add_type("text/html", ".html", True)

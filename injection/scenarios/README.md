@@ -29,6 +29,9 @@ a_rate:
 - N = max; M = max;
 - The first time series is contaminated with 1 to 30 anomalies each anomaly has length K.
 
+a_factor:
+- N = max; M = max;
+- The first time series is contaminated with 1 anomaly each anomaly has length K and the factor is increased from 1 to 10.
 ts_nbr:
 - N = max; M  varies from 3 columns to 100% of the columns;
 - The first time series is contaminated with 10 anomalies each anomaly has length K.

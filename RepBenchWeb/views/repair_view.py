@@ -50,6 +50,7 @@ class RepairView(SyntheticDatasetView):
 
     @staticmethod
     def repair_data(request, setname):
+        print("start repair")
         post = request.POST.dict()
         post.pop("csrfmiddlewaretoken")
         alg_type = post.pop("alg_type")
@@ -64,6 +65,8 @@ class RepairView(SyntheticDatasetView):
         repairer = AnomalyRepairer(1, 1)
         repair_retval = repairer.repair_data_part(alg_type, injected_data_container, params)
         repair = repair_retval["repair"]
+        print("end repair")
+
         repair_scores = repair_retval["scores"]
 
 
@@ -85,6 +88,7 @@ class RepairView(SyntheticDatasetView):
         }
         score_context.update(repair_scores)
         output["scores"] = score_context
+        print("send repair data")
         return JsonResponse(output)
 
     def repair_datasets(request=None, type="repair"):

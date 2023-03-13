@@ -18,7 +18,7 @@ BASE_PERCENTAGES = {AMPLITUDE_SHIFT: 5,
                     POINT_OUTLIER: 2
                     }
 
-DEFAULT_LENGTH = 30  # ignored by pointoutliers
+DEFAULT_LENGTH = 30  # ignored by point outliers
 
 ##### Scenarios
 BASE_SCENARIO = "base"
@@ -39,7 +39,7 @@ scenario_specifications = {
     "a_percentages": [0.25, 0.5, 1, 2, 5, 10, 15, 20], #a_rate scenario
     "ts_nbrs": [3, 4, 5, 6, 7, 8, 9, 10], # TS number scenario
     "cts_nbrs": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], # cts_nbr scenario
-    "a_factors": [0.5, 1, 2, 3, 4, 5, 10, 20], # a_factor scenario
+    "a_factors": [0.5, 1, 2, 3, 4, 5, 10, 20], # a_factor scenario anomaly factor/amplitude compared to std of the data
 }
 
 ### imr labels
