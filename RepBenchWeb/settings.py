@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 import os
 
 SECRET_KEY = os.getenv("SECRET_KEY","AFR*VT%*RVTG&TE*TRE*DERG%TR") # todo make sure env_file is in gjango_gunicorn -> enf_file: .env
-DEBUG = os.getenv("DEBUG",True)
+DEBUG = int(os.getenv("DEBUG",True))
 print("DEBUG: ",DEBUG)
 
 
@@ -116,17 +116,61 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+from os.path import abspath, basename, dirname, join, normpath
+DJANGO_ROOT = dirname(abspath(__file__)) # todo change this depending on file level
+PROJECT_ROOT = dirname(DJANGO_ROOT)
+SITE_NAME = basename(DJANGO_ROOT)
 
-STATIC_URL = 'RepBenchWeb/static/'
+STATIC_ROOT = join(PROJECT_ROOT, 'run', 'static')
 
-import os
+# look for static assets here
+STATICFILES_DIRS = [
+    join(PROJECT_ROOT, 'static'),
+]
+MEDIA_ROOT = join(PROJECT_ROOT, 'run', 'media')
+# look for static assets here
+STATICFILES_DIRS = [
+    join(PROJECT_ROOT, 'static'),
+]
+print(STATICFILES_DIRS, "STATICFILES_DIRS")
+
+PROJECT_TEMPLATES = [
+    join(PROJECT_ROOT, 'templates'),
+    join(PROJECT_ROOT, 'RepBenchWeb', 'templates'),  # vadetisweb site templates
+    join(PROJECT_ROOT, 'RepBenchWeb', 'templates', 'allauth')  # vadetisweb allauth templates
+]
+
+print("AAAAAAAAAAAAAAAAAAAAAAA")
+import sys
+sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
+
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
+
+#
+# import os
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'RepBenchWeb/static') # this is the directory where the static files are stored,
 #
 # ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 

@@ -25,12 +25,10 @@ class DataSet(models.Model):
 
     def get_info(self):
         shape = None
-        print(self.additional_info)
         additional_info =  json.loads(str(self.additional_info))
 
         if shape in additional_info:
             shape = self.additional_info["shape"]
-            print("storing shape")
         else:
             shape = tuple(self.df.shape)
             additional_info["shape"] = shape
