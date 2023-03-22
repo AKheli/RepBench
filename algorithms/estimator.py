@@ -17,7 +17,7 @@ class Estimator(ABC, BaseEstimator):
     def set_score_f(self, score):
         self.score_f = score
 
-    def scores(self, injected, truth, columns_to_repair, labels, *, predicted=None, score=None):
+    def scores(self, injected, truth, columns_to_repair, labels=None, *, predicted=None, score=None):
         """
         :param injected: injected data
         :param truth: original data
@@ -55,9 +55,9 @@ class Estimator(ABC, BaseEstimator):
             mse_col = sm.mean_squared_error(y[non_labeled[:, col], col], predicted[non_labeled[:, col], col])
             mse += mse_col / len(columns_to_repair)
             rmse_per_col.append((col, np.sqrt(mse_col)))
-            partial_mse += sm.mean_squared_error(y[partial_weights[:, col], col],
-                                                 predicted[partial_weights[:, col], col]) / len(columns_to_repair)
-            original_mse += sm.mean_squared_error(y[:, col], X[:, col]) / len(columns_to_repair)
+            # partial_mse += sm.mean_squared_error(y[partial_weights[:, col], col],
+            #                                      predicted[partial_weights[:, col], col]) / len(columns_to_repair)
+            # original_mse += sm.mean_squared_error(y[:, col], X[:, col]) / len(columns_to_repair)
 
         scores = {}
         scores['mae'] = mae

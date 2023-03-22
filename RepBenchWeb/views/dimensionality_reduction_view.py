@@ -4,7 +4,7 @@ from django.shortcuts import render
 import json
 
 from injection.injected_data_container import InjectedDataContainer
-from algorithms.Dimensionality_Reduction.dimensionality_Reduction_estimator import DimensionalityReductionEstimator
+from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
 from testing_frame_work.repair import AnomalyRepairer
 from RepBenchWeb.BenchmarkMaps.repairCreation import injected_container_None_Series
 from RepBenchWeb.forms.alg_param_forms import RPCAparamForm, CDparamForm

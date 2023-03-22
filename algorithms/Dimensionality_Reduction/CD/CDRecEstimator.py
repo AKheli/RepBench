@@ -2,7 +2,7 @@ import time
 
 from algorithms.Dimensionality_Reduction.CD.sign_vector_computations import *
 from algorithms.algorithms_config import CDREC
-from algorithms.Dimensionality_Reduction.dimensionality_Reduction_estimator import DimensionalityReductionEstimator
+from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
 import numpy as np
 
 

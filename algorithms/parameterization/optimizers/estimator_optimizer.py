@@ -33,9 +33,8 @@ class EstimatorOptimizer():
         start = time.time()
         found_params = self.search(repair_inputs,param_grid)
         search_time =  time.time() - start
-
         score = self.estim_change_copy(found_params).scores(**repair_inputs)[self.error_score]
-        return found_params , search_time , score
+        return found_params , search_time , score #todo switch search_time and score
 
 
 
