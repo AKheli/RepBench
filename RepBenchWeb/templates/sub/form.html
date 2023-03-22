@@ -34,7 +34,7 @@
             >
             <!--check if field.field.widget.input_type is select-->
         {% elif field.field.widget.input_type == 'select' %}
-            <select name="{{ field.name }}" class="form-control custom-select">
+            <select name="{{ field.name }}" class="form-control">
                 {% for v,e in field.field.widget.choices %}
                     <option value="{{ v }}">{{ e }}</option>
                 {% endfor %}

@@ -21,11 +21,6 @@ def cc2_paper_link():
 def c22_abr(feature_name):
     return features[feature_name]["abr"]
 
-# title filter
-@register.filter()
-def title():
-    return WebAppTitle
-
 
 @register.filter()
 def parse_alg_name(alg_name):

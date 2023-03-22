@@ -129,6 +129,9 @@ loadChart()
 
 const initMainChart = function (series = {}, container = 'highcharts_container') {
     mainChart = Highcharts.chart(document.getElementById(container), {
+        credits: {
+            enabled: false
+        },
         legend: {
             enabled: true,
             align: 'right',
@@ -244,6 +247,9 @@ const mainChartFetchPromise = new Promise((resolve, reject) => {
             resetSeries()
             resolve()
             load_chart.hideLoading()
+            //hide loadchart div
+            document.getElementById("load_chart").style.display = "none";
+
 
         }).catch(error => console.error(error))
 })

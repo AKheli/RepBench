@@ -5,7 +5,7 @@
                            data-content="Select the algorithm you want to use for repair"
                            data-original-title="" title=""><i
                 class="mdi mdi-information-outline mdi-18px"></i></a></label>
-        <select class="form-control custom-select " name="algorithm" onchange="displayfunc(value)">
+        <select class="form-control" name="algorithm" onchange="displayfunc(value)">
             <option value="" selected="">----</option>
             {% for key, _ in alg_forms.items %}
                 <option value={{ key }}>{{ key }}</option>

@@ -49,7 +49,7 @@ class DimensionalityReductionView(RepairView):
                                           df_original)
         context = {"repaired_series": repaired_series, "scores": scores, "metrics": metrics}
 
-        context["html"] = render(request, 'sub/scoreRepBenchWeb.html', context=context).content.decode('utf-8')
+        # context["html"] = render(request, 'sub/scoreRepBenchWeb.html', context=context).content.decode('utf-8')
 
         ### Extract Reduced Series
         estimator: DimensionalityReductionEstimator = repair_retval["estimator"]

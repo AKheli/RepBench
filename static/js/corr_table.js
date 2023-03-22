@@ -7,6 +7,21 @@ function getPointCategoryName(point, dimension) {
             return axis.categories[point[isY ? 'y' : 'x']];
 }
 
+
+function getRGBColor(value) {
+  // normalize value to range between 0 and 1
+  const normalizedValue = (value + 1) / 2;
+  const absValue = Math.abs(value);
+  // interpolate RGB values between blue and red
+  const red = Math.round(255 * normalizedValue);
+  const blue =  value > 0? 0 :   Math.round(255 * (1 - normalizedValue));
+  const green = 0;
+
+  return `rgb(${red}, ${green}, ${blue} , ${absValue})`;
+}
+
+
+
 initCorrTable = function(categories, data , id) {
         Highcharts.chart(id, {
             chart: {
@@ -14,8 +29,9 @@ initCorrTable = function(categories, data , id) {
                 marginTop: 40,
                 marginBottom: 80,
             },
-
-
+            credits: {
+                enabled: false
+            },
             title: {
                 text: 'Time Series Correlation'
             },
@@ -43,14 +59,15 @@ initCorrTable = function(categories, data , id) {
 
             colorAxis: {
                 stops: [
-                    [0, Highcharts.getOptions().colors[1]],
+                    [0,getRGBColor(-1)],
                     [0.5, '#FFFFFF'],
-                    [1, Highcharts.getOptions().colors[1]]
+                    [1, getRGBColor(1)]
                 ],
                 min: -1,
                 max: 1,
                 minColor: '#FFFFFF',
-                maxColor: Highcharts.getOptions().colors[1]
+                maxColor: Highcharts.getOptions().colors[1],
+                reversed: false
 
             },
 
@@ -75,11 +92,12 @@ initCorrTable = function(categories, data , id) {
                 name: 'Correlation',
                 borderWidth: 0,
                 data: corr_data.map(function (point) {
+                    console.log("VALUE", point[2]);
                     return {
                         x: point[0],
                         y: point[1],
                         value: point[2],
-                        color: 'rgba(0,0,0,' + point[2] + ')'
+                        color: getRGBColor(point[2])
                     };
                 }),
                 dataLabels: {

@@ -7,10 +7,10 @@
             position: absolute; /* position the overlay element absolutely */
             top: 0; /* position it at the top of the container */
             left: 0; /* position it at the left of the container */
-            width: 100%; /* make it as wide as the container */
+            width: 10%; /* make it as wide as the container */
             height: 100%; /* make it as tall as the container */
             background-color: rgba(255, 255, 255, 0.7); /* add a semi-transparent background to make the overlay visible */
-        }
+         }
     </style>
 
 
@@ -31,14 +31,14 @@
 
         <div class="row alg-selection">
             <div class="outer-grid">
-                <div class="form-group">
+                <div class="form-group" id="alg-selection">
                     <label>Algorithm<a tabindex="10" class="btn" role="button" data-toggle="kt-popover"
                                        data-placement="top"
                                        data-trigger="focus"
                                        data-content="Select the algorithm you want to use for repair"
                                        data-original-title="" title=""><i
                             class="mdi mdi-information-outline mdi-18px"></i></a></label>
-                    <select class="form-control custom-select " name="algorithm" onchange="displayfunc(value)">
+                    <select class="form-control" name="algorithm" onchange="displayfunc(value)">
                         {% for key, _ in alg_forms.items %}
                             <option value={{ key }}> {{ key }}</option>
                         {% endfor %}

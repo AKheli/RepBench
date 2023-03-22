@@ -6,7 +6,7 @@
                            data-content="Select Algorithm to perform Bayesian Optimization"
                            data-original-title="" title=""><i
                 class="mdi mdi-information-outline mdi-18px"></i></a></label>
-        <select class="form-control custom-select " id="optFormAlgSelect" name="algorithm" onchange="displayfuncOpt(value)">
+        <select class="form-control" id="optFormAlgSelect" name="algorithm" onchange="displayfuncOpt(value)">
             <option value="" selected="">----</option>
             {% for alg_name, _ in b_opt_param_forms.items %}
                 <option value={{ alg_name }}> {{ alg_name|parse_alg_name }}</option>
