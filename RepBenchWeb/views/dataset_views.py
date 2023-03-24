@@ -1,5 +1,6 @@
 import json
 import numpy as np
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
@@ -18,7 +19,7 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         if isinstance(obj, float):
             return round(obj, 3)
-        if isinstance(obj,np.nan):
+        if isinstance(obj, np.nan):
             return None
 
         return json.JSONEncoder.default(self, obj)
@@ -65,17 +66,23 @@ class DatasetView(View):
         return render(request, self.template, context=context)
 
 
-def sliders_view(request,setname="BAFU"):
-    template = "sub/catch22sliders.html"
+def sliders_view(request, setname="BAFU"):
+    from RepBenchWeb.catch22.features import features
     dataSet = DataSet.objects.get(title=setname)
-    context =   dataSet.get_catch_22_features()
-    return render(request, template,context)
+    context = dataSet.get_catch_22_features()
+    ## add abr and description to the features
+    for ts  , feature_dict  in context["catch22"].items():
+        for feature_name , feature_valued_dict in feature_dict.items():
+            feature_valued_dict['abr'] = features[feature_name]["abr"]
+            feature_valued_dict['description'] = features[feature_name]["description"]
+    return JsonResponse(context)
 
 
 def display_datasets(request=None):
     context = {"datasets": {dataSet.title: dataSet.get_info()
-                            for dataSet in DataSet.objects.all()}}
+                            for dataSet in DataSet.objects.all()},
+               "syntheticDatasets": {dataSet.title: dataSet.get_info()
+                                     for dataSet in InjectedContainer.objects.all() if
+                                     dataSet.title is not None and dataSet.title != ""}}
 
-    context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
-                                    for dataSet in InjectedContainer.objects.all() if dataSet.title is not None and dataSet.title != ""}
     return render(request, 'data_set_options/displayDatasets.html', context=context)

@@ -65,7 +65,7 @@ urlpatterns = [
     path('get_data/<str:setname>', data_loader.get_data, name='get_data'),
 
     # catch22 sliders getter
-    path('sliders_view/<str:setname>', dataset_views.sliders_view, name='get_sliders'),
+    path('sliders_view/<str:setname>', dataset_views.sliders_view, name='get_catch22_data'),
 
 ]
 

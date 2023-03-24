@@ -140,7 +140,6 @@ PROJECT_TEMPLATES = [
     join(PROJECT_ROOT, 'RepBenchWeb', 'templates', 'allauth')  # vadetisweb allauth templates
 ]
 
-print("AAAAAAAAAAAAAAAAAAAAAAA")
 import sys
 sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
 
@@ -148,21 +147,21 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
 
 #
 # import os
