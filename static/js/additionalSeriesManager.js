@@ -113,7 +113,7 @@ const clearAllSeries = function () {
     injectedSeries.length = 0
     reducedSeries.length = 0
     resetSeries()
-    removeScores()
+    // removeScores()
 }
 
 

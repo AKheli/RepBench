@@ -42,13 +42,12 @@ def add_anomalies(original_column,a_type,*, n_anomalies, a_factor, a_len, offset
         index_ranges = get_random_indices(len(data_column) - 2 * offset, a_len, n_anomalies)
         index_ranges =  [ arr + offset for arr in index_ranges]
 
-    print("delete")
     for index_range in index_ranges:
-                data_column[index_range] = injection_mapper[a_type](data_column, index_range,factor = a_factor)[index_range]
+        data_column[index_range] = injection_mapper[a_type](data_column, index_range,factor = a_factor)[index_range]
 
     if fill_na:
         anoms = np.invert(np.isclose(data_column,original_column))
         to_fill = np.invert(np.convolve(anoms,[True,True,True],"same"))
         data_column[to_fill] = None
-    print("delete")
+
     return data_column , index_ranges

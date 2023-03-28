@@ -75,20 +75,24 @@
         {% endif %}
     </div>
     {% endfor %}
-    {#        </div>#}
 
+    <div class="form-group">
+        <button class="btn btn-primary"
+                {% if onclick %}
+                onclick="{{ onclick }}"
+                {% else %}
+                onclick="return false"
+                {% endif %}
 
-    <button class="btn btn-primary"
-            {% if onclick %}
-            onclick="{{ onclick }}"
-            {% else %}
-            onclick="return false"
-            {% endif %}
-    >
-        {{ button_label|default:"Apply" }}
-    </button>
+                {% if button_id %}
+                id="{{ button_id }}"
+                {% endif %}
+        >
+            {{ button_label|default:"Apply" }}
+        </button>
+    </div>
 
-  {% for hidden in form.hidden_fields %}
+    {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
 </form>

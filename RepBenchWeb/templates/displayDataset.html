@@ -3,7 +3,7 @@
 
 {##}
 {##}
-{#TODO:#}
+{# TODO:#}
 {#If positioning the bottom element using absolute positioning messes up the layout, you can try using CSS flexbox to position the elements. Here's an example:#}
 {##}
 {#HTML code:#}
@@ -33,61 +33,55 @@
 {#This approach should respect the overflow and other layout properties of the elements within the .outer div. You can adjust the height property of the .outer div and the flexbox properties of the child elements to suit your specific needs.#}
 
 {% block content %}
-    <style>  .full-height {
-        height: 90vh;
-    }
+    <style>
 
-    h2 {
-        margin-top: 5px;
-    }
 
-    .bottom {
-        position: absolute;
-        bottom: 0;
-    }
+        h2 {
+            margin-top: 5px;
+        }
+
+        .bottom {
+            position: absolute;
+            bottom: 0;
+        }
     </style>
 
-    <div style="position:relative">
+    <div style="position:relative;height:100%">
         {% block graphbuttons %}
             {% include "sub/norm_buttons.html" %}
         {% endblock %}
         {% block chartContainer %}
-            <div id="chart" class="col-md-9 full-height" style="position:relative;">
-                <div id="load_chart" class="overlay full-height">
-                </div>
+            <div id="chart" class="col-md-9" style="height:100%">
                 {% include 'sub/MainChart.html' %}
             </div>
-
         {% endblock %}
-    </div>
 
-    <div id="menu" class="col-md-3 full-height" style="padding-top: 40px;position:relative;">
-        {% block menu %}
-            {% block datasetInfo %}
-                <h2><b>{{ data_info.title }}</b></h2>
-                <p>Source: <a href="{{ data_info.ref_url }}">{{ data_info.url_text }}</a></p>
-                <p>{{ data_info.description }}</p>
-                <p>Number of Values: <b>{{ data_info.values }} </b></p>
-                <p>Number of Time Series: <b>{{ data_info.ts_nbr }} </b></p>
+        <div id="menu" class="col-md-3" style="padding-top: 40px;position:relative; height:100%">
+            {% block menu %}
+                {% block datasetInfo %}
+                    <h2><b>{{ data_info.title }}</b></h2>
+                    <p>Source: <a href="{{ data_info.ref_url }}">{{ data_info.url_text }}</a></p>
+                    <p>{{ data_info.description }}</p>
+                    <p>Number of Values: <b>{{ data_info.values }} </b></p>
+                    <p>Number of Time Series: <b>{{ data_info.ts_nbr }} </b></p>
 
+                {% endblock %}
+                <div id="corr_container" style="max-height: 700px;"></div>
+                {% block sliders %}
+                    <script> const slider_url = "{% url 'get_catch22_data' setname=setname %}"</script>
+                    {#                <div class="row margin-top-20 margin-bot-20 ">#}
+                    <div id="slider-outer">
+                        <h4 style="margin-top: 5px"> Catch22 feature values: &nbsp; </h4>
+                        <div id="slider-dropdown"></div>
+                        <div id="slider-container"
+                             style="display:none; bottom:0; margin-right: 18px; margin-left:18px"></div>
+                    </div>
+                    {% include 'sub/catch22sliders.html' %}
+                {% endblock %}
             {% endblock %}
-            <div id="corr_container" style="max-height: 700px;"></div>
-            {% block sliders %}
-                <script> const slider_url = "{% url 'get_catch22_data' setname=setname %}"</script>
-                {#                <div class="row margin-top-20 margin-bot-20 ">#}
-                <div id="slider-outer">
-                    <h4 style="margin-top: 5px"> Catch22 feature values: &nbsp; </h4>
-                    <div id="slider-dropdown"></div>
-                    <div id="slider-container"
-                         style="display:none; bottom:0; margin-right: 18px; margin-left:18px"></div>
-                </div>
-                {% include 'sub/catch22sliders.html' %}
-            {% endblock %}
-        {% endblock %}
-    </div>
-    </div>
+        </div>
 
-
+    </div>
 
 
 

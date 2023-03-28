@@ -1,4 +1,7 @@
 from django import template
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
 from RepBenchWeb.catch22.features import features
 register = template.Library()
 
@@ -25,3 +28,18 @@ def c22_abr(feature_name):
 @register.filter()
 def parse_alg_name(alg_name):
     return algo_names[alg_name]
+
+
+
+@register.filter(safe=True)
+def add_class(value, css_class):
+    """
+    Adds a CSS class to an HTML element.
+    Usage: {{ some_html_element|add_class:"class-name" }}
+    """
+    value = str(value)
+    if "class" in value:
+        value = value.replace("class=\"", f"class=\"{css_class} ")
+    else: # no class attribute yet
+        value =  value.replace(">", f" class=\"{css_class}\">")
+    return mark_safe(value)

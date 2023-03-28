@@ -4,6 +4,7 @@
     repair_truncation = 3
     n_max_iter = 10
     repair_iter = 10
+    delta = 1
 
 
 [cdrec]
@@ -12,6 +13,7 @@
     threshold = 1.2
     n_max_iter = 2
     repair_iter = 10
+    delta = 1
 
 [imr]
      p = 3

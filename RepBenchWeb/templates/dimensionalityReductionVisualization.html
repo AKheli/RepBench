@@ -1,26 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block content %}
+{% block outerContent %}
+
     <style>
-        .overlay {
-            position: absolute; /* position the overlay element absolutely */
-            top: 0; /* position it at the top of the container */
-            left: 0; /* position it at the left of the container */
-            width: 10%; /* make it as wide as the container */
-            height: 100%; /* make it as tall as the container */
-            background-color: rgba(255, 255, 255, 0.7); /* add a semi-transparent background to make the overlay visible */
-         }
+    .form-group {
+        display : inline-block;
+     }
+        {#.overlay {#}
+        {#    position: absolute; /* position the overlay element absolutely */#}
+        {#    top: 0; /* position it at the top of the container */#}
+        {#    left: 0; /* position it at the left of the container */#}
+        {#    width: 10%; /* make it as wide as the container */#}
+        {#    height: 100%; /* make it as tall as the container */#}
+        {#    background-color: rgba(255, 255, 255, 0.7); /* add a semi-transparent background to make the overlay visible */#}
+        {# }#}
     </style>
 
 
     <div style="position:relative">
-        <div class="kt-portlet alg-selection">
+        <div class="kt-portlet alg-selection" style="margin-top:70px">
             <h1>Dimensionality Reduction Visualization</h1>
         </div>
 
         {% block graphbuttons %}
+            <div style="display:none">
             {% include "sub/norm_buttons.html" %}
+            </div>
         {% endblock %}
         <div id="chart" class="col-md-12" style="position:relative;">
             <div id="load_chart" class="overlay full-height"></div>
@@ -28,16 +34,16 @@
         </div>
     </div>
     <div id="alg-form" class="col-md-12" style="position:relative;">
-
-        <div class="row alg-selection">
-            <div class="outer-grid">
+        <div class="row alg-selection" style="padding-left:0px;padding-left:0px">
                 <div class="form-group" id="alg-selection">
-                    <label>Algorithm<a tabindex="10" class="btn" role="button" data-toggle="kt-popover"
-                                       data-placement="top"
-                                       data-trigger="focus"
-                                       data-content="Select the algorithm you want to use for repair"
-                                       data-original-title="" title=""><i
-                            class="mdi mdi-information-outline mdi-18px"></i></a></label>
+                    <label>Algorithm
+{#                        <a tabindex="10" class="btn" role="button" data-toggle="kt-popover"#}
+{#                                       data-placement="top"#}
+{#                                       data-trigger="focus"#}
+{#                                       data-content="Select the algorithm you want to use for repair"#}
+{#                                       data-original-title="" title=""><i#}
+{#                            class="mdi mdi-information-outline mdi-18px"></i></a>#}
+                    </label>
                     <select class="form-control" name="algorithm" onchange="displayfunc(value)">
                         {% for key, _ in alg_forms.items %}
                             <option value={{ key }}> {{ key }}</option>
@@ -49,7 +55,6 @@
                 {% endfor %}
 
             </div>
-        </div>
 
         <script>
             let lastkey = null
@@ -60,14 +65,13 @@
                 }
                 if (x.style.display === "none") {
                     x.style.display = "block";
-                    x.style.display = "grid";
-                    x.style["grid-template-columns"] = "repeat(4, 15%)";
-                    x.style["grid-template-rows"] = "repeat(1, 70px)";
-                    x.style["grid-gap"] = "20px";
-                    x.style["align-items"] = "end";
-                    x.style["margin-left"] = "20px";
-                    x.style["transform"] = "translate(0, 2.5px)";
-                    x.style["max-width"] = "600px";
+
+                    // get the button inside the element
+                    var button = x.getElementsByTagName("button")[0];
+
+                    x.style["margin-left"] = "10px";
+                    x.style["transform"] = "translate(0, 1.2px)";
+                    button.style["transform"] = "translate(0, -4.5px)";
                 } else {
                     x.style.display = "none";
                 }

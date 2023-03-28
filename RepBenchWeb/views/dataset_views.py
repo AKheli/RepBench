@@ -34,18 +34,17 @@ class DatasetView(View):
 
     def data_set_info_context(self, setname):
         dataSet = DataSet.objects.get(title=setname)
+
+        # generatate correlation data for highcharts
         df = dataSet.df
         corr = df.corr().round(3)
-        correlation_html = df.corr().round(3).to_html(classes=["table table-sm table-dark"],
-                                                      table_id='correlation_table')
         corr_data = []
         for i, row in enumerate(corr.values):
             for j, v in enumerate(row):
                 corr_data.append([i, j, v])
         columns = df.columns.tolist()
 
-        context = {"correlation_html": correlation_html}
-
+        context = {}
         context["data_info"] = dataSet.get_info()
         context["columns"] = columns
         context["corr_data"] = corr_data

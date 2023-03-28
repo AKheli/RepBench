@@ -24,8 +24,7 @@
 
 
     .sliders {
-        {#display: flex;#}
-        flex-wrap: nowrap;
+    {#display: flex;#} flex-wrap: nowrap;
         overflow-x: scroll;
         overflow-y: hidden;
     }
@@ -50,187 +49,87 @@
     const sliderContainer = document.getElementById('slider-container')
     const sliderDropDown = document.getElementById('slider-dropdown')
 
-    fetch(slider_url).then(response => response.json()).then(slider_data => {
-        console.log(slider_data.catch22)
+    mainChartFetchPromise.then(() => {
+        fetch(slider_url).then(response => response.json()).then(slider_data => {
+            console.log(slider_data.catch22)
 
-        // Create dropdown to select time series
-        for (let time_series in slider_data.catch22) {
-            const option = document.createElement('option');
-            option.value = time_series;
-            option.text = time_series;
-            dropdown.appendChild(option);
-        }
-        sliderDropDown.appendChild(dropdown);
+            // Create dropdown to select time series
+            for (let time_series in slider_data.catch22) {
+                const option = document.createElement('option');
+                option.value = time_series;
+                option.text = time_series;
+                dropdown.appendChild(option);
+            }
+            sliderDropDown.appendChild(dropdown);
 
-        // Create container for slider display
-        const sliderDisplay = document.createElement('div');
-        sliderContainer.appendChild(sliderDisplay);
+            // Create container for slider display
+            const sliderDisplay = document.createElement('div');
+            sliderContainer.appendChild(sliderDisplay);
 
-        // Display sliders for selected time series
-        dropdown.addEventListener('change', function () {
-            const selectedTimeSeries = dropdown.value;
-            const allSliders = document.querySelectorAll('.rs-wrapper');
-            for (let i = 0; i < allSliders.length; i++) {
-                const sliders = allSliders[i];
-                if (sliders.id === selectedTimeSeries + '-sliders') {
-                    sliders.style.display = 'flex';
-                } else {
-                    sliders.style.display = 'none';
+            // Display sliders for selected time series
+            dropdown.addEventListener('change', function () {
+                const selectedTimeSeries = dropdown.value;
+                const allSliders = document.querySelectorAll('.rs-wrapper');
+                for (let i = 0; i < allSliders.length; i++) {
+                    const sliders = allSliders[i];
+                    if (sliders.id === selectedTimeSeries + '-sliders') {
+                        sliders.style.display = 'flex';
+                    } else {
+                        sliders.style.display = 'none';
+                    }
+                }
+            });
+
+            // Create sliders
+            for (let time_series in slider_data.catch22) {
+                const sliders = document.createElement('div')
+                sliders.id = time_series + '-sliders'
+                sliders.className = 'row rs-wrapper sliders'
+                sliders.style.display = 'flex' //= time_series === Object.keys(slider_data.catch22)[0] ? 'flex' : 'none'
+                for (let feature in slider_data.catch22[time_series]) {
+                    const slider = document.createElement('div')
+                    slider.id = time_series + '-' + feature
+                    slider.className = 'roundslider normal slider'
+                    slider.title = slider_data.catch22[time_series][feature]['abr']
+                    slider.innerHTML = slider_data.catch22[time_series][feature]
+                    sliders.appendChild(slider)
+                }
+                sliderContainer.appendChild(sliders)
+            }
+            sliderContainer.style.display = 'block'
+
+
+            console.log("initSliders")
+            RoundSliders.init(2);
+            for (let time_series in slider_data.catch22) {
+                for (let feature in slider_data.catch22[time_series]) {
+                    RoundSliders.updateValue("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['value'],
+                        slider_data.catch22[time_series][feature]['min'],
+                        slider_data.catch22[time_series][feature]['max'])
+
+                    RoundSliders.setTitle("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['description'])
+                    document.getElementById(time_series + "-" + feature).title = slider_data.catch22[time_series][feature]['description']
+
                 }
             }
-        });
 
-        // Create sliders
-        for (let time_series in slider_data.catch22) {
-            const sliders = document.createElement('div')
-            sliders.id = time_series + '-sliders'
-            sliders.className = 'row rs-wrapper sliders'
-            sliders.style.display = 'flex' //= time_series === Object.keys(slider_data.catch22)[0] ? 'flex' : 'none'
-            for (let feature in slider_data.catch22[time_series]) {
-                const slider = document.createElement('div')
-                slider.id = time_series + '-' + feature
-                slider.className = 'roundslider normal slider'
-                slider.title = slider_data.catch22[time_series][feature]['abr']
-                slider.innerHTML = slider_data.catch22[time_series][feature]
-                sliders.appendChild(slider)
-            }
-            sliderContainer.appendChild(sliders)
-        }
-        sliderContainer.style.display = 'block'
+            // set the size of the dropdown menu to the size of the longest option
+            {#const intervalId = setInterval(() => {#}
+            {#    if (dropdown.clientWidth > 0) {#}
+            {#        clearInterval(intervalId);#}
+            {#        const longestOptionWidth = Math.max(#}
+            {#            ...Array.from(dropdown.options).map(option => option.clientWidth)#}
+            {#        );#}
+            {#        dropdown.style.width = longestOptionWidth + 'px';#}
+            {#    }#}
+            {# }, 100);#}
 
 
-        console.log("initSliders")
-        RoundSliders.init(2);
-        for (let time_series in slider_data.catch22) {
-            for (let feature in slider_data.catch22[time_series]) {
-                RoundSliders.updateValue("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['value'],
-                    slider_data.catch22[time_series][feature]['min'],
-                    slider_data.catch22[time_series][feature]['max'])
+            // Simulate "change" event on the first option
+            const event = new Event("change");
+            dropdown.dispatchEvent(event);
 
-                RoundSliders.setTitle("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['description'])
-                document.getElementById(time_series + "-" + feature).title = slider_data.catch22[time_series][feature]['description']
-
-            }
-        }
-
-        // set the size of the dropdown menu to the size of the longest option
-        {#const intervalId = setInterval(() => {#}
-        {#    if (dropdown.clientWidth > 0) {#}
-        {#        clearInterval(intervalId);#}
-        {#        const longestOptionWidth = Math.max(#}
-        {#            ...Array.from(dropdown.options).map(option => option.clientWidth)#}
-        {#        );#}
-        {#        dropdown.style.width = longestOptionWidth + 'px';#}
-        {#    }#}
-        {# }, 100);#}
-
-
-        // Simulate "change" event on the first option
-        const event = new Event("change");
-        dropdown.dispatchEvent(event);
-
+        })
     })
 </script>
 
-
-{#    const step = 600#}
-{#    const total_scroll = 22 * 200#}
-{#    const scroll_right = function (id) {#}
-{#        let s_left = document.getElementById(id).scrollLeft#}
-{#        document.getElementById(id).scrollLeft += step#}
-{#    };#}
-{#    const scroll_left = function (id) {#}
-{#        document.getElementById(id).scrollLeft -= step;#}
-{#    };#}
-{##}
-
-{#</script>#}
-{##}
-{#<div class="slider-container">#}
-{#    {% for ts,features in catch22.items %}#}
-{#        <div class="{{ ts }}-bounded">#}
-{#            <div class="center">#}
-{#                Timeseries: {{ ts }}#}
-{#            </div>#}
-{#            <div style="position:relative;padding-left: 30px;padding-right: 30px">#}
-{#                <div id="{{ ts }}-sliders" class="rs-wrapper"#}
-{#                     style="overflow-x: hidden;max-height: 250px;overflow-y:hidden;">#}
-{#                    {% with outer_counter=forloop.counter %}#}
-{#                        {% for name,value in features.items %}#}
-{#                            <div id="roundslider_{{ outer_counter }}_{{ name }}" class="roundslider normal"#}
-{#                                 title="{{ name|c22_abr }}" content="aaaaa" data-popup="aaaa" aria-haspopup="asdsadad">#}
-{#                            </div>#}
-{#                        {% endfor %}#}
-{#                    {% endwith %}#}
-{#                </div>#}
-{#                <p onclick="scroll_right('{{ ts }}-sliders')"><i#}
-{#                        class="arrow right"></i>#}
-{#                </p>#}
-{#                <p onclick="scroll_left('{{ ts }}-sliders')"><i#}
-{#                        class="arrow left"></i>#}
-{#                </p>#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endfor %}#}
-{#</div>#}
-
-{#<style>#}
-{#    html {#}
-{#        scroll-behavior: smooth;#}
-{#    }#}
-{##}
-{#    .arrow {#}
-{#        position: absolute;#}
-{#        top: 50%;#}
-{#        border: solid black;#}
-{#        border-width: 0 5px 5px 0;#}
-{#        display: inline-block;#}
-{#        padding: 3px;#}
-{#        margin: 1px 1px 1px 1px;#}
-{#        z-index: 10000;#}
-{#    }#}
-{##}
-{#    .arrow:hover {#}
-{#        cursor: pointer;#}
-{##}
-{#    }#}
-{##}
-{#    .right {#}
-{#        transform: rotate(-45deg);#}
-{#        -webkit-transform: rotate(-45deg);#}
-{#        right: 1%;#}
-{#    }#}
-{##}
-{#    .left {#}
-{#        transform: rotate(135deg);#}
-{#        -webkit-transform: rotate(135deg);#}
-{#        left: 1%;#}
-{##}
-{#    }#}
-{##}
-{#    .up {#}
-{#        transform: rotate(-135deg);#}
-{#        -webkit-transform: rotate(-135deg);#}
-{#    }#}
-{##}
-{#    .down {#}
-{#        transform: rotate(45deg);#}
-{#        -webkit-transform: rotate(45deg);#}
-{#    }#}
-{#</style>#}
-{##}
-{#<script>#}
-{#    RoundSliders.init(3)#}
-{#    let round_id = null#}
-{#</script>#}
-{#{% for ts,features in catch22.items %}#}
-{#    {% with outer_counter=forloop.counter %}#}
-{#        {% for name,value in features.items %}#}
-{#            <script>#}
-{#                round_id = "roundslider_{{ outer_counter }}_{{name}}"#}
-{#                RoundSliders.updateValue("#" + round_id, {{ value.value }}, {{ value.min }}, {{ value.max }})#}
-{#                document.getElementById(round_id).title = "{{ name|c22_description }}"//+{{ name }}"#}
-{#            </script>#}
-{#        {% endfor %}#}
-{#    {% endwith %}#}
-{#{% endfor %}#}

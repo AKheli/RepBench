@@ -245,10 +245,10 @@ const mainChartFetchPromise = new Promise((resolve, reject) => {
                 data.injected.forEach(s => addInjectedSeries(s))
             }
             resetSeries()
-            resolve()
             load_chart.hideLoading()
             //hide loadchart div
             document.getElementById("load_chart").style.display = "none";
+            resolve()
 
 
         }).catch(error => console.error(error))

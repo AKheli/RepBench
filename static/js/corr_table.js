@@ -6,25 +6,25 @@ function getPointCategoryName(point, dimension) {
 }
 
 
-const warm_colors = ['rgb(255,205,116)', 'rgb(255,202,123)', 'rgb(255,114,81)', 'rgb(155,41,72)']
+// const warm_colors = ['rgb(255,205,116)', 'rgb(255,202,123)', 'rgb(255,114,81)', 'rgb(155,41,72)']
 
 function getRGBColor(value) {
     // normalize value to range between 0 and 1
     const normalizedValue = (value + 1) / 2;
     const absValue = Math.abs(value);
 
-    if (value > 0) {
-        if (value > 0.8){ return 'rgb(155,41,72,' + value + ')'}
-        if (value > 0.6){
-            return `rgb(${255}, ${114}, ${81}, ${255*value})`;
-        }
-        return `rgb(${255}, ${114}, ${81}, ${value})`;
-    }
+    // if (value > 0) {
+    //     if (value > 0.8){ return 'rgb(155,41,72,' + value + ')'}
+    //     if (value > 0.6){
+    //         return `rgb(${255}, ${114}, ${81}, ${255*value})`;
+    //     }
+    //     return `rgb(${255}, ${114}, ${81}, ${value})`;
+    // }
 
-    const blue = value > 0 ? 0 : Math.round(255);
-    const green = 0
-    const red = 0
-    return `rgb(${red}, ${green}, ${blue} , ${absValue})`;
+    const blue = 0 // value > 0 ? 0 : Math.round(255);
+    const green =  value < 0 ? 0 : Math.round(155)
+    const red =  value > 0 ? 0 : Math.round(255)
+    return `rgb(${red}, ${green}, ${blue} , ${Math.pow(absValue,1.5)})`;
 }
 
 
@@ -66,16 +66,20 @@ initCorrTable = function (categories, data, id) {
         colorAxis: {
             stops: [
                 [0, getRGBColor(-1)],
-                [0.5, '#FFFFFF'],
-                // [0.9, warm_colors[1]],
-                [1, getRGBColor(1)]
+                [0.1, getRGBColor(-1+0.1*2)],
+                [0.2, getRGBColor(-1+0.2*2)],
+                [0.3, getRGBColor(-1+0.3*2)],
+                [0.4, getRGBColor(-1+0.4*2)],
+                [0.5, getRGBColor(-1+0.5*2)],
+                [0.6, getRGBColor(-1+0.6*2)],
+                [0.7, getRGBColor(-1+0.7*2)],
+                [0.8, getRGBColor(-1+0.8*2)],
+                [0.9, getRGBColor(-1+0.9*2)],
+                [1, getRGBColor(1)],
             ],
             min: -1,
             max: 1,
-            minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors[1],
             reversed: false
-
         },
 
         legend: {

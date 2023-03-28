@@ -30,6 +30,7 @@ class InjectionView(RepairView):
         data_object = DataSet.objects.get(title=setname)
         df = data_object.df
         context = {"setname": setname}
+        context["data_info"] = data_object.get_info
         context["RepBenchWeb"] = int(request.GET.get("RepBenchWeb", self.default_nbr_of_ts_to_display))
         context["data_fetch_url_name"] = self.data_fetch_url_name
         context["store_form"] = store_injection_form
