@@ -4,3 +4,6 @@ pip3 install pandas
 pip3 install matplotlib
 pip3 install scikit-optimize
 pip3 install scikit-learn
+pip3 install scipy
+pip3 install tsfresh
+pip3 install pycatch22
