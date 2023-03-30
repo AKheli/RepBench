@@ -3,10 +3,7 @@ import json
 import numpy as np
 import pandas as pd
 import os
-import sys
 
-sys.path.append(os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
 from injection import inject_data_df
 from recommendation.feature_extraction import extract_features
@@ -91,11 +88,10 @@ def convert_features(file_name):
         results_line["features"] = features
         results.append(results_line)
     # store result to file
-    with open(f"{file_name}_features", "w") as f:
-        for result in results:
-            f.write(json.dumps(result) + "\n")
+        with open(f"{file_name}_features", "a") as f:
+            # for result in results:
+                f.write(json.dumps(results_line) + "\n")
 
-    return result
+    return results
 
 
-convert_features("recommendation/Scores/results")
