@@ -6,7 +6,7 @@ import os
 
 
 from injection import inject_data_df
-from recommendation.feature_extraction import extract_features
+from recommendation.feature_extraction.feature_extraction import extract_features
 
 data_folder = "data/train"
 

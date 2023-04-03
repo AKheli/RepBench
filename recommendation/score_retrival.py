@@ -1,41 +1,47 @@
 import itertools
-
 import pandas as pd
 import numpy as np
 import json
-
 import os
 import sys
-
 
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
-from recommendation.load_features import get_injection_parameter_hashes_checker
+from recommendation.feature_extraction.load_features import get_injection_parameter_hashes_checker
 from algorithms.param_loader import get_algorithm_params
 from RepBenchWeb.BenchmarkMaps.repairCreation import create_injected_container
 from injection.injection_config import AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER
 from algorithms.algorithm_mapper import algo_mapper
-from algorithms.estimator import Estimator
 from injection import inject_data_df
 from datetime import datetime
 
 # Get current date and time
 now = datetime.now().strftime("%m-%d %H:%M:%S")
 
-outputfile_name = f"recommendation/Scores/{'results'}"
-log_file = f"recommendation/Scores/{now}_logs"
+outputfile_name = f"recommendation/results/{'results'}"
+log_file = f"recommendation/logs/{now}_logs"
 data_folder = "data/train"
 factors = [1, 5, 10]
 a_percentages = [1, 2, 5, 10, 20]
 ts_cols = [[0]]
 scores = ["rmse", "mae"]
-datasets = ["bafu5k.csv", "elec.csv", "humidity.csv", "smd1_5.csv"]
+datasets = ["smd1_5.csv"]
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
+
 def append_to_file(data, filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
+    if not os.path.exists(filename):
+        with open(filename, 'w') as f:
+            f.write('')
+
     with open(filename, 'a') as f:
-        f.write(json.dumps(data) + '\n')
+        if isinstance(data, dict):
+            f.write(json.dumps(data) + '\n')
+        else:
+            f.write(data + '\n')
 
 
 injected_dfs = []
@@ -88,6 +94,15 @@ for factor, a_percentage, columns, score, dataset, a_type in itertools.product(f
             append_to_file(results, outputfile_name)
 
         except Exception as e:
+            raise e
+            import traceback
+
+            print("Exception", e)
+            print("failed to compute", alg_name,
+                  "with", injection_parameters,
+                  "with exception", e,
+                  "of type", type(e).__name__, traceback.format_exc())
             injection_parameters["alg"] = alg_name
-            injection_parameters["exception"] = str(e)
-            append_to_file(injection_parameters,log_file)
+            injection_parameters["exception"] = traceback.format_exc()
+            injection_parameters["exception_type"] = type(e).__name__
+            append_to_file(injection_parameters, log_file)
