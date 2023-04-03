@@ -1,4 +1,7 @@
 import math
+
+import numpy as np
+
 from injection.injection_config import BASE_FACTORS, POINT_OUTLIER, BASE_PERCENTAGES, DEFAULT_LENGTH
 from injection.injection_methods.basic_injections import add_anomalies
 
@@ -23,12 +26,14 @@ def inject_data_df(data_df, *, a_type, cols=None, offset=10,
     injected_df = data_df.copy()
     col_ranges_mapper = {}
     for col in columns_to_inject:
-        injected_df.iloc[:, col], index_ranges = add_anomalies(injected_df.iloc[:, col], a_type, offset=offset,
+        column_to_inject = injected_df.iloc[:, col].copy().values
+        injected_df.iloc[:, col], index_ranges = add_anomalies(column_to_inject, a_type, offset=offset,
                                                                a_factor=factor,
                                                                n_anomalies=n_anomalies, a_len=a_len,
                                                                index_ranges=None if
                                                                index_range_col_mapper is None else
                                                                index_range_col_mapper[col], seed=seed)
+        assert not np.allclose(column_to_inject, injected_df.iloc[:, col]) , column_to_inject[index_ranges]
         col_ranges_mapper[col] = index_ranges
     assert injected_df.shape == data_df.shape
     assert injected_df.index.equals(data_df.index)

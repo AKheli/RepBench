@@ -38,4 +38,20 @@ data_sets_info = {
         "url_text": "",
         "description": "test data",
     },
+
+    "MotorImagery_finger": {
+        "title": "Tiny",
+        "path": "train/MotorImagery_finger.csv",
+        "ref_url": "-",
+        "url_text": "",
+        "description": "test data",
+    },
+
+    "MotorImagery_tongue": {
+        "title": "Tiny",
+        "path": "train/MotorImagery_tongue.csv",
+        "ref_url": "-",
+        "url_text": "",
+        "description": "test data",
+    },
 }

@@ -18,6 +18,8 @@ for k, v in info.items():
         DataSet.objects.filter(title=k).update(dataframe=dataset,additional_info=additional_info, **v)
     v["path"] = path
 
+#python3 manage.py shell
+#copy this script inside the shell and run it
 
 
 

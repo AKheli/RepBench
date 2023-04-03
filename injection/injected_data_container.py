@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class InjectedDataContainer:
-    def __init__(self, injected, truth, *, class_df, labels, name):
+    def __init__(self, injected, truth, *, class_df, labels, name , check_rmse=True):
         self.truth_ = truth  # contains the Original Series
         self.injected_ = injected
         self._labels_ = labels
@@ -16,6 +16,7 @@ class InjectedDataContainer:
         self.repair_names = []
         self.name = name
         self.relabeled = 0
+        self.check_rmse = check_rmse
 
         if class_df is None:
             class_df = pd.DataFrame(np.invert(np.isclose(injected, truth))).reindex_like(truth)
@@ -115,6 +116,8 @@ class InjectedDataContainer:
         self.repair_metrics[(repair_name, repair_type)] = repair_metrics
 
     def check_original_rmse(self, check_labels=True):
+        if not self.check_rmse:
+            return True
         assert np.any(self.klass.values)
         weights = np.zeros_like(self.injected.values)
         weights[self.klass] = 1
@@ -122,6 +125,7 @@ class InjectedDataContainer:
             weights[self.labels] = 0
         weights = weights.flatten()
         assert np.any(weights)
+
 
     def hash(self, additional_input=""):
         m = hashlib.md5(self.injected.values.flatten())

@@ -68,7 +68,7 @@ class RepairView(SyntheticDatasetView):
         print("end repair")
 
         repair_scores = repair_retval["scores"]
-
+        print("repair scores", repair_scores)
 
         score_data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in repair_scores.items() if
                                k in RepairView.error_map.keys()]}

@@ -5,7 +5,7 @@ from injection.injected_data_container import InjectedDataContainer
 from injection.label_generator import generate_df_labels
 
 
-def create_injected_container(injected_df, truth_df):
+def create_injected_container(injected_df, truth_df,container_does_rmse_checks=True):
     assert injected_df.index.equals(truth_df.index), f"{injected_df.index},{truth_df.index}"
     assert injected_df.shape == truth_df.shape, f"{injected_df},{truth_df}"
 
@@ -23,7 +23,7 @@ def create_injected_container(injected_df, truth_df):
     assert injected_df.shape == truth_df.shape
     injdected_container = InjectedDataContainer(injected_df, truth_df, class_df=class_df,
                                                 name="repair_df",
-                                                labels=label_df)
+                                                labels=label_df,check_rmse=container_does_rmse_checks)
     return injdected_container
 
 

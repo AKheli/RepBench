@@ -19,14 +19,15 @@ from datetime import datetime
 # Get current date and time
 now = datetime.now().strftime("%m-%d %H:%M:%S")
 
-outputfile_name = f"recommendation/results/{'results'}"
+outputfile_name = f"recommendation/results/{'results_ucr'}"
 log_file = f"recommendation/logs/{now}_logs"
-data_folder = "data/train"
 factors = [1, 5, 10]
 a_percentages = [1, 2, 5, 10, 20]
 ts_cols = [[0]]
 scores = ["rmse", "mae"]
-datasets = ["smd1_5.csv"]
+datasets =  os.listdir("recommendation/datasets/train")  #["smd1_5.csv"]
+data_folder = "recommendation/datasets/train"
+
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
 
@@ -56,6 +57,7 @@ for factor, a_percentage, columns, score, dataset, a_type in itertools.product(f
     # a_percentage = a_percentages[0]
 
     truth_df: pd.DataFrame = pd.read_csv(f"{data_folder}/{dataset}")
+    #cap the number of rows columns at 30
     n, m = truth_df.shape
     col_list = [[i] for i in range(m)]
 
@@ -79,12 +81,22 @@ for factor, a_percentage, columns, score, dataset, a_type in itertools.product(f
 
             injected_df, col_range_map = inject_data_df(truth_df, a_type=a_type, cols=columns, factor=factor,
                                                         a_percent=a_percentage)
+
+            print("file", dataset)
+            print("injected_df", injected_df)
+
+            assert len(injected_df) == len(truth_df)
+            assert len(injected_df.columns) == len(truth_df.columns)
+            assert not np.allclose(injected_df.values,truth_df.values) ,\
+                [(truth_df.iloc[col,ranges], injected_df.iloc[col,ranges]-truth_df.iloc[col,ranges[0]]) for col,ranges in  col_range_map.items()]
+
             injected_data_container = create_injected_container(truth_df, injected_df)
             injected_dfs.append(injected_df)
 
             alg_results = {}
             alg_name: str = "no alg"
             for alg_name, alg_constructor in algo_mapper.items():
+                print(alg_name)
                 alg_results[alg_name] = {}
 
                 parameters = get_algorithm_params(alg_name)

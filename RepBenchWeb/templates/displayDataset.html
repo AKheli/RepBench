@@ -1,37 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-{##}
-{##}
-{# TODO:#}
-{#If positioning the bottom element using absolute positioning messes up the layout, you can try using CSS flexbox to position the elements. Here's an example:#}
-{##}
-{#HTML code:#}
-{#<div class="outer">#}
-{#  <div class="inner">This is the inner element.</div>#}
-{#  <div class="bottom">This is the bottom element.</div>#}
-{#</div>#}
-{##}
-{#CSS code:#}
-{#try this#}
-{#.outer {#}
-{#  display: flex;#}
-{#  flex-direction: column;#}
-{#  height: 200px;#}
-{# }#}
-{##}
-{#.inner {#}
-{#  flex: 1;#}
-{# }#}
-{##}
-{#.bottom {#}
-{#  align-self: flex-end;#}
-{# }#}
-{##}
-{#In this example, the .outer div has display: flex and flex-direction: column properties, which creates a column layout. The .inner div has a flex: 1 property, which allows it to take up any remaining space in the column. The .bottom div has an align-self: flex-end property, which positions it at the bottom of the column.#}
-{##}
-{#This approach should respect the overflow and other layout properties of the elements within the .outer div. You can adjust the height property of the .outer div and the flexbox properties of the child elements to suit your specific needs.#}
-
 {% block content %}
     <style>
 
