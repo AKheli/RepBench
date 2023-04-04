@@ -7,20 +7,32 @@ import os
 from injection import inject_data_df
 from recommendation.feature_extraction.feature_extraction import extract_features
 
-data_folder = "recommendation/datasets/train"
+default_data_folder = "recommendation/datasets/train"
 
 
-def load_data(injection_parameters, return_truth=True, row_cap=20000, col_cap=20):
+def load_data(injection_parameters, return_truth=True, data_folder=default_data_folder, row_cap=20000, col_cap=20):
     """
-    param: injection_parameters: dict
-       injection_parameters = {
+    Args:
+    injection_parameters: dict = {
             "seed": seed,
             "factor": factor,
-            "cols": columns,
+            "cols" (int): columns,
             "dataset": dataset,
             "a_type": a_type,
             "a_percent": a_percentage
         }
+        return_truth (bool): Whether to return the original dataset as well as the injected dataset
+            (default is True).
+        data_folder (str): The path to the folder where the CSV dataset file is located (default is
+            default_data_folder).
+        row_cap (int): The maximum number of rows to load from the dataset file (default is 20000).
+        col_cap (int): The maximum number of columns to load from the dataset file (default is 20).
+
+    Returns:
+        If return_truth is True, returns a tuple containing two pandas DataFrames: the injected dataset
+        and the original dataset (before injection). If return_truth is False, returns only the injected
+        dataset as a pandas DataFrame.
+
     """
     injection_parameters = injection_parameters.copy()
     dataset = injection_parameters.pop("dataset")
@@ -60,7 +72,7 @@ def load_features(injection_parameters):
 
     return: features: dict of features for the selected column
     """
-    injected_df , _ = load_data(injection_parameters)
+    injected_df, _ = load_data(injection_parameters)
     features = extract_features(injected_df, column=injection_parameters["cols"][0])
     return features
 
