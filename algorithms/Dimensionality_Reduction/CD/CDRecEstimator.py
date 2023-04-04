@@ -21,11 +21,6 @@ class CDRecEstimator(DimensionalityReductionEstimator):
 
         return f'weighted_CDrec({self.classification_truncation},{self.repair_truncation},{self.delta},{round(self.threshold,2), self.repair_iter})'
 
-
-
-
-
-
 def weighted_centroid_decomposition(matrix, truncation=0, weights = None , SV=None ):
     # input processing
     matrix = np.asarray(matrix, dtype=np.float64).copy()

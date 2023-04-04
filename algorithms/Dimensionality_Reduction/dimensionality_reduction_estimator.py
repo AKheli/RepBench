@@ -95,7 +95,7 @@ class DimensionalityReductionEstimator(Estimator):
         reduced = matrix_inter
 
         n_max_iter_tmp = self.n_max_iter
-        self.n_max_iter = 2 #only 2 iterations for repair phase
+        # self.n_max_iter = 2 #only 2 iterations for repair phase
         for i in range(self.repair_iter):
             reduced = self.reduce(reduced, self.repair_truncation)
             matrix_to_repair[self.anomaly_matrix] = reduced[self.anomaly_matrix]

@@ -22,7 +22,7 @@
                 integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
                 crossorigin="anonymous"></script>
         <script src="{% static "css/revival/jquery-ui.js" %}"></script>
-        <script src="loading.js"></script>
+        <script src="{% static 'js/loading.js' %}"></script>
         <!-- CSS sources -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
               integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
@@ -38,7 +38,7 @@
         <link rel="stylesheet" href="{% static "css/fonts.css" %}">
 
         <link rel="stylesheet" href="{% static "css/form.css" %}">
-                <link rel="stylesheet" href="{% static "css/loading.css" %}">
+        <link rel="stylesheet" href="{% static "css/loading.css" %}">
 
 
 
@@ -104,11 +104,12 @@
         grid-template-columns: 130px  600px;
         grid-gap: 10px;
     }
+
     {# center #}
 
-  {#.full-height {#}
-  {#  height: 100%;#}
-  {# }#}
+    {#.full-height {#}
+    {#  height: 100%;#}
+    {# }#}
 
 
 </style>
@@ -171,10 +172,10 @@
 
 <!-- begin: Content -->
 {% block outerContent %} <!-- when the webside should be scrollable vertivally -->
-<div id="content" class="container-fluid" style="height:calc(100vh - 145px); margin-top: 70px">
-    {% block content %}
-    {% endblock %}
-</div>
+    <div id="content" class="container-fluid" style="height:calc(100vh - 145px); margin-top: 70px">
+        {% block content %}
+        {% endblock %}
+    </div>
 {% endblock %}
 
 {% block footer %}
@@ -252,9 +253,7 @@
         zIndex: 9999,
         container: 'body'
     });
-</script>
 
-<script>
     // handle on or multiple classes
     document.querySelectorAll('.move-after-accordion').forEach(function (el) {
         console.log(el)

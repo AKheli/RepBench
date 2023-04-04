@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.views.synthetic_dataset_view import SyntheticDatasetView
+from algorithms import algo_mapper
 from injection.injected_data_container import InjectedDataContainer
 from testing_frame_work.data_methods.data_class import DataContainer
 from testing_frame_work.repair import AnomalyRepairer
@@ -69,6 +70,14 @@ class RepairView(SyntheticDatasetView):
 
         repair_scores = repair_retval["scores"]
         print("repair scores", repair_scores)
+
+
+        ###
+        alg_constructor = algo_mapper[alg_type]
+        alg_score = alg_constructor(**params).scores(**injected_data_container.repair_inputs)["rmse"]
+        print("SCOOOOOOOOOORE" , alg_score)
+
+        ###
 
         score_data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in repair_scores.items() if
                                k in RepairView.error_map.keys()]}

@@ -7,22 +7,27 @@ let createRepairRequestFormData = function (alg) {
 }
 
 let repairResult = null
-let repair = (alg) => fetch(repair_url, {
-    method: 'POST',
-    body: createRepairRequestFormData(alg),
-}).then(response => response.json()).then(responseJson => {
-    const repSeries = responseJson.repaired_series
-    const scores = responseJson.scores
-    repairResult = repSeries
-    let color = null
-    repairedSeries.length  = 0
-    const chartRepairSeries = Object.keys(repSeries).map(key => {
-        let repair = repSeries[key]
-       return addRepairedSeries(repair,color)
+let repair = (alg) => {
+    createScoreBoard()
+
+    fetch(repair_url, {
+        method: 'POST',
+        body: createRepairRequestFormData(alg),
+    }).then(response => response.json()).then(responseJson => {
+        const repSeries = responseJson.repaired_series
+        const scores = responseJson.scores
+        repairResult = repSeries
+        let color = null
+        repairedSeries.length  = 0
+        const chartRepairSeries = Object.keys(repSeries).map(key => {
+            let repair = repSeries[key]
+            return addRepairedSeries(repair,color)
+        })
+        updateScoreBoard(scores)
+
+        resetSeries(true)
+        scores["color"] = mainChart.series[mainChart.series.length-2].color
+
+
     })
-    resetSeries(true)
-
-    scores["color"] = mainChart.series[mainChart.series.length-2].color
-    initScoreBoard(scores)
-
-})
+}

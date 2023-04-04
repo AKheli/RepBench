@@ -57,7 +57,7 @@ class Estimator(ABC, BaseEstimator):
             rmse_per_col.append((col, np.sqrt(mse_col)))
             # partial_mse += sm.mean_squared_error(y[partial_weights[:, col], col],
             #                                      predicted[partial_weights[:, col], col]) / len(columns_to_repair)
-            # original_mse += sm.mean_squared_error(y[:, col], X[:, col]) / len(columns_to_repair)
+            original_mse += sm.mean_squared_error(y[:, col], X[:, col]) / len(columns_to_repair)
 
         scores = {}
         scores['mae'] = mae

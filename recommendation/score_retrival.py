@@ -8,7 +8,7 @@ import sys
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
-from recommendation.feature_extraction.load_features import get_injection_parameter_hashes_checker
+from recommendation.feature_extraction.load_features import get_injection_parameter_hashes_checker, load_data
 from algorithms.param_loader import get_algorithm_params
 from RepBenchWeb.BenchmarkMaps.repairCreation import create_injected_container
 from injection.injection_config import AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER
@@ -21,12 +21,13 @@ now = datetime.now().strftime("%m-%d %H:%M:%S")
 
 outputfile_name = f"recommendation/results/{'results_ucr'}"
 log_file = f"recommendation/logs/{now}_logs"
-factors = [1, 5, 10]
-a_percentages = [1, 2, 5, 10, 20]
-ts_cols = [[0]]
-scores = ["rmse", "mae"]
-datasets =  os.listdir("recommendation/datasets/train")  #["smd1_5.csv"]
+datasets = os.listdir("recommendation/datasets/train")
 data_folder = "recommendation/datasets/train"
+
+factors = [2, 5, 10]
+a_percentages = [1, 2, 5, 10, 20]
+col_n_cap = 3
+score = "rmse"
 
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
@@ -48,23 +49,12 @@ def append_to_file(data, filename):
 injected_dfs = []
 already_computed_checker = get_injection_parameter_hashes_checker(outputfile_name)
 
-for factor, a_percentage, columns, score, dataset, a_type in itertools.product(factors, a_percentages, ts_cols, scores,
-                                                                               datasets, a_types):
-    # factor = factors[0]
-    # columns = ts_cols[0]
-    # dataset = datasets[0]
-    # a_type = a_types[0]
-    # a_percentage = a_percentages[0]
-
+for dataset in datasets:
     truth_df: pd.DataFrame = pd.read_csv(f"{data_folder}/{dataset}")
-    #cap the number of rows columns at 30
-    n, m = truth_df.shape
-    col_list = [[i] for i in range(m)]
-
-    for columns in col_list:
+    ts_cols = [[i] for i in range(min(truth_df.shape[1], col_n_cap))]
+    for factor, a_percentage, columns, a_type in itertools.product(factors, a_percentages, ts_cols, a_types):
         seed = 100
         np.random.seed(seed)
-
         injection_parameters = {
             "seed": seed,
             "factor": factor,
@@ -73,28 +63,21 @@ for factor, a_percentage, columns, score, dataset, a_type in itertools.product(f
             "a_type": a_type,
             "a_percent": a_percentage
         }
-        alg_name = ""
+
+        alg_name: str = "no algorithms yet"
+
         try:
             if already_computed_checker(injection_parameters):
                 print("Already computed")
                 continue
-
-            injected_df, col_range_map = inject_data_df(truth_df, a_type=a_type, cols=columns, factor=factor,
-                                                        a_percent=a_percentage)
+            injected_df , truth_df = load_data(injection_parameters)
 
             print("file", dataset)
-            print("injected_df", injected_df)
-
-            assert len(injected_df) == len(truth_df)
-            assert len(injected_df.columns) == len(truth_df.columns)
-            assert not np.allclose(injected_df.values,truth_df.values) ,\
-                [(truth_df.iloc[col,ranges], injected_df.iloc[col,ranges]-truth_df.iloc[col,ranges[0]]) for col,ranges in  col_range_map.items()]
 
             injected_data_container = create_injected_container(truth_df, injected_df)
             injected_dfs.append(injected_df)
 
             alg_results = {}
-            alg_name: str = "no alg"
             for alg_name, alg_constructor in algo_mapper.items():
                 print(alg_name)
                 alg_results[alg_name] = {}
@@ -102,11 +85,14 @@ for factor, a_percentage, columns, score, dataset, a_type in itertools.product(f
                 parameters = get_algorithm_params(alg_name)
                 alg_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[score]
                 alg_results[alg_name] = {score: alg_score, "parameters": parameters}
-            results = {"alg_results": alg_results, "injection_parameters": injection_parameters}
+
+            original_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[
+                "original_rmse"]
+
+            results = {"original rmse":original_score,  "alg_results": alg_results, "injection_parameters": injection_parameters}
             append_to_file(results, outputfile_name)
 
         except Exception as e:
-            raise e
             import traceback
 
             print("Exception", e)
