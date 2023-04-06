@@ -56,11 +56,12 @@ for dataset in datasets:
     data_sets_to_col_n[dataset] = truth_df.shape[1]
 
 
-for dataset , a_type, factor, a_percentage , columns in itertools.product(datasets , a_types, factors, a_percentages,[[1],[2],[3]]):
+for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[1],[2],[3]],a_percentages,factors, a_types,datasets):
+
     for c in columns:
         if c >= data_sets_to_col_n[dataset]:
             continue
-    
+
     seed = 100
     np.random.seed(seed)
     injection_parameters = {
@@ -80,7 +81,7 @@ for dataset , a_type, factor, a_percentage , columns in itertools.product(datase
             continue
         injected_df, truth_df = load_data(injection_parameters)
 
-        print("file", dataset)
+        print("file", dataset , "a_type", a_type, "factor", factor, "a_percentage", a_percentage, "columns", columns)
 
         injected_data_container = create_injected_container(truth_df, injected_df)
         injected_dfs.append(injected_df)
