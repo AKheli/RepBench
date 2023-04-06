@@ -171,16 +171,18 @@
 
 
 <!-- begin: Content -->
-{% block outerContent %} <!-- when the webside should be scrollable vertivally -->
-    <div id="content" class="container-fluid" style="height:calc(100vh - 145px); margin-top: 70px">
-        {% block content %}
-        {% endblock %}
-    </div>
-{% endblock %}
+<div id="main-content" }>
+    {% block outerContent %} <!-- when the webside should be scrollable vertivally -->
+        <div id="content" class="container-fluid" style="height:calc(100vh - 145px); margin-top: 70px">
+            {% block content %}
+            {% endblock %}
+        </div>
+    {% endblock %}
 
 {% block footer %}
     {% include 'sub/footer.html' %}
 {% endblock %}
+</div>
 <!-- end: Footer -->
 
 <!-- end: Page -->

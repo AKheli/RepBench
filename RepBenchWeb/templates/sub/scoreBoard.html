@@ -13,29 +13,29 @@
 <script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
 
 <style>
-    .roundslider normal {
-        {#padding-left: 100px;#}
-    }
-
-    .slider-grid {
-        margin-top : 15px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(119px, 150fr));
-        {#grid-auto-rows: 20px;#}
-        grid-gap: 20px;
-
-    }
     .rs-title {
         font-size: 17px;
         font-weight: 900;
         z-index: 800;
     }
+
+    .roundslider {
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+        position: relative;
+        z-index: 100;
+    }
+    .slider-container {
+        justify-content: center;
+        align-items: center;
+    }
 </style>
 
 
-<div  id="score_container"  class="outer" style="position: relative">
-    <div  class="inner">
-        <div class="slider-container slider-grid">
+<div id="score_container" class="outer" style="position: relative">
+    <div class="">
+        <div class="slider-container row">
             <div id="RMSE-slider" class="roundslider normal"
                  title="RMSE">
             </div>
