@@ -25,7 +25,7 @@ datasets = os.listdir("recommendation/datasets/train")
 data_folder = "recommendation/datasets/train"
 
 factors = [2, 5, 10]
-a_percentages = [1, 2, 5, 10, 20]
+a_percentages = [5,2,10,1]
 col_n_cap = 3
 score = "rmse"
 
@@ -49,58 +49,67 @@ def append_to_file(data, filename):
 injected_dfs = []
 already_computed_checker = get_injection_parameter_hashes_checker(outputfile_name)
 
+data_sets_to_col_n = {}
 for dataset in datasets:
     truth_df: pd.DataFrame = pd.read_csv(f"{data_folder}/{dataset}")
     ts_cols = [[i] for i in range(min(truth_df.shape[1], col_n_cap))]
-    for factor, a_percentage, columns, a_type in itertools.product(factors, a_percentages, ts_cols, a_types):
-        seed = 100
-        np.random.seed(seed)
-        injection_parameters = {
-            "seed": seed,
-            "factor": factor,
-            "cols": columns,
-            "dataset": dataset,
-            "a_type": a_type,
-            "a_percent": a_percentage
-        }
+    data_sets_to_col_n[dataset] = truth_df.shape[1]
 
-        alg_name: str = "no algorithms yet"
 
-        try:
-            if already_computed_checker(injection_parameters):
-                print("Already computed")
-                continue
-            injected_df , truth_df = load_data(injection_parameters)
+for dataset , a_type, factor, a_percentage , columns in itertools.product(datasets , a_types, factors, a_percentages,[[1],[2],[3]]):
+    for c in columns:
+        if c >= data_sets_to_col_n[dataset]:
+            continue
+    
+    seed = 100
+    np.random.seed(seed)
+    injection_parameters = {
+        "seed": seed,
+        "factor": factor,
+        "cols": columns,
+        "dataset": dataset,
+        "a_type": a_type,
+        "a_percent": a_percentage
+    }
 
-            print("file", dataset)
+    alg_name: str = "no algorithms yet"
 
-            injected_data_container = create_injected_container(truth_df, injected_df)
-            injected_dfs.append(injected_df)
+    try:
+        if already_computed_checker(injection_parameters):
+            print("Already computed")
+            continue
+        injected_df, truth_df = load_data(injection_parameters)
 
-            alg_results = {}
-            for alg_name, alg_constructor in algo_mapper.items():
-                print(alg_name)
-                alg_results[alg_name] = {}
+        print("file", dataset)
 
-                parameters = get_algorithm_params(alg_name)
-                alg_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[score]
-                alg_results[alg_name] = {score: alg_score, "parameters": parameters}
+        injected_data_container = create_injected_container(truth_df, injected_df)
+        injected_dfs.append(injected_df)
 
-            original_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[
-                "original_rmse"]
+        alg_results = {}
+        for alg_name, alg_constructor in algo_mapper.items():
+            print(alg_name)
+            alg_results[alg_name] = {}
 
-            results = {"original rmse":original_score,  "alg_results": alg_results, "injection_parameters": injection_parameters}
-            append_to_file(results, outputfile_name)
+            parameters = get_algorithm_params(alg_name)
+            alg_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[score]
+            alg_results[alg_name] = {score: alg_score, "parameters": parameters}
 
-        except Exception as e:
-            import traceback
+        original_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[
+            "original_rmse"]
 
-            print("Exception", e)
-            print("failed to compute", alg_name,
-                  "with", injection_parameters,
-                  "with exception", e,
-                  "of type", type(e).__name__, traceback.format_exc())
-            injection_parameters["alg"] = alg_name
-            injection_parameters["exception"] = traceback.format_exc()
-            injection_parameters["exception_type"] = type(e).__name__
-            append_to_file(injection_parameters, log_file)
+        results = {"original rmse": original_score, "alg_results": alg_results,
+                   "injection_parameters": injection_parameters}
+        append_to_file(results, outputfile_name)
+
+    except Exception as e:
+        import traceback
+
+        print("Exception", e)
+        print("failed to compute", alg_name,
+              "with", injection_parameters,
+              "with exception", e,
+              "of type", type(e).__name__, traceback.format_exc())
+        injection_parameters["alg"] = alg_name
+        injection_parameters["exception"] = traceback.format_exc()
+        injection_parameters["exception_type"] = type(e).__name__
+        append_to_file(injection_parameters, log_file)

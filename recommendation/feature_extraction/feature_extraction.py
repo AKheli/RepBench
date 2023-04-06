@@ -5,6 +5,12 @@ from tsfresh.feature_extraction import EfficientFCParameters, MinimalFCParameter
 from tsfresh import extract_features as tsfresh_extract_features
 
 
+features_values = { "catch22":  catch22_all([0,0,0,0,0,1])["names"],
+                    "tsfresh_minimal": MinimalFCParameters(),
+                    "tsfresh_efficient": EfficientFCParameters() # not added yet
+                    }
+
+
 def single_ts_feature_extraction(input_data):
     if isinstance(input_data, pd.Series):
         df_data = pd.DataFrame({'data': input_data.flatten()})
@@ -14,11 +20,10 @@ def single_ts_feature_extraction(input_data):
         np_data = input_data
         df_data = pd.DataFrame({'data': np_data.flatten()})
 
-    catch22_features = catch22_all(np_data)
-    catch22_features = {name: round(val, 4) for name, val in
-                        zip(catch22_features["names"], catch22_features["values"])}
+    catch22_features = extract_catch22_features(np_data)
 
     tsfresh_features = extract_ts_fresh_features(np_data)
+
     catch22_features.update(tsfresh_features)
     return catch22_features
 
@@ -28,7 +33,22 @@ def extract_features(dataset, column):
     return single_features
 
 
-def extract_ts_fresh_features(data: np.ndarray , ):
+
+
+
+
+
+
+
+def extract_catch22_features(data: np.ndarray):
+    catch22_features = catch22_all(data)
+    catch22_features = {name: round(val, 4) for name, val in
+                        zip(catch22_features["names"], catch22_features["values"])}
+
+    return catch22_features
+
+
+def extract_ts_fresh_features(data: np.ndarray):
     df_data = pd.DataFrame({'data': data.flatten()})
     df_data["id"] = [0 for _ in range(len(df_data))]
     df_data["time"] = list(range(len(df_data)))
@@ -38,3 +58,7 @@ def extract_ts_fresh_features(data: np.ndarray , ):
     print(tsfresh_features)
 
     return tsfresh_features
+
+
+def subset_features(feature_df : pd.DataFrame, feature_names : list):
+    return feature_df[feature_names]
