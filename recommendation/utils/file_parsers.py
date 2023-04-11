@@ -5,37 +5,58 @@ import pandas as pd
 import pickle
 
 
-def parse_json_file(file_name):
-    """
-    Parses a JSON file with algorithm results and feature data, and returns two pandas DataFrames:
-    one containing the algorithm RMSE values, and one containing the feature values.
+def parse_recommendation_results(file_name, error="rmse"):
+    json_array = parse_lines_file(file_name)
+    df_dict: dict = sub_results_from_json_array(json_array)
+    if "alg_results" in df_dict:
+        print(df_dict["alg_results"])
+        df_dict["best_algorithm"] = df_dict["alg_results"].apply(lambda row: min_alg(row, error), axis=1)
+        df_dict["best_algorithm_error"] = df_dict["alg_results"].apply(lambda row: min_error(row, error), axis=1)
 
-    Args:
-        file_name (str): The name of the JSON file to parse.
 
-    Returns:
-        algorithm_df (pandas.DataFrame): A DataFrame with algorithm RMSE values, where each column
-            corresponds to an algorithm name and each row corresponds to a set of feature values.
-        feature_df (pandas.DataFrame): A DataFrame with feature values, where each column corresponds
-            to a feature name and each row corresponds to a set of algorithm RMSE values.
-    """
+    return df_dict
+
+
+def min_alg(row, error):
+    error_rows = row.apply(lambda r: r[error])
+    return error_rows.idxmin()
+def min_error(row, error):
+    error_rows = row.apply(lambda r: r[error])
+    return error_rows.min()
+
+def parse_lines_file(file_name):
     with open(file_name, 'r') as f:
-        algorithm_data = {}
-        feature_data = {}
-        for line in f:
-            json_data = json.loads(line.strip())
-            for algorithm, algorithm_results in json_data['alg_results'].items():
-                if algorithm not in algorithm_data:
-                    algorithm_data[algorithm] = []
-                algorithm_data[algorithm].append(algorithm_results['rmse'])
-            for feature, feature_value in json_data['features'].items():
-                if feature not in feature_data:
-                    feature_data[feature] = []
-                feature_data[feature].append(feature_value)
-        algorithm_df = pd.DataFrame(algorithm_data)
-        feature_df = pd.DataFrame(feature_data)
-    return algorithm_df, feature_df
+        lines = f.readlines()
+    json_string = "[" + ",".join(lines) + "]"
+    json_array = json.loads(json_string)
+    return json_array
 
+
+def sub_results_from_json_array(json_array):
+    # Create a dictionary of lists for each key
+    result_dict = {}
+    for item in json_array:
+        for key, value in item.items():
+            if isinstance(value, dict):
+                if key in result_dict:
+                    result_dict[key].append(value)
+                else:
+                    result_dict[key] = [value]
+            else:
+                if key in result_dict:
+                    result_dict[key].append(value)
+                else:
+                    result_dict[key] = [value]
+
+    # Create a DataFrame for each key
+    result_frames = {}
+    for key, values in result_dict.items():
+        if isinstance(values[0], dict):
+            result_frames[key] = pd.DataFrame.from_records(values)
+        else:
+            result_frames[key] = pd.DataFrame({key: values})
+
+    return result_frames
 
 
 def get_column_with_lowest_value(df):
@@ -46,6 +67,7 @@ def get_column_with_lowest_value(df):
 def store_estimator(automl, estimator_name="bestEstimator"):
     with open(f'recommendation/automl_files/{estimator_name}.pkl', 'wb') as f:
         pickle.dump(automl, f, pickle.HIGHEST_PROTOCOL)
+
 
 def load_estimator(estimator_name="bestEstimator"):
     """Loads a pickled automl resulst from the recommendation/automl_files directory
@@ -63,6 +85,7 @@ def load_estimator(estimator_name="bestEstimator"):
 
 json_numpy_encoder = lambda obj: obj.tolist() if isinstance(obj, np.ndarray) else obj
 
-def store_estimator_results(results : dict ,file_name: str):
+
+def store_estimator_results(results: dict, file_name: str):
     with open(f'recommendation/automl_files/{file_name}.json', 'w') as f:
-       json.dump(results, f, indent=4, default=json_numpy_encoder)
+        json.dump(results, f, indent=4, default=json_numpy_encoder)

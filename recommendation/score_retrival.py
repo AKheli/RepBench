@@ -19,16 +19,16 @@ from datetime import datetime
 # Get current date and time
 now = datetime.now().strftime("%m-%d %H:%M:%S")
 
-outputfile_name = f"recommendation/results/{'results_ucr'}"
+outputfile_name = f"recommendation/results/{'results_bafu5k_test'}"
 log_file = f"recommendation/logs/{now}_logs"
-datasets = os.listdir("recommendation/datasets/train")
+datasets = ["bafu5k.csv"]  #os.listdir("recommendation/datasets/train")
 data_folder = "recommendation/datasets/train"
 
 factors = [2, 5, 10]
 a_percentages = [5,2,10,1]
 col_n_cap = 3
 score = "rmse"
-
+alg_names = ["rpca" , "screen"]
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
 
@@ -83,21 +83,23 @@ for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[1],[
 
         print("file", dataset , "a_type", a_type, "factor", factor, "a_percentage", a_percentage, "columns", columns)
 
-        injected_data_container = create_injected_container(truth_df, injected_df)
+        injected_data_container = create_injected_container(injected_df = injected_df ,truth_df=truth_df)
         injected_dfs.append(injected_df)
 
         alg_results = {}
-        for alg_name, alg_constructor in algo_mapper.items():
-            print(alg_name)
+        for alg_name in alg_names:
+            alg_constructor = algo_mapper[alg_name]
             alg_results[alg_name] = {}
 
             parameters = get_algorithm_params(alg_name)
             alg_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[score]
             alg_results[alg_name] = {score: alg_score, "parameters": parameters}
 
+
         original_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[
             "original_rmse"]
 
+        print(alg_results)
         results = {"original rmse": original_score, "alg_results": alg_results,
                    "injection_parameters": injection_parameters}
         append_to_file(results, outputfile_name)
