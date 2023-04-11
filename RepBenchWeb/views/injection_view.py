@@ -61,7 +61,8 @@ def inject_data(request, setname):
     ratio = float(post.get("ratio"))
     a_type = post.get("anomaly")
     seed = post.get("seed")
-
+    a_len = int(post.get("length"))
+    print("LENGTH" , a_len)
     if seed == '':
         seed = random.randint(0, 100)
     else:
@@ -75,7 +76,7 @@ def inject_data(request, setname):
     col_injected_norm, _ = add_anomalies(col_norm,
                                          a_type=a_type,
                                          a_factor=factor,
-                                         a_len=30,
+                                         a_len=a_len,
                                          n_anomalies=n_anomalies,
                                          fill_na=True, seed=seed)
     col_injected = col_injected_norm * original_col.std() + original_col.mean()

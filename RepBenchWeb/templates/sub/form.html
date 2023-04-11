@@ -6,7 +6,6 @@
         <div class="form-group {{ style.class }}">
         {% if field.field.widget.input_type != 'checkbox' %}
             <label>{{ field.label }}
-
                 {% if field.help_text %}
                     <a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
                        data-trigger="focus"
@@ -15,32 +14,10 @@
                             class="mdi mdi-information-outline mdi-18px"></i></a>
                 {% endif %}
             </label>
-        {% endif %}
-        <!--check if field.field.widget.input_type is number todo check min and max-->
-        {% if field.field.widget.input_type == 'number' %}
-            <input type="number" name="{{ field.name }}" value="{{ field.value }}" class="form-control"
-                    {% if field.field.widget.attrs.placeholder %}
-                        placeholder= {{ field.field.widget.attrs.placeholder }}
-                    {% endif %}
-            {% if field.field.widget.attrs.min %}
-                min= {{ field.field.widget.attrs.min }}
-            {% endif %}
-                    {% if field.field.widget.attrs.max %}
-                        max= {{ field.field.widget.attrs.max }}
-                    {% endif %}
-            {% if field.field.widget.attrs.step %}
-                step= {{ field.field.widget.attrs.step }}
-            {% endif %}
-            >
-            <!--check if field.field.widget.input_type is select-->
-        {% elif field.field.widget.input_type == 'select' %}
-            <select name="{{ field.name }}" class="form-control">
-                {% for v,e in field.field.widget.choices %}
-                    <option value="{{ v }}">{{ e }}</option>
-                {% endfor %}
-            </select>
 
-        {% elif field.field.widget.input_type == 'checkbox' %}
+            {{ field }}
+        {% endif %}
+        {% if field.field.widget.input_type == 'checkbox' %}
             <div class="accordion" id="seriesAccordion">
             <div class="card dropdown">
                 <div class="card-header" id="headingOne">
@@ -70,8 +47,6 @@
                     </div>
                 </div>
             </div>
-        {% else %}
-            {{ field }}
         {% endif %}
     </div>
     {% endfor %}
@@ -91,8 +66,30 @@
             {{ button_label|default:"Apply" }}
         </button>
     </div>
-
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
 </form>
+
+<style>
+    .help-icon {
+        display: inline-block;
+        position: relative;
+    }
+
+    .help-icon:hover:after {
+        content: attr(title);
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%, -200%);
+        background-color: #fff;
+        color: black;
+        border: 1px solid #ccc;
+        padding: 5px;
+        z-index: 999;
+        font-size: 8px;
+        font-style: italic;
+    }
+
+</style>

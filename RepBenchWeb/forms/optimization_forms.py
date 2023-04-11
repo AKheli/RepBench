@@ -9,12 +9,13 @@ def hidden(initial):
 
 
 class BayesianOptForm(forms.Form):
-    n_initial_points = forms.IntegerField(label="n start", initial=20)
-    n_initial_points.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
+    n_initial_points = forms.IntegerField(label="Starting Samples", initial=20)
+    n_initial_points.widget.attrs.update({ "class": 'form-control', "style": "width: 90px"})
 
-    n_calls = forms.IntegerField(label="n", initial=20)
-    n_calls.widget.attrs.update({ "class": 'multi-anomaly', "style": "width: 90px"})
+    n_calls = forms.IntegerField(label="Resampling", initial=20)
+    n_calls.widget.attrs.update({ "class": 'form-control', "style": "width: 90px"})
     error_loss = forms.CharField(label='Loss', widget=forms.Select(choices=error_choices))
+    error_loss.widget.attrs.update({ "class": 'form-control', "style": "width: 90px"})
 
 
 def bayesian_opt_param_forms_inputs(df):

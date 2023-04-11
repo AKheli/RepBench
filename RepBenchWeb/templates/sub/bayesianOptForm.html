@@ -1,19 +1,20 @@
 {% load filters %}
 
- <style>
-     .width-200{
-         width: 200px!important;
-     }
- </style>
+<style>
+    .width-200 {
+        width: 200px !important;
+    }
+</style>
 <div class="kt-portlet__body">
-    <div class="form-group ">
+    <div  class="form-group ">
         <label>Algorithm<a tabindex="10" class="btn" role="button" data-toggle="kt-popover" data-placement="top"
                            data-trigger="focus"
                            data-content="Select Algorithm to perform Bayesian Optimization"
                            data-original-title="" title=""><i
                 class="mdi mdi-information-outline mdi-18px"></i></a></label>
-        <select class="form-control" id="optFormAlgSelect" name="algorithm" onchange="displayfuncOpt(value)">
-            <option value="" selected="">----</option>
+        <select class="form-control" id="optFormAlgSelect" name="algorithm" onchange="displayfuncOpt(value)"
+                style="margin-bottom: 15px">
+            {#            <option value="" selected="">----</option>#}
             {% for alg_name, _ in b_opt_param_forms.items %}
                 <option value={{ alg_name }}> {{ alg_name|parse_alg_name }}</option>
             {% endfor %}
@@ -21,35 +22,46 @@
         {% include "sub/accordion/accordionBefore.html"  with button_text="Show Parameter Space" c="One" %}
         <div>
             {% for alg,params in b_opt_param_forms.items %}
-                <form class="form-group" enctype="multipart/form-data" id='{{ alg }}'
+                <form class="form-group alg-param-forms" enctype="multipart/form-data" id='{{ alg }}'
                       onchange="return false"
-                      onsubmit="return false" style="display:none;">
-                    {% for param in params %}
-                        <div class="kt-portlet__body{% if class %} {{ class }}{% endif %}">
+                      onsubmit="return false"
+                        {% if forloop.first %}
+                      style="display:block;"
+                        {% else %}
+                      style="display:none;"
+                        {% endif %}
+                >
+                    <table class="table kt-visible-tablet-inline-block}">
+                        <tr>
+                            <td></td>
+                            <td><label>min</label></td>
+                            <td><label>max</label></td>
+                        </tr>
+                        {% for param in params %}
+                            <tr>
+                                <td>
+                                    <label for="{{ param.param_name }}">{{ param.param_name }}</label>
+                                </td>
+                                <td>
+                                    <input class=form-control" id="{{ param.param_name }}"
+                                           size=11 name="{{ param.param_name }}-min"
+                                           pattern="[+-]?([0-9]*[.])?[0-9]+"
+                                           title="Must be a float value"
+                                           value={{ param.min }}
+                                    >
+                                </td>
+                                <td>
+                                    <input class=form-control" id="{{ param.param_name }}"
+                                           size="11" name="{{ param.param_name }}-max"
+                                           pattern="[+-]?([0-9]*[.])?[0-9]+"
+                                           title="Must be a float value"
+                                           value="{{ param.max }}"
+                                    >
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
 
-                            <label for="{{ param.param_name }}">{{ param.param_name }}</label></th>
-                            <table class="table kt-visible-tablet-inline-block}">
-                                <tr>
-                                    <td>min</td>
-                                    <td>max</td>
-                                </tr>
-                                <tr>
-                                    <td><input class=form-control" type="text" id="{{ param.param_name }}"
-                                               size=3 name="{{ param.param_name }}-min"
-                                               pattern="[+-]?([0-9]*[.])?[0-9]+"
-                                               title="Must be a float value"
-                                               value={{ param.min }}
-                                                       class="form-control"></td>
-                                    <td><input type="text" id="{{ param.param_name }}"
-                                               size="3" name="{{ param.param_name }}-max"
-                                               pattern="[+-]?([0-9]*[.])?[0-9]+"
-                                               title="Must be a float value"
-                                               value="{{ param.max }}"
-                                               class="form-control"></td>
-                                </tr>
-                            </table>
-                        </div>
-                    {% endfor %}
 
                     <input type="hidden" name="alg_type" value="{{ alg }}">
                 </form>
@@ -61,61 +73,59 @@
     </div>
     {% include "sub/accordion/accordionBefore.html"  with button_text="Show Bayesian Opt Parameters" c="Two" %}
 
-{#    <style>#}
-        {#    .center {#}
-        {#        display: flex;#}
-        {#        justify-content: center;#}
-        {#        align-items: center;#}
-        {#        height: 100%;#}
-        {#    }#}
-        {##}
-        {#    label {#}
-        {#        display: inline-block;#}
-        {#        width: 150px;#}
-        {#        text-align: right;#}
-        {#        padding-right: 10px;#}
-        {#        margin-bottom: 10px;#}
-        {#    }#}
-        {##}
-        {#    input[type="text"], select {#}
-        {#        display: inline-block;#}
-        {#        width: 200px;#}
-        {#        padding: 5px;#}
-        {#        border: 1px solid #ccc;#}
-        {#        border-radius: 4px;#}
-        {#        box-sizing: border-box;#}
-        {#        margin-bottom: 10px;#}
-        {#        vertical-align: middle;#}
-        {#    }#}
-{#    </style>#}
+    {#    <style>#}
+    {#    .center {#}
+    {#        display: flex;#}
+    {#        justify-content: center;#}
+    {#        align-items: center;#}
+    {#        height: 100%;#}
+    {#    }#}
+    {##}
+    {#    label {#}
+    {#        display: inline-block;#}
+    {#        width: 150px;#}
+    {#        text-align: right;#}
+    {#        padding-right: 10px;#}
+    {#        margin-bottom: 10px;#}
+    {#    }#}
+    {##}
+    {#    input[type="text"], select {#}
+    {#        display: inline-block;#}
+    {#        width: 200px;#}
+    {#        padding: 5px;#}
+    {#        border: 1px solid #ccc;#}
+    {#        border-radius: 4px;#}
+    {#        box-sizing: border-box;#}
+    {#        margin-bottom: 10px;#}
+    {#        vertical-align: middle;#}
+    {#    }#}
+    {#    </style>#}
 
     <form class="center" id="bayesian_opt_form_params" style="overflow:hidden">
-{#        {{ bayesian_opt_form }}#}
+        {#        {{ bayesian_opt_form }}#}
         {% for field in bayesian_opt_form %}
             <div class="row" style="padding-top: 10px">
-               <div class="col-sm-2"> {{ field.label_tag }}</div>
-               <div class="col-sm-6" style="width:200px!important;"> {{ field|add_class:"form-control width-200" }} </div>
+                <div class="col-sm-2"> {{ field.label_tag }}</div>
+                <div class="col-sm-6"
+                     style="width:200px!important;"> {{ field|add_class:"form-control width-200" }} </div>
             </div>
         {% endfor %}
     </form>
 
-    <input type="submit" class="btn btn-primary" onclick="optimizeCurrentData('{{ alg }}form')" style="margin-top: 15px">
+    <input type="submit" class="btn btn-primary" onclick="optimizeCurrentData('{{ alg }}form')"
+           style="margin-top: 15px" value="Optimize">
 
 </div>
 
 <script>
-    let lastkeyopt = null
     let displayfuncOpt = function (key) {
-        console.log(key)
-        var x = document.getElementById(key);
-        if (key !== lastkeyopt && lastkeyopt != null) {
-            document.getElementById(lastkeyopt).style.display = "none";
+        let forms = document.getElementsByClassName("alg-param-forms");
+        for (let i = 0; i < forms.length; i++) {
+            if (forms[i].id === key) {
+                forms[i].style.display = "block";
+            } else {
+                forms[i].style.display = "none";
+            }
         }
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-        lastkeyopt = key
     }
 </script>

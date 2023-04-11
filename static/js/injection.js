@@ -41,3 +41,23 @@ const inject = function () {
     return false
 }
 
+// init injection_form
+
+$('#length-slider').on('input', function () {
+    var value = $(this).val();
+    $('#slider-value').text(' ' + value + ' ');
+});
+
+
+const select = document.getElementById('anomaly-select');
+const slider = document.getElementById('range-slider');
+
+select.addEventListener('change', () => {
+    console.log("SELECTED");
+    const value = select.value;
+    if (value === 'outlier') {
+        slider.step = '0';
+    } else {
+        slider.step = '1';
+    }
+});

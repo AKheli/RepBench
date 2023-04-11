@@ -10,4 +10,4 @@ sys.path.append(os.path.abspath(
 print("sys.path", sys.path)
 
 from recommendation.feature_extraction.load_features import convert_features
-convert_features("recommendation/results/results_ucr")
+convert_features("recommendation/results/results_without_cd")

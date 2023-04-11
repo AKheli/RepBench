@@ -14,7 +14,7 @@ from recommendation.utils import *
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
-feature_file_name = "recommendation/results/results_ucr"
+feature_file_name = "recommendation/results/results_without_cd"
 
 
 algorithms_scores: pd.DataFrame

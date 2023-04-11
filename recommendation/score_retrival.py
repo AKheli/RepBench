@@ -19,16 +19,16 @@ from datetime import datetime
 # Get current date and time
 now = datetime.now().strftime("%m-%d %H:%M:%S")
 
-outputfile_name = f"recommendation/results/{'results_bafu5k_test'}"
+outputfile_name = f"recommendation/results/{'results_without_cd'}"
 log_file = f"recommendation/logs/{now}_logs"
-datasets = ["bafu5k.csv"]  #os.listdir("recommendation/datasets/train")
+datasets = os.listdir("recommendation/datasets/train")
 data_folder = "recommendation/datasets/train"
 
 factors = [2, 5, 10]
 a_percentages = [5,2,10,1]
-col_n_cap = 3
+col_n_cap = 1
 score = "rmse"
-alg_names = ["rpca" , "screen"]
+alg_names = ["rpca" , "screen"  , "imr"]
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
 
@@ -56,7 +56,7 @@ for dataset in datasets:
     data_sets_to_col_n[dataset] = truth_df.shape[1]
 
 
-for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[1],[2],[3]],a_percentages,factors, a_types,datasets):
+for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[0],[1],[2],[3]],a_percentages,factors, a_types,datasets):
 
     for c in columns:
         if c >= data_sets_to_col_n[dataset]:
