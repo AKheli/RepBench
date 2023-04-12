@@ -13,22 +13,24 @@ from algorithms.param_loader import get_algorithm_params
 from RepBenchWeb.BenchmarkMaps.repairCreation import create_injected_container
 from injection.injection_config import AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER
 from algorithms.algorithm_mapper import algo_mapper
-from injection import inject_data_df
+from algorithms.algorithms_config import CDREC , RPCA ,IMR , SCREEN
 from datetime import datetime
 
+mode = "test"
 # Get current date and time
 now = datetime.now().strftime("%m-%d %H:%M:%S")
 
-outputfile_name = f"recommendation/results/{'results_without_cd'}"
-log_file = f"recommendation/logs/{now}_logs"
-datasets = os.listdir("recommendation/datasets/train")
-data_folder = "recommendation/datasets/train"
+outputfile_name = f"recommendation/results/results_{mode}"
+log_file = f"recommendation/logs/{now}_ {mode}_logs"
+data_folder = f"recommendation/datasets/{mode}"
+datasets = os.listdir(data_folder)
+
 
 factors = [2, 5, 10]
 a_percentages = [5,2,10,1]
 col_n_cap = 1
 score = "rmse"
-alg_names = ["rpca" , "screen"  , "imr"]
+alg_names = [CDREC , RPCA ,IMR , SCREEN]
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
 
