@@ -23,7 +23,7 @@ def flaml_search(automl_settings,X_train,y_train,X_test=None,y_test=None ,*, fil
     store_estimator(automl, estimator_name=automl_result_name)
 
     y_pred = (automl.model.estimator.predict(X_train))
-    accuracy = np.mean(y_pred == y_train)
+    accuracy_train = np.mean(y_pred == y_train)
     conf_mat = confusion_matrix(y_train, y_pred)
     class_report = classification_report(y_train, y_pred)
     # roc_auc = roc_auc_score(y_train, y_pred.reshape(-1, 1),multi_class='ovr')
@@ -31,7 +31,7 @@ def flaml_search(automl_settings,X_train,y_train,X_test=None,y_test=None ,*, fil
     # Store metrics in dictionary
     results = {}
     results["train"] = {
-        'accuracy': accuracy,
+        'accuracy': accuracy_train,
         'confusion_matrix': conf_mat,
         'classification_report': class_report,
     }
@@ -43,13 +43,13 @@ def flaml_search(automl_settings,X_train,y_train,X_test=None,y_test=None ,*, fil
         return
 
     pred_y_test = (automl.model.estimator.predict(X_test))
-    accuracy = np.mean(pred_y_test == y_test)
+    accuracy_test = np.mean(pred_y_test == y_test)
     conf_mat = confusion_matrix(y_test, pred_y_test, labels=np.unique(y_pred))
     class_report = classification_report(y_test, pred_y_test,  labels=np.unique(y_pred))
 
     # Store metrics in dictionary
     results["test"] = {
-        'accuracy': accuracy,
+        'accuracy': accuracy_test,
         'confusion_matrix': conf_mat,
         'classification_report': class_report,
     }
@@ -57,3 +57,5 @@ def flaml_search(automl_settings,X_train,y_train,X_test=None,y_test=None ,*, fil
     results.update(additional_info)
     store_estimator_results(results, file_name=automl_result_name + "_results")
 
+    print({"train_accuracy": accuracy_train, "test_accuracy": accuracy_test})
+    return {"train_accuracy": accuracy_train, "test_accuracy": accuracy_test}

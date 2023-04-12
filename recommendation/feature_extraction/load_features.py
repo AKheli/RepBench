@@ -102,10 +102,14 @@ def convert_features(file_name):
     param: file_name: str , each line containing a dict with value "injection_parameters"
     returns: list of dicts where a featrues dict to each dict
     """
+    with open(f"{file_name}_features", "w") as f:
+        f.write("")
+
     with open(file_name, "r") as f:
         lines = f.readlines()
     results = []
-    for line in lines:
+    total_lines = len(lines)
+    for i,line in enumerate(lines):
         results_line = json.loads(line)
         injection_parameters = results_line["injection_parameters"]
         features = load_features(injection_parameters)
@@ -115,5 +119,14 @@ def convert_features(file_name):
         with open(f"{file_name}_features", "a") as f:
             # for result in results:
             f.write(json.dumps(results_line) + "\n")
-
+        show_progress_bar(i + 1, total_lines, prefix='Loading features:', suffix='Complete', length=50)
     return results
+
+def show_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=50, fill='█'):
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filled_length = int(length * iteration // total)
+    bar = fill * filled_length + '-' * (length - filled_length)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end='\r')
+    # Print New Line on Complete
+    if iteration == total:
+        print()

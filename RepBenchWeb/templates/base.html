@@ -40,6 +40,7 @@
         <link rel="stylesheet" href="{% static "css/form.css" %}">
         <link rel="stylesheet" href="{% static "css/loading.css" %}">
 
+        <link rel="stylesheet" href="{% static "css/base.css" %}">
 
 
 
@@ -75,46 +76,8 @@
 <!-- begin: Body -->
 <!-- begin: Body -->
 
-<style>
 
-
-    .viz-chart-info {
-        padding-left: 50px;
-    }
-
-    .margin-top-20 {
-        margin-top: 55px;
-        left: 0;
-        padding-right: 15px !important;
-        padding-left: 15px !important;
-        margin-right: auto !important;
-        margin-left: auto !important;
-    }
-
-    .alg-selection {
-        margin-top: 20px;
-        padding-left: 100px;
-        padding-bottom: 30px;
-        justify-content: center;
-    }
-
-    {# all elemnts of class form-group into 1 row of a grid in my grid #}
-    .outer-grid {
-        display: grid;
-        grid-template-columns: 130px  600px;
-        grid-gap: 10px;
-    }
-
-    {# center #}
-
-    {#.full-height {#}
-    {#  height: 100%;#}
-    {# }#}
-
-
-</style>
-
-<body style="padding-top: 0px">
+<body>
 
 <!-- begin: Page -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -171,9 +134,9 @@
 
 
 <!-- begin: Content -->
-<div id="main-content" }>
+<div id="main-content">
     {% block outerContent %} <!-- when the webside should be scrollable vertivally -->
-        <div id="content" class="container-fluid" style="height:calc(100vh - 145px); margin-top: 70px">
+        <div id="content" class="container-fluid">
             {% block content %}
             {% endblock %}
         </div>

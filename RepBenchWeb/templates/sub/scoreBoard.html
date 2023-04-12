@@ -20,12 +20,17 @@
     }
 
     .roundslider {
-        width: 100px;
-        height: 100px;
-        margin: 5px;
         position: relative;
         z-index: 100;
+
     }
+
+    .slider-container > * {
+        margin-left: max(calc( (33% - 140px)/2 ),2px);
+        margin-right: max(calc( (33% - 140px)/2 ),2px);
+    }
+
+
     .slider-container {
         justify-content: center;
         align-items: center;
@@ -34,18 +39,17 @@
 
 
 <div id="score_container" class="outer" style="position: relative">
-    <div class="">
-        <div class="slider-container row">
-            <div id="RMSE-slider" class="roundslider normal"
-                 title="RMSE">
-            </div>
-            <div id="MAE-slider" class="roundslider normal"
-                 title="MAE">
-            </div>
-            <div id="RMSE-Anomaly-slider" class="roundslider normal"
-                 title="RMSE on Anomaly">
-            </div>
+    <div class="slider-container row">
+        <div id="RMSE-slider" class="roundslider normal"
+             title="RMSE">
+        </div>
+        <div id="MAE-slider" class="roundslider normal"
+             title="MAE">
+        </div>
+        <div id="RMSE-Anomaly-slider" class="roundslider normal"
+             title="RMSE on Anomaly">
         </div>
     </div>
+
 </div>
 

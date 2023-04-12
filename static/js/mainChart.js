@@ -76,38 +76,13 @@ let tooltip = {
     valueDecimals: 2
 }
 
-// let splitMainChart = function () {
-//
-//     return [{ // Primary yAxis
-//         title: {
-//             text: 'Parameters'
-//         },
-//         height: '63%',
-//         lineWidth: 2,
-//     }, {},
-//         {
-//             yAxis: 2,
-//             title: {
-//                 text: "Normalized Difference"
-//             },
-//             top: '67%',
-//             height: '33%',
-//             offset: 0,
-//             lineWidth: 2,
-//             plotBands: [{
-//                 color: 'rgba(68, 170, 213, 0.1)',
-//                 from: -100,
-//                 to: 100
-//             },
-//             ]
-//         }]
-// }
 
 let mainChart = null
 let threshold = null
 
 let load_chart = null
 const loadChart = function (series = {}, container = 'load_chart') {
+    document.getElementById("content").style["overflow-y"] = "hidden"
     if (load_chart !== null) {
         load_chart = null
     }
@@ -120,6 +95,9 @@ const loadChart = function (series = {}, container = 'load_chart') {
                 fontWeight: 'bold',
                 "font-size": "30px"
             }
+        },
+        credits: {
+            enabled: false
         },
     })
     load_chart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
@@ -246,8 +224,8 @@ const mainChartFetchPromise = new Promise((resolve, reject) => {
             }
             resetSeries()
             load_chart.hideLoading()
-            //hide loadchart div
             document.getElementById("load_chart").style.display = "none";
+            document.getElementById("content").style["overflow-y"] = "auto"
             resolve()
 
 
