@@ -10,7 +10,10 @@ from recommendation.feature_extraction.feature_extraction import extract_feature
 default_data_folder = "recommendation/datasets/train"
 
 
-def load_data(injection_parameters, return_truth=True, data_folder=default_data_folder, row_cap=20000, col_cap=20):
+def load_data(injection_parameters,
+              return_truth=True,
+              data_folder=default_data_folder,
+              row_cap=20000, col_cap=20 , normalize= True):
     """
     Args:
     injection_parameters: dict = {
@@ -38,27 +41,32 @@ def load_data(injection_parameters, return_truth=True, data_folder=default_data_
     dataset = injection_parameters.pop("dataset")
     cols = injection_parameters["cols"]
     truth_df: pd.DataFrame = pd.read_csv(f"{data_folder}/{dataset}")
-    n, m = truth_df.shape
+
 
     # z-score  normalization and cutting
+    n, m = truth_df.shape
+
     truth_df = truth_df.iloc[:min(n, row_cap), :min(m, col_cap)]
-    truth_df = (truth_df - truth_df.mean()) / truth_df.std()
+    truth_mean, truth_std = truth_df.mean(), truth_df.std()
+
+    truth_df = (truth_df - truth_mean) / truth_std
 
     injected_df, col_range_map = inject_data_df(truth_df, **injection_parameters)
     assert injected_df.shape == truth_df.shape
     assert not np.allclose(injected_df.iloc[:, cols[0]].values, truth_df.iloc[:, cols[0]].values)
 
-    # import matplotlib.pyplot as plt
-    # plt.plot(injected_df.iloc[:, cols].values , color="red")
-    #
-    # plt.plot(truth_df.iloc[:, cols].values)
-    # plt.show()
+    if not normalize:
+        injected_df = injected_df * truth_std + truth_mean
+        truth_df = truth_df * truth_std + truth_mean
+
     if return_truth:
         return injected_df, truth_df
     return injected_df
 
 
-def load_features(injection_parameters):
+
+
+def load_features(injection_parameters,use_rawdata=False):
     """
     param: injection_parameters: dict
        injection_parameters = {
@@ -72,7 +80,7 @@ def load_features(injection_parameters):
 
     return: features: dict of features for the selected column
     """
-    injected_df, _ = load_data(injection_parameters)
+    injected_df, _ = load_data(injection_parameters, normalize= not use_rawdata)
     features = extract_features(injected_df, column=injection_parameters["cols"][0])
     return features
 
@@ -97,26 +105,35 @@ def get_injection_parameter_hashes_checker(file_name):
     return checker
 
 
-def convert_features(file_name):
+def compute_features(load_filename,  store_filename, use_rawdata=True):
     """
-    param: file_name: str , each line containing a dict with value "injection_parameters"
-    returns: list of dicts where a featrues dict to each dict
+    Args:
+        load_filename (str): The path to the file containing the injection parameters.
+        store_filename (str): The path to the file where the features will be stored.
+        use_rawdata (bool): Whether undo normalization to compute the features (default is True).
+
+    Returns:
+        A list of dictionaries containing the injection parameters and the features for each injection.
     """
-    with open(f"{file_name}_features", "w") as f:
+
+    if not os.path.exists(store_filename):
+        os.makedirs(os.path.dirname(store_filename), exist_ok=True)
+
+    with open(store_filename, "w") as f:
         f.write("")
 
-    with open(file_name, "r") as f:
+    with open(load_filename, "r") as f:
         lines = f.readlines()
     results = []
     total_lines = len(lines)
     for i,line in enumerate(lines):
         results_line = json.loads(line)
         injection_parameters = results_line["injection_parameters"]
-        features = load_features(injection_parameters)
+        features = load_features(injection_parameters,use_rawdata=use_rawdata)
         results_line["features"] = features
         results.append(results_line)
         # store result to file
-        with open(f"{file_name}_features", "a") as f:
+        with open(store_filename, "a") as f:
             # for result in results:
             f.write(json.dumps(results_line) + "\n")
         show_progress_bar(i + 1, total_lines, prefix='Loading features:', suffix='Complete', length=50)

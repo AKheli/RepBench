@@ -3,16 +3,16 @@ import json
 import numpy as np
 import pandas as pd
 import pickle
+import os
 
 
 def parse_recommendation_results(file_name, error="rmse"):
     json_array = parse_lines_file(file_name)
     df_dict: dict = sub_results_from_json_array(json_array)
     if "alg_results" in df_dict:
-        print(df_dict["alg_results"])
+        # print(df_dict["alg_results"])
         df_dict["best_algorithm"] = df_dict["alg_results"].apply(lambda row: min_alg(row, error), axis=1)
         df_dict["best_algorithm_error"] = df_dict["alg_results"].apply(lambda row: min_error(row, error), axis=1)
-
 
     return df_dict
 
@@ -20,9 +20,12 @@ def parse_recommendation_results(file_name, error="rmse"):
 def min_alg(row, error):
     error_rows = row.apply(lambda r: r[error])
     return error_rows.idxmin()
+
+
 def min_error(row, error):
     error_rows = row.apply(lambda r: r[error])
     return error_rows.min()
+
 
 def parse_lines_file(file_name):
     with open(file_name, 'r') as f:
@@ -64,12 +67,14 @@ def get_column_with_lowest_value(df):
     return pd.DataFrame({'best_algorithm': df.idxmin(axis=1)})
 
 
-def store_estimator(automl, estimator_name="bestEstimator"):
-    with open(f'recommendation/automl_files/{estimator_name}.pkl', 'wb') as f:
+
+
+def store_estimator(automl, estimator_name, file_path="recommendation/results/flaml_estimators"):
+    with open(f'{file_path}/{estimator_name}.pkl', 'wb') as f:
         pickle.dump(automl, f, pickle.HIGHEST_PROTOCOL)
 
 
-def load_estimator(estimator_name="bestEstimator"):
+def load_estimator(estimator_name, file_path="recommendation/results/flaml_estimators"):
     """Loads a pickled automl resulst from the recommendation/automl_files directory
     Args:
         estimator_name (str): The name of the estimator to load
@@ -79,13 +84,17 @@ def load_estimator(estimator_name="bestEstimator"):
     usage example:
     automl.model.estimator.predict(X_test)
     """
-    automl = pickle.load(open(f'recommendation/automl_files/{estimator_name}.pkl', 'rb'))
+    try:
+        automl = pickle.load(open(f'{file_path}/{estimator_name}{"" if estimator_name.endswith(".pkl") else ".pkl"}', 'rb'))
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Could not find estimator with name {estimator_name} in {file_path}" +
+                                "\npossible estimators are: " + str(os.listdir(file_path)))
     return automl
 
 
 json_numpy_encoder = lambda obj: obj.tolist() if isinstance(obj, np.ndarray) else obj
 
 
-def store_estimator_results(results: dict, file_name: str):
-    with open(f'recommendation/automl_files/{file_name}.json', 'w') as f:
+def store_estimator_results(results: dict, file_name: str , file_path="recommendation/results/recommendation_results"):
+    with open(f'{file_path}/{file_name}.json', 'w') as f:
         json.dump(results, f, indent=4, default=json_numpy_encoder)

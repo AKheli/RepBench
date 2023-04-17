@@ -11,17 +11,11 @@ sys.path.append(os.path.abspath(
 from recommendation.flaml_search import flaml_search
 from recommendation.utils import *
 
-feature_file_name = "recommendation/results/results_features"
-
-# df = pd.read_json(feature_file_name)
-# Initialize an AutoML instance
-# Specify automl goal and constraint
-
 multiclass_metrics = ['accuracy', 'macro_f1', 'micro_f1']
 
-# algorithms_scores: pd.DataFrame
-# feature_values: pd.DataFrame
-# best_algorithms: pd.DataFrame
+feature_file_name = "recommendation/results/features/results_features"
+
+
 algorithms_scores = parse_recommendation_results(feature_file_name)
 best_algorithms = algorithms_scores['best_algorithm']
 best_algorithms = best_algorithms.values.flatten()
@@ -29,9 +23,6 @@ feature_values = algorithms_scores['features']
 
 encoder = LabelEncoder()
 categories_encoded = encoder.fit_transform(best_algorithms)
-
-# Train with labeled input data
-## Split data into train and test sets
 
 train_split_r = 0.8
 n_train_split = int(len(feature_values) * train_split_r)
@@ -45,12 +36,13 @@ y_train, y_test = categories_encoded[train_split], categories_encoded[test_split
 
 
 
-time_budgets = [60*10]
+time_budgets = [60*5]
 
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--time_budgets', nargs='+', type=int, default=time_budgets,
                     help='Time budgets (in seconds) to use for FLAML search')
+
 args = parser.parse_args()  # e.g --time_budgets 1200 3600
 time_budgets = args.time_budgets
 
@@ -73,4 +65,4 @@ for k in n_features:
         print(f"selected features k={k}:{selected_features}")
         X_test_selected   = X_test[selected_features]
 
-        flaml_search(automl_settings, X_train, y_train, X_test, y_test, verbose=2, file_suffix=k,additional_info={"features" : selected_features})
+        flaml_search(automl_settings, X_train, y_train, verbose=2, file_suffix=k)
