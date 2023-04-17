@@ -52,8 +52,13 @@
             background: #5c5c62;
         }
     </style>
-    <a href="{% url 'repair'  setname=setname %}" class="btn btn-primary grey" style="margin-top: 10px;">Go to
-        Repair</a>
+    <button class="btn btn-primary" style="margin-top: 20px">
+    <a href="{% url 'repair'  setname=setname %}" style="color:white" >Go to
+            Repair</a>
+
+    </button>
+{#    <a href="{% url 'repair'  setname=setname %}" class="btn btn-primary grey" style = "margin-top:30px" >Go to#}
+{#        Repair</a>#}
     <!-- fancy button that goes to repair page with this dataset -->
     {% block sliders %}
     {% endblock %}

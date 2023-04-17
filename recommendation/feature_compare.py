@@ -27,14 +27,14 @@ for i in range(1, 4):
 
 automl_settings = {
     "time_budget": 5*60,  # in seconds
-    "metric": multiclass_metrics[0],  # accuracy , micro_f1, macro_f1
+    "metric": multiclass_metrics[0],  # accuracy , micro_f1, macro_f1 #https://stephenallwright.com/micro-vs-macro-f1-score/
     "task": 'classification',
     "log_file_name": "recommendation/logs/flaml.log",
 }
 
 for feature_endings in feature_names_list:
-    for use_anom_info in [True, False]:
-        print(f"{'use_anomaly_info' if use_anom_info else ''} {feature_endings}")
+    for use_anom_info in [False,True]:
+        # print(f"{'use_anomaly_info' if use_anom_info else ''} {feature_endings}")
         recommendation_input = RecommendationInputLoader(feature_file_name , features=feature_endings , include_anomaly_infos=use_anom_info)
         automl, automl_name = flaml_search(automl_settings, recommendation_input.X_train, recommendation_input.y_train
                                            , file_suffix=f"{'use_anomaly_info' if use_anom_info else ''}")

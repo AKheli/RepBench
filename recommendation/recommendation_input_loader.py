@@ -6,6 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from recommendation.feature_extraction.feature_extraction import feature_endings
 from recommendation.utils import *
 
+
 class RecommendationInputLoader:
     feature_folder = "recommendation/results/features"
     all_features = list(feature_endings.values())
@@ -23,7 +24,6 @@ class RecommendationInputLoader:
             assert isinstance(features, list), "features must be a list of feature names"
             assert all([f in self.all_features for f in features]), f"features must be a subset of {self.all_features}"
 
-
         self.feature_file_name = feature_file_name
         self.feature_file_path = f"{self.feature_folder}/{feature_file_name}"
         self.train_split_r = train_split_r
@@ -35,10 +35,12 @@ class RecommendationInputLoader:
         self.best_algorithms = self.best_algorithms.values.flatten()
         self.feature_values = algorithms_scores['features'].copy()
 
+        all_close = lambda col: np.allclose(col.values, col.values[0])
 
-
-        self.feature_names = [ f_name for f_name in self.feature_values.columns
-                               if any([f_name.endswith(f) for f in features])]
+        self.feature_names = [f_name for f_name in self.feature_values.columns
+                              if any([f_name.endswith(f) for f in features])
+                              and not all_close(self.feature_values[f_name])
+                              ]
 
         print(f"used features: {self.feature_names}")
 
@@ -51,7 +53,7 @@ class RecommendationInputLoader:
             factor = injection_params['factor']
             a_percent = injection_params['a_percent']
             # self.feature_values['a_type'] = a_type
-            self.feature_values["factor"]  = factor.to_list()
+            self.feature_values["factor"] = factor.to_list()
             self.feature_values['a_percent'] = a_percent.iloc[:].values
 
         encoder = LabelEncoder()

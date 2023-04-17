@@ -3,7 +3,7 @@ import pandas as pd
 from pycatch22 import catch22_all
 from tsfresh.feature_extraction import EfficientFCParameters, MinimalFCParameters
 from tsfresh import extract_features as tsfresh_extract_features
-
+import re
 from recommendation.feature_extraction.ts_fresh_features import selected_feature_names
 
 
@@ -12,6 +12,10 @@ feature_endings = {"catch22": "__ct",
                    "multi_dim": "__md",
                    "tsfresh_selected": "__tsf_s"
                    }
+
+def clean_feature_name(name):
+    # replace any non-alphanumeric characters with an underscore
+    return re.sub(r'\W+', '_', name)
 
 def single_ts_feature_extraction(input_data):
     if isinstance(input_data, pd.Series):
@@ -64,7 +68,7 @@ def multi_ts_feature_extraction(dataset: pd.DataFrame, column):
         "corr_abs_median": corr_abs_median,
         "n_ts" : n_ts
     }
-    multi_dim_features = {name + feature_endings["multi_dim"]:val for name, val in multi_dim_features.items()}
+    multi_dim_features = {clean_feature_name(name) + feature_endings["multi_dim"]:val for name, val in multi_dim_features.items()}
     return multi_dim_features
 
 
@@ -77,7 +81,7 @@ def extract_features(dataset, column):  # for one columns only
 
 def extract_catch22_features(data: np.ndarray):
     catch22_features = catch22_all(data)
-    catch22_features = {name + feature_endings["catch22"]: round(val, 4) for name, val in
+    catch22_features = {clean_feature_name(name) + feature_endings["catch22"]: round(val, 4) for name, val in
                         zip(catch22_features["names"], catch22_features["values"])}
 
     return catch22_features
@@ -92,7 +96,7 @@ def extract_ts_fresh_features(data: np.ndarray, FCParameters=MinimalFCParameters
                                                 show_warnings=False,
                                                 disable_progressbar=True)
 
-    tsfresh_features_name = [s.replace('"', '').replace("data__", "") + feature_endings["tsfresh_minimal"] for s in tsfresh_features.columns]
+    tsfresh_features_name = [ clean_feature_name(s.replace('"', '').replace("data__", "")) + feature_endings["tsfresh_minimal"] for s in tsfresh_features.columns]
     tsfresh_features = dict(zip(tsfresh_features_name, tsfresh_features.values.flatten()))
     return tsfresh_features
 
@@ -106,7 +110,7 @@ def extract_selected_ts_fresh_features(data: np.ndarray):
     tsfresh_features = tsfresh_extract_features(df_data, column_id="id", column_sort="time",
                                                 default_fc_parameters=selected_ts_fresh_features)
 
-    tsfresh_features_name = [s.replace('"', '').replace("data__", "") + feature_endings["tsfresh_selected"] for s in
+    tsfresh_features_name = [clean_feature_name(s.replace('"', '').replace("data__", "")) + feature_endings["tsfresh_selected"] for s in
                              tsfresh_features.columns]
     tsfresh_features = dict(zip(tsfresh_features_name, tsfresh_features.values.flatten()))
 
