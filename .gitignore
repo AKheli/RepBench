@@ -7,7 +7,7 @@ Results/
 Data_hidden/
 /Data_hidden/
 bin
-lib
+.lib
 lib64
 build
 share
