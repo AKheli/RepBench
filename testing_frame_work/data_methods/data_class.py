@@ -89,3 +89,4 @@ class DataContainer():
         self.title = file_name if title is None else title
         self.norm_data, self.inf_norm_f = normalize_f(self.original_data)
         self.injected = None
+

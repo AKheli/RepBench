@@ -25,6 +25,7 @@ def map_injected_series(injected_series: pd.Series, injected_series_norm: pd.Ser
     map injected pandas series containing values only in anomalies
     and points next to anomalies to highcharts series
     """
+    print("map_injected_series")
     return {"linkedTo": col_name,
             "id": f"{col_name}_injected",
             "name": f"{col_name}_injected",
@@ -36,13 +37,13 @@ def map_injected_series(injected_series: pd.Series, injected_series_norm: pd.Ser
 
 
 def map_injected_data_container(injected_data_container: InjectedDataContainer):
+    print("map_injected_data_container")
+
     truth: pd.DataFrame = injected_data_container.truth
     injected: pd.DataFrame = injected_data_container.injected
 
     # normalize injected data
     mean, std = truth.mean() , truth.std() #injected.mean(), injected.std()
-    print(mean)
-    print(std)
     injected_norm = (injected - mean) / std
     # normalize truth data w.r.t injected series
     truth_norm = (truth - mean) / std
@@ -67,12 +68,13 @@ def map_injected_data_container(injected_data_container: InjectedDataContainer):
 
 
 def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataContainer, alg_name: str,
-                    links: dict, df_original: DataFrame):
+                    links: dict | None, df_original: DataFrame):
+    print("map repair data")
     truth = injected_data_container.truth
     repair.columns = truth.columns
     injected_data_container: InjectedDataContainer
     data = {
-        str(col_name) + "repair": {"linkedTo": links[col_name],
+        str(col_name) + "repair": {"linkedTo": links[col_name] if links is not None else None,
                                    "id": str(col_name) + "repair" + alg_name,
                                    "name": alg_name,
                                    "data": list(reverse_norm(repair[col_name], df_original[col_name])),

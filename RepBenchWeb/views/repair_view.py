@@ -1,6 +1,6 @@
-from django.http import JsonResponse
 from django.shortcuts import render
 from RepBenchWeb.models import InjectedContainer
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views.synthetic_dataset_view import SyntheticDatasetView
 from algorithms import algo_mapper
 from injection.injected_data_container import InjectedDataContainer
@@ -57,6 +57,7 @@ class RepairView(SyntheticDatasetView):
         alg_type = post.pop("alg_type")
 
         data_container = DatasetView.load_data_container(setname)
+
         df_norm = data_container.norm_data  # only work with normalized data
         df_original = data_container.original_data
         injected_series = json.loads(post.pop("injected_series"))
@@ -75,8 +76,6 @@ class RepairView(SyntheticDatasetView):
         ###
         alg_constructor = algo_mapper[alg_type]
         alg_score = alg_constructor(**params).scores(**injected_data_container.repair_inputs)["rmse"]
-        print("SCOOOOOOOOOORE" , alg_score)
-
         ###
 
         score_data = {"data": [{"name": RepairView.error_map[k], "y": v} for k, v in repair_scores.items() if
@@ -98,7 +97,7 @@ class RepairView(SyntheticDatasetView):
         score_context.update(repair_scores)
         output["scores"] = score_context
         print("send repair data")
-        return JsonResponse(output)
+        return RepBenchJsonRespone(output)
 
     def repair_datasets(request=None, type="repair"):
         context = {}

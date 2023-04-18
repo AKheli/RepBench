@@ -28,10 +28,14 @@ def min_error(row, error):
 
 
 def parse_lines_file(file_name):
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
-    json_string = "[" + ",".join(lines) + "]"
-    json_array = json.loads(json_string)
+    try:
+        with open(file_name, 'r') as f:
+            lines = f.readlines()
+        json_string = "[" + ",".join(lines) + "]"
+        json_array = json.loads(json_string)
+    except FileNotFoundError as e :
+        print(os.listdir())
+        raise e
     return json_array
 
 

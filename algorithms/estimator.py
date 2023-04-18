@@ -55,9 +55,13 @@ class Estimator(ABC, BaseEstimator):
             mse_col = sm.mean_squared_error(y[non_labeled[:, col], col], predicted[non_labeled[:, col], col])
             mse += mse_col / len(columns_to_repair)
             rmse_per_col.append((col, np.sqrt(mse_col)))
-            # partial_mse += sm.mean_squared_error(y[partial_weights[:, col], col],
-            #                                      predicted[partial_weights[:, col], col]) / len(columns_to_repair)
             original_mse += sm.mean_squared_error(y[:, col], X[:, col]) / len(columns_to_repair)
+
+            try:
+                partial_mse += sm.mean_squared_error(y[partial_weights[:, col], col],
+                                                     predicted[partial_weights[:, col], col]) / len(columns_to_repair)
+            except:
+                pass
 
         scores = {}
         scores['mae'] = mae
@@ -71,6 +75,7 @@ class Estimator(ABC, BaseEstimator):
         else:
             return scores
 
+
     def mae_score(self, X, y, labels):
         predicted = self.predict(X, y, labels)
         flatten_y = y.values.flatten()
@@ -80,6 +85,7 @@ class Estimator(ABC, BaseEstimator):
         weights = weights.flatten()
         score_ = sm.mean_absolute_error(flatten_y[weights], flatten_predicted[weights])
         return score_
+
 
     def full_rmse(self, X, y, labels):
         predicted = self.predict(X, y, labels)
@@ -91,6 +97,7 @@ class Estimator(ABC, BaseEstimator):
         score_ = sm.mean_squared_error(flatten_y[weights], flatten_predicted[weights], squared=False)
         return score_
 
+
     def partial_rmse(self, X, y, labels):
         predicted = self.predict(X, y, labels)
         flatten_y = y.values.flatten()
@@ -101,18 +108,23 @@ class Estimator(ABC, BaseEstimator):
         score_ = sm.mean_squared_error(flatten_y[weights], flatten_predicted[weights], squared=False)
         return score_
 
+
     def repair(self, injected, truth, columns_to_repair, labels=None):
         raise NotImplementedError(self)
+
 
     def get_params(self, deep=False):
         return self.get_fitted_params()
 
+
     def get_fitted_params(self, **args):
         raise NotImplementedError(self)
+
 
     def suggest_param_range(self, X=None):
         "parameter ranges used for training depending on data X"
         raise NotImplementedError(self)
+
 
     def get_default_params(self):
         signature = inspect.signature(self.__init__)
@@ -121,6 +133,7 @@ class Estimator(ABC, BaseEstimator):
             for k, v in signature.parameters.items()
             if v.default is not inspect.Parameter.empty
         }
+
 
     def get_param_info(self, X=None):
         """
@@ -132,13 +145,16 @@ class Estimator(ABC, BaseEstimator):
 
         return {k: (type(v[0]), min(v), max(v), default_params[k], v) for k, v in self.suggest_param_range(X).items()}
 
+
     @property
     def alg_type(self):
         "e.g. for colors in plot"
         raise NotImplementedError(self)
 
+
     def algo_name(self):
         raise NotImplementedError(self)
+
 
     @staticmethod
     def to_numpy(df_or_numpy, copy=True):

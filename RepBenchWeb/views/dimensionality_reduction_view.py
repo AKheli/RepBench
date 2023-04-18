@@ -1,8 +1,8 @@
 import numpy as np
-from django.http import JsonResponse
 from django.shortcuts import render
 import json
 
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from injection.injected_data_container import InjectedDataContainer
 from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
 from testing_frame_work.repair import AnomalyRepairer
@@ -167,4 +167,4 @@ class DimensionalityReductionView(RepairView):
 
 
 
-        return JsonResponse(context, encoder=DimensionalityReductionView.encoder)
+        return RepBenchJsonRespone(context, encoder=DimensionalityReductionView.encoder)

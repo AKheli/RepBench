@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(
 from recommendation.flaml_search import flaml_search
 from recommendation.recommendation_input_loader import RecommendationInputLoader
 
-feature_file_name = "results_features_non_normalized"
+feature_file_name = "try"
 
 recommendation_input = RecommendationInputLoader(feature_file_name)
 
@@ -25,17 +25,17 @@ time_budgets = args.time_budgets
 multiclass_metrics = ['accuracy', 'macro_f1', 'micro_f1']
 
 metric = multiclass_metrics[0]
-time_budget = 25
+time_budget = 2
 
 # for metric in multiclass_metrics:
-for time_budget in time_budgets:
-    automl_settings = {
-        "time_budget": time_budget,  # in seconds
-        "metric": metric,  # accuracy , micro_f1, macro_f1
-        "task": 'classification',
-        "log_file_name": "recommendation/logs/flaml.log",
+# for time_budget in time_budgets:
+automl_settings = {
+    "time_budget": time_budget,  # in seconds
+    "metric": metric,  # accuracy , micro_f1, macro_f1
+    "task": 'classification',
+    "log_file_name": "recommendation/logs/flaml.log",
     }
-    flaml_search(automl_settings, recommendation_input.X_train, recommendation_input.y_train, verbose=2,file_suffix="non_normalized")
+automl , filename = flaml_search(automl_settings, recommendation_input.X_train, recommendation_input.y_train, verbose=2,file_suffix="non_normalized")
 
 
 

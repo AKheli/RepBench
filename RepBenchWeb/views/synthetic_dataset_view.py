@@ -2,9 +2,9 @@ import numpy as np
 
 from RepBenchWeb.views.dataset_views import DatasetView
 from RepBenchWeb.models import  InjectedContainer
-from django.http import JsonResponse
 from testing_frame_work.data_methods.data_class import DataContainer
 from RepBenchWeb.ts_manager.HighchartsMapper import map_truth_data
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 
 
 class SyntheticDatasetView(DatasetView):
@@ -30,4 +30,4 @@ class SyntheticDatasetView(DatasetView):
         injected = injected_data_container.get_none_filled_injected()
         result["injected"] = [map_injected_series(injected[c],cols[i],truth_container) for i,c in enumerate(injected) if i in
                               injected_data_container.injected_columns]
-        return JsonResponse(result)
+        return RepBenchJsonRespone(result)

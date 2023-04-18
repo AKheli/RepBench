@@ -6,6 +6,8 @@ Highcharts.setOptions({
     }
 });
 
+
+
 const chartNavigator = { // do not use navigator since it is used by another script
     xAxis: {
         labels: {
@@ -80,6 +82,8 @@ let tooltip = {
 let mainChart = null
 let threshold = null
 
+let legendWidth = null
+
 let load_chart = null
 const loadChart = function (series = {}, container = 'load_chart') {
     document.getElementById("content").style["overflow-y"] = "hidden"
@@ -117,8 +121,8 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             floating: true,
             // y :-20,
             // x : -20,
+            width:legendWidth
         },
-
         tooltip: tooltip,
         chart: {
             type: 'line',

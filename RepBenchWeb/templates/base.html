@@ -119,11 +119,23 @@
                     </ul>
                 </li>
 
-
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'optimisation_datasets' %}">
                         Optimization
                     </a>
+                </li>
+
+                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        Recommendation<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'recommendation_datasets' %}">Recommendation</a></li>
+{#                        <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Dimensionality#}
+{#                            Reduction Viz</a></li>#}
+
+                    </ul>
                 </li>
             </ul>
         </div>

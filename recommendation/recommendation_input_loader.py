@@ -57,9 +57,9 @@ class RecommendationInputLoader:
             self.feature_values['a_percent'] = a_percent.iloc[:].values
 
         encoder = LabelEncoder()
-        self.categories_encoded = encoder.fit_transform(self.best_algorithms)
+        self.categories_encoded = self.best_algorithms #encoder.fit_transform(self.best_algorithms)
         self.encoder = encoder
-        self.labels = encoder.classes_
+        # self.labels = encoder.classes_
         # remove features with nan entries
         if nan_safe:
             nan_free_rows = ~np.isnan(self.feature_values.values).any(axis=1)

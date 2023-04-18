@@ -3,7 +3,9 @@ import json
 from django.db import models
 import pandas as pd
 
+from RepBenchWeb.ts_manager.HighchartsMapper import map_repair_data
 from injection.injected_data_container import InjectedDataContainer
+from recommendation.recommend import get_recommendation
 
 
 class DataSet(models.Model):
@@ -69,6 +71,9 @@ class InjectedContainer(models.Model):
     info = models.JSONField(blank=False, null=True)  # orginal data titel
     original_data_set = models.CharField(max_length=100, null=True)
 
+
+    recommendation = models.JSONField(blank=False, null=True)  # recomendation for the model
+
     @property
     def injected_container(self):
         injected_container_: InjectedDataContainer = InjectedDataContainer.from_json(self.injectedContainer_json)
@@ -95,6 +100,31 @@ class InjectedContainer(models.Model):
     def __str__(self):
         return self.title
 
+    def recommendation_context(self):
+        if True or self.recommendation is None:
+            # recommendation_dict = json.loads(self.recommendation)
+            original_data = DataSet.objects.get(title=self.original_data_set)
+            df_original = original_data.df
+            injected_data_container  = self.injected_container
+            truth = injected_data_container.truth
+            print(truth)
+            recommendation_results = get_recommendation(injected_data_container)
+            repairs = recommendation_results["alg_repairs"]
+
+            repair_converted ={}
+            for alg_name,repair in repairs.items():
+                mean, std = truth.mean(), truth.std()  # injected.mean(), injected.std()
+                repair_norm = (repair - mean) / std
+                # normalize truth data w.r.t injected series
+
+                repair_converted[alg_name] = map_repair_data(repair_norm, injected_data_container, alg_name, links=None, df_original= truth)
+            recommendation_results["alg_repairs"] = repair_converted
+
+            self.recommendation = json.dumps(recommendation_results)
+            self.save()
+        else:
+            recommendation_results = json.loads(self.recommendation)
+        return  recommendation_results
 
 """ how to delete a model in shell
 

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
+from RepBenchWeb.views.recommendation import recommendation_view
 from RepBenchWeb.views import (
     indexview,
     optimizationview,
@@ -67,6 +68,11 @@ urlpatterns = [
     # catch22 sliders getter
     path('sliders_view/<str:setname>', dataset_views.sliders_view, name='get_catch22_data'),
 
+
+    ## recommendation
+    path('recommendation/<str:setname>', recommendation_view.RecommendationView.as_view(), name='recommend'),
+    path('recommendation_datasets', recommendation_view.RecommendationView().recommendation_datasets, name='recommendation_datasets'),
+    path('get_reccomendation_results/<str:setname>', recommendation_view.RecommendationView.get_recommendation , name="get_recommendation")
 ]
 
 

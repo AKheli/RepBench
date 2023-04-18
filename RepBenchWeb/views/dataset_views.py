@@ -1,9 +1,9 @@
 import json
 import numpy as np
-from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views import data_loader
 import RepBenchWeb.datasetsConfig as datasetsConfig
 from RepBenchWeb.models import DataSet, InjectedContainer
@@ -74,7 +74,7 @@ def sliders_view(request, setname="BAFU"):
         for feature_name , feature_valued_dict in feature_dict.items():
             feature_valued_dict['abr'] = features[feature_name]["abr"]
             feature_valued_dict['description'] = features[feature_name]["description"]
-    return JsonResponse(context)
+    return RepBenchJsonRespone(context)
 
 
 def display_datasets(request=None):

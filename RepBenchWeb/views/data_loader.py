@@ -1,6 +1,7 @@
 import numpy as np
 from django.http import JsonResponse
 
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from injection.injected_data_container import InjectedDataContainer
 from RepBenchWeb.models import DataSet, InjectedContainer
 from RepBenchWeb.ts_manager.HighchartsMapper import map_truth_data, map_injected_data_container
@@ -8,6 +9,8 @@ from testing_frame_work.data_methods.data_class import DataContainer
 
 
 def load_data_container(setname,RepBenchWeb=4):
+    print("load data container")
+
     if DataSet.objects.filter(title=setname).exists():
         data_object = DataSet.objects.get(title=setname)
         df = data_object.df
@@ -31,4 +34,4 @@ def get_data(request, setname,RepBenchWeb=4):
     close = np.isclose(injected_data_container.truth.values, injected_data_container.injected.values)
     assert np.allclose(~close, injected_data_container.class_df.values)
     results = map_injected_data_container(injected_data_container)
-    return JsonResponse(results)
+    return RepBenchJsonRespone(results)

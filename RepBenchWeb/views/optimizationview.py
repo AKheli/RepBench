@@ -8,6 +8,7 @@ from RepBenchWeb.BenchmarkMaps.repairCreation import injected_container_None_Ser
 from RepBenchWeb.forms.injection_form import InjectionForm
 from RepBenchWeb.forms.optimization_forms import BayesianOptForm, bayesian_opt_param_forms_inputs
 from RepBenchWeb.models import InjectedContainer
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views.dataset_views import DatasetView
 
 
@@ -78,7 +79,7 @@ class OptimizationView(DatasetView):
             "param_ranges": param_ranges,
             "setname": setname,
         }
-        return JsonResponse(context, encoder=OptimizationView.encoder)
+        return RepBenchJsonRespone(context)
 
     @staticmethod
     def optimization_datasets(request=None):
@@ -99,10 +100,10 @@ def fetch_opt_results(request):
         print("fetch_opt_results", res)
         print(res)
         print()
-        return JsonResponse(res, encoder=OptimizationView.encoder)
+        return RepBenchJsonRespone(res)
 
     if status == "finished":
-        return JsonResponse({"status": "DONE"}, encoder=OptimizationView.encoder)
+        return RepBenchJsonRespone({"status": "DONE"})
     else:
-        return JsonResponse({"status": "pending"}, encoder=OptimizationView.encoder)
+        return RepBenchJsonRespone({"status": "pending"})
 

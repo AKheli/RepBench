@@ -13,7 +13,7 @@ from algorithms.param_loader import get_algorithm_params
 from RepBenchWeb.BenchmarkMaps.repairCreation import create_injected_container
 from injection.injection_config import AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER
 from algorithms.algorithm_mapper import algo_mapper
-from algorithms.algorithms_config import CDREC , RPCA ,IMR , SCREEN
+from algorithms.algorithms_config import CDREC, RPCA, IMR, SCREEN
 from datetime import datetime
 
 mode = "test"
@@ -25,12 +25,11 @@ log_file = f"recommendation/logs/{now}_ {mode}_logs"
 data_folder = f"recommendation/datasets/{mode}"
 datasets = os.listdir(data_folder)
 
-
 factors = [2, 5, 10]
-a_percentages = [5,2,10,1]
+a_percentages = [5, 2, 10, 1]
 col_n_cap = 1
 score = "rmse"
-alg_names = [CDREC , RPCA ,IMR , SCREEN]
+alg_names = [CDREC, RPCA, IMR, SCREEN]
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
 
 
@@ -57,9 +56,8 @@ for dataset in datasets:
     ts_cols = [[i] for i in range(min(truth_df.shape[1], col_n_cap))]
     data_sets_to_col_n[dataset] = truth_df.shape[1]
 
-
-for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[0],[1],[2],[3]],a_percentages,factors, a_types,datasets):
-
+for columns, a_percentage, factor, a_type, dataset in itertools.product([[0], [1], [2], [3]], a_percentages, factors,
+                                                                        a_types, datasets):
     for c in columns:
         if c >= data_sets_to_col_n[dataset]:
             continue
@@ -83,9 +81,9 @@ for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[0],[
             continue
         injected_df, truth_df = load_data(injection_parameters)
 
-        print("file", dataset , "a_type", a_type, "factor", factor, "a_percentage", a_percentage, "columns", columns)
+        print("file", dataset, "a_type", a_type, "factor", factor, "a_percentage", a_percentage, "columns", columns)
 
-        injected_data_container = create_injected_container(injected_df = injected_df ,truth_df=truth_df)
+        injected_data_container = create_injected_container(injected_df=injected_df, truth_df=truth_df)
         injected_dfs.append(injected_df)
 
         alg_results = {}
@@ -96,7 +94,6 @@ for columns , a_percentage, factor ,a_type, dataset  in itertools.product([[0],[
             parameters = get_algorithm_params(alg_name)
             alg_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[score]
             alg_results[alg_name] = {score: alg_score, "parameters": parameters}
-
 
         original_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs)[
             "original_rmse"]

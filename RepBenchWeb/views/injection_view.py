@@ -2,9 +2,9 @@ import json
 import random
 
 import pandas as pd
-from django.http import JsonResponse
 from django.shortcuts import render
 
+from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from injection.injected_data_container import InjectedDataContainer
 from RepBenchWeb.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
 from RepBenchWeb.forms.injection_form import store_injection_form, InjectionForm
@@ -81,7 +81,7 @@ def inject_data(request, setname):
                                          fill_na=True, seed=seed)
     col_injected = col_injected_norm * original_col.std() + original_col.mean()
     injected_series = map_injected_series(col_injected, col_injected_norm, col_name)
-    return JsonResponse({"injected_series": injected_series})
+    return RepBenchJsonRespone({"injected_series": injected_series})
 
 
 def store_data(request, setname):
@@ -122,4 +122,4 @@ def store_data(request, setname):
     injected_data_set = InjectedContainer(title=title, injectedContainer_json=injected_data_container.to_json(),
                                           description=description, original_data_set=setname)
     injected_data_set.save()
-    return JsonResponse({"success": True})
+    return RepBenchJsonRespone({"success": True})
