@@ -68,7 +68,7 @@ def map_injected_data_container(injected_data_container: InjectedDataContainer):
 
 
 def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataContainer, alg_name: str,
-                    links: dict | None, df_original: DataFrame):
+                    links: dict, df_original: DataFrame):
     print("map repair data")
     truth = injected_data_container.truth
     repair.columns = truth.columns
