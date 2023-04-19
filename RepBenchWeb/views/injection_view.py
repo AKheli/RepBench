@@ -50,8 +50,10 @@ def inject_data(request, setname):
     data_container = DataContainer(df, title=title)
 
     df = data_container.norm_data
-    if isinstance(df.columns, pd.Int64Index):
+    try:
         col_name = int(col_name)
+    except:
+        pass
 
     col_norm = df[col_name]
     original_col = data_container.original_data[col_name]
@@ -62,7 +64,6 @@ def inject_data(request, setname):
     a_type = post.get("anomaly")
     seed = post.get("seed")
     a_len = int(post.get("length"))
-    print("LENGTH" , a_len)
     if seed == '':
         seed = random.randint(0, 100)
     else:
