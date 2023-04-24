@@ -36,8 +36,8 @@ class RepBenchJsonEncoder(json.JSONEncoder):
             return obj.tolist()
         if isinstance(obj, float):
             return round(obj, 3)
-        if isinstance(obj, np.nan):
-            return None
+        # if np.isnan(obj):
+        #     return None
         return super().default(obj)
 
 

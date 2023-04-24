@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        form, h2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        form {
+            max-width: 300px;
+        }
+
+        label, select, input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            padding: 10px 24px;
+            border-radius: 4px;
+        }
+    </style>
+
+    <h2> Repair Recomendation </h2>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_files' %}">
+
+        {% csrf_token %}
+
+        <label for="id_file1">Dataset File:</label>
+        <input type="file" name="file1" required="" id="id_file1">
+
+
+        <label for="id_file2">Labeled Anomalous Values (Optional)</label>
+        <input type="file" name="file2" id="id_file2">
+
+        <label for="id_file3">Clean Dataset (Optional)</label>
+        <input type="file" name="file3" id="id_file3">
+
+        {#    {{ upload_form.as_p }}#}
+
+        <label for="column-select">Select the column:</label>
+        <select name="column-id" id="column-select" disabled> </select>
+        <input name="column-name" id="column-name" style="display:none;"> </input>
+
+        <button id="upload-button" type="submit" style="display: none">Recommend</button>
+    </form>
+
+    <script>
+
+        const file_1 = document.getElementById("id_file1")
+        file_1.addEventListener('change', handleFileUpload, false)
+
+        const columnSelect = document.getElementById('column-select');
+        columnSelect.addEventListener('change', event => document.getElementById("option-text").value = event.target.text, false);
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const content = e.target.result;
+                    const lines = content.split('\n');
+                    const headerLine = lines[0];
+
+                    const delimiter = headerLine.indexOf(',') >= 0 ? ',' : /\s+/;
+                    let columnNames = headerLine.trim().split(delimiter);
+
+                    const containsFloat = columnNames.some(name => {
+                        const number = parseFloat(name);
+                        return !isNaN(number) && number.toString() === name;
+                    });
+
+                    let integerColumnNames = [];
+                    if (containsFloat) {
+                        for (let i = 1; i <= columnNames.length; i++) {
+                            integerColumnNames.push(i.toString());
+                        }
+
+                        columnNames = integerColumnNames;
+                    }
+
+
+                    columnSelect.innerHTML = '';
+
+                    columnNames.forEach(function (columnName, index) {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.text = columnName;
+                        columnSelect.add(option);
+                    });
+
+                    columnSelect.style.display = 'block';
+                    columnSelect.disabled = false;
+
+                    document.getElementById("upload-button").style.display = 'block';
+                };
+                reader.readAsText(file);
+            }
+        }
+
+
+    </script>
+{% endblock %}

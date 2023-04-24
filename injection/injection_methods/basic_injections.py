@@ -16,6 +16,7 @@ def inject_point_outlier(data, indexes, factor, directions=(1, -1)):
 def inject_amplitude_shift(data, index_range, factor, directions=(1, -1)):
     original_data=data.copy()
     data[index_range] += np.random.choice(directions) * factor
+    print(data)
     if np.allclose(data, original_data):
         raise InjectionError("No change in data after injection",anomaly_type=AMPLITUDE_SHIFT,data=data[index_range])
     return data

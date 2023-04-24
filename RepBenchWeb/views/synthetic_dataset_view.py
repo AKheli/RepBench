@@ -25,7 +25,7 @@ class SyntheticDatasetView(DatasetView):
 
         df = injected_data_container.truth
         truth_container = DataContainer(df)
-        result = map_truth_data(truth_container, RepBenchWeb)
+        result = {"series" : map_truth_data(truth_container, RepBenchWeb) }
         cols = [i for i in df.columns]
         injected = injected_data_container.get_none_filled_injected()
         result["injected"] = [map_injected_series(injected[c],cols[i],truth_container) for i,c in enumerate(injected) if i in

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import os
-
+import csv
 
 def parse_recommendation_results(file_name, error="rmse"):
     json_array = parse_lines_file(file_name)
@@ -102,3 +102,28 @@ json_numpy_encoder = lambda obj: obj.tolist() if isinstance(obj, np.ndarray) els
 def store_estimator_results(results: dict, file_name: str , file_path="recommendation/results/recommendation_results"):
     with open(f'{file_path}/{file_name}.json', 'w') as f:
         json.dump(results, f, indent=4, default=json_numpy_encoder)
+
+
+
+def read_file_to_pandas(filename : str) -> pd.DataFrame:
+    # Check if the file is comma or whitespace-separated
+    with open(filename, 'r') as file:
+        dialect = csv.Sniffer().sniff(file.readline())
+        file.seek(0)
+        delimiter : str = dialect.delimiter
+
+    # Read the first few lines to infer if the first row contains column names or data
+    with open(filename, 'r') as file:
+        first_line = file.readline().strip()
+        second_line = file.readline().strip()
+
+    has_header = csv.Sniffer().has_header(first_line + '\n' + second_line)
+
+    if has_header:
+        df = pd.read_csv(filename, delimiter=delimiter)
+    else:
+        header = None
+        df = pd.read_csv(filename, delimiter=delimiter, header=None)
+
+    # Read the file into a pandas DataFrame
+    return df

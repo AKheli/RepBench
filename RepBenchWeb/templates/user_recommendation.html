@@ -1,0 +1,89 @@
+{% extends "displayDataSetSynthetic.html" %}
+{% load static %}
+
+  {% block chartContainer %}
+            <div id="chart" class="col-md-9" style="height:100%">
+                {% include 'sub/MainChart.html'  with highcharts_series=highcharts_series%}
+            </div>
+  {% endblock %}
+
+
+{% block menu %}
+    <h2>Dataset: {{ uploaded_file_name }}</h2>
+
+    <div>
+        <table style="border-spacing: 10px;">
+            <tr>
+                <td style="text-align:left; padding-right: 10px;">Number of Values:</td>
+                <td style="text-align:left;">{{ data_info.values }}</td>
+            </tr>
+            <tr>
+                <td style="text-align:left; padding-right: 10px;">Number of TS:</td>
+                <td style="text-align:left;">{{ data_info.ts_nbr }}</td>
+            </tr>
+
+        </table>
+    </div>
+
+    <h2 style="margin-top: 20px">Repair Recommendation</h2>
+    <div id="rec_info" style="display:none">
+
+            <button id="descr-show" type="button" class="btn btn-default btn-xs" style="display:inline-block;padding:1px 3px 1px 4px">
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> show description
+            </button>
+            <button style="display:none;;padding: 2px" id="descr-hide" type="button" class="btn btn-default btn-xs">
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> hide description
+            </button>
+
+        <div id="descr-options"  style="display:none;">
+        <p> Algorithm classification using <a href="https://microsoft.github.io/FLAML/" >FLAML autoML</a> to recommend the
+            most
+            suitable anomaly repair algorithm.  </p>
+          <p>  Features from catch22, tsfresh and correlation values between the time series are used to train the classifiers.
+        </p>
+            <p> The classifier options are lgbm, rf, xgboost, extra_tree, xgb_limitdepth and lrl1.
+             </p>
+        </p>
+
+        </div>
+        <table style="border-spacing: 10px;">
+            <tr>
+                <td style="text-align:left; padding-right: 10px;">Recommend Algorithm</td>
+                <td style="text-align:left;" id="recommended_algorithm"></td>
+            </tr>
+            <tr>
+                <td style="text-align:left; padding-right: 10px;">Used Classifier</td>
+                <td style="text-align:left;" id="used_classifier"></td>
+            </tr>
+        </table>
+    </div>
+    <p style="margin-top: 30px;margin-bottom: -1px;text-align: center"> Classification probabilities for each
+        algorithm: </p>
+    <div id="probabilities-chart" style="height:230px">
+    </div>
+    <div id="alg-scores-chart"></div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        {#let recommendation_url = "{% url 'get_recommendation' setname=setname %}"#}
+        $('#descr-show').click(function () {
+            $('#descr-show').hide();
+            $('#descr-hide').show();
+            $('#descr-options').show();
+        });
+        $('#descr-hide').click(function () {
+            $('#descr-hide').hide();
+            $('#descr-options').hide();
+            $('#descr-show').show();
+        });
+
+    </script>
+    {#    <script src="{% static 'js/repair.js' %}" type="text/javascript"></script>#}
+    <script src="{% static 'js/recommendation/recommendation_charts.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/recommendation/recommendation.js' %}" type="text/javascript"></script>
+
+    <script>
+        const recommendation_data = {{ recommendation_data|safe }};
+        display_recommendation_results(recommendation_data)
+    </script>
+{% endblock %}

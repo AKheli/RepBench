@@ -22,22 +22,27 @@ const inject = function () {
                 //delete old series
                 let s = responseJson.injected_series
                 //remove old series in the same column
-                let previously_injected = null
                 if (mainChart.get(s["id"])) {
-                    // remove element from injectedSeries list the item with the same id as s["id"]
-                    previously_injected = injectedSeries.filter(inj_s => inj_s.series.id === s["id"])[0]
-                    injectedSeries = injectedSeries.filter(inj_s => inj_s.series.id !== s["id"])
-                    mainChart.get(s["id"]).remove();
+                    let previously_injected = chartManager.injectedSeries.filter(inj_s => inj_s._chartSeriesData.id === s["id"])[0]
+                    // merge the two series
+                    previously_injected.originalData.forEach((val, idx) => {
+                        if (s["data"][idx] === null) {
+                            s["data"][idx] = val
+                            s["norm_data"][idx] = previously_injected.normData[idx]
+                        }
+                    })
+                    chartManager.removeSeries(s["id"])
                 }
+
+                chartManager.addSeries(s, true, "injected")
                 s["dashStyle"] = 'ShortDot'
-                addInjectedSeries(s, previously_injected)
             })
         )
 
     })
-    Promise.all(promises).then(() => {
-        resetSeries()
-    })
+    // Promise.all(promises).then(() => {
+    //     // resetSeries()
+    // })
     return false
 }
 

@@ -11,13 +11,6 @@ from testing_frame_work.data_methods.data_class import DataContainer
 class RecommendationView(SyntheticDatasetView):
     template = "recommendation.html"
     recommender_file_name = ""
-    def load_recommender(self):
-        from recommendation.utils.file_parsers import load_estimator
-        automl = load_estimator(self.recommender_file_name)
-
-
-
-    # def recommendation_context(self,setname):
 
 
     def get(self, request, setname="BAFU"):

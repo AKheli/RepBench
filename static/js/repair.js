@@ -2,7 +2,7 @@ let createRepairRequestFormData = function (alg) {
     const form = document.getElementById(alg)
     const repairFormData = new FormData(form)
     repairFormData.append('csrfmiddlewaretoken', csrftoken)
-    repairFormData.append("injected_series", JSON.stringify(get_injected_norm_data()))
+    repairFormData.append("injected_series", JSON.stringify(chartManager.get_injected_norm_data()))
     return repairFormData
 }
 
@@ -17,16 +17,17 @@ let repair = (alg) => {
         const repSeries = responseJson.repaired_series
         const scores = responseJson.scores
         repairResult = repSeries
-        let color = null
-        repairedSeries.length  = 0
+
+
         const chartRepairSeries = Object.keys(repSeries).map(key => {
             let repair = repSeries[key]
-            return addRepairedSeries(repair,color)
+            console.log(repair)
+            return chartManager.addSeries(repair,false,"repair")
         })
-        updateScoreBoard(scores)
-
-        resetSeries(true)
+        console.log(scores)
+        // chartManager.resetSeries(true)
         scores["color"] = mainChart.series[mainChart.series.length-2].color
+        updateScoreBoard(scores)
 
 
     })

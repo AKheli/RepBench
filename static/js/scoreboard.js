@@ -15,11 +15,11 @@ const createScoreBoard = function () {
 
 const updateScoreBoard = function (scores) {
     RoundSliders.init(2);
-    RoundSliders.updateValue("#RMSE-slider", scores.rmse, 0, scores.original_scores.rmse);
+    RoundSliders.updateValue("#RMSE-slider", scores.RMSE, 0, scores.original_scores.RMSE);
     RoundSliders.setTitle("#RMSE-slider", "RMSE");
-    RoundSliders.updateValue("#MAE-slider", scores.mae, 0, scores.original_scores.mae);
+    RoundSliders.updateValue("#MAE-slider", scores.MAE, 0, scores.original_scores.MAE);
     RoundSliders.setTitle("#MAE-slider", "MAE");
-    RoundSliders.updateValue("#RMSE-Anomaly-slider", scores.partial_rmse, 0, 2);
+    RoundSliders.updateValue("#RMSE-Anomaly-slider", scores["RMSE on Anomaly"], 0, 2);
     RoundSliders.setTitle("#RMSE-Anomaly-slider", "RMSE on Anomaly");
     scoreBoardLoadeer();
 }

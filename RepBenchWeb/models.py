@@ -107,7 +107,6 @@ class InjectedContainer(models.Model):
             df_original = original_data.df
             injected_data_container  = self.injected_container
             truth = injected_data_container.truth
-            print(truth)
             recommendation_results = get_recommendation(injected_data_container)
             repairs = recommendation_results["alg_repairs"]
 
@@ -117,7 +116,7 @@ class InjectedContainer(models.Model):
                 repair_norm = (repair - mean) / std
                 # normalize truth data w.r.t injected series
 
-                repair_converted[alg_name] = map_repair_data(repair_norm, injected_data_container, alg_name, links=None, df_original= truth)
+                repair_converted[alg_name] = map_repair_data(repair_norm, injected_data_container, alg_name=alg_name, links=None, df_original= truth)
             recommendation_results["alg_repairs"] = repair_converted
 
             self.recommendation = json.dumps(recommendation_results)

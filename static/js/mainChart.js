@@ -1,3 +1,6 @@
+const chartManager = new ChartManager();
+
+
 Highcharts.setOptions({
     plotOptions: {
         series: {
@@ -5,7 +8,6 @@ Highcharts.setOptions({
         }
     }
 });
-
 
 
 const chartNavigator = { // do not use navigator since it is used by another script
@@ -30,7 +32,6 @@ const events = {
         if (series.filter(s => s.visible).length === 0) {
             series[0].show()
         }
-
         series.forEach(s => {
             var id = s.userOptions.id,
                 name = s.userOptions.name
@@ -81,9 +82,7 @@ let tooltip = {
 
 let mainChart = null
 let threshold = null
-
 let legendWidth = null
-
 let load_chart = null
 const loadChart = function (series = {}, container = 'load_chart') {
     document.getElementById("content").style["overflow-y"] = "hidden"
@@ -106,10 +105,11 @@ const loadChart = function (series = {}, container = 'load_chart') {
     })
     load_chart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
 }
-loadChart()
 
 
-const initMainChart = function (series = {}, container = 'highcharts_container') {
+const initMainChart = function (series = {}, addSeriesToChartManager = false, container = 'highcharts_container') {
+    loadChart()
+    console.log("chart_input", series)
     mainChart = Highcharts.chart(document.getElementById(container), {
         credits: {
             enabled: false
@@ -121,7 +121,7 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             floating: true,
             // y :-20,
             // x : -20,
-            width:legendWidth
+            width: legendWidth
         },
         tooltip: tooltip,
         chart: {
@@ -132,33 +132,9 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
             // spacingTop: 20
             x: -200,
         },
-        yAxis: threshold === null ? [{
-            title: {
-                text: "",
-            },
-            endOnTick: true,
-        }] : splitMainChart(),
-        plotOptions: {
-            series: {
-                pointStart: 1,
-                pointInterval: 1,
-                series: {
-                    marker: {
-                        enabled: false,
-                        states: {
-                            hover: {
-                                enabled: false
-                            }
-                        }
-                    },
-                    shadow: false,
-                    animation: false
-                }
-            },
-        },
 
         title: {
-            text: chart_title,
+            text: chart_title ? chart_title : "",
             style: {
                 color: 'black',
                 fontWeight: 'bold',
@@ -204,36 +180,65 @@ const initMainChart = function (series = {}, container = 'highcharts_container')
 
         series: series, // add a series otherwise it does not work
     });
+
+
+    console.log("mainChart", mainChart)
+    load_chart.hideLoading()
+    document.getElementById("load_chart").style.display = "none";
+    document.getElementById("content").style["overflow-y"] = "auto"
+
+    if (addSeriesToChartManager) {
+        series.forEach(s => {
+            chartManager.addSeries(s, false,)
+        })
+    }
 }
 
-const mainChartFetchPromise = new Promise((resolve, reject) => {
-    fetch(data_url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
-        }
-    }).then(response => response.json())
-        .then(data => {
-            if (data.injected) {
-                initMainChart(data.series.concat(data.injected))
-            } else {
-                initMainChart(data.series)
+
+const fetch_main_chart_data = function (data_url) {
+    return new Promise((resolve, reject) => {
+        fetch(data_url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
             }
+        }).then(response => response.json())
+            .then(data => {
+                // if (data.injected) {// todo check this
+                //     initMainChart(data.series.concat(data.injected))
+                // } else {
+                //     initMainChart(data.series)
+                // }
 
-            // Store data
-            data.series.forEach(s => addOriginalSeries(s))
-            if (data.injected) {
-                data.injected.forEach(s => addInjectedSeries(s))
-            }
-            resetSeries()
-            load_chart.hideLoading()
-            document.getElementById("load_chart").style.display = "none";
-            document.getElementById("content").style["overflow-y"] = "auto"
-            resolve()
+                data.series.forEach(s => chartManager.addSeries(s,false))
+                if (data.injected) {
+                    data.injected.forEach(s => chartManager.addSeries(s,false,"injected"))
+                }
+                chartManager.resetSeries()
+                resolve()
 
 
-        }).catch(error => console.error(error))
+
+            }).catch(error => console.error(error))
+    })
+}
+
+
+$('#rawButton').click(function () {
+    $('#zButton').removeClass('active');
+    // $('#minMaxButton').removeClass('active');
+    $('#rawButton').addClass('active');
+    chartManager.normalized = false;
+    chartManager.resetSeries()
 })
 
-
+$('#zButton').click(function () {
+    $('#rawButton').removeClass('active');
+    // $('#minMaxButton').removeClass('active');
+    $('#zButton').addClass('active');
+    if (!chartManager.normalized ) {
+        chartManager.normalized = true;
+        chartManager.resetSeries()
+    }
+});

@@ -11,12 +11,12 @@ def map_truth_data(original_data: pd.DataFrame, norm_data: pd.DataFrame = None, 
     df, df_norm = original_data, norm_data \
         if norm_data is not None else (original_data - original_data.mean()) / original_data.std()
 
-    data = {
-        'series': [{"visible": i < RepBenchWeb, "id": col_name, "name": col_name, "data": list(df[col_name])
+
+    data =  [{"visible": i < RepBenchWeb, "id": col_name, "name": col_name, "data": list(df[col_name])
                        , "norm_data": list(df_norm[col_name])} for (i, col_name)
                    in
                    enumerate(df.columns)]
-    }
+
     return data
 
 
@@ -64,17 +64,17 @@ def map_injected_data_container(injected_data_container: InjectedDataContainer):
             map_injected_series(injected_col, injected_col_norm, col_name)
         )
 
-    return {"series": truth_series["series"], "injected": injected_series}
+    return {"series": truth_series, "injected": injected_series}
 
 
 def map_repair_data(repair: DataFrame, injected_data_container: InjectedDataContainer, alg_name: str,
                     links: dict, df_original: DataFrame):
-    print("map repair data")
+
     truth = injected_data_container.truth
     repair.columns = truth.columns
     injected_data_container: InjectedDataContainer
     data = {
-        str(col_name) + "repair": {"linkedTo": links[col_name] if links is not None else None,
+        str(col_name) + "repair": {**({"linkedTo": links[col_name]} if links else {}),
                                    "id": str(col_name) + "repair" + alg_name,
                                    "name": alg_name,
                                    "data": list(reverse_norm(repair[col_name], df_original[col_name])),

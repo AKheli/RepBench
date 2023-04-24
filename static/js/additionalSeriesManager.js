@@ -1,204 +1,140 @@
-let normalized = false
-let injectedSeries = []
-const repairedSeries = []
-const originalSeries = []
-const reducedSeries = []
+class ChartManager {
+    //needs mainChart to be initialized to use
+    constructor() {
+        this.normalized = false;
+        this.injectedSeries = [];
+        this.repairedSeries = [];
+        this.originalSeries = [];
+        this.reducedSeries = [];
 
-//large color palette excluding red good visible with white background
-const colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
-    '#50394c', '#e4d354', '#8085e8', '#8d4653', '#91e8e1', '#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9']
-// color palette for repaired series,different from the one used for original series
-const repairedColors = ['#ff7f0e','#1f77b4', '#2ca02c', '#d62728', '#9467bd',
-'#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#2ca02c', '#d62728', '#9467bd', '#e377c2', '#7f7f7f']
-const getRepairedColor = function () {
-    return repairedColors[repairedSeries.length % repairedColors.length]
-}
-const getColor = function () {
-    return colors[originalSeries.length % colors.length]
-}
-
-const getOriginalData = function (id, norm= false) {
-    return originalSeries.filter(s => s.series.id === id)[0].originalData
-}
-
-const chartSeriesMap = function (){
-    let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
-    var myDict = {};
-    allSeries.forEach(s => {
-        myDict[s.chartSeries.name] = s
-    })
-    return myDict
-}
-
-const normDataSelection = function (series) {
-    return normalized ? [...series.normData] : [...series.originalData]
-}
-const swap_norm = function () {
-    const seriesMap = chartSeriesMap()
-    mainChart.series.forEach(s => {
-        if(s.name in seriesMap){
-            const series = seriesMap[s.name]
-            s.setData(normDataSelection(series),false)
-        }
-    })
-    mainChart.redraw()
-}
-
-
-const get_injected_norm_data = function () {
-    //data that gets sent to the back end
-    return injectedSeries.map(s => {
-        return {
-            linkedTo: s.series.linkedTo,
-            id: s.series.id, //injected id
-            data: s.series.norm_data
-        }
-    })
-}
-
-const addSeries = function (series) {
-    let ser = {
-        series: series,
-        originalData: series.data.map(s => s),
-        normData: series.norm_data.map(s => s),
-        name: series.name,
-        chartSeries: null,
+        this.colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#50394c', '#e4d354', '#8085e8', '#8d4653',
+            '#91e8e1', '#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9'];
+        this.repairedColors = ['#ff7f0e', '#1f77b4', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+            '#bcbd22', '#17becf', '#2ca02c', '#d62728', '#9467bd', '#e377c2', '#7f7f7f'];
     }
-    return ser
-}
-const addOriginalSeries = function (series , add_to_chart = false) {
-    if (series.color == null) {
-        series.color = getColor()
+
+    getColor(type = "default") {
+        if (type === "original") {
+            return this.colors[this.originalSeries.length % this.colors.length];
+        }
+        if (type === "repair") {
+            return this.repairedColors[this.repairedSeries.length % this.repairedColors.length];
+        }
     }
-    const retval = addSeries(series)
-    originalSeries.push(retval)
-    return retval
-}
 
 
-const addInjectedSeries = function (series, previously_injected) {
-    console.log("ADD INJECTED SERIES")
-    console.log("PREVIOUSLY INJECTED: ", previously_injected) // merge the two injected series
-    if (previously_injected) {
-        series.data.forEach((p, i) => {
-            if (series.data[i] === null) {
-                if (previously_injected.originalData[i] !== null) {
-                    series.data[i] = previously_injected.originalData[i]
-                    series.norm_data[i] = previously_injected.normData[i]
-                }
+    getSeriesChartData(ser) {
+        let chartSeriesData = ser._chartSeriesData
+        console.log(ser)
+        console.log(chartSeriesData)
+        console.log(ser.color)
+        chartSeriesData.color = ser.color
+        chartSeriesData.data = this.normalized ? [...ser.normData] : [...ser.originalData];
+        return chartSeriesData
+    }
+
+    addSeries(series, addToChart = true, series_type = "original", merge_with = null) {
+        series_type = series.series_type ? series.series_type : series_type
+
+
+        let ser = {
+            id: series.id,
+            originalData: series.data.map(s => s),
+            normData: series.norm_data.map(s => s),
+            name: series.name,
+            series_type: series_type,
+            color: series.color !== undefined ? series.color : this.getColor(series_type),
+            chartSeriesObj: null, // ref to series in chart
+            _chartSeriesData: series//  acces with getSeriesChartData
+        };
+
+
+        if (series_type === "original") {
+            this.originalSeries.push(ser);
+        } else if (series_type === "injected") {
+            if( typeof updateExportInjectedButton === 'function' ) updateExportInjectedButton(this.injectedSeries)
+            this.injectedSeries.push(ser);
+        } else if (series_type === "repair") {
+            this.repairedSeries.push(ser);
+        } else if (series_type === "reduced") {
+            this.reducedSeries.push(ser);
+        }
+        if (addToChart) {
+            ser.chartSeriesObj = mainChart.addSeries(this.getSeriesChartData(ser));
+            // ser.chartSeriesData = null;
+        }
+        return ser;
+    }
+
+    get_injected_norm_data() {
+        //data that gets sent to the back end
+        return this.injectedSeries.map(s => {
+            return {
+                linkedTo: s._chartSeriesData.linkedTo,
+                id: s._chartSeriesData.id, //injected id
+                data: s.normData
             }
-
-        })
-    }
-    const retval = addSeries(series)
-    injectedSeries.push(retval)
-    return retval
-}
-
-const addRepairedSeries = function (series, col) {
-    if (col != null) {
-        series.color = col
-    }
-    if (series.color == null) {
-        series.color = getRepairedColor()
-    }
-    const retval = addSeries(series)
-    repairedSeries.push(retval)
-    return retval
-}
-
-
-const clearAllSeries = function () {
-    repairedSeries.length = 0
-    injectedSeries.length = 0
-    reducedSeries.length = 0
-    resetSeries()
-    // removeScores()
-}
-
-
-const resetSeries = function (showOnlyInjected = false) {
-    console.log("resetSeries")
-    if (mainChart !== null) {
-        mainChart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
-    }
-    let allSeries = originalSeries.concat(injectedSeries).concat(repairedSeries).concat(reducedSeries)
-    if (showOnlyInjected) {
-        const repairLinks = injectedSeries.map(s => {
-            return s.series.linkedTo
-        })
-        originalSeries.forEach(o => {
-            o.series.visible = repairLinks.includes(o.series.id)
         })
     }
 
-    allSeries.forEach(s => {
-        if (s.chartSeries && !showOnlyInjected) {
-            s.series.visible = s.chartSeries.visible
+    clearAllSeries() {
+        this.repairedSeries.length = 0
+        this.injectedSeries.length = 0
+        this.reducedSeries.length = 0
+        this.resetSeries()
+        // removeScores()
+    }
+
+    getAllSeries() {
+        return this.originalSeries.concat(this.injectedSeries).concat(this.repairedSeries).concat(this.reducedSeries)
+    }
+
+
+    removeSeries(id) {
+        this.injectedSeries = this.injectedSeries.filter(s => s._chartSeriesData.id !== id)
+        this.repairedSeries = this.repairedSeries.filter(s => s._chartSeriesData.id !== id)
+        this.reducedSeries = this.reducedSeries.filter(s => s._chartSeriesData.id !== id)
+        this.originalSeries = this.originalSeries.filter(s => s._chartSeriesData.id !== id)
+        mainChart.get(id).remove();
+    }
+
+    _getChartXAxis() {
+        const axis0isDefined = mainChart !== null && mainChart.xAxis !== undefined && mainChart.xAxis[0] !== undefined
+        if (axis0isDefined) {
+            const chartMin = mainChart.xAxis[0].min + 0
+            const chartMax = mainChart.xAxis[0].max + 0
+            return {"min": chartMin, "max": chartMax}
         }
-    })
-
-    let allInputSeries = allSeries.map(s => s.series)
-    const axis0isDefined = mainChart !== null && mainChart.xAxis !== undefined && mainChart.xAxis[0] !== undefined
-
-
-    if (axis0isDefined) {
-        const chartMin = mainChart.xAxis[0].min+0
-        const chartMax = mainChart.xAxis[0].max+0
-        initMainChart(allInputSeries)
-        mainChart.xAxis[0].setExtremes(chartMin, chartMax)
+        return false
     }
-    else {
-        initMainChart(allInputSeries)
+
+    resetSeries(showOnlyInjected = false) {
+        // if (mainChart !== null) {
+        //     mainChart.showLoading('<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">');
+        // }
+
+        if (showOnlyInjected) {
+            const repairLinks = this.injectedSeries.map(s => {
+                return s._chartSeriesData.linkedTo
+            })
+            this.originalSeries.forEach(originalS => {
+                originalS._chartSeriesData.isVisible = repairLinks.includes(originalS._chartSeriesData.id)
+            })
+        }
+        let allChartSeries = this.getAllSeries().map(s => this.getSeriesChartData(s))
+
+        const axis0isDefined = this._getChartXAxis()
+        initMainChart(allChartSeries)
+        if (axis0isDefined) {
+            mainChart.xAxis[0].setExtremes(axis0isDefined.min, axis0isDefined.max)
+        }
+
     }
-    document.getElementById("highcharts_container_wrapper").style.display = "block"
-    allSeries.forEach((s, i) => s.chartSeries = mainChart.series[i])
-    updateExportInjectedButton(injectedSeries)
-    mainChart.hideLoading()
 }
 
 
 
-let injectedString = null
-const stringifyInjectedSeries = function () {
-    injectedSeries.forEach(s => {
-        s.series.data = s.originalData
-    })
-    injectedString = JSON.stringify(injectedSeries.map(s => s.series))
-}
 
-const loadInjectedSeries = function () {
-    if (injectedString) {
-        let loadedInjected = JSON.parse(injectedString)
-        loadedInjected.forEach(s => {
-            addInjectedSeries(s)
-        })
-        resetSeries()
-
-    }
-
-}
-
-
-$('#rawButton').click(function () {
-
-    $('#zButton').removeClass('active');
-    // $('#minMaxButton').removeClass('active');
-    $('#rawButton').addClass('active');
-    normalized = false;
-    swap_norm()
-})
-
-$('#zButton').click(function () {
-
-    $('#rawButton').removeClass('active');
-    // $('#minMaxButton').removeClass('active');
-    $('#zButton').addClass('active');
-    if (!normalized) {
-        normalized = true;
-        swap_norm()
-    }
-});
 
 
 

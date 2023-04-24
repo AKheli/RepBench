@@ -56,4 +56,4 @@ const updateExportInjectedButton = function (injectedSeries) {
 
     }
 }
-updateExportInjectedButton(injectedSeries)
+// updateExportInjectedButton(injectedSeries)

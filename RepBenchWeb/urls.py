@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
-from RepBenchWeb.views.recommendation import recommendation_view
+from RepBenchWeb.views.recommendation import recommendation_view , file_upload_view
 from RepBenchWeb.views import (
     indexview,
     optimizationview,
@@ -72,7 +72,12 @@ urlpatterns = [
     ## recommendation
     path('recommendation/<str:setname>', recommendation_view.RecommendationView.as_view(), name='recommend'),
     path('recommendation_datasets', recommendation_view.RecommendationView().recommendation_datasets, name='recommendation_datasets'),
-    path('get_reccomendation_results/<str:setname>', recommendation_view.RecommendationView.get_recommendation , name="get_recommendation")
+    path('get_reccomendation_results/<str:setname>', recommendation_view.RecommendationView.get_recommendation , name="get_recommendation"),
+
+
+    path('user_recommendation', file_upload_view.upload_files , name="user_recommendation"),
+    path('upload/', file_upload_view.upload_files, name='upload_files'),
+    # path('user_recommendation', recommendation_view..as_view(), name='user_recommendation'),
 ]
 
 

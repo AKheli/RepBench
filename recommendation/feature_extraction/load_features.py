@@ -6,6 +6,9 @@ import os
 
 from injection import inject_data_df
 from recommendation.feature_extraction.feature_extraction import extract_features
+import csv
+
+from recommendation.utils.file_parsers import read_file_to_pandas
 
 default_data_folder = "recommendation/datasets/train"
 
@@ -40,7 +43,7 @@ def load_data(injection_parameters,
     injection_parameters = injection_parameters.copy()
     dataset = injection_parameters.pop("dataset")
     cols = injection_parameters["cols"]
-    truth_df: pd.DataFrame = pd.read_csv(f"{data_folder}/{dataset}")
+    truth_df: pd.DataFrame = read_file_to_pandas(f"{data_folder}/{dataset}")
 
 
     # z-score  normalization and cutting
@@ -66,7 +69,7 @@ def load_data(injection_parameters,
 
 
 
-def load_features(injection_parameters,use_rawdata=False):
+def load_features(injection_parameters,data_folder,use_rawdata=False):
     """
     param: injection_parameters: dict
        injection_parameters = {
@@ -80,10 +83,9 @@ def load_features(injection_parameters,use_rawdata=False):
 
     return: features: dict of features for the selected column
     """
-    injected_df, _ = load_data(injection_parameters, normalize= not use_rawdata)
+    injected_df, _ = load_data(injection_parameters, data_folder=data_folder, normalize= not use_rawdata)
     features = extract_features(injected_df, column=injection_parameters["cols"][0])
     return features
-
 
 def get_injection_parameter_hashes_checker(file_name):
     if not os.path.exists(file_name):
@@ -105,7 +107,7 @@ def get_injection_parameter_hashes_checker(file_name):
     return checker
 
 
-def compute_features(load_filename,  store_filename, use_rawdata=True):
+def compute_features(load_filename,  store_filename, data_folder, use_rawdata=True):
     """
     Args:
         load_filename (str): The path to the file containing the injection parameters.
@@ -129,7 +131,7 @@ def compute_features(load_filename,  store_filename, use_rawdata=True):
     for i,line in enumerate(lines):
         results_line = json.loads(line)
         injection_parameters = results_line["injection_parameters"]
-        features = load_features(injection_parameters,use_rawdata=use_rawdata)
+        features = load_features(injection_parameters,data_folder=data_folder , use_rawdata=use_rawdata)
         results_line["features"] = features
         results.append(results_line)
         # store result to file

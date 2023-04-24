@@ -27,6 +27,8 @@ COPY ./frozen_requirements.txt /usr/src/app
 RUN apt-get update && apt-get install -y build-essential
 
 RUN pip install -r /usr/src/app/frozen_requirements.txt
+
+# updated conflicting requierement
 RUN pip install --upgrade protobuf
 
 COPY . /usr/src/app

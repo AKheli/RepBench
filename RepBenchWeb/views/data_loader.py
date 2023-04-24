@@ -27,7 +27,7 @@ def get_data(request, setname,RepBenchWeb=4):
     RepBenchWeb = int(request.GET.get("RepBenchWeb", RepBenchWeb))
     if DataSet.objects.filter(title=setname).exists():
         df = DataSet.objects.get(title=setname).df
-        return JsonResponse(map_truth_data(df,RepBenchWeb=RepBenchWeb))
+        return JsonResponse({ "series" : map_truth_data(df,RepBenchWeb=RepBenchWeb) })
 
     injected_data_container: InjectedDataContainer = InjectedContainer.objects.get(title=setname).injected_container
 
