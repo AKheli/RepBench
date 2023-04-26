@@ -29,7 +29,7 @@ const display_recommendation_results = function (data, wait_for_chart = false) {
                 rep_series.visible = k === data.recommended_algorithm
                 rep_series.legendIndex = k === data.recommended_algorithm ? -2 : -1
                 console.log("repseries", rep_series)
-                chartManager.addSeries(rep_series, false,   "repair")
+                chartManager.addSeries(rep_series, false, "repair")
             });
         })
     } else {
@@ -38,7 +38,7 @@ const display_recommendation_results = function (data, wait_for_chart = false) {
             rep_series.visible = k === data.recommended_algorithm
             rep_series.legendIndex = k === data.recommended_algorithm ? -2 : -1
             console.log("repseries", rep_series)
-            chartManager.addSeries(rep_series, false,   "repair")
+            chartManager.addSeries(rep_series, false, "repair")
         });
     }
     chartManager.resetSeries(true)
@@ -58,7 +58,7 @@ if (typeof recommendation_url !== 'undefined') {
             }
         }).then(response => response.json()).then(data => {
             recommendationResults = data
-            display_recommendation_results(data,true)
+            display_recommendation_results(data, true)
             resolve()
         }).catch(error => console.error(error))
     })

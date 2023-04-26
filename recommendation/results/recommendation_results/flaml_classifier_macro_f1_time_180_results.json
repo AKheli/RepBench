@@ -1,0 +1,62 @@
+{
+    "train": {
+        "accuracy": 0.6173304628632938,
+        "confusion_matrix": [
+            [
+                74,
+                125,
+                53,
+                21
+            ],
+            [
+                6,
+                632,
+                3,
+                13
+            ],
+            [
+                23,
+                130,
+                149,
+                48
+            ],
+            [
+                39,
+                241,
+                9,
+                292
+            ]
+        ],
+        "classification_report": "              precision    recall  f1-score   support\n\n           0       0.52      0.27      0.36       273\n           1       0.56      0.97      0.71       654\n           2       0.70      0.43      0.53       350\n           3       0.78      0.50      0.61       581\n\n    accuracy                           0.62      1858\n   macro avg       0.64      0.54      0.55      1858\nweighted avg       0.65      0.62      0.59      1858\n"
+    },
+    "test": {
+        "accuracy": 0.6097954790096879,
+        "confusion_matrix": [
+            [
+                90,
+                128,
+                49,
+                18
+            ],
+            [
+                8,
+                558,
+                1,
+                14
+            ],
+            [
+                20,
+                125,
+                159,
+                49
+            ],
+            [
+                33,
+                267,
+                13,
+                326
+            ]
+        ],
+        "classification_report": "              precision    recall  f1-score   support\n\n           0       0.60      0.32      0.41       285\n           1       0.52      0.96      0.67       581\n           2       0.72      0.45      0.55       353\n           3       0.80      0.51      0.62       639\n\n    accuracy                           0.61      1858\n   macro avg       0.66      0.56      0.57      1858\nweighted avg       0.66      0.61      0.59      1858\n"
+    }
+}

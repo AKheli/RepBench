@@ -1,0 +1,62 @@
+{
+    "train": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+            [
+                456,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                781,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                634,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                710
+            ]
+        ],
+        "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00       456\n           1       1.00      1.00      1.00       781\n           2       1.00      1.00      1.00       634\n           3       1.00      1.00      1.00       710\n\n    accuracy                           1.00      2581\n   macro avg       1.00      1.00      1.00      2581\nweighted avg       1.00      1.00      1.00      2581\n"
+    },
+    "test": {
+        "accuracy": 0.7662538699690402,
+        "confusion_matrix": [
+            [
+                55,
+                1,
+                47,
+                11
+            ],
+            [
+                1,
+                167,
+                3,
+                9
+            ],
+            [
+                30,
+                6,
+                114,
+                18
+            ],
+            [
+                4,
+                11,
+                10,
+                159
+            ]
+        ],
+        "classification_report": "              precision    recall  f1-score   support\n\n           0       0.61      0.48      0.54       114\n           1       0.90      0.93      0.92       180\n           2       0.66      0.68      0.67       168\n           3       0.81      0.86      0.83       184\n\n    accuracy                           0.77       646\n   macro avg       0.74      0.74      0.74       646\nweighted avg       0.76      0.77      0.76       646\n"
+    }
+}

@@ -18,7 +18,8 @@ from algorithms.algorithms_config import CDREC, RPCA, IMR, SCREEN
 from datetime import datetime
 
 
-mode = "validation"
+mode = "train"
+
 # Get current date and time
 now = datetime.now().strftime("%m-%d %H:%M:%S")
 
@@ -29,7 +30,7 @@ datasets = os.listdir(data_folder)
 
 factors = [2, 5, 10]
 a_percentages = [4, 7, 11, 11]
-col_n_cap = 1
+col_n_cap = 4
 score = "rmse"
 alg_names = [CDREC, RPCA, IMR, SCREEN]
 a_types = [AMPLITUDE_SHIFT, DISTORTION, POINT_OUTLIER]
@@ -58,7 +59,7 @@ for dataset in datasets:
     ts_cols = [[i] for i in range(min(truth_df.shape[1], col_n_cap))]
     data_sets_to_col_n[dataset] = truth_df.shape[1]
 
-for columns, a_percentage, factor, a_type, dataset in itertools.product([[0], [1], [2], [3]], a_percentages, factors,
+for columns, a_percentage, factor, a_type, dataset in itertools.product([ [1], [2], [3]], a_percentages, factors,
                                                                         a_types, datasets):
     for c in columns:
         if c >= data_sets_to_col_n[dataset]:

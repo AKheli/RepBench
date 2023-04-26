@@ -1,0 +1,62 @@
+{
+    "train": {
+        "accuracy": 0.9020452099031216,
+        "confusion_matrix": [
+            [
+                209,
+                10,
+                32,
+                22
+            ],
+            [
+                2,
+                631,
+                6,
+                15
+            ],
+            [
+                31,
+                3,
+                287,
+                29
+            ],
+            [
+                7,
+                14,
+                11,
+                549
+            ]
+        ],
+        "classification_report": "              precision    recall  f1-score   support\n\n           0       0.84      0.77      0.80       273\n           1       0.96      0.96      0.96       654\n           2       0.85      0.82      0.84       350\n           3       0.89      0.94      0.92       581\n\n    accuracy                           0.90      1858\n   macro avg       0.89      0.87      0.88      1858\nweighted avg       0.90      0.90      0.90      1858\n"
+    },
+    "test": {
+        "accuracy": 0.9133476856835306,
+        "confusion_matrix": [
+            [
+                235,
+                11,
+                25,
+                14
+            ],
+            [
+                2,
+                564,
+                4,
+                11
+            ],
+            [
+                30,
+                4,
+                296,
+                23
+            ],
+            [
+                7,
+                18,
+                12,
+                602
+            ]
+        ],
+        "classification_report": "              precision    recall  f1-score   support\n\n           0       0.86      0.82      0.84       285\n           1       0.94      0.97      0.96       581\n           2       0.88      0.84      0.86       353\n           3       0.93      0.94      0.93       639\n\n    accuracy                           0.91      1858\n   macro avg       0.90      0.89      0.90      1858\nweighted avg       0.91      0.91      0.91      1858\n"
+    }
+}

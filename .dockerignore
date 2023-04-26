@@ -3,7 +3,8 @@ lib
 bin
 lib64
 *.csv
-*.json
+*.zip
+#*.json
 *.png
 *.jpg
 .git

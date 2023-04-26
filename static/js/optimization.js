@@ -10,6 +10,7 @@ let createBayesianOptFormData = function (form_id) {
     for (var pair of formData.entries()) {
         bayesienOptFormData.append(pair[0], pair[1]);
     }
+    console.log(csrftoken)
     bayesienOptFormData.append('csrfmiddlewaretoken', csrftoken)
     bayesienOptFormData.append("injected_series", JSON.stringify(chartManager.get_injected_norm_data()))
     return bayesienOptFormData

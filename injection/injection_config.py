@@ -1,12 +1,11 @@
 ##### Anomalies
 AMPLITUDE_SHIFT = "shift"
 DISTORTION = "distortion"
-GROWTH_CHANGE = "growth"
+# GROWTH_CHANGE = "growth" # to handled by any algorithm yet
 POINT_OUTLIER = "outlier"
 
 ANOMALY_TYPES = (AMPLITUDE_SHIFT,
                  DISTORTION,
-                 GROWTH_CHANGE,
                  POINT_OUTLIER)
 
 BASE_FACTORS = {AMPLITUDE_SHIFT: 2,

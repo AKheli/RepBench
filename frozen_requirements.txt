@@ -192,3 +192,4 @@ wrapt==1.15.0
 xgboost==1.7.4
 zict==2.2.0
 zipp==3.15.0
+django-cors-headers==3.14.0

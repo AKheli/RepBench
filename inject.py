@@ -10,8 +10,9 @@ from injection.injection_config import ANOMALY_TYPES
 
 
 STORE_FOLDER = "injection/Results"
-#make folder if does not exist
-try:
+
+
+try: #make folder if does not exist
     os.mkdir(STORE_FOLDER)
 except:
     pass
@@ -25,7 +26,6 @@ def add_injection_arguments_to_parser(parser):
     parser.add_argument("-ts" ,"-time_series")
     parser.add_argument("-d" , "-dataset", required=True)
     parser.add_argument("-l" , "-length" , default="30" ,type = int)
-
 
 def init_injection_parser(input = None):
     parser = argparse.ArgumentParser()
@@ -60,7 +60,7 @@ def main(input = None):
     injected_df : pd.DataFrame  = injected_df_norm*original_data.std() + original_data.mean()
     file_name = file_name if file_name.endswith(".csv") else file_name + ".csv"
     print("load csv")
-    injected_df.to_csv(f"{STORE_FOLDER}/{file_name}")
+    injected_df.to_csv(f"{STORE_FOLDER}/{file_name}", index=False)
     print("csv generated")
 
 

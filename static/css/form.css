@@ -7,8 +7,6 @@ form label , .form-group label {
     margin-left: 2px;
 }
 
-
-
 card span {
     font-size: 16px !important;
     color: #333;
@@ -41,16 +39,14 @@ form .btn-primary {
 }
 
 a.btn{
-    padding-bottom: 6px;
+    padding-bottom: 0px;
     padding-top: 0px;
     padding-left: 5px ;
     padding-right: 5px ;
 
 }
 
-.mdi-information-outline{
-    /*vertical-align: text-before-edge !important;*/
-}
+
 
 #alg-selection {
     /*move it down a bit to match with other selections when on the same heihgt*/

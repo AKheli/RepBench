@@ -52,7 +52,15 @@ class ChartManager {
         if (series_type === "original") {
             this.originalSeries.push(ser);
         } else if (series_type === "injected") {
-            if( typeof updateExportInjectedButton === 'function' ) updateExportInjectedButton(this.injectedSeries)
+<<<<<<< HEAD
+            try {
+                updateExportInjectedButton(this.injectedSeries);
+            } catch (error) {
+                console.error('Failed to call updateExportInjectedButton:');
+            }
+=======
+            if (typeof updateExportInjectedButton === 'function') updateExportInjectedButton(this.injectedSeries)
+>>>>>>> d4294bb (Updated recommendation page)
             this.injectedSeries.push(ser);
         } else if (series_type === "repair") {
             this.repairedSeries.push(ser);
@@ -129,6 +137,9 @@ class ChartManager {
             mainChart.xAxis[0].setExtremes(axis0isDefined.min, axis0isDefined.max)
         }
 
+        if (typeof adjustLayout === 'function') {
+            adjustLayout()
+        }
     }
 }
 
