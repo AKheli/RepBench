@@ -15,10 +15,10 @@ from RepBenchWeb.ts_manager.HighchartsMapper import map_injected_series
 from RepBenchWeb.views.data_loader import load_data_container
 from RepBenchWeb.views.repair_view import RepairView
 from testing_frame_work.data_methods.data_class import DataContainer
-
+from django.views.decorators.http import require_http_methods
 
 class InjectionView(RepairView):
-    template = "injection.html"
+    template = "inject-and-repair.html"
     error_map = {"rmse": "RMSE",
                  "mae": "MAE",
                  "partial_rmse": "RMSE on Anomaly",
@@ -30,7 +30,7 @@ class InjectionView(RepairView):
         data_object = DataSet.objects.get(title=setname)
         df = data_object.df
         context = {"setname": setname}
-        context["data_info"] = data_object.get_info
+        context["data_info"] = data_object.get_info()
         context["RepBenchWeb"] = int(request.GET.get("RepBenchWeb", self.default_nbr_of_ts_to_display))
         context["data_fetch_url_name"] = self.data_fetch_url_name
         context["store_form"] = store_injection_form
@@ -40,6 +40,8 @@ class InjectionView(RepairView):
         return render(request, self.template, context=context)
 
 
+
+# @require_http_methods(["POST"])
 def inject_data(request, setname):
     post = request.POST
     col_name = post.get("data_columns")
@@ -63,7 +65,7 @@ def inject_data(request, setname):
     ratio = float(post.get("ratio"))
     a_type = post.get("anomaly")
     seed = post.get("seed")
-    a_len = int(post.get("length"))
+    a_len = 30 # int(post.get("length"))
     if seed == '':
         seed = random.randint(0, 100)
     else:

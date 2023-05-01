@@ -77,11 +77,13 @@ def sliders_view(request, setname="BAFU"):
     return RepBenchJsonRespone(context)
 
 
-def display_datasets(request=None):
+def display_datasets(request=None,option="Display"):
     context = {"datasets": {dataSet.title: dataSet.get_info()
                             for dataSet in DataSet.objects.all()},
                "syntheticDatasets": {dataSet.title: dataSet.get_info()
                                      for dataSet in InjectedContainer.objects.all() if
-                                     dataSet.title is not None and dataSet.title != ""}}
+                                     dataSet.title is not None and dataSet.title != ""},
+
+                "option" : option}
 
     return render(request, 'data_set_options/displayDatasets.html', context=context)

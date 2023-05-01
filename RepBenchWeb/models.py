@@ -13,6 +13,7 @@ class DataSet(models.Model):
     dataframe = models.JSONField(null=False, blank=False)
     ref_url = models.CharField(max_length=200, null=True, blank=True)
     url_text = models.CharField(max_length=200, null=True, blank=True)
+    granularity = models.CharField(max_length=200, null=True, blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
     additional_info = models.JSONField(blank=False)
 
@@ -38,13 +39,35 @@ class DataSet(models.Model):
 
         n, m = shape
         return {
+            "length" : n,
             "values": n * m,
             "ts_nbr": m,
             "title": self.title,
             "ref_url": self.ref_url,
             "url_text": self.url_text,
             "description": self.description,
+            "granularity" : self.granularity,
+            "time_interval" : self.granularity_to_time_interval()
         }
+
+
+    def granularity_to_time_interval(self):
+        unit = self.granularity[-1] #s,m,h,d,w
+
+        s = 1
+        m = 60*s
+        h = 60*m
+        d = 24*h
+        w = 7*d
+        gran_dict = {
+            "s" : s,
+            "m" : m,
+            "h" : h,
+            "d" : d,
+            "w" : w
+        }
+        print( int(gran_dict[unit]))
+        return  int(gran_dict[unit])
 
     def get_catch_22_features(self):
         additional_info = json.loads(self.additional_info)

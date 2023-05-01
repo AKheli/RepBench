@@ -8,8 +8,9 @@ let createRepairRequestFormData = function (alg) {
 
 let repairResult = null
 let repair = (alg) => {
+    console.log("createScoreBoard")
     createScoreBoard()
-
+    mainChart.showLoading()
     fetch(repair_url, {
         method: 'POST',
         body: createRepairRequestFormData(alg),
@@ -25,10 +26,12 @@ let repair = (alg) => {
             return chartManager.addSeries(repair,false,"repair")
         })
         console.log(scores)
-        // chartManager.resetSeries(true)
+        chartManager.resetSeries(true)
         scores["color"] = mainChart.series[mainChart.series.length-2].color
         updateScoreBoard(scores)
 
-
-    })
+    }).finally( () => {
+                mainChart.hideLoading()
+    }
+    )
 }

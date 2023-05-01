@@ -15,7 +15,6 @@ class RangeSliderInput(forms.TextInput):
     max_value = 100
     step = 1
 
-
     def __init__(self, *args, **kwargs):
         self.min_value = kwargs.pop('min_value', self.min_value)
         self.max_value = kwargs.pop('max_value', self.max_value)
@@ -39,24 +38,26 @@ class RangeSliderInput(forms.TextInput):
 
 class InjectionForm(forms.Form):
     anomaly = forms.CharField(label='Anomaly Type', widget=forms.Select(choices=ANOMALY_CHOICES, attrs={
-        "class": 'form-control', "id": "anomaly_id"}))
+        "class": 'form-control', "id": "anomaly_id",
+        "myInfo": "Anomaly Type to infect the data with."}))
     ratio = forms.FloatField(label='Ratio', initial=0.1, widget=NumberInput(
-        attrs={'id': "ratio_id", 'min': 0, 'max': 1, "class": 'form-control'}))
+        attrs={'id': "ratio_id", 'min': 0, 'max': 1, "class": 'form-control',
+               "myInfo": "Ratio of the Time Series to be injected."}))
     factor = forms.FloatField(initial=3, widget=NumberInput(
-        attrs={'id': "ratio_id", 'min':0, 'max': 30, "class": 'form-control'}))
-
-    length = forms.IntegerField(widget=RangeSliderInput(attrs={'id': 'length-slider' ,}))
+        attrs={'id': "ratio_id", 'min': 0, 'max': 30, "class": 'form-control',
+               "myInfo": "Standard deviation factor of the anomaly."}))
 
     def __init__(self, data_columns, ts_name="bafu", *args, **kwargs):
         super(InjectionForm, self).__init__(*args, **kwargs)
-        self.fields["data_columns"] = forms.MultipleChoiceField(
-            label=mark_safe("Inject Anomalies For: &nbsp;"),  # to add white space
-            widget=forms.CheckboxSelectMultiple(),
-            choices=[(i, i) for i in data_columns])
+
+        self.fields["data_columns"] = forms.CharField(
+            label=mark_safe("Time Series"),  # to add white space
+            widget=forms.Select(attrs={"class": "form-control"}, choices=[(i, i) for i in data_columns]),
+        )
 
         self.fields["data_set"] = forms.CharField(widget=forms.HiddenInput(), required=False, initial=ts_name)
         self.fields["seed"] = forms.IntegerField(label='Seed', required=False, widget=forms.NumberInput(
-            attrs={'title': 'Enter numbers Only' ,'min':0, 'step':1 , "class": 'form-control' }))
+            attrs={'title': 'Enter numbers Only', 'min': 0, 'step': 1, "class": 'form-control'}))
 
 
 class store_injection_form(forms.Form):

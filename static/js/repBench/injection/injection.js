@@ -1,21 +1,19 @@
 let createInjectFormData = function (form_id) {
     let form = document.getElementById(form_id)
     let formData = new FormData(form)
-    formData.append('csrfmiddlewaretoken', csrftoken)
     return formData
 }
 
-const inject = function () {
-    const formData = createInjectFormData('injection_form')
+const inject = function (injectionURL) {
+    const formData = createInjectFormData('injectionForm')
     const columnsToInject = [...formData.getAll('data_columns')]
-    formData.forEach((value, key) => {
-    })
-
+    console.log(formData)
+    console.log(columnsToInject)
     const promises = []
     columnsToInject.forEach(val => {
         formData.set('data_columns', val)
         promises.push(
-            fetch(injection_url, {
+            fetch(injectionURL, {
                 method: 'POST',
                 body: formData,
             }).then(response => response.json()).then(responseJson => {
@@ -40,29 +38,29 @@ const inject = function () {
         )
 
     })
-    // Promise.all(promises).then(() => {
-    //     // resetSeries()
-    // })
+    Promise.all(promises).then(() => {
+        // resetSeries()
+    })
     return false
 }
 
 // init injection_form
 
-$('#length-slider').on('input', function () {
-    var value = $(this).val();
-    $('#slider-value').text(' ' + value + ' ');
-});
-
-
-const select = document.getElementById('anomaly-select');
-const slider = document.getElementById('range-slider');
-
-select.addEventListener('change', () => {
-    console.log("SELECTED");
-    const value = select.value;
-    if (value === 'outlier') {
-        slider.step = '0';
-    } else {
-        slider.step = '1';
-    }
-});
+// $('#length-slider').on('input', function () {
+//     var value = $(this).val();
+//     $('#slider-value').text(' ' + value + ' ');
+// });
+//
+//
+// const select = document.getElementById('anomaly-select');
+// const slider = document.getElementById('range-slider');
+//
+// select.addEventListener('change', () => {
+//     console.log("SELECTED");
+//     const value = select.value;
+//     if (value === 'outlier') {
+//         slider.step = '0';
+//     } else {
+//         slider.step = '1';
+//     }
+// });

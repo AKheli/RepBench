@@ -1,4 +1,4 @@
-declare module 'static/js/lib/popper-js/popper.js' {
+declare module 'popper.js' {
   declare type Position = 'top' | 'right' | 'bottom' | 'left';
   declare type Placement =
     | 'auto-start'

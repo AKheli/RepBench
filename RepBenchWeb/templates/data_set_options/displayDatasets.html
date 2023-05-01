@@ -1,64 +1,196 @@
 {% extends "base.html" %}
 {% load static %}
-    
+
+{% block css %}
+    {{ block.super }}
+    <link href="{% static 'css/lib/datatables/datatables.css' %}" rel="stylesheet" type="text/css"/>
+
+    <style>
+        .table {
+            color: #8492A6;
+        }
+    </style>
+
+{% endblock %}
 
 {% block content %}
     <!-- import style sheet -->
-    <link rel="stylesheet" href="{% static 'css/revival/datasets.css' %}">
+    <div class="kt-portlet">
+        <div class="kt-portlet__head kt-portlet__head--lg">
+            <div class="kt-portlet__head-label">
+                <span class="kt-portlet__head-icon">
+                    <i class="mdi mdi-chart-timeline-variant mdi-24px kt-font-brand"></i>
+                </span>
+                <h3 class="kt-portlet__head-title">
+                    Table of Real-World Datasets
+                </h3>
+            </div>
+        </div>
+        <div class="kt-portlet__body">
+            <div class="kt-portlet shadow-none kt-portlet--fit  mb-0" data-ktportlet="true"> {# kt-portlet--collapsed #}
+                {#                <div class="kt-portlet__head border-bottom-0">#}
+                {#                    <div class="kt-portlet__head-toolbar">#}
+                {#                        <div class="kt-portlet__head-group">#}
+                {#                            <span class="font-weight-bold">Search Table</span> <a href="#" data-ktportlet-tool="toggle"#}
+                {#                                                                                  class="btn btn-sm btn-icon btn-default btn-icon-md"><i#}
+                {#                                class="mdi mdi-chevron-down mdi-18px"></i></a>#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
+                <div class="kt-portlet__body mt-3">
+                    <form class="kt-form kt-form--fit kt-margin-b-20" name="search_form_name">
+                        <div class="row kt-margin-b-20">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="table_real_world_datasets"
+                                           class="table table-bordered table-hover table-checkable dataTable no-footer dtr-inline"
+                                           role="grid" aria-describedby="table_real_world_datasets_info"
+                                           style="width: 1341px;">
+                                        <thead>
+                                        <tr role="row">
+                                            <th class="" tabindex="0" aria-controls="table_real_world_datasets"
+                                                rowspan="1" colspan="1" style="width: 220.667px;"
+                                                aria-label="title: activate to sort column ascending">
+                                                Title
+                                            </th>
+                                            <th class="" tabindex="0"
+                                                aria-controls="table_real_world_datasets" rowspan="1" colspan="1"
+                                                style="width: 184.6667px;"
+                                                aria-label="owner: activate to sort column descending"
+                                                aria-sort="ascending">Source
+                                            </th>
+                                            <th class="" tabindex="0" aria-controls="table_real_world_datasets"
+                                                rowspan="1" colspan="1" style="width: 125.667px;"
+                                                aria-label="timeseries: activate to sort column ascending">
+                                                Timeseries
+                                            </th>
+                                            <th class="" tabindex="0" aria-controls="table_real_world_datasets"
+                                                rowspan="1" colspan="1" style="width: 85.6667px;"
+                                                aria-label="values: act     ivate to sort column ascending">Values
+                                            </th>
+                                            <th class="" tabindex="0" aria-controls="table_real_world_datasets"
+                                                rowspan="1" colspan="1" style="width: 126.667px;"
+                                                aria-label="granularity: activate to sort column ascending">
+                                                Granularity
+                                            </th>
+                                            <th class="" tabindex="0" aria-controls="table_real_world_datasets"
+                                                rowspan="1" colspan="1" style="width: 91.5px;"
+                                                aria-label="actions: activate to sort column ascending">Action
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
 
-    <div class="container">
-        <h2>Datasets</h2>
-        <p>To view a dataset, click on its title from the table below.</p>
-        <table class="table">
-            <tbody>
-            <tr>
-                <th>Title</th>
-                <th>Source</th>
-                <th style="text-align: right">Time series</th>
-                <th style="text-align: right">Values</th>
-                  <th style="text-align: right">Action</th>
-                {#            <th style="text-align: right">Missing values</th>#}
-            </tr>
-            <tr>
+                                        {% for name,attr in  datasets.items %}
+                                            <tr>
+                                                <td tabindex="0" class="">{{ attr.title }}</td>
+                                                <td>
+                                                    <a href="{% url 'display_dataset' setname=name %}"> {{ attr.url_text }}</a>
+                                                </td>
+                                                <td style="text-align: right">{{ attr.ts_nbr }}</td>
+                                                <td style="text-align: right">{{ attr.values }}</td>
+                                                <td style="text-align: right">-</td>
+                                                {#                <td style="text-align: right"><a href="{% url 'injection' setname=attr.title %}">Inject and Repair</a></td>#}
+                                                <td>
+                                                    {% if option == "Repair" %}
+                                                        <a href="{% url 'injectAndRepair' setname=name %}">{{ option }}</a>
 
-              {% for name,attr in  datasets.items %}
-            <tr>
-                <td><a href="{% url 'display_dataset' setname=name %}">{{ attr.title }}</a>
-                <td><a href="{{ attr.ref_url }}">{{ attr.url_text }}</a></td>
-                <td style="text-align: right">{{ attr.ts_nbr }}</td>
-                <td style="text-align: right">{{ attr.values }}</td>
-
-                <td style="text-align: right"><a href="{% url 'injection' setname=attr.title %}">Inject and Repair</a></td>
-            </tr>
-        {% endfor %}
-
-
-            </tbody>
-        </table>
-
-     <h2>Synthetic Datasets</h2>
-        <table class="table">
-            <tbody>
-            <tr>
-                <th>Title</th>
-                <th style="text-align: right">Time series</th>
-                <th style="text-align: right">Values</th>
-                  <th style="text-align: right">Action</th>
-            </tr>
-            <tr>
-
-              {% for name,attr in  syntheticDatasets.items %}
-            <tr>
-                <td><a href="{% url 'synthetic_dataset_view' setname=name %}">{{ attr.title }}</a>
-                <td style="text-align: right">{{ attr.ts_nbr }}</td>
-                <td style="text-align: right">{{ attr.values }}</td>
-
-                <td style="text-align: right"><a href="{% url 'repair' setname=attr.title  %}">Repair</a></td>
-            </tr>
-        {% endfor %}
-
-
-            </tbody>
-        </table>
+                                                    {% else %}
+                                                        <a href="{% url 'display_dataset' setname=name %}">Display</a>
+                                                    {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                        {#                                        <tr role="row" class="odd">#}
+                                        {#                                            <td tabindex="0" class="">A2 Yahoo</td>#}
+                                        {#                                            <td class="sorting_1">admin</td>#}
+                                        {#                                            <td>10</td>#}
+                                        {#                                            <td>7100</td>#}
+                                        {#                                            <td>H</td>#}
+                                        {#                                            <td>false</td>#}
+                                        {#                                            <td>1</td>#}
+                                        {#                                            <td><a href="/display/real-world/28/">Display</a></td>#}
+                                        {#                                        </tr>#}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                {#                                <div class="col-sm-12 col-md-5">#}
+                                {#                                    <div class="dataTables_info" id="table_real_world_datasets_info" role="status"#}
+                                {#                                         aria-live="polite">1 to 8 of 8 entries#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                                <div class="col-sm-12 col-md-7 dataTables_pager">#}
+                                {#                                    <div class="dataTables_length" id="table_real_world_datasets_length"><label><select#}
+                                {#                                            name="table_real_world_datasets_length"#}
+                                {#                                            aria-controls="table_real_world_datasets"#}
+                                {#                                            class="custom-select custom-select-sm form-control form-control-sm">#}
+                                {#                                        <option value="5">10</option>#}
+                                {#                                        <option value="20">20</option>#}
+                                {#                                        <option value="30">30</option>#}
+                                {#                                        <option value="40">40</option>#}
+                                {#                                        <option value="-1">All</option>#}
+                                {#                                    </select> entries</label></div>#}
+                                {#                                    <div class="dataTables_paginate paging_simple_numbers"#}
+                                {#                                         id="table_real_world_datasets_paginate">#}
+                                {#                                        <ul class="pagination">#}
+                                {#                                            <li class="paginate_button page-item previous disabled"#}
+                                {#                                                id="table_real_world_datasets_previous"><a href="#"#}
+                                {#                                                                                           aria-controls="table_real_world_datasets"#}
+                                {#                                                                                           data-dt-idx="0" tabindex="0"#}
+                                {#                                                                                           class="page-link"><i#}
+                                {#                                                    class="mdi mdi-chevron-left mdi-18px"></i></a></li>#}
+                                {#                                            <li class="paginate_button page-item active"><a href="#"#}
+                                {#                                                                                            aria-controls="table_real_world_datasets"#}
+                                {#                                                                                            data-dt-idx="1" tabindex="0"#}
+                                {#                                                                                            class="page-link">1</a></li>#}
+                                {#                                            <li class="paginate_button page-item next disabled"#}
+                                {#                                                id="table_real_world_datasets_next"><a href="#"#}
+                                {#                                                                                       aria-controls="table_real_world_datasets"#}
+                                {#                                                                                       data-dt-idx="2" tabindex="0"#}
+                                {#                                                                                       class="page-link"><i#}
+                                {#                                                    class="mdi mdi-chevron-right mdi-18px"></i></a></li>#}
+                                {#                                        </ul>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                            </div>
+                        </div>
+                        <div class="kt-separator kt-separator--md kt-separator--dashed"></div>
+                        {#                        <div class="row">#}
+                        {#                            <div class="col-lg-12">#}
+                        {#                                <button class="btn btn-primary btn-brand--icon" id="kt_search">#}
+                        {#                <span>#}
+                        {#                    <i class="mdi mdi-18px mdi-magnify"></i>#}
+                        {#                    <span>Search</span>#}
+                        {#                </span>#}
+                        {#                                </button>#}
+                        {#                                <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">#}
+                        {#                <span>#}
+                        {#                    <i class="mdi mdi-18px mdi-close"></i>#}
+                        {#                    <span>Reset</span>#}
+                        {#                </span>#}
+                        {#                                </button>#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+                    </form>
+                </div>
+            </div>
+            <!--begin: Datatable -->
+            <table id="table_real_world_datasets" class="table table-bordered table-hover table-checkable"></table>
+            <!--end: Datatable -->
+        </div>
     </div>
+
+
+{% endblock %}
+
+{% block additional_bottom_js %}
+    {{ block.super }}
+    <script src="{% static 'js/lib/datatables/datatables.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/custom/datatables.init.js' %}" type="text/javascript"></script>
+    {#    <script type="text/javascript">#}
+    {#        jQuery(document).ready(function () {#}
+    {#            VadetisDatatables.init("table_real_world_datasets", "{% url 'vadetisweb:display_real_world_datasets_datatable-list' %}?format=datatables");#}
+    {#        });#}
+    {#    </script>#}
 {% endblock %}
