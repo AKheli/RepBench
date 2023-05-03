@@ -12,6 +12,7 @@ from RepBenchWeb.views import (
     dataset_views,
     repair_view,
     injection_view,
+    datasets_display,
 )
 
 from RepBenchWeb.views import dimensionality_reduction_view, synthetic_dataset_view, data_loader
@@ -26,6 +27,7 @@ urlpatterns = [
 
     path('display_datasets/', dataset_views.display_datasets, name='display_datasets'),
     path('display_datasets/<str:option>', dataset_views.display_datasets, name='display_datasets'),
+    path('display_datasets/<str:option>/<str:synthetic>', dataset_views.display_datasets, name='display_datasets'),
 
     path('display_dataset/<str:setname>', dataset_views.DatasetView.as_view(), name='display_dataset'),
     path('display_dataset_synthetic/<str:setname>', synthetic_dataset_view.SyntheticDatasetView.as_view(),
@@ -48,13 +50,12 @@ urlpatterns = [
     path('repair_data/<str:setname>', repair_view.RepairView.repair_data, name='repair_data'),
 
     # optimization
+    path('optimization_datasets',datasets_display.display_optimization_datasets,name="optimization_datasets"),
     path('opt', optimizationview.OptimizationView.as_view(), name="opt"),
     path('opt/<str:setname>', optimizationview.OptimizationView.as_view(), name="opt"),
     path('optimize_data/<str:setname>', optimizationview.OptimizationView.optimize, name='optimize_data'),
     path('fetch_optresults', optimizationview.fetch_opt_results, name='fetch_optresults'),
 
-    path('optimizazionDataSets', optimizationview.OptimizationView().optimization_datasets,
-         name='optimisation_datasets'),
 
     # alg inspection
     path('alg_inspection', dimensionality_reduction_view.DimensionalityReductionView.as_view(),

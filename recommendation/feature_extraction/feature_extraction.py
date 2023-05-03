@@ -6,16 +6,17 @@ from tsfresh import extract_features as tsfresh_extract_features
 import re
 from recommendation.feature_extraction.ts_fresh_features import selected_feature_names
 
-
 feature_endings = {"catch22": "__ct",
                    "tsfresh_minimal": "__tsf_m",
                    "multi_dim": "__md",
                    "tsfresh_selected": "__tsf_s"
                    }
 
+
 def clean_feature_name(name):
     # replace any non-alphanumeric characters with an underscore
     return re.sub(r'\W+', '_', name)
+
 
 def single_ts_feature_extraction(input_data):
     if isinstance(input_data, pd.Series):
@@ -28,8 +29,8 @@ def single_ts_feature_extraction(input_data):
 
     features = {}
     selected_tsfresh_features = extract_selected_ts_fresh_features(np_data)
-    catch22_features = extract_catch22_features(np_data)
     tsfresh_features_minimal = extract_ts_fresh_features(np_data)
+    catch22_features = extract_catch22_features(np_data)
 
     features.update(catch22_features)
     features.update(selected_tsfresh_features)
@@ -61,14 +62,15 @@ def multi_ts_feature_extraction(dataset: pd.DataFrame, column):
 
     multi_dim_features = {
         "col_corr__mean": col_corr__mean,
-        "col_corr_median" : col_corr_median,
-        "col_corr_abs_mean" : col_corr_abs_mean,
+        "col_corr_median": col_corr_median,
+        "col_corr_abs_mean": col_corr_abs_mean,
         "col_corr_abs_median": col_corr_abs_median,
-        "corr_abs_mean" : corr_abs_mean,
+        "corr_abs_mean": corr_abs_mean,
         "corr_abs_median": corr_abs_median,
-        "n_ts" : n_ts
+        "n_ts": n_ts
     }
-    multi_dim_features = {clean_feature_name(name) + feature_endings["multi_dim"]:val for name, val in multi_dim_features.items()}
+    multi_dim_features = {clean_feature_name(name) + feature_endings["multi_dim"]: val for name, val in
+                          multi_dim_features.items()}
     return multi_dim_features
 
 
@@ -88,36 +90,40 @@ def extract_catch22_features(data: np.ndarray):
 
 
 def extract_ts_fresh_features(data: np.ndarray, FCParameters=MinimalFCParameters()):
-    df_data = pd.DataFrame({'data': data.flatten()})
-    df_data["id"] = [0 for _ in range(len(df_data))]
-    df_data["time"] = list(range(len(df_data)))
-    tsfresh_features = tsfresh_extract_features(df_data, column_id="id", column_sort="time",
+    data = data.flatten()
+    timeseries = pd.DataFrame({"id": [0 for _ in range(len(data))],
+                               "time": list(range(len(data))),
+                               'data': data.flatten()}
+                              )
+    timeseries["id"] = timeseries["id"].astype(object)
+
+    tsfresh_features = tsfresh_extract_features(timeseries, column_id="id", column_sort="time",
                                                 default_fc_parameters=FCParameters,
                                                 show_warnings=False,
                                                 disable_progressbar=True)
 
-    tsfresh_features_name = [ clean_feature_name(s.replace('"', '').replace("data__", "")) + feature_endings["tsfresh_minimal"] for s in tsfresh_features.columns]
+    tsfresh_features_name = [
+        clean_feature_name(s.replace('"', '').replace("data__", "")) + feature_endings["tsfresh_minimal"] for s in
+        tsfresh_features.columns]
     tsfresh_features = dict(zip(tsfresh_features_name, tsfresh_features.values.flatten()))
     return tsfresh_features
 
 
 def extract_selected_ts_fresh_features(data: np.ndarray):
     from recommendation.feature_extraction.ts_fresh_features import selected_ts_fresh_features
+    data = data.flatten()
+    timeseries = pd.DataFrame({"id": [0 for _ in range(len(data))],
+                               "time": list(range(len(data))),
+                               'data': data.flatten()}
+                              )
+    timeseries["id"] = timeseries["id"].astype(object)
 
-    df_data = pd.DataFrame({'data': data.flatten()})
-    df_data["id"] = [0 for _ in range(len(df_data))]
-    df_data["time"] = list(range(len(df_data)))
-    tsfresh_features = tsfresh_extract_features(df_data, column_id="id", column_sort="time",
+    tsfresh_features = tsfresh_extract_features(timeseries, column_id="id", column_sort="time",
                                                 default_fc_parameters=selected_ts_fresh_features)
 
-    tsfresh_features_name = [clean_feature_name(s.replace('"', '').replace("data__", "")) + feature_endings["tsfresh_selected"] for s in
-                             tsfresh_features.columns]
+    tsfresh_features_name = [
+        clean_feature_name(s.replace('"', '').replace("data__", "")) + feature_endings["tsfresh_selected"] for s in
+        tsfresh_features.columns]
     tsfresh_features = dict(zip(tsfresh_features_name, tsfresh_features.values.flatten()))
 
     return tsfresh_features
-
-
-
-
-
-

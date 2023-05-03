@@ -25,7 +25,7 @@
             Inject the dataset with anomalies
             {% include 'sub/form.html' with form=injection_form form_id="injection_form" onclick="inject()" button_label="Inject Anomalies" button_id="injection-button" %}
 
-            {#            {% include 'sub/storeForm.html' %}#}
+            {#            {% include 'sub/store-form.html' %}#}
         {% endblock %}
     </div>
     </div>
@@ -40,7 +40,7 @@
         </p>
         Repair your custom Anomalies by selecting an algorithm.
         {% include 'sub/repairForm.html' %}
-        {% include 'sub/scoreBoard.html' %}
+        {% include 'sub/score-board.html' %}
         <div class="bottom-button">
 
         </div>

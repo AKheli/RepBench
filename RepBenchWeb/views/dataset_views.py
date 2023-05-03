@@ -77,7 +77,10 @@ def sliders_view(request, setname="BAFU"):
     return RepBenchJsonRespone(context)
 
 
-def display_datasets(request=None,option="Display"):
+
+
+
+def display_datasets(request=None,option="Display" , synthetic=False):
     context = {"datasets": {dataSet.title: dataSet.get_info()
                             for dataSet in DataSet.objects.all()},
                "syntheticDatasets": {dataSet.title: dataSet.get_info()
@@ -85,5 +88,9 @@ def display_datasets(request=None,option="Display"):
                                      dataSet.title is not None and dataSet.title != ""},
 
                 "option" : option}
+
+
+    if synthetic:
+        return render(request, 'data_set_options/displayDatasetsSynthetic.html', context=context)
 
     return render(request, 'data_set_options/displayDatasets.html', context=context)

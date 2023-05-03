@@ -17,7 +17,7 @@ from injection import get_injected_container_example
 
 alg_names = [CDREC, RPCA, IMR, SCREEN]
 # injected_data_container: InjectedDataContainer = get_injected_container_example()
-autoML_file_name_default = "flaml_classifier_accuracy_time_600_non_normalized"
+autoML_file_name_default = "flaml_classifier_accuracy_time_6_non_normalized"
 
 
 def get_recommendation(injected_data_container: InjectedDataContainer,
@@ -52,7 +52,6 @@ def get_recommendation(injected_data_container: InjectedDataContainer,
     automl: AutoML = load_estimator(autoML_file_name)
     features = extract_features(injected_data_container.injected, injected_data_container.injected_columns[0])
     fd = pd.DataFrame.from_dict({k: [v] for k, v in features.items()})
-
     best_algorithm = automl.predict(fd)[0]
     label_inverse = automl._label_transformer.inverse_transform
 

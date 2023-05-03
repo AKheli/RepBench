@@ -26,7 +26,7 @@ def create_injected_container(* , injected_df, truth_df,container_does_rmse_chec
     assert label_df.index.equals(truth_df.index)
 
     assert injected_df.shape == truth_df.shape
-    injdected_container = InjectedDataContainer(injected_df, truth_df, class_df=class_df,
+    injected_container = InjectedDataContainer(injected_df, truth_df, class_df=class_df,
                                                 name="repair_df",
                                                 labels=label_df,check_rmse=container_does_rmse_checks)
 
@@ -35,11 +35,13 @@ def create_injected_container(* , injected_df, truth_df,container_does_rmse_chec
     # plt.show()
 
 
-    return injdected_container
+    return injected_container
 
 
 
 def injected_container_None_Series( truth_df , injected_series_dicts):
+    print("truth_df" , truth_df)
+    print(injected_series_dicts)
     injected_df = truth_df.copy()
     for series_dict in injected_series_dicts:
         col_name, data = series_dict["linkedTo"] ,  series_dict["data"]

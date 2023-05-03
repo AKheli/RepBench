@@ -81,16 +81,6 @@ class OptimizationView(DatasetView):
         }
         return RepBenchJsonRespone(context)
 
-    @staticmethod
-    def optimization_datasets(request=None):
-        context = {}
-        context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
-                                        for dataSet in InjectedContainer.objects.all() if
-                                        dataSet.title is not None and dataSet.title != "" and dataSet.get_info()["length"] < 1000}
-        context["type"] = type
-        return render(request, 'data_set_options/optimizationDatasets.html', context=context)
-
-
 def fetch_opt_results(request):
     token = request.POST.get("csrfmiddlewaretoken")
     status, data = Optjob.retrieve_results(token)

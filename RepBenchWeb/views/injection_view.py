@@ -1,9 +1,7 @@
 import json
 import random
 
-import pandas as pd
 from django.shortcuts import render
-
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from injection.injected_data_container import InjectedDataContainer
 from RepBenchWeb.forms.alg_param_forms import SCREENparamForm, RPCAparamForm, CDparamForm, IMRparamField
@@ -12,10 +10,8 @@ from RepBenchWeb.models import InjectedContainer, DataSet
 from injection.injection_methods.basic_injections import add_anomalies
 from RepBenchWeb.BenchmarkMaps.repairCreation import injected_container_None_Series
 from RepBenchWeb.ts_manager.HighchartsMapper import map_injected_series
-from RepBenchWeb.views.data_loader import load_data_container
 from RepBenchWeb.views.repair_view import RepairView
 from testing_frame_work.data_methods.data_class import DataContainer
-from django.views.decorators.http import require_http_methods
 
 class InjectionView(RepairView):
     template = "inject-and-repair.html"
@@ -94,25 +90,31 @@ def store_data(request, setname):
     if min < 0:
         min = 0
 
-    print(post.get("visible_series"))
     visible = json.loads(post.get("visible_series"))
     description = post.get("description")
     post.pop("csrfmiddlewaretoken")
-    data_container = load_data_container(setname)
+
+    data_object = DataSet.objects.get(title=setname)
+    df = data_object.df
+    granularity = data_object.granularity
+    data_container =  DataContainer(df, title=title)
+
     df_norm = data_container.norm_data  # only work with normalized data
     df_original = data_container.original_data
     # df_original = data_container.original_data
     injected_series = json.loads(post.pop("injected_series"))
-
-
-    if post.pop("selectionOnly"):
+    selection_only = post.pop("selectionOnly", False)
+    if selection_only:
         # cut min and max
         df_norm = df_norm.iloc[min:max]
+        print(min,max)
+        print(visible)
         for series_dict in injected_series:
             series_dict["data"] = series_dict["data"][min:max]
             # only select visible series
             df_norm = df_norm[visible]
             df_original = df_original[visible]
+
 
     injected_data_container: InjectedDataContainer = injected_container_None_Series(df_norm, injected_series)
     injected_data_container.set_to_original_scale(df_original.mean(), df_original.std())
@@ -123,6 +125,8 @@ def store_data(request, setname):
 
     injectedDataframe = injected_data_container.injected.to_json()
     injected_data_set = InjectedContainer(title=title, injectedContainer_json=injected_data_container.to_json(),
-                                          description=description, original_data_set=setname)
+                                          description=description, original_data_set=setname,granularity= granularity)
     injected_data_set.save()
     return RepBenchJsonRespone({"success": True})
+
+

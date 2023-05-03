@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
+
+{% block css %}
+    {{ block.super }}
+    <link href="{% static 'css/lib/highcharts/highcharts.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/custom/highcharts.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/lib/nouislider/nouislider.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/lib/ion-rangeslider/ion.rangeSlider.min.css' %}" rel="stylesheet" type="text/css"/>
+    <script src="{% static 'js/repBench/injection/injection.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/repBench/repair/repair.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/repBench/injection/store.js' %}" type="text/javascript"></script>
+{% endblock %}
+
+
 {% block content %}
     <style>
 
@@ -15,42 +29,83 @@
         }
     </style>
 
-    <div id="graph-height" style="position:relative;height:100%">
-        {% block graphbuttons %}
-            {% include "sub/norm_buttons.html" %}
-        {% endblock %}
-        {% block chartContainer %}
-            <div id="chart" class="col-md-9" style="height:100%">
-                {% include 'sub/MainChart.html' %}
-            </div>
-        {% endblock %}
+    <div>
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title"> {{ setname }} </h3>
+                </div>
+                <div class="kt-portlet__head-toolbar">
+                    <div id="highcharts_head_actions" class="kt-portlet__head-actions">
+                        {#                        <a id="reset_chart_btn" class="btn btn-outline-brand btn-bold btn-sm"#}
+                        {#                           onclick="chartManager.clearAllSeries();return false;">Reset</a>#}
+                        <div class="dropdown dropdown-inline">
+                            <a href="#" class="btn btn-outline-brand btn-icon btn-sm" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <i class="mdi mdi-18px mdi-dots-horizontal"></i>
+                            </a>
 
-        <div id="menu" class="col-md-3" style="padding-top: 40px;position:relative">
-            {% block menu %}
-                {% block datasetInfo %}
-                    <h2><b>{{ data_info.title }}</b></h2>
-                    <p>Source: <a href="{{ data_info.ref_url }}">{{ data_info.url_text }}</a></p>
-                    <p>{{ data_info.description }}</p>
-                    <p>Number of Values: <b>{{ data_info.values }} </b></p>
-                    <p>Number of Time Series: <b>{{ data_info.ts_nbr }} </b></p>
-
-                {% endblock %}
-                <div id="corr_container" style="max-height: 700px;"></div>
-                {% block sliders %}
-                    <script> const slider_url = "{% url 'get_catch22_data' setname=setname %}"</script>
-                    {#                <div class="row margin-top-20 margin-bot-20 ">#}
-                    <div id="slider-outer">
-                        <h4 style="margin-top: 5px"> Catch22 feature values: &nbsp; </h4>
-                        <div id="slider-dropdown"></div>
-                        <div id="slider-container"
-                             style="display:none; bottom:0; margin-right: 18px; margin-left:18px"></div>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <ul class="kt-nav">
+                                    <li class="kt-nav__section kt-nav__section--first">
+                                        <span class="kt-nav__section-text">Load Data</span>
+                                    </li>
+                                    <li class="kt-nav__item">
+                                        <a id="raw_btn" onclick="chartManager.setOriginal(); return false;"
+                                           class="kt-nav__link">
+                                            <span class="kt-nav__link-text">Raw</span>
+                                        </a>
+                                    </li>
+                                    <li class="kt-nav__item">
+                                        <a id="zscore_btn" onclick="chartManager.setZscore(); return false;"
+                                           class="kt-nav__link">
+                                            <span class="kt-nav__link-text">Normalized</span>
+                                        </a>
+                                    </li>
+                                    {#                                        <li class="kt-nav__section kt-nav__section--first">#}
+                                    {#                                            <span class="kt-nav__section-text">Download</span>#}
+                                    {#                                        </li>#}
+                                    {#                                        <li class="kt-nav__item">#}
+                                    {#                                            <a id="download_csv" href="#" class="kt-nav__link">#}
+                                    {#                                                <span class="kt-nav__link-text">Download CSV</span>#}
+                                    {#                                            </a>#}
+                                    {#                                        </li>#}
+                                    {#                                        <li class="kt-nav__item">#}
+                                    {#                                            <a id="download_json" href="#" class="kt-nav__link">#}
+                                    {#                                                <span class="kt-nav__link-text">Download JSON</span>#}
+                                    {#                                            </a>#}
+                                    {#                                        </li>#}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    {% include 'sub/catch22sliders.html' %}
-                {% endblock %}
-            {% endblock %}
-        </div>
+                </div>
+            </div>
 
+            <div class="kt-portlet__body kt-portlet__body--fit">
+            </div>
+            <!--begin: Highcharts -->
+            {% include 'sub/MainChart.html' %}
+            <!--end: Highcharts -->
+        </div>
     </div>
+    {% block blowChartContent %}
+        <div class="row" style="padding-top: 30px">
+            <div class="col-md-6">
+                {% include "sub/data_info_portlet.html" %}
+            </div>
+
+            <div id="correlation" class="col-md-6">
+                <div id="corr_container" style="max-height: 700px;"></div>
+                <div id="slider-outer">
+                    <h4 style="margin-top: 5px"> Catch22 feature values: &nbsp; </h4>
+                    <div id="slider-dropdown"></div>
+                    <div id="slider-container"
+                         style="display:none; bottom:0; margin-right: 18px; margin-left:18px"></div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
 
 
 
@@ -60,10 +115,7 @@
     </script>
 
     {% block js %}
-        <script src='{% static "js/corr_table.js" %}'></script>
-        <link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
-        <script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>
-        <script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
+        <script src='{% static "js/repBench/display/corr-table.js" %}'></script>
         <script>
             const categories = {{ columns | safe }};
             const corr_data = {{ corr_data | safe }};

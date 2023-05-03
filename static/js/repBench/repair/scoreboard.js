@@ -3,6 +3,9 @@
 
 let scoreBoardLoadeer = function () {}
 const createScoreBoard = function () {
+
+    document.getElementById("score_container").style.display = "block";
+    console.log("createScoreBoard")
     RoundSliders.init(2);
     RoundSliders.updateValue("#RMSE-slider", 0, 0, 0);
     // RoundSliders.setTitle("#RMSE-slider", "RMSE");
