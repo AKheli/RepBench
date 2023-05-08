@@ -1,20 +1,40 @@
 {% extends "displayDataSetSynthetic.html" %}
 {% load static %}
 
-{% block graphbuttons %}
-{% endblock %}
-
-
+{#{% block graphbuttons %}#}
+{#{% endblock %}#}
 
 
 {% block content %}
-    <div id="optChartContainer" class="col-lg-9 col-md-12 col-sm-12 col-xs-12" style="height:800px;margin-top: 70px">
-        <table id="myTable">
-            <thead>
-            </thead>
-            <tbody id="testBody"></tbody>
-        </table>
+            <h2>Parameterization</h2>
+
+    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title"> Optimization </h3>
+                </div>
+                {#                <div class="kt-portlet__head-toolbar">#}
+                {#                </div>#}
+
+                {#                <div class="kt-portlet__body kt-portlet__body--fit">#}
+                {#                </div>#}
+            </div>
+            {#             <div class="kt-portlet__body kt-portlet__body--fit">#}
+            {##}
+            {#             </div>#}
+            <div class="kt-portlet__body">
+                <div id="optChartContainer"></div>
+            </div>
+
+        </div>
     </div>
+
+    {#        <table id="myTable">#}
+    {#            <thead>#}
+    {#            </thead>#}
+    {#            <tbody id="testBody"></tbody>#}
+    {#        </table>#}
     <div style="display:None">
         <div>
             <div class="kt-portlet">
@@ -68,29 +88,58 @@
         </div>
     </div>
     {% block blowChartContent %}
-        <h2>Parameterization</h2>
-            <h3>Dataset: {{ data_info.title }}</h3>
-            <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>
-            <p>{{ data_info.description }}</p>
-            <p>Number of Values: {{ data_info.values }}</p>
-            <p>Number of Time Series: {{ data_info.ts_nbr }}</p>
-            <!-- pretty table displaying anomaly rates per time series -->
 
-            {% if data_info.original_data_set is  not None %}
-                Original Dataset:
-                <a href="{% url 'display_dataset' setname=data_info.original_data_set %}">{{ data_info.original_data_set }}
-                </a>
-            {% endif %}
+        {#        <div class="kt-portlet">#}
+        {#            <div class="kt-portlet__head">#}
+        {#                <div class="kt-portlet__head-label">#}
+        {#                    <h3 class="kt-portlet__head-title"> Optimization </h3>#}
+        {#                </div>#}
+        {#                <div class="kt-portlet__head-toolbar">#}
+        {#                </div>#}
+        {#            </div>#}
+        {#            <div class="kt-portlet__body kt-portlet__body--fit">#}
+        {#                <h3>Dataset: {{ data_info.title }}</h3>#}
+        {#                <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>#}
+        {#                <p>{{ data_info.description }}</p>#}
+        {#                <p>Number of Values: {{ data_info.values }}</p>#}
+        {#                <p>Number of Time Series: {{ data_info.ts_nbr }}</p>#}
+        {#                <!-- pretty table displaying anomaly rates per time series -->#}
+        {##}
+        {#                {% if data_info.original_data_set is  not None %}#}
+        {#                    Original Dataset:#}
+        {#                    <a href="{% url 'display_dataset' setname=data_info.original_data_set %}">{{ data_info.original_data_set }}#}
+        {#                    </a>#}
+        {#                {% endif %}#}
+        {#            </div>#}
+        {#        </div>#}
+        {#                <div class="kt-portlet__head-toolbar">#}
+        {#                </div>#}
 
-            <!-- repair button that goes to repair page with this dataset -->
-            <!-- style href> -->
-            <style>
-                .grey {
-                    background: #5c5c62;
-                }
-            </style>
+        {#                <div class="kt-portlet__body kt-portlet__body--fit">#}
+        {#                </div>#}
 
-            {% include 'sub/bayesianOptForm.html' %}
+        <!-- repair button that goes to repair page with this dataset -->
+        <!-- style href> -->
+        {#        <style>#}
+        {#            .grey {#}
+        {#                background: #5c5c62;#}
+        {#            }#}
+        {#        </style>#}
+            <div class="col-lg-5">
+
+        <div class="kt-portlet">
+            <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title"> Optimization </h3>
+                </div>
+                <div class="kt-portlet__head-toolbar">
+                </div>
+            </div>
+            <div class="kt-portlet__body kt-portlet__body--fit">
+                {% include 'sub/bayesianOptForm.html' %}
+            </div>
+        </div>
+        </div>
     {% endblock %}
 
 
@@ -113,38 +162,6 @@
     {#        </script>#}
     {#    {% endblock %}#}
 {% endblock %}
-
-
-
-
-{##}
-{#{% block menu %}#}
-{#    <h2>Parameterization</h2>#}
-{#    <h3>Dataset: {{ data_info.title }}</h3>#}
-{#    <a href="{{ data_info.ref_url }}"> {{ data_info.url_text }}</a>#}
-{#    <p>{{ data_info.description }}</p>#}
-{#    <p>Number of Values: {{ data_info.values }}</p>#}
-{#    <p>Number of Time Series: {{ data_info.ts_nbr }}</p>#}
-{#    <!-- pretty table displaying anomaly rates per time series -->#}
-{##}
-{#    {% if data_info.original_data_set is  not None %}#}
-{#        Original Dataset:#}
-{#        <a href="{% url 'display_dataset' setname=data_info.original_data_set %}">{{ data_info.original_data_set }}#}
-{#        </a>#}
-{#    {% endif %}#}
-{##}
-{#    <!-- repair button that goes to repair page with this dataset -->#}
-{#    <!-- style href> -->#}
-{#    <style>#}
-{#        .grey {#}
-{#            background: #5c5c62;#}
-{#        }#}
-{#    </style>#}
-{##}
-{#        {% include 'sub/bayesianOptForm.html' %}#}
-{##}
-{#{% endblock %}#}
-
 
 
 {% block additional_bottom_js %}

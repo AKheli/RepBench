@@ -1,3 +1,4 @@
+import os
 import warnings
 import numpy as np
 from matplotlib import pyplot as plt
@@ -7,12 +8,12 @@ from recommendation.utils import *
 from recommendation.utils.file_parsers import store_estimator_results
 
 
-def flaml_search(automl_settings, X_train, y_train, *, file_suffix=None, verbose=-1, ignore_flaml_output=True , file_name=None):
+def flaml_search(automl_settings, X_train, y_train, *, verbose=-1, ignore_flaml_output=True, file_name=None):
     automl = AutoML(**automl_settings)
     automl_result_name = f"flaml_classifier_{automl_settings.get('metric')}_time_{automl_settings.get('time_budget')}"
 
-    if file_suffix is not None:
-        automl_result_name = f"{automl_result_name}_{file_suffix}"
+    if file_name is not None:
+        automl_result_name = file_name
 
     if ignore_flaml_output:
         with  warnings.catch_warnings():
@@ -25,8 +26,86 @@ def flaml_search(automl_settings, X_train, y_train, *, file_suffix=None, verbose
     return automl, automl_result_name
 
 
-def compute_automl_scores(automl_or_automl_result_name, X_train, y_train, X_test, y_test, *, additional_info: dict = None
-                          , plot_confusion_matrix=False,labels=None):
+def flaml_search_advanced_output(automl_settings, X_train, y_train, *,
+                                 file_name=None ,output_list = None):
+    import threading
+    import sys
+
+    if output_list is None:
+        output_list = []
+
+
+    if file_name is not None:
+        automl_result_name = file_name
+    else:
+        automl_result_name = f"flaml_classifier_{automl_settings.get('metric')}_time_{automl_settings.get('time_budget')}"
+
+    def run_flaml_search(automl_settings_, X_train_, y_train_):
+        automl = AutoML(**automl_settings)
+        normal_write = sys.stdout.write
+        def print_output(*args):
+            thread_id = threading.get_ident()
+            if thread_id == flaml_thread.ident:
+                output = ' '.join(str(a) for a in args)
+                output_list.append(output)
+                # normal_write(*args)
+            else:
+                normal_write(*args)
+
+        sys.stdout.write = print_output
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            automl.fit(X_train=X_train_, y_train=y_train_, **automl_settings_)
+        sys.stdout = sys.__stdout__
+
+        store_estimator(automl, estimator_name=automl_result_name)
+
+
+    flaml_thread = threading.Thread(target=run_flaml_search, args=(automl_settings, X_train.copy(), y_train.copy()))
+    flaml_thread.start()
+    print("started")
+    return flaml_thread , output_list
+
+
+def flaml_search_multiprocess(automl_settings, X_train, y_train, *,file_name=None):
+
+    # if output_list is None:
+    #     output_list = []
+
+
+    if file_name is not None:
+        automl_result_name = file_name
+    else:
+        automl_result_name = f"flaml_classifier_{automl_settings.get('metric')}_time_{automl_settings.get('time_budget')}"
+
+    automl = AutoML(**automl_settings)
+
+    import multiprocessing
+    out_put_queue = multiprocessing.Queue()
+    def run_flaml_search(automl_settings_, X_train_, y_train_ , queue_):
+        import sys
+
+        normal_write = sys.stdout.write
+        def print_output(*args):
+            output = ' '.join(str(a) for a in args) + "cut"+str(os.getpid()) + "\n"
+            queue_.put(output)
+
+        sys.stdout.write = print_output
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            automl.fit(X_train=X_train_, y_train=y_train_, **automl_settings_,n_jobs=3)
+
+        store_estimator(automl, estimator_name=automl_result_name)
+
+    p = multiprocessing.Process(target=run_flaml_search, args=(automl_settings,X_train,y_train,out_put_queue))
+    p.start()
+
+    return p , out_put_queue
+
+
+def compute_automl_scores(automl_or_automl_result_name, X_train, y_train, X_test, y_test, *,
+                          additional_info: dict = None
+                          , plot_confusion_matrix=False, labels=None):
     if additional_info is None:
         additional_info = {}
 
@@ -77,9 +156,9 @@ def compute_automl_scores(automl_or_automl_result_name, X_train, y_train, X_test
 
     if plot_confusion_matrix:
         from sklearn.metrics import ConfusionMatrixDisplay
-        disp = ConfusionMatrixDisplay(conf_mat,display_labels=labels)
+        disp = ConfusionMatrixDisplay(conf_mat, display_labels=labels)
         disp.plot()
         plt.show()
 
-    print("train_accuracy", accuracy_train, "test_accuracy", accuracy_test , automl_result_name)
+    print("train_accuracy", accuracy_train, "test_accuracy", accuracy_test, automl_result_name)
     return {"train_accuracy": accuracy_train, "test_accuracy": accuracy_test}

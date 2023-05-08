@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
-from RepBenchWeb.views.recommendation import recommendation_view, file_upload_view
+from RepBenchWeb.views.recommendation import recommendation_view, file_upload_view , flaml_example_view
 from RepBenchWeb.views import (
     indexview,
     optimizationview,
@@ -71,6 +71,10 @@ urlpatterns = [
     # catch22 sliders getter
     path('sliders_view/<str:setname>', dataset_views.sliders_view, name='get_catch22_data'),
 
+
+
+
+
     ## recommendation
     path('recommendation/<str:setname>', recommendation_view.RecommendationView.as_view(), name='recommend'),
     path('recommendation_datasets', recommendation_view.RecommendationView().recommendation_datasets,
@@ -80,6 +84,11 @@ urlpatterns = [
 
     path('user_recommendation', file_upload_view.upload_files, name="user_recommendation"),
     path('upload/', file_upload_view.upload_files, name='upload_files'),
+
+
+    path('flaml_example', flaml_example_view.start_flaml, name='start_flaml'),
+    path('flaml_retrieve', flaml_example_view.retrieve_flaml_results, name='retrieve_flaml_results'),
+
     # path('user_recommendation', recommendation_view..as_view(), name='user_recommendation'),
 ]
 

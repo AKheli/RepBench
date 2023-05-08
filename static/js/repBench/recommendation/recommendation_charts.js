@@ -8,10 +8,12 @@ const createProbabilityChart = function (probabilities) {
             y: probabilities[key]
         }
     })
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA" , chartHeight)
 // Create the chart using Highcharts
     probabilityChart = Highcharts.chart('probabilities-chart', {
         chart: {
-            type: 'column'
+            type: 'column',
+            height: chartHeight
         },
         title: {
             text: ''
@@ -76,10 +78,10 @@ const createErrorChart = function (alg_scores) {
     let alg_categories = Object.keys(alg_scores)
 
     console.log(series)
-    console.log(alg_categories)
     scoreChart = Highcharts.chart('alg-scores-chart', {
         chart: {
-            type: 'column'
+            type: 'column',
+            height: chartHeight
         },
         title: {
             text: ''

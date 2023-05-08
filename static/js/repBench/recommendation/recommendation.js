@@ -1,6 +1,6 @@
 
 
-const display_recommendation_results = function (data, wait_for_chart = false) {
+const display_recommendation_results = function (data, wait_for_chart) {
     console.log("display recommendation results", data)
     recommendationResults = data
 

@@ -1,0 +1,86 @@
+{% load static %}
+
+<script src="{% static 'js/repBench/recommendation/flamlCharts.js' %}" type="text/javascript"></script>
+
+<div class="kt-portlet">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title"></h3>
+            <form id="start-flaml-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Start Flaml</button>
+            </form>
+        </div>
+        <div class="kt-portlet__head-toolbar">
+        </div>
+    </div>
+    <div class="kt-portlet__body">
+        <div id="flaml-chart"></div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#start-flaml-form').on('submit', function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'start_flaml' %}',
+                data: $('#start-flaml-form').serialize(),
+                success: function (response) {
+                    console.log(response);
+                    let estimators = response.automl_settings.estimator_list;
+                    // Display message that Flaml is running
+                    $('#results-table').html('<p>Flaml is running. Please wait for results...</p>');
+                    // Call function to retrieve Flaml results periodically
+
+                    // Create chart
+                    initFlamlChart(estimators);
+                    getFlamlResults();
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert('Error starting Flaml');
+                }
+            });
+        });
+    });
+
+    function getFlamlResults() {
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'retrieve_flaml_results' %}',
+            data: $('#start-flaml-form').serialize(),
+            success: function (response) {
+                console.log(response);
+                if (response.status === 'running') {
+                    let results = response.results
+                    // Display results table
+                    {#var table = '<table class="table"><thead><tr><th>Time</th><th>Estimator</th><th>Error</th><th>Best Estimator</th><th>Best Error</th></tr></thead><tbody>';#}
+                    for (var i = 0; i < results.length; i++) {
+                        let estimator = results[i].estimator
+                        let score = results[i].error
+                        let time = results[i].time
+                        addDataToFlamlChart(score, estimator, time);
+                        {#table += '<tr><td>' + result.time + '</td><td>' + result.estimator + '</td><td>' + result.error + '</td><td>' + result.best_estimator + '</td><td>' + result.best_error + '</td></tr>';#}
+                    }
+                    {#table += '</tbody></table>';#}
+                    {#$('#results-table').html(table);#}
+                    // Call function again after 5 seconds
+                    flamlChart.redraw()
+                    setTimeout(getFlamlResults, 1000);
+                } else if (response.status === 'finished') {
+                    // Display message that Flaml is finished
+                    {#$('#results-table').html('<p>Flaml finished. Please see logs for details.</p>');#}
+                }
+            },
+            error: function (response) {
+                console.log(response);
+                alert('Error retrieving Flaml results');
+            }
+        });
+    }
+</script>

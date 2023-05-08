@@ -36,7 +36,7 @@ y_train, y_test = categories_encoded[train_split], categories_encoded[test_split
 
 
 
-time_budgets = [60*5]
+time_budgets = [60]
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -47,7 +47,7 @@ args = parser.parse_args()  # e.g --time_budgets 1200 3600
 time_budgets = args.time_budgets
 
 ### Select features
-n_features = [5, 10, 20, 25]
+n_features = [5] #, 10, 20, 25]
 
 for k in n_features:
     for time_budget in time_budgets:

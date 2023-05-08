@@ -34,6 +34,8 @@ def get_recommendation(injected_data_container: InjectedDataContainer,
     "data_features" : dict "feature_name" -> val
     }
     """
+
+    print("get recommendation")
     alg_scores = {}
     alg_parameters = {}
     alg_repairs = {}

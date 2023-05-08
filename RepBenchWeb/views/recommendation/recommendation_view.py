@@ -12,7 +12,6 @@ class RecommendationView(SyntheticDatasetView):
     template = "recommendation.html"
     recommender_file_name = ""
 
-
     def get(self, request, setname="BAFU"):
         data_object = InjectedContainer.objects.get(title=setname)
         injected_data_container: InjectedDataContainer = data_object.injected_container
@@ -31,7 +30,7 @@ class RecommendationView(SyntheticDatasetView):
     @staticmethod
     def get_recommendation(request,setname):
         data_object = InjectedContainer.objects.get(title=setname)
-        output =data_object.recommendation_context()
+        output = data_object.recommendation_context()
         return RepBenchJsonRespone(output)
 
     @staticmethod
