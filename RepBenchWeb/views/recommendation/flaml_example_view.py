@@ -6,10 +6,13 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import time
 
+from RepBenchWeb.views.utils.cleanup_task import flaml_processes_queues_and_times, kill_process, \
+    to_many_requests_response
+
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
-from recommendation.flaml_search import flaml_search, flaml_search_advanced_output, flaml_search_multiprocess
+from recommendation.flaml_search import flaml_search_multiprocess
 from recommendation.utils import *
 
 multiclass_metrics = ['accuracy', 'macro_f1', 'micro_f1']
@@ -35,46 +38,54 @@ X_test = feature_values.iloc[test_split, :]
 y_train, y_test = categories_encoded[train_split], categories_encoded[test_split]
 
 
-
-
-flaml_processes_queues_and_times = {}
-
-
 def start_flaml(request):
-    time_budget = 40
+    time_budget = 20
     automl_settings = {
         "time_budget": time_budget,  # in seconds
         "metric": "accuracy",  # accuracy , micro_f1, macro_f1
         "task": 'classification',
         "log_file_name": "recommendation/logs/flaml.log",
-        "estimator_list": ['lgbm', 'rf', 'xgboost' , 'extra_tree' , 'lrl1']
+        "estimator_list": ['lgbm', 'rf', 'xgboost', 'extra_tree', 'lrl1']
     }
 
     token = request.POST.get("csrfmiddlewaretoken")
 
     if token in flaml_processes_queues_and_times:
+        print("cleaning up old process")
+        flaml_process, out_put_queue, start_time = flaml_processes_queues_and_times[token]
+        kill_process(flaml_process)
         del flaml_processes_queues_and_times[token]
 
     flaml_process, out_put_queue = flaml_search_multiprocess(automl_settings, X_train, y_train)
 
     start_time = time.time()
-    flaml_processes_queues_and_times[token] = (flaml_process,out_put_queue,start_time)
-    return RepBenchJsonRespone({"status": "ok" , "automl_settings": automl_settings})
+    flaml_processes_queues_and_times[token] = (flaml_process, out_put_queue, start_time)
+    # clean
+    # cleanup_process(token, time_budget * 2,)
+
+    # cache.set(token, {'pid': flaml_process.pid, 'start_time': start_time})
+
+    return RepBenchJsonRespone({"status": "ok", "automl_settings": automl_settings})
+
 
 import re
+
 regex = r"at\s+(\d+\.\d+)s,\s*estimator\s+(\w+)'s\s+best\s+error=(\d+\.\d+),\s*best\s+estimator\s+(\w+)'s\s+best\s+error=(\d+\.\d+)"
 from _queue import Empty
 
 
 def retrieve_flaml_results(request):
-    print("retrieve_flaml_results")
     status = "running"
     token = request.POST.get("csrfmiddlewaretoken")
+
+    if to_many_requests_response(token):
+        return RepBenchJsonRespone({"status": "finished"})
+
     try:
         flaml_process, out_put_queue, start_time = flaml_processes_queues_and_times[token]
     except KeyError:
-        return RepBenchJsonRespone({"results": [] , "status":"finished"})
-
+        print("no process found")
+        return RepBenchJsonRespone({"results": [], "status": "finished"})
 
     results = []
     while True:
@@ -94,11 +105,13 @@ def retrieve_flaml_results(request):
                     print(output.split("cut")[-1] if "cut" in output else "")
 
         except Empty:
-                break
+            break
     if not flaml_process.is_alive():
         print("process is dead")
-        flaml_processes_queues_and_times.pop(token,"")
+        flaml_processes_queues_and_times.pop(token, "")
+        print("cleaning up old process")
+        print(flaml_process.pid)
         flaml_process.join()
         status = "finished"
 
-    return RepBenchJsonRespone({"results": results , "status":status})
+    return RepBenchJsonRespone({"results": results, "status": status})

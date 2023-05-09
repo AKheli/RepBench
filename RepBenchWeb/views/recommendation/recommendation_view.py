@@ -21,8 +21,6 @@ class RecommendationView(SyntheticDatasetView):
         context["data_info"] =  InjectedContainer.objects.get(title=setname).get_info()
         context["RepBenchWeb"] = int(request.GET.get("RepBenchWeb", self.default_nbr_of_ts_to_display))
         context["data_fetch_url_name"] = self.data_fetch_url_name
-        # context["alg_forms"] = self.ParamForms
-        # context["injection_form"] = InjectionForm(list(df.columns))
         context["injected_data_set_info"] = self.data_set_info_context(setname)
         return render(request, self.template, context=context)
 

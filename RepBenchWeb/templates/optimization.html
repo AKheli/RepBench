@@ -5,86 +5,105 @@
 {#{% endblock %}#}
 
 
+
 {% block content %}
-            <h2>Parameterization</h2>
 
-    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-        <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title"> Optimization </h3>
-                </div>
-                {#                <div class="kt-portlet__head-toolbar">#}
-                {#                </div>#}
+    <style>
 
-                {#                <div class="kt-portlet__body kt-portlet__body--fit">#}
-                {#                </div>#}
-            </div>
-            {#             <div class="kt-portlet__body kt-portlet__body--fit">#}
-            {##}
-            {#             </div>#}
-            <div class="kt-portlet__body">
-                <div id="optChartContainer"></div>
-            </div>
+        .play-btn {
+            display: inline-block;
+            background-color: #2196F3;
+            border: 2px solid #2196F3;
+            color: #FFF;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            padding: 0px 10px;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+        }
 
-        </div>
+        .play-btn:hover {
+            background-color: #0D47A1;
+            border-color: #0D47A1;
+            color: #FFF;
+        }
+
+        .play-btn:active {
+            background-color: #0D47A1;
+            border-color: #0D47A1;
+            color: #FFF;
+        }
+
+        .play-btn:hover, .play-btn:active {
+            {#box-shadow: 0px 0px 10px #BBB; /* Add a shadow effect on hover and click */#}
+        }
+
+
+    </style>
+
+
+    <h2>Parameterization</h2>
+    <div style="display:None">
+
+        {% include 'sub/MainChart.html' %}
+        <!--end: Highcharts -->
     </div>
 
-    {#        <table id="myTable">#}
-    {#            <thead>#}
-    {#            </thead>#}
-    {#            <tbody id="testBody"></tbody>#}
-    {#        </table>#}
-    <div style="display:None">
-        <div>
+    <div class="row">
+        <div class="col-lg-7 col-md-7 col-sm-9 col-xs-9">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title"> {{ setname }} </h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                        <div id="highcharts_head_actions" class="kt-portlet__head-actions">
-                            {#                        <a id="reset_chart_btn" class="btn btn-outline-brand btn-bold btn-sm"#}
-                            {#                           onclick="chartManager.clearAllSeries();return false;">Reset</a>#}
-                            <div class="dropdown dropdown-inline">
-                                <a href="#" class="btn btn-outline-brand btn-icon btn-sm" data-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false">
-                                    <i class="mdi mdi-18px mdi-dots-horizontal"></i>
-                                </a>
 
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <ul class="kt-nav">
-                                        <li class="kt-nav__section kt-nav__section--first">
-                                            <span class="kt-nav__section-text">Load Data</span>
-                                        </li>
-                                        <li class="kt-nav__item">
-                                            <a id="raw_btn" onclick="chartManager.setOriginal(); return false;"
-                                               class="kt-nav__link">
-                                                <span class="kt-nav__link-text">Raw</span>
-                                            </a>
-                                        </li>
-                                        <li class="kt-nav__item">
-                                            <a id="zscore_btn" onclick="chartManager.setZscore(); return false;"
-                                               class="kt-nav__link">
-                                                <span class="kt-nav__link-text">Normalized</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                        {#                         <a href="#" class="btn btn-outline-brand btn-icon btn-sm" data-toggle="dropdown"#}
+                        {#                                   aria-haspopup="true" aria-expanded="false">#}
+                        {#                                    <i class="mdi mdi-18px mdi-dots-horizontal"></i>#}
+                        {#                                </a>#}
+
+                        <a href="#" onclick="optimizeCurrentData('{{ alg }}form')" class="play-btn"
+                           data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <i class="mdi mdi-24px mdi-play"></i>
+                        </a>
+
+                        {#                        <input type="submit" class="btn btn-primary" onclick="optimizeCurrentData('{{ alg }}form')"#}
+                        {#                               value="">#}
+                        {#                        <h3 class="kt-portlet__head-title"> Optimization </h3>#}
                     </div>
+                    {#                <div class="kt-portlet__head-toolbar">#}
+                    {#                </div>#}
+
+                    {#                <div class="kt-portlet__body kt-portlet__body--fit">#}
+                    {#                </div>#}
+                </div>
+                {#             <div class="kt-portlet__body kt-portlet__body--fit">#}
+                {##}
+                {#             </div>#}
+                <div class="kt-portlet__body">
+                    <div id="optChartContainer"></div>
                 </div>
 
-                <div class="kt-portlet__body kt-portlet__body--fit">
-                </div>
-                <!--begin: Highcharts -->
-
-                {% include 'sub/MainChart.html' %}
-                <!--end: Highcharts -->
             </div>
+        </div>
 
+        {#        <table id="myTable">#}
+        {#            <thead>#}
+        {#            </thead>#}
+        {#            <tbody id="testBody"></tbody>#}
+        {#        </table>#}
 
+        <div class="col-lg-4">
+            {#            <div class="kt-portlet">#}
+            {#                <div class="kt-portlet__head">#}
+            {#                    <div class="kt-portlet__head-label">#}
+            {#                        <h3 class="kt-portlet__head-title"> Optimization </h3>#}
+            {#                    </div>#}
+            {#                    <div class="kt-portlet__head-toolbar">#}
+            {#                    </div>#}
+            {#                </div>#}
+            {% include 'sub/bayesianOptForm.html' %}
+            {#            </div>#}
         </div>
     </div>
     {% block blowChartContent %}
@@ -125,21 +144,7 @@
         {#                background: #5c5c62;#}
         {#            }#}
         {#        </style>#}
-            <div class="col-lg-5">
 
-        <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title"> Optimization </h3>
-                </div>
-                <div class="kt-portlet__head-toolbar">
-                </div>
-            </div>
-            <div class="kt-portlet__body kt-portlet__body--fit">
-                {% include 'sub/bayesianOptForm.html' %}
-            </div>
-        </div>
-        </div>
     {% endblock %}
 
 
@@ -168,7 +173,6 @@
     <script type="text/javascript">
         let injection_url = "{% url 'inject_data' setname=setname %}"
         let repair_url = "{% url 'repair_data' setname=setname %}"
-        {#let store_url = "{% url 'store_data' setname=setname %}"#}
         let optimization_url = "{% url 'optimize_data' setname=setname %}"
         let fetch_opt_result = "{% url 'fetch_optresults' %}"
     </script>

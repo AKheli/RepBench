@@ -1,14 +1,13 @@
-from django.urls import path
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import RedirectView
 
 from RepBenchWeb.views.recommendation import recommendation_view, file_upload_view , flaml_example_view
+from RepBenchWeb.views.algorithm_analysis import optimizationview
+
 from RepBenchWeb.views import (
     indexview,
-    optimizationview,
     dataset_views,
     repair_view,
     injection_view,
@@ -53,7 +52,7 @@ urlpatterns = [
     path('optimization_datasets',datasets_display.display_optimization_datasets,name="optimization_datasets"),
     path('opt', optimizationview.OptimizationView.as_view(), name="opt"),
     path('opt/<str:setname>', optimizationview.OptimizationView.as_view(), name="opt"),
-    path('optimize_data/<str:setname>', optimizationview.OptimizationView.optimize, name='optimize_data'),
+    path('optimize_data/<str:setname>', optimizationview.start_optimization, name='optimize_data'),
     path('fetch_optresults', optimizationview.fetch_opt_results, name='fetch_optresults'),
 
 

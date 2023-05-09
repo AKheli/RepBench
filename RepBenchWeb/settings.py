@@ -64,6 +64,7 @@ CORS_ALLOW_HEADERS = [
 INSTALLED_APPS = [
     'RepBenchWeb',
     'corsheaders',
+    # 'background_task',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

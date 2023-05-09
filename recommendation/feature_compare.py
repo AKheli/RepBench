@@ -10,7 +10,7 @@ from recommendation.recommendation_input_loader import RecommendationInputLoader
 from recommendation.flaml_search import flaml_search, compute_automl_scores
 from recommendation.feature_extraction.feature_extraction import feature_endings as ft_e
 
-feature_file_name = "try"
+feature_file_name = "results_features"
 multiclass_metrics = ['accuracy', 'macro_f1', 'micro_f1']
 
 catch_22_feature_ending = ft_e['catch22']
@@ -37,7 +37,7 @@ for feature_endings in feature_names_list:
         # print(f"{'use_anomaly_info' if use_anom_info else ''} {feature_endings}")
         recommendation_input = RecommendationInputLoader(feature_file_name , features=feature_endings , include_anomaly_infos=use_anom_info)
         automl, automl_name = flaml_search(automl_settings, recommendation_input.X_train, recommendation_input.y_train
-                                           , file_suffix=f"{'use_anomaly_info' if use_anom_info else ''}")
+                                           )
 
         compute_automl_scores(automl_name, recommendation_input.X_train, recommendation_input.y_train
                               , recommendation_input.X_test, recommendation_input.y_test,

@@ -40,8 +40,6 @@ def create_injected_container(* , injected_df, truth_df,container_does_rmse_chec
 
 
 def injected_container_None_Series( truth_df , injected_series_dicts):
-    print("truth_df" , truth_df)
-    print(injected_series_dicts)
     injected_df = truth_df.copy()
     for series_dict in injected_series_dicts:
         col_name, data = series_dict["linkedTo"] ,  series_dict["data"]

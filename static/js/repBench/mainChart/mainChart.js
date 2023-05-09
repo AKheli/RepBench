@@ -1,6 +1,7 @@
 const chartManager = new ChartManager();
 let chartHeight = 750
 
+
 Highcharts.setOptions({
     plotOptions: {
         series: {

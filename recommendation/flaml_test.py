@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
-from recommendation.flaml_search import flaml_search, flaml_search_advanced_output, flaml_search_multiprocess
+from recommendation.flaml_search import flaml_search, flaml_search_multiprocess
 from recommendation.utils import *
 
 multiclass_metrics = ['accuracy', 'macro_f1', 'micro_f1']
@@ -45,7 +45,7 @@ automl_settings = {
 
 
 flaml_process, out_put_queue = flaml_search_multiprocess(automl_settings, X_train, y_train)
-flaml_process_2 , out_put_queue_2 = flaml_search_multiprocess(automl_settings, X_train, y_train)
+# flaml_process_2 , out_put_queue_2 = flaml_search_multiprocess(automl_settings, X_train, y_train)
 
 import re
 

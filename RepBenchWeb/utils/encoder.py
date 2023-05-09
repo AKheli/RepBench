@@ -45,9 +45,9 @@ class RepBenchJsonEncoder(json.JSONEncoder):
 
 def RepBenchJsonRespone(response_data):
     dumped = json.dumps(response_data,cls=RepBenchJsonEncoder)
-    print(type(dumped))
+    # print(type(dumped))
     for k,v in repbench_maps.items():
-        print(k,v)
+        # print(k,v)
         dumped = dumped.replace(k,v)
     response_data = json.loads(dumped)
     return JsonResponse(response_data, encoder=RepBenchJsonEncoder)#json_dumps_params={'cls': RepBenchJsonEncoder}

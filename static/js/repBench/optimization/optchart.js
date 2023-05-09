@@ -1,23 +1,23 @@
 let optChart = null
 let initOptChart = function (params, error, n_init, n_sample) {
     optChart = Highcharts.chart('optChartContainer', {
-            chart: {
-                marginRight: 0,
-                marginTop: 30,
-            },
+            // chart: {
+            //     marginRight: 0,
+            //     marginTop: 30,
+            // },
 
-            legend: {
-                align: 'left',
-                verticalAlign: 'top',
-                x: 100,
-                y: -20,
-                floating: true,
-                itemStyle: {
-                    // color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: '20px'
-                },
-            },
+            // legend: {
+            //     align: 'left',
+            //     verticalAlign: 'top',
+            //     x: 100,
+            //     y: -20,
+            //     floating: true,
+            //     itemStyle: {
+            //         // color: 'white',
+            //         fontWeight: 'bold',
+            //         fontSize: '20px'
+            //     },
+            // },
 
             tooltip: {
                 shared: true,

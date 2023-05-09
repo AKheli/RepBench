@@ -227,8 +227,8 @@
                             <div class="kt-subheader__main">
                                 {% block page_title %}{% endblock %}
                                 <span class="kt-subheader__separator kt-hidden"></span>
-                                {#                                                        {% block breadcrumbs %}{% endblock %}#}
-                                {#                                                        {% block breadcrumbs_content %}{% render_breadcrumbs %}{% endblock %}#}
+{#                                {% block breadcrumbs %}{% endblock %}#}
+{#                                {% block breadcrumbs_content %}{% render_breadcrumbs %}{% endblock %}#}
                             </div>
                         </div>
                         <!-- end: SubHeader -->
@@ -283,6 +283,19 @@
         {#        KTQuickSearchMobile().init(KTUtil.get('kt_quick_search_inline'), "{% url 'vadetisweb:dataset_search' %}");#}
         {#    }#}
         {# });#}
+
+        const toggleButtons = document.querySelectorAll('.btn-icon-md');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                toggleButtons.forEach(btn => {
+                    const icon = btn.querySelector('i');
+                    if (icon.classList.contains('mdi-chevron-up') && button !== btn) {
+                        btn.click();
+                    }
+                });
+            });
+        });
     </script>
 {% endblock %}
 {% block additional_bottom_js %}
