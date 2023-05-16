@@ -21,45 +21,44 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 import os
 
-SECRET_KEY = os.getenv("SECRET_KEY","AFR*VT%*RVTG&TE*TRE*DERG%TR") # todo make sure env_file is in gjango_gunicorn -> enf_file: .env
-DEBUG = int(os.getenv("DEBUG",True))
-print("DEBUG: ",DEBUG)
+SECRET_KEY = os.getenv("SECRET_KEY",
+                       "AFR*VT%*RVTG&TE*TRE*DERG%TR")  # todo make sure env_file is in gjango_gunicorn -> enf_file: .env
+DEBUG = int(os.getenv("DEBUG", True))
+print("DEBUG: ", DEBUG)
 
-
-ALLOWED_HOSTS = ['*'] # todo: check this
+ALLOWED_HOSTS = ['*']  # todo: check this
 
 # Application definition
 
 CORS_ALLOWED_ORIGINS = [
-"http://localhost:8000",
-"http://127.0.0.1:8000"
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-r".*",
+    r".*",
 ]
 
 CORS_ALLOW_METHODS = [
-'DELETE',
-'GET',
-'OPTIONS',
-'PATCH',
-'POST',
-'PUT',
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 
 CORS_ALLOW_HEADERS = [
-'accept',
-'accept-encoding',
-'authorization',
-'content-type',
-'dnt',
-'origin',
-'user-agent',
-'x-csrftoken',
-'x-requested-with',
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
-
 
 INSTALLED_APPS = [
     'RepBenchWeb',
@@ -87,9 +86,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'RepBenchWeb.urls'
 
+
 def title(request):
     # return the value you want as a dictionary. you may add multiple values in there.
     return {'Title': "RepBench"}
+
 
 TEMPLATES = [
     {
@@ -117,7 +118,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'repair.db',
+    },
+    'OPTIONS': {
+        'autocommit': True
     }
+
 }
 
 # Password validation
@@ -152,7 +157,8 @@ USE_L10N = True
 USE_TZ = True
 
 from os.path import abspath, basename, dirname, join, normpath
-DJANGO_ROOT = dirname(abspath(__file__)) # todo change this depending on file level
+
+DJANGO_ROOT = dirname(abspath(__file__))  # todo change this depending on file level
 PROJECT_ROOT = dirname(DJANGO_ROOT)
 SITE_NAME = basename(DJANGO_ROOT)
 
@@ -176,10 +182,25 @@ PROJECT_TEMPLATES = [
 ]
 
 import sys
+
 sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_TASK_RESULT_EXPIRES = 1800  # 30min
+#
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://redis:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
 
 
 # LOGGING = {
@@ -205,8 +226,6 @@ MEDIA_URL = '/media/'
 #
 # ]
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
 
 
 # ###

@@ -15,12 +15,12 @@ def flaml_search(automl_settings, X_train, y_train, *, verbose=-1, ignore_flaml_
     if file_name is not None:
         automl_result_name = file_name
 
-    if ignore_flaml_output:
-        with  warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            automl.fit(X_train=X_train, y_train=y_train, verbose=2, **automl_settings)
-    else:
-        automl.fit(X_train=X_train, y_train=y_train, verbose=verbose, **automl_settings)
+    # if ignore_flaml_output:
+    #     with  warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         automl.fit(X_train=X_train, y_train=y_train, verbose=2, **automl_settings)
+    # else:
+    automl.fit(X_train=X_train, y_train=y_train, callback = lambda x : print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",x) , **automl_settings)
 
     store_estimator(automl, estimator_name=automl_result_name)
     return automl, automl_result_name

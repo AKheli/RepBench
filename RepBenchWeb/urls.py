@@ -87,9 +87,11 @@ urlpatterns = [
 
     path('flaml_example', flaml_example_view.start_flaml, name='start_flaml'),
     path('flaml_retrieve', flaml_example_view.retrieve_flaml_results, name='retrieve_flaml_results'),
-
+    path('get_flaml_recommendation/<str:setname>' , flaml_example_view.get_flaml_recommendation , name='get_flaml_recommendation')
     # path('user_recommendation', recommendation_view..as_view(), name='user_recommendation'),
 ]
+
+
 
 urlpatterns += [
                    # path('RepBenchWeb/', include("RepBenchWeb.urls")),

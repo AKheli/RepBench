@@ -74,21 +74,3 @@ while True:
         if not flaml_process.is_alive():
             break
 
-
-while True:
-    try:
-        output = out_put_queue_2.get(timeout=10,block=False)
-        if "at" in output:
-            match = re.search(regex, output)
-            if match:
-                result = {"time": float(match.group(1)),
-                          "estimator": match.group(2),
-                          "error": float(match.group(3)),
-                          "best_estimator": match.group(4),
-                          "best_error": float(match.group(5))
-                          }
-                print(result)
-                print(output.split("cut")[-1] if "cut" in output else "")
-    except Empty:
-        if not flaml_process_2.is_alive():
-            break

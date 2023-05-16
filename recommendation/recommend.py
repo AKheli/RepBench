@@ -21,7 +21,7 @@ autoML_file_name_default = "flaml_classifier_accuracy_time_6_non_normalized"
 
 
 def get_recommendation(injected_data_container: InjectedDataContainer,
-                       autoML_file_name: str = autoML_file_name_default) -> dict:
+                       autoML_file_name: str = autoML_file_name_default , automl : AutoML=None) -> dict:
     """
     Returns dict: {
     "recommended_algorithm" : str
@@ -51,7 +51,7 @@ def get_recommendation(injected_data_container: InjectedDataContainer,
         alg_scores[alg_name] = alg_score
         alg_repairs[alg_name] = alg_repair
 
-    automl: AutoML = load_estimator(autoML_file_name)
+    automl: AutoML = load_estimator(autoML_file_name) if automl is None else automl
     features = extract_features(injected_data_container.injected, injected_data_container.injected_columns[0])
     fd = pd.DataFrame.from_dict({k: [v] for k, v in features.items()})
     best_algorithm = automl.predict(fd)[0]

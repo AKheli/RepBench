@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from RepBenchWeb.forms.recommendation_forms import AutomlSettingsForm
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views.synthetic_dataset_view import SyntheticDatasetView
@@ -22,6 +23,8 @@ class RecommendationView(SyntheticDatasetView):
         context["RepBenchWeb"] = int(request.GET.get("RepBenchWeb", self.default_nbr_of_ts_to_display))
         context["data_fetch_url_name"] = self.data_fetch_url_name
         context["injected_data_set_info"] = self.data_set_info_context(setname)
+
+        context["flaml_settings_form"] = AutomlSettingsForm()
         return render(request, self.template, context=context)
 
 

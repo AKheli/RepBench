@@ -1,34 +1,27 @@
 version: '3'
 
 services:
-  db:
-    image: postgres
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    restart: always
-
-  app:
-    build:
-      context: .
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - static_volume:/RepairBenchWeb/static
+      - .:/code
     ports:
-      - "8000:8000"
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=devsecretkey
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - 8000:8000
     depends_on:
-      - db
-    command: >
-      sh -c "python3 manage.py migrate &&
-             python3 manage.py runserver 0.0.0.0:8000"
-    restart: always
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=RepBenchWeb.settings
 
-
-volumes:
-  static_volume:
+  celery:
+    build: .
+    command: celery -A RepBenchWeb worker --loglevel=info -c 4
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=RepBenchWeb.settings
+  redis:
+    image: redis

@@ -8,28 +8,57 @@
             <h3 class="kt-portlet__head-title"></h3>
             <form id="start-flaml-form">
                 {% csrf_token %}
+
                 <button type="submit" class="btn btn-primary">Start Flaml</button>
+                <div id="start-button-right" style="display: inline;">
+                    <h6 id="start-button-right-text" style="display: inline;">OOO</h6>
+                </div>
             </form>
         </div>
         <div class="kt-portlet__head-toolbar">
         </div>
     </div>
     <div class="kt-portlet__body">
-        <div id="flaml-chart"></div>
+        <div class="row">
+            <div class="col-md-9" id="flaml-chart"></div>
+            <form class="form-group col-md-3" id="flaml_settings_form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in flaml_settings_form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+            </form>
+        </div>
     </div>
 </div>
 
 
-
 <script>
+    let flaml_response_data = []
+    let flaml_response_iter = 0;
+
+
     $(document).ready(function () {
+
+
         $('#start-flaml-form').on('submit', function (event) {
             event.preventDefault();
+            flaml_response_iter = 0;
+            flaml_response_data = [];
+
+            let queryString = $('#flaml_settings_form').serialize();
+            const params = new URLSearchParams(queryString);
+            const estimatorList = params.getAll("estimator_list");
+            queryString += '&estimator_list=' + estimatorList;
+
+            flaml_response_iter = 0;
 
             $.ajax({
                 type: 'POST',
                 url: '{% url 'start_flaml' %}',
-                data: $('#start-flaml-form').serialize(),
+                data: $('#start-flaml-form').serialize() + '&' + queryString,
                 success: function (response) {
                     console.log(response);
                     let estimators = response.automl_settings.estimator_list;
@@ -38,43 +67,36 @@
                     // Call function to retrieve Flaml results periodically
 
                     // Create chart
+                    let task_id = response.task_id
                     initFlamlChart(estimators);
-                    getFlamlResults();
+                    getFlamlResults(task_id);
                 },
                 error: function (response) {
                     console.log(response);
-                    alert('Error starting Flaml');
+                    {#alert('Error starting Flaml');#}
                 }
             });
         });
     });
 
-    function getFlamlResults() {
+
+    function getFlamlResults(task_id) {
         $.ajax({
             type: 'POST',
             url: '{% url 'retrieve_flaml_results' %}',
-            data: $('#start-flaml-form').serialize(),
+            data: $('#start-flaml-form').serialize() + '&task_id=' + task_id,
             success: function (response) {
-                console.log(response);
+                console.log("EYYY", response);
                 if (response.status === 'running') {
-                    let results = response.results
-                    // Display results table
-                    {#var table = '<table class="table"><thead><tr><th>Time</th><th>Estimator</th><th>Error</th><th>Best Estimator</th><th>Best Error</th></tr></thead><tbody>';#}
-                    for (var i = 0; i < results.length; i++) {
-                        let estimator = results[i].estimator
-                        let score = results[i].error
-                        let time = results[i].time
-                        addDataToFlamlChart(score, estimator, time);
-                        {#table += '<tr><td>' + result.time + '</td><td>' + result.estimator + '</td><td>' + result.error + '</td><td>' + result.best_estimator + '</td><td>' + result.best_error + '</td></tr>';#}
-                    }
-                    {#table += '</tbody></table>';#}
-                    {#$('#results-table').html(table);#}
-                    // Call function again after 5 seconds
-                    flamlChart.redraw()
-                    setTimeout(getFlamlResults, 1000);
-                } else if (response.status === 'finished') {
+
+                    flaml_response_data = response.data;
+                    flamlChart.redraw();
+                    setTimeout(function () {
+                        getFlamlResults(task_id);  // Pass the task_id again in the recursive call
+                    }, 1000);
+                } else if (response.status === 'done') {
                     // Display message that Flaml is finished
-                    {#$('#results-table').html('<p>Flaml finished. Please see logs for details.</p>');#}
+                    // ...
                 }
             },
             error: function (response) {
@@ -83,4 +105,27 @@
             }
         });
     }
+    let intervalTimer = 1000;
+    function iterateData() {
+        // Check if iterator is within bounds
+        if (flaml_response_iter < flaml_response_data.length) {
+            // Perform the desired action with the data
+            currentData = flaml_response_data[flaml_response_iter];
+            let score = currentData.score;
+            let roundedScore = Math.round(score * 1000) / 1000;
+            document.getElementById("start-button-right-text").innerHTML = currentData.estimator + "  score:" + roundedScore;
+            // Move the iterator forward
+            flaml_response_iter = flaml_response_iter + 1;
+            flamlChart.series[0].addPoint(score);
+            {#addDataToFlamlChart(score, currentData.estimator , 1);#}
+        } else {
+            // Wait until the data is long enough
+            console.log("Waiting for more data..." + flaml_response_iter);
+        }
+       setTimeout(iterateData, intervalTimer);
+    }
+    iterateData();
+
+
+
 </script>

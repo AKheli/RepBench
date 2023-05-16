@@ -1,10 +1,13 @@
+# from django.core.cache import cache
+from RepBenchWeb.models import TaskData
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 import sys
 import os
-
+from RepBenchWeb.celery import flaml_search_task
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 import time
+from django.core.cache import cache
 
 from RepBenchWeb.views.utils.cleanup_task import flaml_processes_queues_and_times, kill_process, \
     to_many_requests_response
@@ -12,7 +15,6 @@ from RepBenchWeb.views.utils.cleanup_task import flaml_processes_queues_and_time
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
-from recommendation.flaml_search import flaml_search_multiprocess
 from recommendation.utils import *
 
 multiclass_metrics = ['accuracy', 'macro_f1', 'micro_f1']
@@ -27,91 +29,64 @@ feature_values = algorithms_scores['features']
 encoder = LabelEncoder()
 categories_encoded = encoder.fit_transform(best_algorithms)
 
-train_split_r = 0.5
+train_split_r = 0.9
 n_train_split = int(len(feature_values) * train_split_r)
 train_split = np.random.choice(len(feature_values), n_train_split, replace=False)
 
 # get all other indices
-test_split = np.setdiff1d(np.arange(len(feature_values)), train_split)
-X_train = feature_values.iloc[train_split, :]
-X_test = feature_values.iloc[test_split, :]
-y_train, y_test = categories_encoded[train_split], categories_encoded[test_split]
-
-
 def start_flaml(request):
-    time_budget = 20
+
+    test_split = np.setdiff1d(np.arange(len(feature_values)), train_split)
+    X_train = feature_values.iloc[train_split, :]
+    y_train : np.ndarray = categories_encoded[train_split]
+
     automl_settings = {
-        "time_budget": time_budget,  # in seconds
-        "metric": "accuracy",  # accuracy , micro_f1, macro_f1
+        "metric": "accuracy",  # choice from  accuracy , micro_f1, macro_f1
         "task": 'classification',
         "log_file_name": "recommendation/logs/flaml.log",
         "estimator_list": ['lgbm', 'rf', 'xgboost', 'extra_tree', 'lrl1']
     }
 
     token = request.POST.get("csrfmiddlewaretoken")
+    automl_settings["time_budget"] = int(request.POST.get("time_budget",20))
+    automl_settings["metric"] = request.POST.get("metric","accuracy")
+    automl_settings["task"] = "classification"
 
-    if token in flaml_processes_queues_and_times:
-        print("cleaning up old process")
-        flaml_process, out_put_queue, start_time = flaml_processes_queues_and_times[token]
-        kill_process(flaml_process)
-        del flaml_processes_queues_and_times[token]
+    print("ESTIMATOR LIST" , request.POST.get("estimator_list") )
+    estimator_list = request.POST.get("estimator_list")
+    estimator_list = estimator_list if isinstance(estimator_list, list) else estimator_list.split(",")
 
-    flaml_process, out_put_queue = flaml_search_multiprocess(automl_settings, X_train, y_train)
-
-    start_time = time.time()
-    flaml_processes_queues_and_times[token] = (flaml_process, out_put_queue, start_time)
-    # clean
-    # cleanup_process(token, time_budget * 2,)
-
-    # cache.set(token, {'pid': flaml_process.pid, 'start_time': start_time})
-
-    return RepBenchJsonRespone({"status": "ok", "automl_settings": automl_settings})
+    automl_settings["estimator_list"] = estimator_list
+    X_train_dict = X_train.to_dict()
+    y_train_dict = y_train.tolist()
+    task_id = token
+    flaml_search_task.delay(automl_settings, X_train_dict, y_train_dict, my_task_id=task_id)
 
 
-import re
-
-regex = r"at\s+(\d+\.\d+)s,\s*estimator\s+(\w+)'s\s+best\s+error=(\d+\.\d+),\s*best\s+estimator\s+(\w+)'s\s+best\s+error=(\d+\.\d+)"
-from _queue import Empty
+    return RepBenchJsonRespone({"status": "ok", "automl_settings": automl_settings, "task_id": task_id})
 
 
 def retrieve_flaml_results(request):
-    status = "running"
     token = request.POST.get("csrfmiddlewaretoken")
 
-    if to_many_requests_response(token):
-        return RepBenchJsonRespone({"status": "finished"})
-
+    task_id = request.POST.get("task_id")
+    print("task_id retrive" , task_id)
+    print(TaskData.objects.filter(task_id=task_id))
     try:
-        flaml_process, out_put_queue, start_time = flaml_processes_queues_and_times[token]
-    except KeyError:
-        print("no process found")
-        return RepBenchJsonRespone({"results": [], "status": "finished"})
+        print("celery taskdata" , TaskData.objects.filter(task_id=task_id).last().data)
+    except:
+        print("no task data found")
+        return RepBenchJsonRespone({"data": [] , "status": "running"})
 
-    results = []
-    while True:
-        try:
-            output = out_put_queue.get(timeout=10, block=False)
-            if "at" in output:
-                match = re.search(regex, output)
-                if match:
-                    result = {"time": float(match.group(1)),
-                              "estimator": match.group(2),
-                              "error": float(match.group(3)),
-                              "best_estimator": match.group(4),
-                              "best_error": float(match.group(5))
-                              }
-                    print(result)
-                    results.append(result)
-                    print(output.split("cut")[-1] if "cut" in output else "")
+    task_object = TaskData.objects.filter(task_id=task_id).last()
+    data = task_object.data
+    status = task_object.status
+    return RepBenchJsonRespone({"data": data, "status": status})
 
-        except Empty:
-            break
-    if not flaml_process.is_alive():
-        print("process is dead")
-        flaml_processes_queues_and_times.pop(token, "")
-        print("cleaning up old process")
-        print(flaml_process.pid)
-        flaml_process.join()
-        status = "finished"
 
-    return RepBenchJsonRespone({"results": results, "status": status})
+
+def get_flaml_recommendation(request,setname):
+    task_id = request.POST.get("task_id")
+    task_object = TaskData.objects.filter(task_id=task_id).last()
+    recommendation = task_object.get_recommendation(setname)
+    return RepBenchJsonRespone(recommendation)

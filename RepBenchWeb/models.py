@@ -1,11 +1,17 @@
 import json
+import pickle
 
 from django.db import models
 import pandas as pd
+from flaml import AutoML
 
 from RepBenchWeb.ts_manager.HighchartsMapper import map_repair_data
+from algorithms import algo_mapper
+from algorithms.param_loader import get_algorithm_params
 from injection.injected_data_container import InjectedDataContainer
-from recommendation.recommend import get_recommendation
+from recommendation.feature_extraction.feature_extraction import extract_features
+from recommendation.recommend import get_recommendation, alg_names
+from recommendation.utils import load_estimator
 
 
 def granularity_to_time_interval(granularity):
@@ -151,14 +157,14 @@ class InjectedContainer(models.Model):
     def __str__(self):
         return self.title
 
-    def recommendation_context(self):
+    def recommendation_context(self,automl =None):
         if True or self.recommendation is None:
             # recommendation_dict = json.loads(self.recommendation)
             original_data = DataSet.objects.get(title=self.original_data_set)
             df_original = original_data.df
             injected_data_container = self.injected_container
             truth = injected_data_container.truth
-            recommendation_results = get_recommendation(injected_data_container)
+            recommendation_results = get_recommendation(injected_data_container,automl)
             repairs = recommendation_results["alg_repairs"]
 
             repair_converted = {}
@@ -166,7 +172,6 @@ class InjectedContainer(models.Model):
                 mean, std = truth.mean(), truth.std()  # injected.mean(), injected.std()
                 repair_norm = (repair - mean) / std
                 # normalize truth data w.r.t injected series
-
                 repair_converted[alg_name] = map_repair_data(repair_norm, injected_data_container, alg_name=alg_name,
                                                              links=None, df_original=truth)
             recommendation_results["alg_repairs"] = repair_converted
@@ -176,6 +181,63 @@ class InjectedContainer(models.Model):
         else:
             recommendation_results = json.loads(self.recommendation)
         return recommendation_results
+
+from django.utils import timezone
+from datetime import timedelta
+from RepBenchWeb.celery import revoke_task
+from picklefield.fields import PickledObjectField
+
+class TaskData(models.Model):
+    task_id = models.CharField(max_length=255,unique=True)
+    data_type = models.CharField(max_length=255)
+    data = models.JSONField(default=list)
+    created_at = models.DateTimeField(default=timezone.now)
+    celery_task_id = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=255, default="running")
+    autoML = PickledObjectField(null=True, blank=True)
+
+    def set_done(self):
+        self.status = "done"
+        self.save()
+
+
+
+    def delete(self,  *args, **kwargs):
+        try:
+            revoke_task(self.celery_task_id)
+            print("old CELERY STOPPED")
+        except:
+            pass
+        super().delete(*args, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        task_id = kwargs.get('task_id')
+        TaskData.objects.filter(task_id=task_id).delete()
+        self.clean()
+        super().__init__(*args, **kwargs)
+
+
+    def add_data(self, data):
+        self.data.append(data)
+        self.save()
+
+
+    def clean(self):
+        """ delete all objects older than 10 minutes"""
+        time_threshold = timezone.now() - timedelta(minutes=30)
+        TaskData.objects.filter(created_at__lt=time_threshold).delete()
+
+
+
+    def set_autoML(self, automl):
+        self.autoML = pickle.dumps(automl, pickle.HIGHEST_PROTOCOL)
+        self.save()
+
+
+    def get_recommendation(self,setname):
+        automl = pickle.loads(self.autoML)
+        return   InjectedContainer.objects.get(title=setname).recommendation_context()
+
 
 
 """ how to delete a model in shell
@@ -193,3 +255,6 @@ InjectedContainer.objects.filter(title="test").delete()
 """ how to add a new field without reinitlalizing the whole table
 https://stackoverflow.com/questions/24311993/how-to-add-a-new-field-to-a-model-with-new-django-migrations
 """
+
+
+

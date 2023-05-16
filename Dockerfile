@@ -1,37 +1,25 @@
-FROM python:3.10-slim
+FROM python:3.10
 ENV PYTHONUNBUFFERED 1
 
 
-WORKDIR /usr/src/app
-EXPOSE 8000
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Installing scipy
-#RUN pip3 install --no-cache-dir --disable-pip-version-check scipy==1.7.1
-## Installing other slow packages
-#RUN pip3 install --no-cache-dir \
-#    pandas==1.3.5 \
-#    numpy==1.21.4 \
-#    psycopg2-binary==2.9.1 \
-#    scikit-learn==1.0.2 \
-#    matplotlib==3.5.1 \
-#    scikit-optimize==0.9.0
-#
-#
-#RUN pip3 install --no-cache-dir \
-#    FLAML==1.1.3\
-#    tsfresh==0.20.0
+# Set work directory
+WORKDIR /code
 
-# Installing requirements
-COPY ./frozen_requirements.txt /usr/src/app
+# Install dependencies
+COPY requirements.txt /code/
+RUN pip install --upgrade pip
 
-RUN apt-get update && apt-get install -y build-essential
+RUN apt-get update && apt-get install -y gcc python3-dev
+RUN pip install pycatch22==0.4.2
+RUN pip install -r requirements.txt
 
-RUN pip install -r /usr/src/app/frozen_requirements.txt
+# Copy project
+COPY . /code/
 
-# updated conflicting requierement
-RUN pip install --upgrade protobuf
-
-COPY . /usr/src/app
 
 
 

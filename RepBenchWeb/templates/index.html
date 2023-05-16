@@ -36,19 +36,21 @@
                         </li>
                         <li>Repair
                             <ul>
-                                <li><a href="{% url 'display_datasets' option="Repair" %}">Repair Synthetic Datasets</a></li>
+                                <li><a href="{% url 'display_datasets' option="Repair" %}">Repair Synthetic Datasets</a>
+                                </li>
                                 <li><a href="{% url 'display_datasets' %}">Inject Data and Repair</a></li>
                             </ul>
                         </li>
                         <li>Algorithm Analysis
                             <ul>
-                                  <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Detailed Repair of Matrix
-                        decomposition Techniques</a></li>
-                                  <li><a href=" {% url 'optimization_datasets' %}">Display Parameter Search using Bayesian
-                        Optimization</a></li>
+                                <li><a href="{% url 'repair_datasets' type='dimensionality_reduction' %}">Detailed
+                                    Repair of Matrix
+                                    decomposition Techniques</a></li>
+                                <li><a href=" {% url 'optimization_datasets' %}">Display Parameter Search using Bayesian
+                                    Optimization</a></li>
                             </ul>
                         </li>
-                         <li>Recommendation
+                        <li>Recommendation
                             <ul>
                                 <li><a href="">Real-World Datasets</a></li>
                                 <li><a href="">Synthetic Datasets</a></li>
@@ -59,12 +61,10 @@
                 <div class="col-md-3">
                     <p><b>Supported algorithms:</b></p>
                     <ul>
-                        <li>LISA (Pearson Correlation, Spatial Correlation, DTW)</li>
-                        <li>Robust PCA (Huber Loss Function)</li>
-                        <li>Histogram</li>
-                        <li>Cluster (Gaussian Mixture)</li>
-                        <li>Support Vector Machine</li>
-                        <li>Isolation Forest</li>
+                        <li>Iterative Minimum Repairing (IMR)</li>
+                        <li>Stream Data Cleaning under Speed Constraints (SCREEN)</li>
+                        <li>CDrep (Repair based on the Centroid Decomposition)</li>
+                        <li>RPCA (Robust PCA using Huber Loss Function)</li>
                     </ul>
                 </div>
             </div>
@@ -72,6 +72,21 @@
             <p>This application was implemented at the at the <a href="http://exascale.info/" target="_blank">eXascale
                 Infolab</a>, a research group at the <a href="http://www.unifr.ch/" target="_blank">University of
                 Fribourg</a>, Switzerland.</p>
+
+            <p>
+            <h3>
+                <b> Publications:</b>
+            </h3>
+            <ol>
+                <li>Zhang, Aoqian, et al. <b>"Time series data cleaning: From anomaly detection to anomaly
+                    repairing."</b> Proceedings of the VLDB Endowment 10.10 (2017): 1046-1057.
+                </li>
+                <li>Song, Shaoxu, et al. <b>"SCREEN: stream data cleaning under speed constraints."</b> Proceedings of
+                    the 2015 ACM SIGMOD International Conference on Management of Data. 2015.
+                </li>
+            </ol>
+
+            </p>
         </div>
     </div>
 {% endblock %}

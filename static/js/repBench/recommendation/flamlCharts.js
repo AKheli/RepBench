@@ -1,17 +1,19 @@
 let flamlChart = null
 
+
+
 function initFlamlChart(estimators) {
     console.log("init flaml chart")
     flamlChart = Highcharts.chart('flaml-chart', {
-        chart: {
-            type: 'column',
-            // height: 290,
-        },
+        // chart: {
+        //     type: 'column',
+        //     // height: 290,
+        // },
         title: {
             text: ''
         },
         xAxis: {
-            categories: []
+            // categories: []
         },
         yAxis: {
             min: 0,
@@ -19,22 +21,23 @@ function initFlamlChart(estimators) {
                 text: 'Score'
             }
         },
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-            shared: true
-        },
-        plotOptions: {
-            column: {
-                stacking: 'normal'
-            }
-        },
-        series: estimators.map(e => {
-            return {
-                name: e,
-                data: []
-
-            }
-        })
+        // tooltip: {
+        //     pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+        //     shared: true
+        // },
+        // plotOptions: {
+        //     column: {
+        //         stacking: 'normal'
+        //     }
+        // },
+        // series: [{}]estimators.map(e => {
+        //     return {
+        //         name: e,
+        //         data: []
+        //
+        //     }
+        // })
+        series : [{ data:[] , name: "score" }]
 
     });
 
