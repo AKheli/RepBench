@@ -164,7 +164,7 @@ class InjectedContainer(models.Model):
             df_original = original_data.df
             injected_data_container = self.injected_container
             truth = injected_data_container.truth
-            recommendation_results = get_recommendation(injected_data_container,automl)
+            recommendation_results = get_recommendation(injected_data_container,automl=automl)
             repairs = recommendation_results["alg_repairs"]
 
             repair_converted = {}
@@ -176,8 +176,8 @@ class InjectedContainer(models.Model):
                                                              links=None, df_original=truth)
             recommendation_results["alg_repairs"] = repair_converted
 
-            self.recommendation = json.dumps(recommendation_results)
-            self.save()
+            # self.recommendation = json.dumps(recommendation_results, cls=)
+            # self.save()
         else:
             recommendation_results = json.loads(self.recommendation)
         return recommendation_results
@@ -200,6 +200,11 @@ class TaskData(models.Model):
         self.status = "done"
         self.save()
 
+    def is_running(self):
+        return self.status == "running"
+
+    def is_done(self):
+        return self.status == "done"
 
 
     def delete(self,  *args, **kwargs):
@@ -230,13 +235,14 @@ class TaskData(models.Model):
 
 
     def set_autoML(self, automl):
+        print("SET AUTO ML")
         self.autoML = pickle.dumps(automl, pickle.HIGHEST_PROTOCOL)
         self.save()
 
 
     def get_recommendation(self,setname):
         automl = pickle.loads(self.autoML)
-        return   InjectedContainer.objects.get(title=setname).recommendation_context()
+        return InjectedContainer.objects.get(title=setname).recommendation_context(automl)
 
 
 

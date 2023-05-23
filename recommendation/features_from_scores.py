@@ -9,10 +9,10 @@ load_non_normalized_truth_features = True
 
 load_path = "recommendation/results/scores"
 store_path = "recommendation/results/features"
-data_folder = "recommendation/datasets/validation"
-file_name = "results_validation" if len(sys.argv) == 1 else sys.argv[1]
+data_folder = "recommendation/datasets/train"
+file_name = "results" if len(sys.argv) == 1 else sys.argv[1]
 
-store_file_name = file_name + "_features" #+ ("_non_normalized" if load_non_normalized_truth_features else "")
+store_file_name = file_name + "_features2" #+ ("_non_normalized" if load_non_normalized_truth_features else "")
 
 
 print("loading features from " + load_path + "/" + file_name +

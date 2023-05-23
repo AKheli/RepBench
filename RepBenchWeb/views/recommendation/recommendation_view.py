@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from RepBenchWeb.forms.recommendation_forms import AutomlSettingsForm
+from RepBenchWeb.forms.recommendation_forms import AutomlSettingsForm, RayTuneSettingsForm
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views.synthetic_dataset_view import SyntheticDatasetView
@@ -25,6 +25,7 @@ class RecommendationView(SyntheticDatasetView):
         context["injected_data_set_info"] = self.data_set_info_context(setname)
 
         context["flaml_settings_form"] = AutomlSettingsForm()
+        context["ray_tune_settings_form"] = RayTuneSettingsForm()
         return render(request, self.template, context=context)
 
 

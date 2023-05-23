@@ -20,7 +20,7 @@ alg_names = [CDREC, RPCA, IMR, SCREEN]
 autoML_file_name_default = "flaml_classifier_accuracy_time_6_non_normalized"
 
 
-def get_recommendation(injected_data_container: InjectedDataContainer,
+def get_recommendation(injected_data_container: InjectedDataContainer, *,
                        autoML_file_name: str = autoML_file_name_default , automl : AutoML=None) -> dict:
     """
     Returns dict: {
@@ -52,12 +52,16 @@ def get_recommendation(injected_data_container: InjectedDataContainer,
         alg_repairs[alg_name] = alg_repair
 
     automl: AutoML = load_estimator(autoML_file_name) if automl is None else automl
+    print("FEAUTURES" , automl.feature_names_in_)
     features = extract_features(injected_data_container.injected, injected_data_container.injected_columns[0])
+    print("FEAUTURES" , features)
+
     fd = pd.DataFrame.from_dict({k: [v] for k, v in features.items()})
+
     best_algorithm = automl.predict(fd)[0]
     label_inverse = automl._label_transformer.inverse_transform
 
-    probabilities = {label_inverse([i])[0]: p for i, p in enumerate(automl.predict_proba(fd)[0])}
+    probabilities = {   str(label_inverse([i])[0]) : p for i, p in enumerate(automl.predict_proba(fd)[0])}
     used_estimator = automl.best_estimator
     results = {
         "recommended_algorithm": best_algorithm,

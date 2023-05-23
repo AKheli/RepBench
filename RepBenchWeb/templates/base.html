@@ -9,6 +9,58 @@
     {#    <link rel="shortcut icon" type="image/x-icon" href="/static/img/global/favicon_vadetis.ico"/>#}
 
     {% block css %}
+
+        <style>
+
+            .reload-btn {
+               display: inline-block;
+                background-color: white;
+                border: 2px solid  darkgray;
+                color: black;
+                font-weight: bold;
+                text-align: center;
+                text-decoration: none;
+                padding: 0px 6px;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+
+              .reload-btn:hover {
+                background-color: darkgray;
+                {#border-color: #0D47A1;#}
+            }
+
+
+            .play-btn {
+                display: inline-block;
+                background-color: #2196F3;
+                border: 2px solid #2196F3;
+                color: #FFF;
+                font-weight: bold;
+                text-align: center;
+                text-decoration: none;
+                padding: 0px 10px;
+                border-radius: 5px;
+                transition: all 0.2s ease;
+            }
+
+            .play-btn:hover {
+                background-color: #0D47A1;
+                border-color: #0D47A1;
+                color: #FFF;
+            }
+
+            .play-btn:active {
+                background-color: #0D47A1;
+                border-color: #0D47A1;
+                color: #FFF;
+            }
+
+            .play-btn:hover, .play-btn:active {
+            {#box-shadow: 0px 0px 10px #BBB; /* Add a shadow effect on hover and click */#}
+            }
+        </style>
+
         <link href="{% static 'css/lib/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" type="text/css"/>
         <!-- end: Global Styles Plugins -->
         <!-- begin:Global Styles -->
@@ -227,8 +279,8 @@
                             <div class="kt-subheader__main">
                                 {% block page_title %}{% endblock %}
                                 <span class="kt-subheader__separator kt-hidden"></span>
-{#                                {% block breadcrumbs %}{% endblock %}#}
-{#                                {% block breadcrumbs_content %}{% render_breadcrumbs %}{% endblock %}#}
+                                {#                                {% block breadcrumbs %}{% endblock %}#}
+                                {#                                {% block breadcrumbs_content %}{% render_breadcrumbs %}{% endblock %}#}
                             </div>
                         </div>
                         <!-- end: SubHeader -->
