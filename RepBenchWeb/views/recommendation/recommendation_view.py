@@ -36,10 +36,10 @@ class RecommendationView(SyntheticDatasetView):
         return RepBenchJsonRespone(output)
 
     @staticmethod
-    def recommendation_datasets(request=None, type="recommend"):
+    def recommendation_datasets(request=None):
         context = {}
-        context["syntheticDatasets"] = {dataSet.title: dataSet.get_info()
+        context["datasets"] = {dataSet.title: dataSet.get_info()
                                         for dataSet in InjectedContainer.objects.all() if
                                         dataSet.title is not None and dataSet.title != "" }
         context["type"] = type
-        return render(request, 'data_set_options/repairDatasets.html', context=context)
+        return render(request, 'data_set_options/displayRecommendationDatasets.html', context=context)

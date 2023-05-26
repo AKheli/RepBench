@@ -22,3 +22,5 @@ def display_optimization_datasets(request=None, synthetic=False):
 
 
     return render(request, 'data_set_options/displayDatasetsSynthetic.html', context=context)
+
+

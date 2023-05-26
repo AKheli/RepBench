@@ -67,47 +67,107 @@ const invertObj = function (originalObj) {
     }
     return invertedObj
 }
-const createErrorChart = function (alg_scores) {
-    let series = Object.entries(alg_scores).map(([k, v]) => {
-        return {
-            name: k,
-            data: Object.entries(v).map(([k, v]) => v)
-        }
-    })
-    alg_scores = invertObj(alg_scores)
-    let alg_categories = Object.keys(alg_scores)
+// const createErrorChart = function (alg_scores) {
+//     let series = Object.entries(alg_scores).map(([k, v]) => {
+//         return {
+//             name: k,
+//             data: Object.entries(v).map(([k, v]) => v)
+//         }
+//     })
+//     alg_scores = invertObj(alg_scores)
+//     let alg_categories = Object.keys(alg_scores)
+//
+//     console.log(series)
+//     scoreChart = Highcharts.chart('alg-scores-chart', {
+//         chart: {
+//             type: 'column',
+//             height: chartHeight
+//         },
+//         title: {
+//             text: ''
+//         },
+//         xAxis: {
+//             categories: alg_categories
+//         },
+//         yAxis: {
+//             title: {
+//                 text: 'Score'
+//             }
+//         },
+//             credits: {
+//             enabled: false
+//         },
+//         legend: {
+//             enabled: true
+//         },
+//         plotOptions: {
+//             column: {
+//                 pointPadding: 0.2,
+//                 shadow: false,
+//                 borderWidth: 0
+//             }
+//         },
+//         series: series
+//     });
+// }
 
-    console.log(series)
-    scoreChart = Highcharts.chart('alg-scores-chart', {
-        chart: {
-            type: 'column',
-            height: chartHeight
-        },
-        title: {
-            text: ''
-        },
-        xAxis: {
-            categories: alg_categories
-        },
-        yAxis: {
-            title: {
-                text: 'Score'
-            }
-        },
-            credits: {
-            enabled: false
-        },
-        legend: {
-            enabled: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                shadow: false,
-                borderWidth: 0
-            }
-        },
-        series: series
-    });
-}
+
+const createErrorChart = function (alg_scores) {
+    console.log("CREATE ERROR CHART" , alg_scores)
+  const categories = Object.keys(alg_scores);
+  const maeData = categories.map((category) => alg_scores[category].MAE);
+  const rmseData = categories.map((category) => alg_scores[category].RMSE);
+  const rmseAnomalyData = categories.map((category) => alg_scores[category]["RMSE on Anomaly"]);
+  const originalRmseData = categories.map((category) => alg_scores[category].original_RMSE);
+
+  scoreChart = Highcharts.chart('alg-scores-chart', {
+    chart: {
+      type: 'column',
+      height: chartHeight
+    },
+    title: {
+      text: ''
+    },
+    xAxis: {
+      categories: categories
+    },
+    yAxis: {
+      title: {
+        text: 'Error Value'
+      }
+    },
+    legend: {
+      // align: 'top',
+      verticalAlign: 'top',
+      // layout: 'vertical'
+    },
+    plotOptions: {
+      series: {
+        borderWidth: 0,
+        dataLabels: {
+          enabled: true,
+          format: '{point.y:.4f}'
+        }
+      }
+    },
+    series: [
+      {
+        name: 'MAE',
+        data: maeData
+      },
+      {
+        name: 'RMSE',
+        data: rmseData
+      },
+      {
+        name: 'RMSE on Anomaly',
+        data: rmseAnomalyData
+      },
+      {
+        name: 'Original RMSE',
+        data: originalRmseData
+      }
+    ]
+  });
+};
 

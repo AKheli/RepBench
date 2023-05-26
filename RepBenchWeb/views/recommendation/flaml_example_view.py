@@ -1,5 +1,8 @@
 # from django.core.cache import cache
+from sklearn.metrics import f1_score, accuracy_score
+
 from RepBenchWeb.models import TaskData
+
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 import sys
 import os
@@ -11,6 +14,7 @@ from django.core.cache import cache
 
 from RepBenchWeb.views.utils.cleanup_task import flaml_processes_queues_and_times, kill_process, \
     to_many_requests_response
+from recommendation.ray_tune.ray_tune_config import config as ray_tune_config
 
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
@@ -26,23 +30,34 @@ best_algorithms = algorithms_scores['best_algorithm']
 best_algorithms = best_algorithms.values.flatten()
 feature_values = algorithms_scores['features']
 
-encoder = LabelEncoder()
-categories_encoded = encoder.fit_transform(best_algorithms)
 
 train_split_r = 0.9
 n_train_split = int(len(feature_values) * train_split_r)
 train_split = np.random.choice(len(feature_values), n_train_split, replace=False)
 
+X = feature_values.iloc[train_split, :]
+if X.isnull().values.any():
+    nan_columns = X.columns[X.isnull().any()].tolist()
+    if nan_columns:
+        print("Columns containing NaN values:", nan_columns)
+
+    nan_rows = X[X.isnull().any(axis=1)]
+    if not nan_rows.empty:
+        print("Row indices containing NaN values:\n", nan_rows.index)
+    else:
+        print("No rows contain NaN values.")
+    print("X contains NaN values.")
+    X = X.dropna(axis=1)
+
+
+y : np.ndarray = best_algorithms[train_split]
+from recommendation.encoder import encode
+y = encode(y)
+
 # get all other indices
 def start_flaml(request):
-    print("START" , dict(request.POST))
     # time.sleep(10)
-
     test_split = np.setdiff1d(np.arange(len(feature_values)), train_split)
-    X_train = feature_values.iloc[train_split, :]
-    y_train : np.ndarray = categories_encoded[train_split]
-    print("X_train" , X_train.shape)
-    time.sleep(4)
     automl_settings = {
         "metric": "accuracy",  # choice from  accuracy , micro_f1, macro_f1
         "task": 'classification',
@@ -64,41 +79,91 @@ def start_flaml(request):
     automl_settings["estimator_list"] = estimator_list
 
     task_id = request.POST.get("task_id")
+    from RepBenchWeb.models import TaskData
 
-    X = X_train
-    y = y_train
-    if X.isnull().values.any():
-        nan_columns = X.columns[X.isnull().any()].tolist()
-        if nan_columns:
-            print("Columns containing NaN values:", nan_columns)
-
-        nan_rows = X[X.isnull().any(axis=1)]
-        if not nan_rows.empty:
-            print("Row indices containing NaN values:\n", nan_rows.index)
-        else:
-            print("No rows contain NaN values.")
-        print("X contains NaN values.")
-        X_train = X.dropna(axis=1)
-
-    else:
-        print("X does not contain NaN values.")
-
-
-    X_train_dict = X_train.to_dict()
-    y_train_dict = y_train.tolist()
-    # For numpy array
-    if np.isnan(y).any():
-        print("y contains NaN values.")
-    else:
-        print("y does not contain NaN values.")
-    print("AFTER NAN CHECK")
-    TaskData.objects.filter(task_id=task_id).delete()
+    try:
+        TaskData.objects.get(task_id=task_id).delete()
+    except TaskData.DoesNotExist:
+        pass
 
     if tuner == "ray":
-        ray_tune_search_task.delay(automl_settings, X_train_dict, y_train_dict, my_task_id=task_id)
+        task_data = TaskData(task_id=task_id, data_type="ray")
+        task_data.save()
+        ray_tune_search_task.delay(automl_settings, X, y, my_task_id=task_id)
     else:
-        flaml_search_task.delay(automl_settings, X_train_dict, y_train_dict, my_task_id=task_id)
+        task_data = TaskData(task_id=task_id, data_type="flaml")
+        task_data.save()
+        flaml_search_task.delay(automl_settings, X, y, my_task_id=task_id)
 
+    # from sklearn.ensemble import RandomForestClassifier
+    # from lightgbm import LGBMClassifier
+    # from sklearn.ensemble import ExtraTreesClassifier
+    # from sklearn.linear_model import LogisticRegression
+    # from ray.tune.search.bayesopt import BayesOptSearch
+    #
+    # from ray import tune
+    # from RepBenchWeb.models import TaskData
+    # # check if X or y contai nan vlaues
+    #
+    # setting_metric = automl_settings["metric"]
+    #
+    # metrics = {
+    #     "accuracy": accuracy_score,
+    #     "micro_f1": lambda y_true, y_pred: f1_score(y_true, y_pred, average='micro'),
+    #     "macro_f1": lambda y_true, y_pred: f1_score(y_true, y_pred, average='macro')
+    # }
+    #
+    # from ray.tune import Callback
+    # class MyCallback(Callback):
+    #     def on_trial_result(self, iteration, trials, trial, result, **info):
+    #         data_ = {"score": result["score"],
+    #                  # "estimator": result["config"]["model"],
+    #                  "pred_time": result["time_this_iter_s"],
+    #                  "config": result["config"].copy()
+    #                  }
+    #
+    #         # print("DATA", data_)
+    #
+    # def train_model(config):
+    #     estimator = config.get("model", "LGBM")
+    #     if estimator == "RandomForest":
+    #         model = RandomForestClassifier(n_estimators=config["n_estimators"],
+    #                                        max_depth=config["max_depth"],
+    #                                        min_samples_split=config["min_samples_split"])
+    #     elif estimator == "ExtraTrees":
+    #         model = ExtraTreesClassifier(n_estimators=config["n_estimators"],
+    #                                      max_depth=config["max_depth"],
+    #                                      min_samples_split=config["min_samples_split"])
+    #     elif estimator == "LogisticRegression":
+    #         model = LogisticRegression(penalty="l1", C=config["C"], solver='liblinear')
+    #
+    #     else:  # "LGBM"
+    #         model = LGBMClassifier(n_estimators=config["n_estimators"],
+    #                                num_leaves=config["num_leaves"],
+    #                                learning_rate=config["learning_rate"],
+    #                                min_child_samples=config["min_child_samples"])
+    #
+    #     t = time.time()
+    #
+    #     model.fit(X, y)
+    #     y_predict = model.predict(X)
+    #
+    #     from sklearn.metrics import accuracy_score
+    #     accuracy = accuracy_score(y, y_predict)
+    #
+    #     score = metrics[setting_metric](y, y_predict)
+    #     return {"score": score}
+    #
+    # from ray.tune.search.ax import AxSearch
+    # from ray import air, tune
+    # ray_tune_config.pop("model","")
+    # ax_search = AxSearch()
+    # tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
+    #                    tune_config=tune.TuneConfig(time_budget_s=5, metric="score", mode="max", max_concurrent_trials=3,
+    #                                                num_samples=-1, search_alg=ax_search)
+    #                    )
+    # tuner.fit()
+    print("sarch task initialized")
     return RepBenchJsonRespone({"status": "ok", "automl_settings": automl_settings, "task_id": task_id})
 
 

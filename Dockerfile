@@ -16,7 +16,8 @@ RUN pip install --upgrade pip
 RUN apt-get update && apt-get install -y gcc python3-dev
 RUN pip install pycatch22==0.4.2
 RUN pip install -r requirements.txt
-
+RUN pip3 install bayesian-optimization
+RUN pip install ax-platform sqlalchemy
 # Copy project
 COPY . /code/
 

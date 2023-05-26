@@ -65,20 +65,23 @@ let tooltip = {
     formatter: function (e) {
         // The first returned item is the header, subsequent items are the
         // points
+        console.log("this",this)
+        console.log("e",e)
         let x = this.x
-        return ['<p style=\"color:black;font-size:15px;\"> ' + this.series.name + ': ' + this.y + '</p>'].concat(
-            this.series.linkedSeries.map(function (s) {
-                console.log("SSSSSSSSSS" , s)
-                selectedY = s.data[x].y
-                selectedY = Math.round(selectedY * 1000) / 1000
-                if (selectedY !== null) {
-                    if (s.name.includes('injected')) {
-                        return "<br> <p style=\"color:red;font-size:15px;\">" + s.name + " " + selectedY + "<\p> "
-                    } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
-                }
-
-            })
-        );
+        // return ['<p style=\"color:black;font-size:15px;\"> ' + this.series.name + ': ' + this.y + '</p>'].concat(
+        //     this.series.linkedSeries.map(function (s) {
+        //         console.log("SSSSSSSSSS" , s)
+        //         selectedY = s.data[x].y
+        //         selectedY = Math.round(selectedY * 1000) / 1000
+        //         if (selectedY !== null) {
+        //             if (s.name.includes('injected')) {
+        //                 return "<br> <p style=\"color:red;font-size:15px;\">" + s.name + " " + selectedY + "<\p> "
+        //             } else return "<br> <p style=\"color:" + s.color + ";font-size:15px;\">" + s.name + ": " + selectedY + "<\p> "
+        //         }
+        //
+        //     })
+        // );
+        return ['<p style=\"color:black;font-size:15px;\"> ' + this.series.name + ': ' + this.y + '</p>']
     },
     shared: false,
     valueDecimals: 2
@@ -130,7 +133,6 @@ const createEmptyChart = function (length, container = 'highcharts_container') {
 
 const initMainChart = function (series = {}, addSeriesToChartManager = false, container = 'highcharts_container') {
     // loadChart()
-    console.log("INIT MAIN CHART" , chartHeight)
     mainChart = Highcharts.chart(document.getElementById(container), {
         credits: {
             enabled: false

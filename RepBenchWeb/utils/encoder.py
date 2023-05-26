@@ -41,18 +41,6 @@ class RepBenchJsonEncoder(json.JSONEncoder):
 
 
 def RepBenchJsonRespone(response_data):
-    # print("RESPONSE DATA", response_data)
-    # for k,v in response_data.items():
-    #     print(k)
-    #     print(v)
-    #     print(type(k))
-    #     print(type(v))
-    #     if isinstance(v,dict):
-    #         print("DICT",*v)
-    #         for k2,v2 in v.items():
-    #             print(type(k2),type(v2))
-    #     dumped = json.dumps(v, cls=RepBenchJsonEncoder)
-
     dumped = json.dumps(response_data, cls=RepBenchJsonEncoder)
     # print(type(dumped))
     for k, v in repbench_maps.items():

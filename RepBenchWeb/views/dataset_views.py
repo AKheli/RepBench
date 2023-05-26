@@ -94,3 +94,22 @@ def display_datasets(request=None,option="Display" , synthetic=False):
         return render(request, 'data_set_options/displayDatasetsSynthetic.html', context=context)
 
     return render(request, 'data_set_options/displayDatasets.html', context=context)
+
+
+def delete_dataset(request,setname):
+    response = ""
+    try:
+        # dataSet = DataSet.objects.get(title=setname)
+        # dataSet.delete()
+        # response = f"{setname} deleted"
+        response = f"could not delete {setname}"
+        raise Exception
+    except:
+        try:
+            dataSet = InjectedContainer.objects.get(title=setname)
+            dataSet.delete()
+            response = f"{setname} (synthetic) deleted"
+        except:
+            response = f"could not delete {setname}"
+
+    return RepBenchJsonRespone({"result":response})

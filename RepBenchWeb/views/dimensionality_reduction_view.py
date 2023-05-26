@@ -2,6 +2,7 @@ import numpy as np
 from django.shortcuts import render
 import json
 
+from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from injection.injected_data_container import InjectedDataContainer
 from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
@@ -15,7 +16,7 @@ from testing_frame_work.data_methods.data_class import normalize_f
 
 
 class DimensionalityReductionView(RepairView):
-    template = "dimensionalityReductionVisualization.html"
+    template = "AlgorithmAnalysis/dimensionalityReductionVisualization.html"
     ParamForms = {"RPCA": RPCAparamForm(), "CDrec": CDparamForm()}
 
     @staticmethod
@@ -167,4 +168,12 @@ class DimensionalityReductionView(RepairView):
 
 
 
-        return RepBenchJsonRespone(context, encoder=DimensionalityReductionView.encoder)
+        return RepBenchJsonRespone(context)
+
+
+def display_dim_reduction_datasets(request=None):
+    context = {}
+    context["datasets"] = {dataSet.title: dataSet.get_info()
+                           for dataSet in InjectedContainer.objects.all() if
+                           dataSet.title is not None and dataSet.title != ""}
+    return render(request, 'data_set_options/displayDimReductionDataSets.html', context=context)

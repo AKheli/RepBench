@@ -57,6 +57,7 @@ urlpatterns = [
 
 
     # alg inspection
+    path('dim_reduction_datasets', dimensionality_reduction_view.display_dim_reduction_datasets, name="dim_reduction_datasets"),
     path('alg_inspection', dimensionality_reduction_view.DimensionalityReductionView.as_view(),
          name="dimensionality_reduction"),
     path('alg_inspection/<str:setname>', dimensionality_reduction_view.DimensionalityReductionView.as_view(),
@@ -75,20 +76,27 @@ urlpatterns = [
 
 
     ## recommendation
-    path('recommendation/<str:setname>', recommendation_view.RecommendationView.as_view(), name='recommend'),
     path('recommendation_datasets', recommendation_view.RecommendationView().recommendation_datasets,
          name='recommendation_datasets'),
+
+
+    path('recommendation/<str:setname>', recommendation_view.RecommendationView.as_view(), name='recommendation'),
+
     path('get_reccomendation_results/<str:setname>', recommendation_view.RecommendationView.get_recommendation,
          name="get_recommendation"),
 
-    path('user_recommendation', file_upload_view.upload_files, name="user_recommendation"),
-    path('upload/', file_upload_view.upload_files, name='upload_files'),
-
+    # path('user_recommendation', file_upload_view.upload_files, name="user_recommendation"),
+    # path('upload/', file_upload_view.upload_files, name='upload_files'),
 
     path('flaml_example', flaml_example_view.start_flaml, name='start_flaml'),
     path('flaml_retrieve', flaml_example_view.retrieve_flaml_results, name='retrieve_flaml_results'),
-    path('get_flaml_recommendation/<str:setname>' , flaml_example_view.flaml_prediction , name='get_flaml_recommendation')
+    path('get_flaml_recommendation/<str:setname>' , flaml_example_view.flaml_prediction , name='get_flaml_recommendation'),
     # path('user_recommendation', recommendation_view..as_view(), name='user_recommendation'),
+
+
+
+    #delete dataset
+    path('delete_dataset/<str:setname>', dataset_views.delete_dataset, name='delete_dataset'),
 ]
 
 

@@ -167,7 +167,7 @@
 
         let select = document.getElementById('select_option');
         let selectedOptionValue = select.value
-        document.getElementById("start-button-right-text").innerHTML = "Starting " + selectedOptionValue ;
+        document.getElementById("start-button-right-text").innerHTML = "Starting " + selectedOptionValue;
         initFlamlChart([]);
         flamlChart.showLoading()
         $.ajax({
@@ -196,6 +196,7 @@
 
 
     function getFlamlResults() {
+
         $.ajax({
             type: 'POST',
             url: '{% url 'retrieve_flaml_results' %}',
@@ -257,20 +258,30 @@
 
 
     function getPrediction() {
+        mainChart.showLoading()
         $.ajax({
             type: 'POST',
             url: '{% url 'get_flaml_recommendation' setname=setname %}',
             data: $('#start-flaml-form').serialize() + '&task_id=' + task_id,
             success: function (response) {
-                {#console.log("EYYY", response);#}
+                console.log("EYYY", response);
+
                 const repairs = response.alg_repairs
-                Object.entries(repairs).forEach(([repairs_keys, repairs_values]) => {
+                const best_alg = response.recommended_algorithm[0]
+                Object.entries(repairs).forEach(([repairs_key, repairs_values]) => {
                         Object.entries(repairs_values).forEach(([key, value]) => {
                             console.log(key, value)
+
+                            value.legendIndex = repairs_key === best_alg ? -2 : -1
+                            value.visible = repairs_key === best_alg
+                            value.name = repairs_key === best_alg ? value.name + " (recommendation)" : value.name
                             chartManager.addSeries(value, true, "repair")
                         });
                     },
                 );
+                mainChart.hideLoading()
+                createProbabilityChart(response.probabilities)
+                createErrorChart(response.alg_scores)
             },
             error: function (response) {
                 console.log(response);
