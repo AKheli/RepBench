@@ -12,7 +12,13 @@ function initFlamlChart(estimators) {
             text: ''
         },
         xAxis: {
-            categories: []
+            categories: ["best"],
+            plotLines: [{
+                color: 'red',
+                width: 3,
+                value: 0.5,
+                dashStyle: "dot"
+            }]
         },
         yAxis: {
             min: 0,
@@ -38,7 +44,7 @@ function initFlamlChart(estimators) {
         //         stacking: 'normal'
         //     }
         // },
-        series: [{name: "best", data: [] }, {name: "current", data: []}]
+        series: [{name: "current", data: [0]}]
         // series: [{data: [], name: "" , showInLegend: false, type: "line"}]
 
     });
@@ -50,27 +56,32 @@ function initFlamlChart(estimators) {
         if (!categoreis.includes(estimator)) {
             flamlChart.xAxis[0].setCategories([...categoreis, estimator]);
             flamlChart.series.filter(s => s.name === "current")[0].addPoint(score)
-            flamlChart.series.filter(s => s.name === "best")[0].addPoint(score)
+            // flamlChart.series.filter(s => s.name === "best")[0].addPoint(score)
 
         } else {
-            flamlChart.series.filter(s => s.name === "current")[0].data[categoreis.indexOf(estimator)].update(score)
-            const currentBest = flamlChart.series.filter(s => s.name === "best")[0].data[categoreis.indexOf(estimator)].y
-            console.log("estimator", estimator)
-            console.log("currentBest", currentBest)
-            console.log("score", score)
-            if (currentBest < score) {
-                flamlChart.series.filter(s => s.name === "best")[0].data[categoreis.indexOf(estimator)].update(score)
+            let seriesData = flamlChart.series.filter(s => s.name === "current")[0].data
+            seriesData[categoreis.indexOf(estimator)].update(score)
+            let best = seriesData[0]
+            if(score > best.y) {
+                best.update({color: "red" , y: score})
             }
-            let arr = flamlChart.series.filter(s => s.name === "best")[0].data.map(d => d.y);
-            let max = Math.max(...arr);
-            let maxIndex = arr.indexOf(max);
-            flamlChart.series.filter(s => s.name === "best")[0].data.forEach((d, i) => {
-                if (i === maxIndex) {
-                    d.update({color: "red"})
-                } else {
-                    d.update({color: "blue"})
-                }
-            })
+            // const currentBest = flamlChart.series.filter(s => s.name === "best")[0].data[categoreis.indexOf(estimator)].y
+            console.log("estimator", estimator)
+            // console.log("currentBest", currentBest)
+            console.log("score", score)
+            // if (currentBest < score) {
+            //     flamlChart.series.filter(s => s.name === "best")[0].data[categoreis.indexOf(estimator)].update(score)
+            // }
+            // let arr = flamlChart.series.filter(s => s.name === "best")[0].data.map(d => d.y);
+            // let max = Math.max(...arr);
+            // let maxIndex = arr.indexOf(max);
+            // flamlChart.series.filter(s => s.name === "best")[0].data.forEach((d, i) => {
+            //     if (i === maxIndex) {
+            //         d.update({color: "red"})
+            //     } else {
+            //         d.update({color: "blue"})
+            //     }
+            // })
         }
 
         // if (this.presentationMode === "split") {
