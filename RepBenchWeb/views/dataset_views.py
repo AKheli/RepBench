@@ -6,7 +6,7 @@ from django.views import View
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views.config import *
 from RepBenchWeb.views import data_loader
-import RepBenchWeb.datasetsConfig as datasetsConfig
+import RepBenchWeb.models.datasetsConfig as datasetsConfig
 from RepBenchWeb.models import DataSet, InjectedContainer
 
 
@@ -49,7 +49,7 @@ class DatasetView(View):
         context["data_info"] = dataSet.get_info()
         context["columns"] = columns
         context["corr_data"] = corr_data
-        context.update(dataSet.get_catch_22_features())
+        # context.update(dataSet.get_catch_22_features())
         return context
 
     def data_set_default_context(self, request, setname=datasetsConfig.default_set):
@@ -69,7 +69,7 @@ class DatasetView(View):
 def sliders_view(request, setname="BAFU"):
     from RepBenchWeb.catch22.features import features
     dataSet = DataSet.objects.get(title=setname)
-    context = dataSet.get_catch_22_features()
+    context = {} #dataSet.get_catch_22_features()
     ## add abr and description to the features
     for ts  , feature_dict  in context["catch22"].items():
         for feature_name , feature_valued_dict in feature_dict.items():

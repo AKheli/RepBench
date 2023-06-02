@@ -1,18 +1,11 @@
 import json
 import pickle
-
 from django.db import models
 import pandas as pd
-from flaml import AutoML
-
 from RepBenchWeb.ts_manager.HighchartsMapper import map_repair_data
-from RepBenchWeb.views.recommendation.utils import get_relevant_parameters
-from algorithms import algo_mapper
-from algorithms.param_loader import get_algorithm_params
 from injection.injected_data_container import InjectedDataContainer
-from recommendation.feature_extraction.feature_extraction import extract_features
 from recommendation.recommend import get_recommendation, alg_names
-from recommendation.utils import load_estimator
+from picklefield.fields import PickledObjectField
 
 
 def granularity_to_time_interval(granularity):
@@ -62,11 +55,38 @@ def granularity_to_time_interval(granularity):
 class DataSet(models.Model):
     title = models.CharField(max_length=64, null=False, blank=False, unique=True)
     dataframe = models.JSONField(null=False, blank=False)
+
     ref_url = models.CharField(max_length=200, null=True, blank=True)
     url_text = models.CharField(max_length=200, null=True, blank=True)
     granularity = models.CharField(max_length=200, null=True, blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
-    additional_info = models.JSONField(blank=False)
+    additional_info = models.JSONField(default=dict)
+
+    ## infered attributes
+    ts_nbr = models.IntegerField()
+    length = models.IntegerField()
+    features = PickledObjectField(default=dict)
+
+    def __init__(self, *args, **kwargs):
+        super(DataSet, self).__init__(*args, **kwargs)
+        self.length, self.ts_nbr = self.df.shape
+
+    def compute_features_(self):
+        df = self.df
+        print(self.title)
+        from recommendation.feature_extraction.feature_extraction import extract_features
+        features_ = {col: extract_features(df, column=i) for i, col in enumerate(df.columns)}
+        self.features = features_
+
+    def compute_features(self):
+        self.compute_features_()
+        self.save()
+
+    def get_features(self):
+        if self.features == {}:
+            self.compute_features()
+        return self.features
+
 
     def __str__(self):
         return self.title
@@ -79,20 +99,21 @@ class DataSet(models.Model):
 
     def get_info(self):
         shape = None
-        additional_info = json.loads(str(self.additional_info))
+        additional_info: dict = json.loads(str(self.additional_info))
 
         if shape in additional_info:
             shape = self.additional_info["shape"]
         else:
             shape = tuple(self.df.shape)
             additional_info["shape"] = shape
-        self.additional_info = json.dumps(additional_info)
+            self.additional_info = json.dumps(additional_info)
 
         n, m = shape
+
         return {
-            "length": n,
-            "values": n * m,
-            "ts_nbr": m,
+            "length": self.length,
+            "ts_nbr": self.ts_nbr,
+            "values": self.length * self.ts_nbr,
             "title": self.title,
             "ref_url": self.ref_url,
             "url_text": self.url_text,
@@ -101,16 +122,16 @@ class DataSet(models.Model):
             "time_interval": granularity_to_time_interval(self.granularity),
         }
 
-    def get_catch_22_features(self):
-        additional_info = json.loads(self.additional_info)
-        # additional_info["catch22"] = {k if isinstance(k, int) else k.replace(" ", "") : v for k, v in additional_info["catch22"].items()}
-        #
-        # self.additional_info = json.dumps(additional_info)
-        # self.save()
-        # print("save")
-        return {"catch22": additional_info["catch22"],
-                "catch22_min_max": additional_info["catch22_min_max"]
-                }
+    # def get_catch_22_features(self):
+    #     additional_info = json.loads(self.additional_info)
+    #     # additional_info["catch22"] = {k if isinstance(k, int) else k.replace(" ", "") : v for k, v in additional_info["catch22"].items()}
+    #     #
+    #     # self.additional_info = json.dumps(additional_info)
+    #     # self.save()
+    #     # print("save")
+    #     return {"catch22": additional_info["catch22"],
+    #             "catch22_min_max": additional_info["catch22_min_max"]
+    #             }
 
 
 score_map = {"mae": "MAE",
@@ -128,6 +149,7 @@ class InjectedContainer(models.Model):
     original_data_set = models.CharField(max_length=100, null=True)
     granularity = models.CharField(max_length=200, null=True, blank=True)
     recommendation = models.JSONField(blank=False, null=True)  # recomendation for the model
+    # features = models.JSONField(blank=False, null=True)  # features of the model
 
     @property
     def injected_container(self):
@@ -182,19 +204,3 @@ class InjectedContainer(models.Model):
         else:
             recommendation_results = json.loads(self.recommendation)
         return recommendation_results
-
-""" how to delete a model in shell
-
-python3 manage.py shell
-
-from RepBenchWeb.models import InjectedContainer
-
-Select the title to delete
-InjectedContainer.objects.all()
-
-InjectedContainer.objects.filter(title="test").delete()
-"""
-
-""" how to add a new field without reinitlalizing the whole table
-https://stackoverflow.com/questions/24311993/how-to-add-a-new-field-to-a-model-with-new-django-migrations
-"""
