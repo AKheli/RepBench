@@ -200,7 +200,7 @@
 
     //region Range Calculation
 
-    // Determine the size of a sub-range in relation to a full range.
+    // Determine the size of a parts-range in relation to a full range.
     function subRangeRatio(pa, pb) {
         return 100 / (pb - pa);
     }
@@ -528,7 +528,7 @@
     Spectrum.prototype.getDefaultStep = function(value, isDown, size) {
         var j = getJ(value, this.xPct);
 
-        // When at the top or stepping down, look at the previous sub-range
+        // When at the top or stepping down, look at the previous parts-range
         if (value === 100 || (isDown && value === this.xPct[j - 1])) {
             j = Math.max(j - 1, 1);
         }
@@ -624,13 +624,13 @@
         markerVertical: "marker-vertical",
         markerNormal: "marker-normal",
         markerLarge: "marker-large",
-        markerSub: "marker-sub",
+        markerSub: "marker-parts",
         value: "value",
         valueHorizontal: "value-horizontal",
         valueVertical: "value-vertical",
         valueNormal: "value-normal",
         valueLarge: "value-large",
-        valueSub: "value-sub"
+        valueSub: "value-parts"
     };
 
     //endregion
@@ -1980,7 +1980,7 @@
                     return false;
                 }
 
-                // No step set, use the default of 10% of the sub-range
+                // No step set, use the default of 10% of the parts-range
                 if (step === false) {
                     step = scope_Spectrum.getDefaultStep(
                         scope_Locations[handleNumber],

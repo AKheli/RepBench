@@ -1,0 +1,39 @@
+{% extends "parts/kt-portlet.html" %}
+
+
+
+
+{% block portlet-title %}
+    About
+{% endblock %}
+
+
+{% block portlet-body %}
+    <table class="data-info">
+        <tr>
+            <td><strong>Source:</strong></td>
+            <td><a href="{{ data_info.ref_url }}">{{ data_info.url_text }}</a></td>
+        </tr>
+
+        {% if data_info.description %}
+            <tr>
+                <td><strong>Description:</strong></td>
+                <td>{{ data_info.description }}</td>
+            </tr>
+        {% endif %}
+
+        <tr>
+            <td><strong>Number of Values:</strong></td>
+            <td><span class="data-value">{{ data_info.values }}</span></td>
+        </tr>
+
+        <tr>
+            <td><strong>Number of Time Series:</strong></td>
+            <td><span class="data-ts-nbr">{{ data_info.ts_nbr }}</span></td>
+        </tr>
+    </table>
+{% endblock %}
+
+
+
+

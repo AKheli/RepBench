@@ -9,6 +9,7 @@ from RepBenchWeb.forms.optimization_forms import BayesianOptForm, bayesian_opt_p
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
 from RepBenchWeb.views.algorithm_analysis.optimiser_task import run_optimization
+from RepBenchWeb.views.config import OPTIMIZATION_TEMPLATE
 from RepBenchWeb.views.dataset_views import DatasetView
 from RepBenchWeb.views.utils.cleanup_task import optimization_processes_queue_and_times, kill_process, \
     to_many_requests_response
@@ -31,7 +32,7 @@ class opt_JSONRespnse(JsonResponse):
 
 
 class OptimizationView(DatasetView):
-    template = "optimization.html"
+    template = OPTIMIZATION_TEMPLATE
 
     def create_opt_context(self, df):
         opt_context = {"bayesian_opt_form": BayesianOptForm(),

@@ -5676,7 +5676,7 @@
                 if (rendererDefs) {
                     renderer.defs = rendererDefs.destroy();
                 }
-                // Remove sub pixel fix handler (#982)
+                // Remove parts pixel fix handler (#982)
                 if (renderer.unSubPixelFix) {
                     renderer.unSubPixelFix();
                 }
@@ -20853,7 +20853,7 @@
                     minute: 9,
                     hour: 6,
                     day: 3
-                }, lastN = 'millisecond'; // for sub-millisecond data, #4223
+                }, lastN = 'millisecond'; // for parts-millisecond data, #4223
                 for (n in timeUnits) { // eslint-disable-line guard-for-in
                     // If the range is exactly one week and we're looking at a
                     // Sunday/Monday, go for the week format
@@ -23979,7 +23979,7 @@
                     /**
                      * The options structure for the chart after merging
                      * {@link #defaultOptions} and {@link #userOptions}. It contains
-                     * members for the sub elements like series, legend, tooltip etc.
+                     * members for the parts elements like series, legend, tooltip etc.
                      *
                      * @name Highcharts.Chart#options
                      * @type {Highcharts.Options}

@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views import View
 
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
+from RepBenchWeb.views.config import *
 from RepBenchWeb.views import data_loader
 import RepBenchWeb.datasetsConfig as datasetsConfig
 from RepBenchWeb.models import DataSet, InjectedContainer
@@ -27,7 +28,7 @@ class NpEncoder(json.JSONEncoder):
 
 class DatasetView(View):
     default_nbr_of_ts_to_display = 5
-    template = 'displayDataset.html'
+    template = DISPLAY_DATASET_TEMPLATE
     encoder = NpEncoder
     data_fetch_url_name = "get_data"
     load_data_container = data_loader.load_data_container
@@ -91,9 +92,9 @@ def display_datasets(request=None,option="Display" , synthetic=False):
 
 
     if synthetic:
-        return render(request, 'data_set_options/displayDatasetsSynthetic.html', context=context)
+        return render(request, DISPLAY_DATASETS_SYNTHETIC_TEMPLATE, context=context)
 
-    return render(request, 'data_set_options/displayDatasets.html', context=context)
+    return render(request, DISPLAY_DATASETS_TEMPLATE, context=context)
 
 
 def delete_dataset(request,setname):

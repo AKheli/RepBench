@@ -76,7 +76,7 @@
                 <div class="kt-portlet__body kt-portlet__body--fit">
                 </div>
                 <!--begin: Highcharts -->
-                {% include 'sub/MainChart.html' %}
+                {% include 'parts/MainChart.html' %}
                 <!--end: Highcharts -->
             </div>
         </div>
@@ -86,7 +86,7 @@
     {% block belowChartContent %}
         <div class="row" style="padding-top: 30px">
             <div class="col-md-6">
-                {% include "sub/data_info_portlet.html" %}
+                {% include "displayDataset/data_info_portlet.html" %}
             </div>
 
             <div id="correlation" class="col-md-6">

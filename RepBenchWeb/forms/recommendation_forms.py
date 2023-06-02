@@ -13,11 +13,18 @@ ESTIMATOR_CHOICES = [
     ('rf', 'Random Forest'),
     ('xgboost', 'XGBoost'),
     ('extra_tree', 'Extra Tree'),
-    ('lrl1', 'LRL1')
+    ('lrl1', 'Logisitc Regression')
 ]
 
-FEATURE_CHOICES = [ ("catch22","catch22"), ("tsfresh","TSFreshMinimal"),("tsfresh","TSFresh")]
-METRIC_CHOICES = [('accuracy', 'accuracy'), ('micro_f1', 'micro_f1'), ('macro_f1', 'macro_f1')]
+RayTunes_ESTIMATOR_CHOICES = [
+    ('LGBM', 'LGBM'),
+    ('RandomForest', 'Random Forest'),
+    ('ExtraTrees', 'Extra Tree'),
+    ('LogisticRegression', 'Logistic Regression')
+]
+
+FEATURE_CHOICES = [ ("catch22","Catch22"), ("tsfresh_minimal","TSFreshMinimal"),("tsfresh_selected","TSFresh")]
+METRIC_CHOICES = [('accuracy', 'Accuracy'), ('micro_f1', 'Micro F1'), ('macro_f1', 'Macro F1')]
 TASK_CHOICES = [('classification', 'classification')]  # add more if needed
 
 
@@ -46,19 +53,19 @@ class AutomlSettingsForm(forms.Form):
 
 
 class RayTuneSettingsForm(forms.Form):
-    time_budget = forms.IntegerField(label='Time Budget (seconds)', initial=60, widget=forms.NumberInput(
+    ray_tunes_time_budget = forms.IntegerField(label='Time Budget (secondss)', initial=60, widget=forms.NumberInput(
         attrs={'id': "time_budget_id", 'min': 0, "class": 'form-control'}))
-    metric = forms.CharField(label='Metric', initial='accuracy', widget=forms.Select(choices=METRIC_CHOICES, attrs={
+    ray_tunes_metric = forms.CharField(label='Metric', initial='accuracy', widget=forms.Select(choices=METRIC_CHOICES, attrs={
         "class": 'form-control'}))
     # task = forms.CharField(initial='classification', widget=forms.HiddenInput(), required=False)
-    estimator_list = forms.ChoiceField(label='Estimator',
-                                               initial=[choice[1] for choice in ESTIMATOR_CHOICES],
-                                               widget=forms.Select(
+    ray_tunes_estimator_list = forms.MultipleChoiceField(label='Estimator',
+                                               initial=[choice[1] for choice in RayTunes_ESTIMATOR_CHOICES],
+                                               widget=forms.CheckboxSelectMultiple(
                                                    attrs={'class': 'form-control', "name": 'estimator'}),
-                                               choices=ESTIMATOR_CHOICES
+                                               choices=RayTunes_ESTIMATOR_CHOICES
                                                )
 
-    features = forms.ChoiceField(label='Features',
+    ray_tunes_features = forms.ChoiceField(label='Features',
                                                initial=[choice[0] for choice in FEATURE_CHOICES],
                                                widget=forms.CheckboxSelectMultiple(
                                                    attrs={'class': 'kt-checkbox', "name": 'estimator_list[]'}),
@@ -66,4 +73,4 @@ class RayTuneSettingsForm(forms.Form):
                                                )
     def __init__(self, *args, **kwargs):
         super(RayTuneSettingsForm, self).__init__(*args, **kwargs)
-        self.fields['estimator_list'].initial = [choice[0] for choice in ESTIMATOR_CHOICES]
+        self.fields['ray_tunes_estimator_list'].initial = [choice[0] for choice in RayTunes_ESTIMATOR_CHOICES]

@@ -12,7 +12,7 @@ function initFlamlChart(estimators) {
             text: ''
         },
         xAxis: {
-            categories: ["best"],
+            categories: [""],
             plotLines: [{
                 color: 'red',
                 width: 3,
@@ -44,7 +44,7 @@ function initFlamlChart(estimators) {
         //         stacking: 'normal'
         //     }
         // },
-        series: [{name: "current", data: [0]}]
+        series: [{name: "current", data: [0] , showInLegend: false}]
         // series: [{data: [], name: "" , showInLegend: false, type: "line"}]
 
     });
@@ -52,18 +52,20 @@ function initFlamlChart(estimators) {
 
     flamlChart.presentationMode = "split" //or combined
     flamlChart.addData = function (score, estimator, iter) {
-        let categoreis = flamlChart.xAxis[0].categories
-        if (!categoreis.includes(estimator)) {
-            flamlChart.xAxis[0].setCategories([...categoreis, estimator]);
+        let categories = flamlChart.xAxis[0].categories
+        if (!categories.includes(estimator)) {
+            flamlChart.xAxis[0].setCategories([...categories, estimator]);
             flamlChart.series.filter(s => s.name === "current")[0].addPoint(score)
+
             // flamlChart.series.filter(s => s.name === "best")[0].addPoint(score)
 
         } else {
             let seriesData = flamlChart.series.filter(s => s.name === "current")[0].data
-            seriesData[categoreis.indexOf(estimator)].update(score)
+            seriesData[categories.indexOf(estimator)].update(score)
             let best = seriesData[0]
             if(score > best.y) {
                 best.update({color: "red" , y: score})
+                categories[0] = "<b>" + estimator+ "</b>"
             }
             // const currentBest = flamlChart.series.filter(s => s.name === "best")[0].data[categoreis.indexOf(estimator)].y
             console.log("estimator", estimator)

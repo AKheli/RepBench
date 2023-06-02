@@ -1,50 +1,13 @@
-{% extends "displayDataSetSynthetic.html" %}
+{% extends "displayDataset/displayDatasetSynthetic.html" %}
 {% load static %}
 
 
 {% block content %}
     <div class="row">
-        <div class="col-md-9">
-            {% include 'sub/flaml-example.html' %}
+        <div class="col-md-12">
+            {% include 'parts/flaml-example.html' %}
         </div>
-        <div id="rec_info" class="col-md-3">
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title"> Repair Recommendation </h3>
-                    </div>
-                    <div class="kt-portlet__head-toolbar">
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                    <table style="border-spacing: 10px;">
-                        <tr>
-                            <td style="text-align:left; padding-right: 10px;">Recommend Algorithm</td>
-                            <td style="text-align:left;" id="recommended_algorithm"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left; padding-right: 10px;">Used Classifier</td>
-                            <td style="text-align:left;" id="used_classifier"></td>
-                        </tr>
-                    </table>
-                    <p> Algorithm classification using <a href="https://microsoft.github.io/FLAML/">FLAML autoML</a>
-                        to
-                        recommend the
-                        most
-                        suitable anomaly repair algorithm. </p>
-                    <p> Features from catch22, tsfresh and correlation values between the time series are used to
-                        train
-                        the
-                        classifiers.
-                    </p>
-                    <p> The classifier options are lgbm, rf, xgboost, extra_tree, xgb_limitdepth and lrl1.
-                    </p>
-                    {#                <h2>Dataset: {{ data_info.title }}</h2>#}
-                </div>
-            </div>
-        </div>
-
-        <div id="main-chart" class="col-md-12">
+        <div id="main-chart" class="col-md-7">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -59,7 +22,6 @@
                                    aria-haspopup="true" aria-expanded="false">
                                     <i class="mdi mdi-18px mdi-dots-horizontal"></i>
                                 </a>
-
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <ul class="kt-nav">
                                         <li class="kt-nav__section kt-nav__section--first">
@@ -105,12 +67,13 @@
                 <div class="kt-portlet__body kt-portlet__body--fit">
                 </div>
                 <!--begin: Highcharts -->
-                {% include 'sub/MainChart.html' with chartHeight=400 %}
+                {% include 'parts/MainChart.html' with chartHeight=400 %}
                 <!--end: Highcharts -->
             </div>
         </div>
 
-        <div class="col-md-4">
+
+        <div class="col-md-5">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -124,8 +87,6 @@
                     <div id="probabilities-chart" class="mybox-content"></div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">

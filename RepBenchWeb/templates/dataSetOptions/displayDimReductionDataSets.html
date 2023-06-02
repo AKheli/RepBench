@@ -1,4 +1,4 @@
-{% extends "data_set_options/displayDatasets.html" %}
+{% extends "dataSetOptions/displayDatasets.html" %}
 
 {% block content %}
     <!-- import style sheet -->
@@ -67,7 +67,7 @@
                                                 <td style="text-align: right">{{ attr.values }}</td>
                                                 <td style="text-align: right">-</td>
                                                 <td>
-                                                    <a href="{% url 'recommendation' setname=name %}">Recommend</a>
+                                                    <a href="{% url 'dimensionality_reduction' setname=name %}">Display</a>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

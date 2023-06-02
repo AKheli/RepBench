@@ -10,8 +10,8 @@ import sys
 import os
 import numpy as np
 import time
-from recommendation.ray_tune.ray_tune_config import config as ray_tune_config
-
+from recommendation.ray_tune.ray_tune_config import config as ray_tune_config, RAYTUNE_ESTIMATORS
+from recommendation.feature_extraction.feature_extraction import feature_endings
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
 
@@ -75,31 +75,71 @@ def start_flaml(request):
     token = request.POST.get("csrfmiddlewaretoken")
     automl_settings["time_budget"] = int(request.POST.get("time_budget", 20))
     automl_settings["metric"] = request.POST.get("metric", "accuracy")
-    automl_settings["task"] = "classification"
     tuner = request.POST.get("tuner")
 
-    print("ESTIMATOR LIST", request.POST.get("estimator_list"))
     estimator_list = request.POST.get("estimator_list")
     estimator_list = estimator_list if isinstance(estimator_list, list) else estimator_list.split(",")
 
     automl_settings["estimator_list"] = estimator_list
 
+
     task_id = request.POST.get("task_id")
     from RepBenchWeb.models import TaskData
 
-    try:
+    try: # clear older task running with same id
         TaskData.objects.get(task_id=task_id).delete()
     except TaskData.DoesNotExist:
         pass
 
+
+    automl_settings["task"] = "classification"
+    print(dict(request.POST))
+
+
+    ### Load Features
     if tuner == "ray":
+        selected_features = dict(request.POST).get("ray_tunes_features")
+    else:
+        selected_features =  dict(request.POST).get("features")
+
+    selected_features = selected_features if selected_features else [] ## if empty selection use an empty set and only multi dim
+
+    valid_endings = [feature_endings[sel_] for sel_ in  selected_features] + [feature_endings["multi_dim"]]
+
+    features_in_X =   [col_name for col_name in   X.columns if any([col_name.endswith(end_) for end_ in valid_endings])]
+
+
+
+    if tuner == "ray":
+        estimator_list = dict(request.POST).get("ray_tunes_estimator_list")
+        print(estimator_list, "liiist beeeoferaradadad")
+        estimator_list = estimator_list if isinstance(estimator_list, list) else estimator_list.split(",")
+        automl_settings["estimator_list"] = estimator_list
+
+        for estim_ in estimator_list:
+            assert estim_ in RAYTUNE_ESTIMATORS, f"Estimator {estim_} not supported by raytune found in {estimator_list}"
+
+        automl_settings["time_budget"] = int(request.POST.get("ray_tunes_time_budget"))
+        automl_settings["metric"] = request.POST.get("ray_tunes_metric", "accuracy")
+
         task_data = TaskData(task_id=task_id, data_type="ray")
         task_data.save()
-        ray_tune_search_task.delay(automl_settings, X_train, y_train, X_test, y_test, my_task_id=task_id)
+
+        print("EEESTIMATOR" , estimator_list)
+
+
+        ray_tune_search_task.delay(automl_settings, X_train[features_in_X], y_train, X_test[features_in_X], y_test, my_task_id=task_id)
     else:
+
+        estimator_list = request.POST.get("estimator_list")
+        estimator_list = estimator_list if isinstance(estimator_list, list) else estimator_list.split(",")
+
+        automl_settings["estimator_list"] = estimator_list
+
+
         task_data = TaskData(task_id=task_id, data_type="flaml")
         task_data.save()
-        flaml_search_task.delay(automl_settings, X_train, y_train, X_test, y_test, my_task_id=task_id)
+        flaml_search_task.delay(automl_settings, X_train[features_in_X], y_train, X_test[features_in_X], y_test, my_task_id=task_id)
 
     # from sklearn.ensemble import RandomForestClassifier
     # from lightgbm import LGBMClassifier
@@ -216,7 +256,8 @@ def retrieve_flaml_results(request):
     # time.sleep(2)
 
     task_data = TaskData.objects.filter(task_id=task_id).last()
-    data = task_data.data
+    data = task_data.get_data()
+    print("DAAAATAA" , data , task_data.data_type)
     status = task_data.status
     if task_data.is_running():
         return RepBenchJsonRespone({"data": data, "status": status})

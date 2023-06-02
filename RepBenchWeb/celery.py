@@ -1,24 +1,20 @@
 from __future__ import absolute_import, unicode_literals
 import os
 import logging
-import time
 
+import numpy as np
 from ray.tune.search.hyperopt import HyperOptSearch
 from ray.tune.search.nevergrad import NevergradSearch
 from ray.tune.search.skopt import SkOptSearch
 
 from recommendation.ray_tune.ray_tune_config import config as ray_tune_config
-import numpy as np
-import pandas as pd
+
 from celery import Celery, shared_task, signals
-# from contextlib import redirect_stdout
 #
 from sklearn.ensemble import RandomForestClassifier
 from lightgbm import LGBMClassifier
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
-from ray.tune.search.bayesopt import BayesOptSearch
-from ray.tune.search.ax import AxSearch
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'RepBenchWeb.settings')
 
@@ -30,8 +26,6 @@ app.conf.task_serializer = 'pickle'
 app.conf.result_serializer = 'pickle'
 app.conf.accept_content = ['application/json', 'application/x-python-serialize']
 
-
-# app.conf.task_serializer = 'pickle'
 
 @signals.setup_logging.connect
 def setup_celery_logging(**kwargs):  # disble logging for celery other wise ray tune does not function
@@ -64,7 +58,6 @@ metrics = {
 
 @shared_task(bind=True)
 def flaml_search_task(self, settings, X_train, y_train, X_test, y_text, my_task_id):
-    print("start celery")
     from RepBenchWeb.models import TaskData
     # automl = AutoML(**settings)
     normal_write = sys.stdout.write
@@ -72,7 +65,6 @@ def flaml_search_task(self, settings, X_train, y_train, X_test, y_text, my_task_
 
     task_data = TaskData.objects.get(task_id=my_task_id)
     task_data.set_celery_task_id(self.request.id)
-    print("got task")
 
     def custom_metric(
             X_val, y_val, estimator, labels,
@@ -86,10 +78,12 @@ def flaml_search_task(self, settings, X_train, y_train, X_test, y_text, my_task_
         # print("score parameters" , y_train,y_pred)
 
         score = metrics[setting_metric](y_train, y_pred)
-        estimator = str(estimator.__class__.__name__).split("Estimator")[0]
+        estimator_name = str(estimator.__class__.__name__).split("Estimator")[0]
+        if estimator_name == "LRL1Classifier":
+            estimator_name = "LogisticRegression"
         print(estimator)
         task_data.add_data({"score": score, "pred_time": pred_time,
-                            "estimator": estimator})
+                            "estimator": estimator_name, "config": {"model": estimator_name, **estimator.get_params()}})
         return score, {"pred_time": pred_time}
 
     # Initialize FLAML with custom metric
@@ -127,7 +121,7 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
     X = X_train
     y = y_train
 
-    # check if X or y contai nan vlaues
+    # check if X or y contains nan vlaues
 
     setting_metric = settings["metric"]
 
@@ -143,7 +137,7 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
             task_data.add_data(data_)
 
     def train_model(config):
-        estimator = config.get("model", "LGBM")
+        estimator = config.get("model")
         if estimator == "RandomForest":
             model = RandomForestClassifier(n_estimators=config["n_estimators"],
                                            max_depth=config["max_depth"],
@@ -151,7 +145,9 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
         elif estimator == "ExtraTrees":
             model = ExtraTreesClassifier(n_estimators=config["n_estimators"],
                                          max_depth=config["max_depth"],
-                                         min_samples_split=config["min_samples_split"])
+                                         min_samples_split=config["min_samples_split"],
+                                         max_features=config["max_features"])
+
         elif estimator == "LogisticRegression":
             model = LogisticRegression(penalty="l1", C=config["C"], solver='liblinear')
 
@@ -165,7 +161,20 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
         score = metrics[setting_metric](y_text, y_predict)
         return {"score": score}
 
-    search_alg = "hyperopt"
+    ray_tune_config = {
+        "model": tune.choice(settings["estimator_list"]),
+        "n_estimators": tune.randint(5, 30),
+        "max_depth": tune.randint(3, 10),
+        "min_samples_split": tune.randint(2, 6),
+        "num_leaves": tune.randint(2, 30),
+        "learning_rate": tune.choice(np.logspace(-4, 0, 500)),
+        "min_child_samples": tune.randint(3, 15),
+        "C": tune.choice(np.logspace(-5, 0, 500)),  # tune.loguniform(1e-3, 1)
+        "max_features": tune.randint(3, 30),
+        "max_leaf_nodes": tune.randint(3, 20),
+    }
+
+    search_alg = "default"
     import nevergrad as ng
 
     if search_alg == "ZOOpt":
@@ -181,7 +190,6 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
             mode="max",
             **zoopt_search_config
         )
-        # ray_tune_config.pop("model", "")
         tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
                            tune_config=tune.TuneConfig(time_budget_s=50000, metric="score", mode="max",
                                                        max_concurrent_trials=3,
@@ -193,9 +201,9 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
         )
 
         tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-                           tune_config=tune.TuneConfig(time_budget_s=50, metric="score", mode="max",
+                           tune_config=tune.TuneConfig(time_budget_s=settings["time_budget"], metric="score", mode="max",
                                                        max_concurrent_trials=3,
-                                                       num_samples=100, search_alg=skopt_search))
+                                                       num_samples=10000, search_alg=skopt_search))
 
     elif search_alg == "nevergrad":
         ng_search = NevergradSearch(
@@ -205,53 +213,53 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
         )
 
         tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-                           tune_config=tune.TuneConfig(time_budget_s=50, metric="score", mode="max",
+                           tune_config=tune.TuneConfig(time_budget_s=settings["time_budget"], metric="score", mode="max",
                                                        max_concurrent_trials=3,
-                                                       num_samples=100, search_alg=ng_search))
+                                                       num_samples=10000, search_alg=ng_search))
     elif search_alg == "hyperopt":
         hyperopt_search = HyperOptSearch(
             metric="score", mode="max",
         )
         tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-                           tune_config=tune.TuneConfig(time_budget_s=50, metric="score", mode="max",
+                           tune_config=tune.TuneConfig(time_budget_s=settings["time_budget"], metric="score", mode="max",
                                                        max_concurrent_trials=3,
-                                                       num_samples=100, search_alg=hyperopt_search))
+                                                       num_samples=10000, search_alg=hyperopt_search))
 
     elif search_alg == "default":
         tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-                           tune_config=tune.TuneConfig(time_budget_s=50, metric="score", mode="max",
+                           tune_config=tune.TuneConfig(time_budget_s=settings["time_budget"], metric="score", mode="max",
                                                        max_concurrent_trials=3,
-                                                       num_samples=100))
-    # t = time.time()
-    #
-    # zoopt_search_config = {
-    #     "parallel_num": 4,  # how many workers to parallel
-    # }
-    #
-    # zoopt_search = ZOOptSearch(
-    #     algo="Asracos",  # only support Asracos currently
-    #     budget=5000,  # must match `num_samples` in `tune.TuneConfig()`.
-    #     # dim_dict=dim_dict,
-    #     metric="score",
-    #     mode="max",
-    #     **zoopt_search_config
-    # )
-    #
-    # # from ray.tune.search.hebo import HEBOSearch
-    # # hebo = HEBOSearch(metric="score", mode="max")
+                                                       num_samples=10000))
+# t = time.time()
+#
+# zoopt_search_config = {
+#     "parallel_num": 4,  # how many workers to parallel
+# }
+#
+# zoopt_search = ZOOptSearch(
+#     algo="Asracos",  # only support Asracos currently
+#     budget=5000,  # must match `num_samples` in `tune.TuneConfig()`.
+#     # dim_dict=dim_dict,
+#     metric="score",
+#     mode="max",
+#     **zoopt_search_config
+# )
+#
+# # from ray.tune.search.hebo import HEBOSearch
+# # hebo = HEBOSearch(metric="score", mode="max")
 
-    # ray_tune_config.pop("model", "")
-    # # ax_search = AxSearch()
-    # tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-    #                    tune_config=tune.TuneConfig(time_budget_s=1000, metric="score", mode="max",
-    #                                                max_concurrent_trials=4,
-    #                                                num_samples=5000))
+# ray_tune_config.pop("model", "")
+# # ax_search = AxSearch()
+# tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
+#                    tune_config=tune.TuneConfig(time_budget_s=1000, metric="score", mode="max",
+#                                                max_concurrent_trials=4,
+#                                                num_samples=5000))
 
-    # bayesopt = BayesOptSearch(metric="score", mode="max")
-    # tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-    #                    tune_config=tune.TuneConfig(time_budget_s=5, metric="score", mode="max", max_concurrent_trials=3,
-    #                                                num_samples=-1, search_alg=bayesopt)
-    #                    )
+# bayesopt = BayesOptSearch(metric="score", mode="max")
+# tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
+#                    tune_config=tune.TuneConfig(time_budget_s=5, metric="score", mode="max", max_concurrent_trials=3,
+#                                                num_samples=-1, search_alg=bayesopt)
+#                    )
 
     result_grid = tuner.fit()
     best_result = result_grid.get_best_result()

@@ -81,11 +81,11 @@ def upload_files(request):
             highcharts_series += repaired_series
             highcharts_series = json.dumps(highcharts_series, cls=RepBenchJsonEncoder)
             recommendation_data = json.dumps(recommendation, cls=RepBenchJsonEncoder)
-            return render(request, 'user_recommendation.html',
+            return render(request, 'recommendation/user_recommendation.html',
                           {'data_info': data_info, "highcharts_series": highcharts_series,
                            "recommendation_data": recommendation_data})
 
         else:
             print("form is not valid")
 
-    return render(request, 'user_recommendation_start.html', {'upload_form': upload_form})
+    return render(request, 'recommendation/user_recommendation_start.html', {'upload_form': upload_form})

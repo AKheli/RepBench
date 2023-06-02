@@ -707,7 +707,7 @@
             attribs = merge(attribs);
             attribs.alpha = (attribs.alpha || 0) * deg2rad;
             attribs.beta = (attribs.beta || 0) * deg2rad;
-            // Create the different sub sections of the shape
+            // Create the different parts sections of the shape
             wrapper.top = renderer.path();
             wrapper.side1 = renderer.path();
             wrapper.side2 = renderer.path();

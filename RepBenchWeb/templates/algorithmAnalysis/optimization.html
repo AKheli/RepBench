@@ -1,4 +1,4 @@
-{% extends "displayDataSetSynthetic.html" %}
+{% extends "displayDataset/displayDatasetSynthetic.html" %}
 {% load static %}
 
 {#{% block graphbuttons %}#}
@@ -8,7 +8,7 @@
     <h2>Parameterization</h2>
     <div style="display:None">
 
-        {% include 'sub/MainChart.html' %}
+        {% include 'parts/MainChart.html' %}
         <!--end: Highcharts -->
     </div>
 
@@ -64,7 +64,7 @@
             {#                    <div class="kt-portlet__head-toolbar">#}
             {#                    </div>#}
             {#                </div>#}
-            {% include 'sub/bayesianOptForm.html' %}
+            {% include 'parts/bayesianOptForm.html' %}
             {#            </div>#}
         </div>
     </div>
@@ -142,7 +142,7 @@
     <script src="{% static 'js/repBench/optimization/optchart.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/repBench/optimization/optimization.js' %}" type="text/javascript"></script>
 
-    {#          {% include 'sub/score-board.html' %}#}
+    {#          {% include 'parts/score-board.html' %}#}
 {% endblock %}
 
 
@@ -150,13 +150,13 @@
 {#{% block content %}#}
 {#    <div class="row " style="display: none">#}
 {#        <div class="col-md-9" style="position:relative;">#}
-{#                {% include 'sub/MainChart.html' %}#}
-{#                {% include 'sub/score-board.html' %}#}
+{#                {% include 'parts/MainChart.html' %}#}
+{#                {% include 'parts/score-board.html' %}#}
 {##}
 {#        </div>#}
 {#        <div id="chart-right" class="col-md-3">#}
 {#            {% block first_form %}#}
-{#                {% include 'sub/repairForm.html' %}#}
+{#                {% include 'parts/repairForm.html' %}#}
 {#            {% endblock %}#}
 {#        </div>#}
 {#    </div>#}

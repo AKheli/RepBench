@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
+from RepBenchWeb.views.config import DISPLAY_REPAIR_DATASETS_TEMPLATE
 from RepBenchWeb.views.synthetic_dataset_view import SyntheticDatasetView
 from algorithms import algo_mapper
 from injection.injected_data_container import InjectedDataContainer
@@ -105,4 +106,4 @@ class RepairView(SyntheticDatasetView):
                                         for dataSet in InjectedContainer.objects.all() if
                                         dataSet.title is not None and dataSet.title != "" }
         context["type"] = type
-        return render(request, 'data_set_options/repairDatasets.html', context=context)
+        return render(request, DISPLAY_REPAIR_DATASETS_TEMPLATE, context=context)

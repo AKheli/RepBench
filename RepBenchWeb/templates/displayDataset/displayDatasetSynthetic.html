@@ -1,11 +1,10 @@
-{% extends "displayDataset.html" %}
+{% extends "displayDataset/displayDataset.html" %}
 {% load static %}
 
 
 {% block belowChartContent %}
 
     <div class="row">
-
         <div class="col-md-4">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
@@ -16,7 +15,7 @@
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    {% include 'syntheticDataDescription.html' %}
+                    {% include 'displayDataset/syntheticDataDescription.html' %}
                 </div>
 
             </div>

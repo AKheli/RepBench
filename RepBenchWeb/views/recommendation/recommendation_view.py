@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-
+from RepBenchWeb.views.config import *
 from RepBenchWeb.forms.recommendation_forms import AutomlSettingsForm, RayTuneSettingsForm
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
@@ -10,7 +10,7 @@ from testing_frame_work.data_methods.data_class import DataContainer
 
 
 class RecommendationView(SyntheticDatasetView):
-    template = "recommendation.html"
+    template = RECOMMENDATION_TEMPLATE
     recommender_file_name = ""
 
     def get(self, request, setname="BAFU"):
@@ -42,4 +42,4 @@ class RecommendationView(SyntheticDatasetView):
                                         for dataSet in InjectedContainer.objects.all() if
                                         dataSet.title is not None and dataSet.title != "" }
         context["type"] = type
-        return render(request, 'data_set_options/displayRecommendationDatasets.html', context=context)
+        return render(request, 'dataSetOptions/displayRecommendationDatasets.html', context=context)

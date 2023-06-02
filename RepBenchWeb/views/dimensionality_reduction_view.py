@@ -4,6 +4,7 @@ import json
 
 from RepBenchWeb.models import InjectedContainer
 from RepBenchWeb.utils.encoder import RepBenchJsonRespone
+from RepBenchWeb.views.config import *
 from injection.injected_data_container import InjectedDataContainer
 from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
 from testing_frame_work.repair import AnomalyRepairer
@@ -16,7 +17,7 @@ from testing_frame_work.data_methods.data_class import normalize_f
 
 
 class DimensionalityReductionView(RepairView):
-    template = "AlgorithmAnalysis/dimensionalityReductionVisualization.html"
+    template = DIMENSIONALITY_REDUCTION_TEMPLATE
     ParamForms = {"RPCA": RPCAparamForm(), "CDrec": CDparamForm()}
 
     @staticmethod
@@ -49,8 +50,6 @@ class DimensionalityReductionView(RepairView):
         repaired_series = map_repair_data(repair, injected_data_container, alg_name, original_to_injected_links,
                                           df_original)
         context = {"repaired_series": repaired_series, "scores": scores, "metrics": metrics}
-
-        # context["html"] = render(request, 'sub/scoreRepBenchWeb.html', context=context).content.decode('utf-8')
 
         ### Extract Reduced Series
         estimator: DimensionalityReductionEstimator = repair_retval["estimator"]
@@ -176,4 +175,4 @@ def display_dim_reduction_datasets(request=None):
     context["datasets"] = {dataSet.title: dataSet.get_info()
                            for dataSet in InjectedContainer.objects.all() if
                            dataSet.title is not None and dataSet.title != ""}
-    return render(request, 'data_set_options/displayDimReductionDataSets.html', context=context)
+    return render(request, DISP, context=context)

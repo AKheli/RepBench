@@ -13,9 +13,9 @@
         <style>
 
             .reload-btn {
-               display: inline-block;
+                display: inline-block;
                 background-color: white;
-                border: 2px solid  darkgray;
+                border: 2px solid darkgray;
                 color: black;
                 font-weight: bold;
                 text-align: center;
@@ -25,9 +25,9 @@
                 transition: all 0.2s ease;
             }
 
-              .reload-btn:hover {
+            .reload-btn:hover {
                 background-color: darkgray;
-                {#border-color: #0D47A1;#}
+            {#border-color: #0D47A1;#}
             }
 
 
@@ -299,9 +299,20 @@
                 </div>
             </div>
             <!-- begin: Footer -->
-            {#            {% block footer %}#}
-            {#                {% include 'vadetisweb/parts/footer/footer.html' %}#}
-            {#            {% endblock %}#}
+            {% block footer %}
+                <div class="kt-footer kt-grid__item" id="kt_footer">
+                    <div class="kt-container">
+                        <div class="kt-footer__bottom">
+                            <div class="kt-footer__copyright">
+                                RepBench - Time Series Anomaly Repair Benchmark
+                            </div>
+                            <div class="kt-footer__menu">
+{#                                <a href="{% url 'vadetisweb:about' %}" class="kt-link">About</a>#}
+                                <a href="https://exascale.info/" target="_blank" class="kt-link">eXascale Infolab</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>                        {% endblock %}
             <!-- end: Footer -->
         </div>
     </div>

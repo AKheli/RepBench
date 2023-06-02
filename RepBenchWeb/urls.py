@@ -7,7 +7,7 @@ from RepBenchWeb.views.recommendation import recommendation_view, file_upload_vi
 from RepBenchWeb.views.algorithm_analysis import optimizationview
 
 from RepBenchWeb.views import (
-    indexview,
+    index_view,
     dataset_views,
     repair_view,
     injection_view,
@@ -19,9 +19,9 @@ from RepBenchWeb.views import dimensionality_reduction_view, synthetic_dataset_v
 app_name = 'RepBenchWeb'
 
 urlpatterns = [
-    path('', indexview.index, name='index'),
-    path('RepBenchWeb', indexview.index, name='index'),
-    path('RepBenchWeb/', indexview.index, name='index'),
+    path('', index_view.index, name='index'),
+    path(app_name, index_view.index, name='index'),
+    path(app_name+'/', index_view.index, name='index'),
 
 
     path('display_datasets/', dataset_views.display_datasets, name='display_datasets'),
