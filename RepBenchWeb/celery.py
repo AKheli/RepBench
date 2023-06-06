@@ -27,9 +27,9 @@ app.conf.result_serializer = 'pickle'
 app.conf.accept_content = ['application/json', 'application/x-python-serialize']
 
 
-# @signals.setup_logging.connect
-# def setup_celery_logging(**kwargs):  # disble logging for celery other wise ray tune does not function
-#     pass
+@signals.setup_logging.connect
+def setup_celery_logging(**kwargs):  # disble logging for celery other wise ray tune does not function
+    pass
 
 
 from flaml import AutoML
@@ -102,17 +102,18 @@ def flaml_search_task(self, settings, X_train, y_train, X_test, y_test, my_task_
         automl.fit(X_train=X_train, y_train=y_train, **settings, n_jobs=3, verbose=-3)
 
     automl._state.metric = setting_metric  # reset metric to original (we cant picke local objects)
+
+    task_data.set_classifier(automl)
     task_data.set_done()
 
-    classifier = automl.model
-    try:
-        print(classifier.feature_names_)
-    except:
-        print(classifier.feature_names_in_)
+    # classifier = automl.model
+    # try:
+    #     print(classifier.feature_names_)
+    # except:
+    #     print(classifier.feature_names_in_)
 
     # print(X_train)
     # classifier.fit(X_train, y_train)
-    task_data.set_classifier(automl)
     # print(automl.best_estimator)
     # print("prediction")
     # for p in automl.predict(X_test):

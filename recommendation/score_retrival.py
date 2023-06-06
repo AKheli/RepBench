@@ -5,8 +5,8 @@ import json
 import os
 import sys
 
-sys.path.append(os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..')))  # run from top dir with  python3 recommendation/score_retrival.py
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
 
 from recommendation.feature_extraction.load_features import get_injection_parameter_hashes_checker, load_data, \
     read_file_to_pandas

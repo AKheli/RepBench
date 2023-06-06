@@ -48,15 +48,22 @@ class TaskData(models.Model):
         super().__init__(*args, **kwargs)
 
     def add_data(self, data):
+        import time
+        time = time.time()
         data["processed"] = False
+        data["time"] = time
         self.data.append(data)
         self.save()
 
     def get_data(self):
-        for data_iteration in self.data:
+        for i,data_iteration in enumerate(self.data):
             if not data_iteration["processed"]:
                 data_iteration["parameters"] = get_relevant_parameters(data_iteration.pop("config"))
                 data_iteration["processed"] = True
+                if i >0:
+                    data_iteration["run_time"] = data_iteration["time"] - self.data[i-1]["time"]
+                else:
+                    data_iteration["run_time"] = 0
         self.save()
         return self.data
 
