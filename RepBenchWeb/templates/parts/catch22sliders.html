@@ -1,17 +1,17 @@
 {% load static %}
 {% load filters %}
 
-<link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
-<script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>
-<script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
+{#<link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>#}
+{#<script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>#}
+{#<script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>#}
 
 <style>
 
-    .rs-tooltip-text {
-        font-size: 15px !important;
-        color: #0f0f16;
-        font-weight: 900;
-    }
+    {#.rs-tooltip-text {#}
+        {#font-size: 15px !important;#}
+    {#    color: #0f0f16;#}
+    {#    font-weight: 900;#}
+    { # }#}
 
     {#.slider-container {#}
     {#    max-height: 500px;#}
@@ -21,115 +21,115 @@
     {#    max-width: 200px;#}
     {#    width: auto; !important;#}
     {# }#}
-
-
-    .sliders {
-    {#display: flex;#} flex-wrap: nowrap;
-        overflow-x: scroll;
-        overflow-y: hidden;
-    }
-
-    .slider {
-        width: 140px; /* adjust the width as necessary */
-        height: 140px; /* adjust the height as necessary */
-        margin-right: 10px; /* add some space between child divs */
-        margin-top: 5px;
-        margin-bottom: 5px;
-        position: static; /* set position to static */
-        z-index: auto; /* set z-index to auto */
-        flex-shrink: 0; /* prevent child divs from shrinking */
-    }
+    {##}
+    {##}
+    {#.sliders {#}
+    {#display: flex; flex-wrap: nowrap;#}
+    {#    overflow-x: scroll;#}
+    {#    overflow-y: hidden;#}
+    {# }#}
+    {##}
+    {#.slider {#}
+    {#    width: 140px; /* adjust the width as necessary */#}
+    {#    height: 140px; /* adjust the height as necessary */#}
+    {#    margin-right: 10px; /* add some space between child divs */#}
+    {#    margin-top: 5px;#}
+    {#    margin-bottom: 5px;#}
+    {#    position: static; /* set position to static */#}
+    {#    z-index: auto; /* set z-index to auto */#}
+    {#    flex-shrink: 0; /* prevent child divs from shrinking */#}
+    {# }#}
 
 </style>
 
-<script>
-
-    const dropdown = document.createElement('select');
-    dropdown.classList.add('form-control');
-    const sliderContainer = document.getElementById('slider-container')
-    const sliderDropDown = document.getElementById('slider-dropdown')
-
-    mainChartFetchPromise.then(() => {
-        fetch(slider_url).then(response => response.json()).then(slider_data => {
-            console.log(slider_data.catch22)
-
-            // Create dropdown to select time series
-            for (let time_series in slider_data.catch22) {
-                const option = document.createElement('option');
-                option.value = time_series;
-                option.text = time_series;
-                dropdown.appendChild(option);
-            }
-            sliderDropDown.appendChild(dropdown);
-
-            // Create container for slider display
-            const sliderDisplay = document.createElement('div');
-            sliderContainer.appendChild(sliderDisplay);
-
-            // Display sliders for selected time series
-            dropdown.addEventListener('change', function () {
-                const selectedTimeSeries = dropdown.value;
-                const allSliders = document.querySelectorAll('.rs-wrapper');
-                for (let i = 0; i < allSliders.length; i++) {
-                    const sliders = allSliders[i];
-                    if (sliders.id === selectedTimeSeries + '-sliders') {
-                        sliders.style.display = 'flex';
-                    } else {
-                        sliders.style.display = 'none';
-                    }
-                }
-            });
-
-            // Create sliders
-            for (let time_series in slider_data.catch22) {
-                const sliders = document.createElement('div')
-                sliders.id = time_series + '-sliders'
-                sliders.className = 'row rs-wrapper sliders'
-                sliders.style.display = 'flex' //= time_series === Object.keys(slider_data.catch22)[0] ? 'flex' : 'none'
-                for (let feature in slider_data.catch22[time_series]) {
-                    const slider = document.createElement('div')
-                    slider.id = time_series + '-' + feature
-                    slider.className = 'roundslider normal slider'
-                    slider.title = slider_data.catch22[time_series][feature]['abr']
-                    slider.innerHTML = slider_data.catch22[time_series][feature]
-                    sliders.appendChild(slider)
-                }
-                sliderContainer.appendChild(sliders)
-            }
-            sliderContainer.style.display = 'block'
-
-
-            console.log("initSliders")
-            RoundSliders.init(2);
-            for (let time_series in slider_data.catch22) {
-                for (let feature in slider_data.catch22[time_series]) {
-                    RoundSliders.updateValue("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['value'],
-                        slider_data.catch22[time_series][feature]['min'],
-                        slider_data.catch22[time_series][feature]['max'])
-
-                    RoundSliders.setTitle("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['description'])
-                    document.getElementById(time_series + "-" + feature).title = slider_data.catch22[time_series][feature]['description']
-
-                }
-            }
-
-            // set the size of the dropdown menu to the size of the longest option
-            {#const intervalId = setInterval(() => {#}
-            {#    if (dropdown.clientWidth > 0) {#}
-            {#        clearInterval(intervalId);#}
-            {#        const longestOptionWidth = Math.max(#}
-            {#            ...Array.from(dropdown.options).map(option => option.clientWidth)#}
-            {#        );#}
-            {#        dropdown.style.width = longestOptionWidth + 'px';#}
-            {#    }#}
-            {# }, 100);#}
-
-
-            // Simulate "change" event on the first option
-            const event = new Event("change");
-            dropdown.dispatchEvent(event);
-
-        })
-    })
+{#<script>#}
+{##}
+{#    const dropdown = document.createElement('select');#}
+{#    dropdown.classList.add('form-control');#}
+{#    const sliderContainer = document.getElementById('slider-container')#}
+{#    const sliderDropDown = document.getElementById('slider-dropdown')#}
+{##}
+{#    mainChartFetchPromise.then(() => {#}
+{#        fetch(slider_url).then(response => response.json()).then(slider_data => {#}
+{#            console.log(slider_data.catch22)#}
+{##}
+{#            // Create dropdown to select time series#}
+{#            for (let time_series in slider_data.catch22) {#}
+{#                const option = document.createElement('option');#}
+{#                option.value = time_series;#}
+{#                option.text = time_series;#}
+{#                dropdown.appendChild(option);#}
+{#            }#}
+{#            sliderDropDown.appendChild(dropdown);#}
+{##}
+{#            // Create container for slider display#}
+{#            const sliderDisplay = document.createElement('div');#}
+{#            sliderContainer.appendChild(sliderDisplay);#}
+{##}
+{#            // Display sliders for selected time series#}
+{#            dropdown.addEventListener('change', function () {#}
+{#                const selectedTimeSeries = dropdown.value;#}
+{#                const allSliders = document.querySelectorAll('.rs-wrapper');#}
+{#                for (let i = 0; i < allSliders.length; i++) {#}
+{#                    const sliders = allSliders[i];#}
+{#                    if (sliders.id === selectedTimeSeries + '-sliders') {#}
+{#                        sliders.style.display = 'flex';#}
+{#                    } else {#}
+{#                        sliders.style.display = 'none';#}
+{#                    }#}
+{#                }#}
+{#            });#}
+{##}
+{#            // Create sliders#}
+{#            for (let time_series in slider_data.catch22) {#}
+{#                const sliders = document.createElement('div')#}
+{#                sliders.id = time_series + '-sliders'#}
+{#                sliders.className = 'row rs-wrapper sliders'#}
+{#                sliders.style.display = 'flex' //= time_series === Object.keys(slider_data.catch22)[0] ? 'flex' : 'none'#}
+{#                for (let feature in slider_data.catch22[time_series]) {#}
+{#                    const slider = document.createElement('div')#}
+{#                    slider.id = time_series + '-' + feature#}
+{#                    slider.className = 'roundslider normal slider'#}
+{#                    slider.title = slider_data.catch22[time_series][feature]['abr']#}
+{#                    slider.innerHTML = slider_data.catch22[time_series][feature]#}
+{#                    sliders.appendChild(slider)#}
+{#                }#}
+{#                sliderContainer.appendChild(sliders)#}
+{#            }#}
+{#            sliderContainer.style.display = 'block'#}
+{##}
+{##}
+{#            console.log("initSliders")#}
+{#            RoundSliders.init(2);#}
+{#            for (let time_series in slider_data.catch22) {#}
+{#                for (let feature in slider_data.catch22[time_series]) {#}
+{#                    RoundSliders.updateValue("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['value'],#}
+{#                        slider_data.catch22[time_series][feature]['min'],#}
+{#                        slider_data.catch22[time_series][feature]['max'])#}
+{##}
+{#                    RoundSliders.setTitle("#" + time_series + "-" + feature, slider_data.catch22[time_series][feature]['description'])#}
+{#                    document.getElementById(time_series + "-" + feature).title = slider_data.catch22[time_series][feature]['description']#}
+{##}
+{#                }#}
+{#            }#}
+{##}
+{#            // set the size of the dropdown menu to the size of the longest option#}
+{#            const intervalId = setInterval(() => {#}
+{#                if (dropdown.clientWidth > 0) {#}
+{#                    clearInterval(intervalId);#}
+{#                    const longestOptionWidth = Math.max(#}
+{#                        ...Array.from(dropdown.options).map(option => option.clientWidth)#}
+{#                    );#}
+{#                    dropdown.style.width = longestOptionWidth + 'px';#}
+{#                }#}
+{#             }, 100);#}
+{##}
+{##}
+{#            // Simulate "change" event on the first option#}
+{#            const event = new Event("change");#}
+{#            dropdown.dispatchEvent(event);#}
+{##}
+{#        })#}
+{#    })#}
 </script>
 

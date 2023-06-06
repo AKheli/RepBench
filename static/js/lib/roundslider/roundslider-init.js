@@ -1,6 +1,6 @@
 var RoundSliders = function () {
     return {
-        init: function (round_digits) {
+        init: function (round_digits,width,radius) {
             //roundslider does not support ie8 so skip it
             if (!jQuery().roundSlider()) {
                 return;
@@ -53,8 +53,8 @@ var RoundSliders = function () {
             // init
             $(".roundslider.inverse").roundSlider({
                 sliderType: "min-range",
-                radius: 50,
-                width: 6,
+                radius: radius,
+                width: width,
                 value: null,
                 step: step_size.toFixed(round_digits),
                 handleSize: 0,

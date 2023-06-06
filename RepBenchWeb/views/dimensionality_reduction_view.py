@@ -175,4 +175,4 @@ def display_dim_reduction_datasets(request=None):
     context["datasets"] = {dataSet.title: dataSet.get_info()
                            for dataSet in InjectedContainer.objects.all() if
                            dataSet.title is not None and dataSet.title != ""}
-    return render(request, DISP, context=context)
+    return render(request, DISPLAY_DIMENSIONALITY_REDUCTION_DATASETS_TEMPLATE, context=context)

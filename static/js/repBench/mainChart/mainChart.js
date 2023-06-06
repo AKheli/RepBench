@@ -1,4 +1,4 @@
-const chartManager = new ChartManager();
+let chartManager = new ChartManager();
 let chartHeight = 750
 
 
@@ -116,6 +116,7 @@ const loadChart = function (series = {}, container = 'load_chart') {
 
 
 const createEmptyChart = function (length, container = 'highcharts_container') {
+    chartManager = new ChartManager();
     length = parseInt(length)
     if (length > 1000) length = 1000
     length =  timeInterval * 1000 * length

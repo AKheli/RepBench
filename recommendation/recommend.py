@@ -69,18 +69,16 @@ def get_all_repairs(injected_data_container: InjectedDataContainer):
         "alg_scores": alg_scores,
         "alg_parameters": alg_parameters,
     }
-    print(result)
     return result
 
 
 def get_recommendation_and_repair(injected_data_container: InjectedDataContainer, classifier):
-    results : dict = get_recommendation(injected_data_container, classifier)
-    results.update(get_all_repairs(InjectedDataContainer))
+    results : dict = get_recommendation_from_classifier(injected_data_container, classifier)
+    results.update(get_all_repairs(injected_data_container))
     return results
 
 
-def get_recommendation(injected_data_container: InjectedDataContainer, *,
-                       autoML_file_name: str = autoML_file_name_default, automl: AutoML = None) -> dict:
+def get_recommendation_from_classifier(injected_data_container: InjectedDataContainer, classifier) -> dict:
     """
     Returns dict: {
     "recommended_algorithm" : str
@@ -94,53 +92,44 @@ def get_recommendation(injected_data_container: InjectedDataContainer, *,
     }
     """
 
-    print("get recommendation")
-    alg_scores = {}
-    alg_parameters = {}
-    alg_repairs = {}
-    for alg_name in alg_names:
-        alg_constructor = algo_mapper[alg_name]
-        parameters = get_algorithm_params(alg_name)
-        alg_repair = alg_constructor(**parameters).repair(**injected_data_container.repair_inputs)
-        alg_score = alg_constructor(**parameters).scores(**injected_data_container.repair_inputs, predicted=alg_repair)
-        alg_score.pop("rmse_per_col", None)
-        alg_score.pop("original_RMSE", None)
-
-        alg_parameters[alg_name] = parameters
-        alg_scores[alg_name] = alg_score
-        alg_repairs[alg_name] = alg_repair
-
-    automl: AutoML = load_estimator(autoML_file_name) if automl is None else automl
+    print("DATACOINTAINER MEAN",injected_data_container.injected.mean())
+    print("DATACOINTAINER STD",injected_data_container.injected.std())
     features = extract_features(injected_data_container.injected, injected_data_container.injected_columns[0])
 
     try:
-        used_features = automl.feature_names_in_
+        used_features = classifier.feature_names_in_
     except:
-        used_features = automl.feature_name_ ##some classifiers have feature_name_ instead of features_names_in_
-    print("used features",used_features)
+        used_features = classifier.feature_name_ ##some classifiers have feature_name_ instead of features_names_in_
 
-    print("Modelfeatures", list(used_features))
+
+    print("FEATURES",list(features.keys())[0:10])
+    print("used features",list(used_features)[0:10])
+    # print("used features",used_features)
+
+    # print("Modelfeatures", list(used_features))
 
     fd = pd.DataFrame.from_dict({f_name: [v] for f_name, v in features.items() if f_name in used_features})
+    print("final features" , list(fd.columns)[0:10])
+    print("FEATURES",list(features.values())[0:10])
 
     from recommendation.encoder import decode
 
-    predictions = automl.predict(fd)
-    best_algorithm = decode(predictions)
-    probabilities = {str(decode(i)): p for i, p in enumerate(automl.predict_proba(fd)[0])}
+    prediction = classifier.predict(fd)[0]
+    # print("AUTOML PREDICTION", prediction)
+    # print("prediction type" , type(prediction))
+
+    best_algorithm = decode(prediction)
+    probabilities = {str(decode(i)): p for i, p in enumerate(classifier.predict_proba(fd)[0])}
     try:
-        used_estimator = automl.best_estimator
+        used_estimator = classifier.best_estimator
     except:
-        used_estimator= str(automl.__class__.__name__.split("Estimator")[0])
+        used_estimator= str(classifier.__class__.__name__.split("Estimator")[0])
 
     results = {
         "recommended_algorithm": best_algorithm,
         "probabilities": probabilities,
-        "alg_repairs": alg_repairs,
-        "alg_scores": alg_scores,
-        "alg_parameters": alg_parameters,
         "used_estimator": used_estimator,
-        "data_features": features
+        # "data_features": features
     }
 
     return results

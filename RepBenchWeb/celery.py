@@ -27,9 +27,9 @@ app.conf.result_serializer = 'pickle'
 app.conf.accept_content = ['application/json', 'application/x-python-serialize']
 
 
-@signals.setup_logging.connect
-def setup_celery_logging(**kwargs):  # disble logging for celery other wise ray tune does not function
-    pass
+# @signals.setup_logging.connect
+# def setup_celery_logging(**kwargs):  # disble logging for celery other wise ray tune does not function
+#     pass
 
 
 from flaml import AutoML
@@ -57,15 +57,17 @@ metrics = {
 
 
 @shared_task(bind=True)
-def flaml_search_task(self, settings, X_train, y_train, X_test, y_text, my_task_id):
+def flaml_search_task(self, settings, X_train, y_train, X_test, y_test, my_task_id):
     from RepBenchWeb.models import TaskData
     # automl = AutoML(**settings)
     normal_write = sys.stdout.write
     setting_metric = settings["metric"]
-
+    print("MEEEETRIC", setting_metric)
     task_data = TaskData.objects.get(task_id=my_task_id)
     task_data.set_celery_task_id(self.request.id)
 
+    for p_ in y_train:
+        print(p_)
     def custom_metric(
             X_val, y_val, estimator, labels,
             X_train, y_train, weight_val=None, weight_train=None,
@@ -74,23 +76,26 @@ def flaml_search_task(self, settings, X_train, y_train, X_test, y_text, my_task_
         import time
         start = time.time()
         pred_time = (time.time() - start) / len(X_val)
-        y_pred = estimator.predict(X_train)
-        # print("score parameters" , y_train,y_pred)
+        estimator.fit(X_train, y_train)
+        # print(X_train.shape, y_train.shape, X_val.shape, y_val.shape)
+        y_pred = estimator.predict(X_val)
+        score = metrics[setting_metric](y_pred, y_val)
+        print(y_pred,score)
 
-        score = metrics[setting_metric](y_train, y_pred)
         estimator_name = str(estimator.__class__.__name__).split("Estimator")[0]
         if estimator_name == "LRL1Classifier":
             estimator_name = "LogisticRegression"
-        print(estimator)
+        # print(estimator)
         task_data.add_data({"score": score, "pred_time": pred_time,
                             "estimator": estimator_name, "config": {"model": estimator_name, **estimator.get_params()}})
+
         return score, {"pred_time": pred_time}
 
     # Initialize FLAML with custom metric
     automl = AutoML()
 
     settings["metric"] = custom_metric
-    print("start task")
+    # print("start task")
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -99,9 +104,24 @@ def flaml_search_task(self, settings, X_train, y_train, X_test, y_text, my_task_
     automl._state.metric = setting_metric  # reset metric to original (we cant picke local objects)
     task_data.set_done()
 
-    task_data.set_autoML(automl)
-    print("CLEERY DOOOOONE")
-    print(task_data)
+    classifier = automl.model
+    try:
+        print(classifier.feature_names_)
+    except:
+        print(classifier.feature_names_in_)
+
+    # print(X_train)
+    # classifier.fit(X_train, y_train)
+    task_data.set_classifier(automl)
+    # print(automl.best_estimator)
+    # print("prediction")
+    # for p in automl.predict(X_test):
+    #     print(p)
+    # print("DONE")
+    # print(classifier.feature_importances_)
+
+    # print("CLEERY DOOOOONE")
+    # print(task_data)
 
 
 # from recommendation.ray_tune.ray_tune_config import config as ray_tune_config
@@ -174,8 +194,7 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
         "max_leaf_nodes": tune.randint(3, 20),
     }
 
-    search_alg = "default"
-    import nevergrad as ng
+    search_alg = settings["optimizer"]
 
     if search_alg == "ZOOpt":
         zoopt_search_config = {
@@ -206,6 +225,7 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
                                                        num_samples=10000, search_alg=skopt_search))
 
     elif search_alg == "nevergrad":
+        import nevergrad as ng
         ng_search = NevergradSearch(
             optimizer=ng.optimizers.OnePlusOne,
             metric="score",
@@ -230,36 +250,6 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
                            tune_config=tune.TuneConfig(time_budget_s=settings["time_budget"], metric="score", mode="max",
                                                        max_concurrent_trials=3,
                                                        num_samples=10000))
-# t = time.time()
-#
-# zoopt_search_config = {
-#     "parallel_num": 4,  # how many workers to parallel
-# }
-#
-# zoopt_search = ZOOptSearch(
-#     algo="Asracos",  # only support Asracos currently
-#     budget=5000,  # must match `num_samples` in `tune.TuneConfig()`.
-#     # dim_dict=dim_dict,
-#     metric="score",
-#     mode="max",
-#     **zoopt_search_config
-# )
-#
-# # from ray.tune.search.hebo import HEBOSearch
-# # hebo = HEBOSearch(metric="score", mode="max")
-
-# ray_tune_config.pop("model", "")
-# # ax_search = AxSearch()
-# tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-#                    tune_config=tune.TuneConfig(time_budget_s=1000, metric="score", mode="max",
-#                                                max_concurrent_trials=4,
-#                                                num_samples=5000))
-
-# bayesopt = BayesOptSearch(metric="score", mode="max")
-# tuner = tune.Tuner(train_model, param_space=ray_tune_config, run_config=air.RunConfig(callbacks=[MyCallback()]),
-#                    tune_config=tune.TuneConfig(time_budget_s=5, metric="score", mode="max", max_concurrent_trials=3,
-#                                                num_samples=-1, search_alg=bayesopt)
-#                    )
 
     result_grid = tuner.fit()
     best_result = result_grid.get_best_result()
@@ -286,8 +276,7 @@ def ray_tune_search_task(self, settings, X_train, y_train, X_test, y_text, my_ta
     model.fit(X, y)
     task_data.set_done()
     print("DONE")
-    # task_data.set_done()
-    task_data.set_autoML(model)
+    task_data.set_classifier(model)
 
 # print(results.get_best_result(metric="score", mode="min").config)
 

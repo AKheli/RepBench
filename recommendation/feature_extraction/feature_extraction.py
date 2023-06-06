@@ -74,7 +74,8 @@ def multi_ts_feature_extraction(dataset: pd.DataFrame, column):
     return multi_dim_features
 
 
-def extract_features(dataset, column):  # for one columns only
+def extract_features(dataset : pd.DataFrame, column):  # for one columns only
+    dataset = (dataset - dataset.mean())/dataset.std()
     single_features = single_ts_feature_extraction(dataset.iloc[:, column].values)
     multi_features = multi_ts_feature_extraction(dataset, column)
     single_features.update(multi_features)

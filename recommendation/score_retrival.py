@@ -25,7 +25,7 @@ now = datetime.now().strftime("%m-%d %H:%M:%S")
 
 output_filename = f"recommendation/results/scores/results_{mode}"
 log_file = f"recommendation/logs/{now}_ {mode}_logs"
-data_folder = f"recommendation/datasets/{mode}"
+data_folder = f"data/recommendation/{mode}"
 datasets = os.listdir(data_folder)
 
 factors = [2, 5, 10]
@@ -59,7 +59,7 @@ for dataset in datasets:
     ts_cols = [[i] for i in range(min(truth_df.shape[1], col_n_cap))]
     data_sets_to_col_n[dataset] = truth_df.shape[1]
 
-for columns, a_percentage, factor, a_type, dataset in itertools.product([ [1], [2], [3]], a_percentages, factors,
+for columns, a_percentage, factor, a_type, dataset in itertools.product([ [0], [1], [2], [3]], a_percentages, factors,
                                                                         a_types, datasets):
     for c in columns:
         if c >= data_sets_to_col_n[dataset]:

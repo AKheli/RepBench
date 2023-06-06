@@ -4,7 +4,7 @@ from django.db import models
 import pandas as pd
 from RepBenchWeb.ts_manager.HighchartsMapper import map_repair_data
 from injection.injected_data_container import InjectedDataContainer
-from recommendation.recommend import get_recommendation, alg_names
+from recommendation.recommend import get_recommendation, alg_names, get_recommendation_and_repair
 from picklefield.fields import PickledObjectField
 
 
@@ -187,7 +187,7 @@ class InjectedContainer(models.Model):
             df_original = original_data.df
             injected_data_container = self.injected_container
             truth = injected_data_container.truth
-            recommendation_results = get_recommendation(injected_data_container, automl=automl)
+            recommendation_results = get_recommendation_and_repair(injected_data_container, classifier=automl)
             repairs = recommendation_results["alg_repairs"]
 
             repair_converted = {}

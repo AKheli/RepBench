@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from RepBenchWeb.views.recommendation import recommendation_view, file_upload_view , flaml_example_view
+from RepBenchWeb.views.recommendation import recommendation_view, file_upload_view , recommendation_example_view
 from RepBenchWeb.views.algorithm_analysis import optimizationview
 
 from RepBenchWeb.views import (
@@ -80,18 +80,24 @@ urlpatterns = [
          name='recommendation_datasets'),
 
 
-    path('recommendation/<str:setname>', recommendation_view.RecommendationView.as_view(), name='recommendation'),
+    path('recommendation/<str:type>', recommendation_view.RecommendationView.as_view(), name='recommendation'),
 
-    path('get_reccomendation_results/<str:setname>', recommendation_view.RecommendationView.get_recommendation,
-         name="get_recommendation"),
+    # path('get_recommendation_results/<str:setname>', recommendation_view.RecommendationView.get_recommendation,
+    #      name="get_recommendation"),
 
     # path('user_recommendation', file_upload_view.upload_files, name="user_recommendation"),
     # path('upload/', file_upload_view.upload_files, name='upload_files'),
 
-    path('flaml_example', flaml_example_view.start_flaml, name='start_flaml'),
-    path('flaml_retrieve', flaml_example_view.retrieve_flaml_results, name='retrieve_flaml_results'),
-    path('get_flaml_recommendation/<str:setname>' , flaml_example_view.flaml_prediction , name='get_flaml_recommendation'),
+
+    path('flaml_example', recommendation_example_view.start_flaml, name='start_flaml'),
+    path('raytunes_example',recommendation_example_view.start_raytunes, name='start_raytunes'),
+
+
+    path('recommendation_retrieve', recommendation_example_view.retrieve_flaml_results,
+         name='retrieve_recommendation_results'),
+    path('get_recommendation/<str:setname>' , recommendation_example_view.flaml_prediction , name='get_recommendation'),
     # path('user_recommendation', recommendation_view..as_view(), name='user_recommendation'),
+
 
 
 

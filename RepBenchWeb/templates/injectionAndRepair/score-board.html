@@ -1,0 +1,86 @@
+{% load static %}
+<style>
+    .rs-tooltip-text {
+        color: #000 !important;
+        font-size: 20px !important;
+        font-weight: 900 !important;
+    }
+
+    .roundslider.inverse {
+        width: 2000px; /* Adjust the width as desired */
+        height: 200px; /* Adjust the height as desired */
+    }
+</style>
+
+<script src="{% static  'js/repBench/repair/scoreboard.js' %} " type="text/javascript"></script>
+<link href="{% static 'css/lib/roundslider/roundslider.min.css' %}" rel="stylesheet" type="text/css"/>
+<script src="{% static 'js/lib/roundslider/roundslider.min.js' %}"></script>
+<script src="{% static 'js/lib/roundslider/roundslider-init.js' %}"></script>
+
+<style>
+    .rs-title {
+        font-size: 13px;
+        font-weight: 900;
+        z-index: 800;
+    }
+
+    .rs-tooltip-text {
+        font-size: 15px !important;
+    }
+
+    .slider-container {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .roundslider {
+      {#justify-content: center;#}
+        transform: translate(0, 20px);
+    }
+</style>
+
+
+<div id="score_portlets" class="kt-portlet" data-ktportlet="true">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title">Scores</h3>
+        </div>
+        <div class="kt-portlet__head-toolbar">
+            {#                <div class="kt-portlet__head-group">#}
+            {#                    <a href="#" data-ktportlet-tool="toggle"#}
+            {#                       class="btn btn-sm btn-icon btn-default btn-icon-md"><i#}
+            {#                            class="mdi mdi-chevron-up mdi-18px"></i></a>#}
+            {#                </div>#}
+        </div>
+    </div>
+    <div id="scores_portlet">
+        <div class="kt-portlet__body">
+
+            <div id="initial-score-portlet-text">
+                <h5 class="text-center" style="color:lightgray ">Please Inject the Dataset with anomalies and then run
+                    a Repair Algorithm.</h5>
+            </div>
+
+            <div class="row">
+                {#                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">#}
+                <div id="RMSE-slider" class="roundslider inverse"
+                     title="RMSE">
+                </div>
+                {#                            </div>#}
+                {#                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">#}
+                <div id="MAE-slider" class="roundslider inverse"
+                     title="MAE">
+                </div>
+                {#                            </div>#}
+                {#                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">#}
+                <div id="RMSE-Anomaly-slider" class="roundslider inverse"
+                     title="RMSE on Anomaly">
+                </div>
+                {#                            </div>#}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -63,7 +63,7 @@ def inject_data(request, setname):
     a_type = post.get("anomaly")
     seed = post.get("seed")
     a_len = 30 # int(post.get("length"))
-    if seed == '':
+    if seed == '' or seed is None:
         seed = random.randint(0, 100)
     else:
         seed = int(seed)

@@ -1,0 +1,300 @@
+{#<script>#}
+{#    document.addEventListener('DOMContentLoaded', function () {#}
+{#        document.getElementById('select_option').addEventListener('change', function () {#}
+{#            document.getElementById('flaml_settings_form').style.display = (this.value == 'flaml' ? 'block' : 'none');#}
+{#            document.getElementById('ray_tune_settings_form').style.display = (this.value == 'ray' ? 'block' : 'none');#}
+{#        });#}
+{#    });#}
+{#</script>#}
+
+<script>
+
+    const recommendationHandler = {
+        init: function (option,start_url,retrieve_url) {
+            this.flaml_response_data = []
+            this.flaml_response_iter = 0;
+            this.flaml_series = [];
+            this.task_id = '{{csrf_token}}'
+            this.playing = false
+            this.computing = false
+            this.intervalTimer = 800
+            this.option = option//flaml or ray
+            this.start_url = start_url
+            this.retrieve_url = retrieve_url
+        },
+        startTuning: function () {
+            this.playing = false
+            this.flaml_response_iter = 0;
+            this.flaml_response_data = [];
+            this.flaml_series = []
+
+            let queryString = $('#recommendation_settings_form').serialize();
+            const params = new URLSearchParams(queryString);
+            const estimatorList = params.getAll("estimator_list");
+            console.log(estimatorList)
+            queryString += '&estimator_list=' + estimatorList;
+
+            document.getElementById("start-button-right-text").innerHTML = "Starting " + this.option;
+            initFlamlChart([]);
+            flamlChart.showLoading()
+
+            $.ajax({
+                type: 'POST',
+                url: this.start_url,
+                data: $('#start-form').serialize() + '&' + $('#ray_tune_settings_form').serialize() + '&' + queryString + '&tuner=' + this.option + '&task_id=' + this.task_id,
+                success: (response) => {
+                    {#console.log(response);#}
+                    let estimators = response.automl_settings.estimator_list;
+                    // Display message that Flaml is running
+                    // Call function to retrieve Flaml results periodically
+                    // Create chart
+                    document.getElementById("start-button-right-text").innerHTML = "Starting " + this.option + "..."
+                    this.getRecommendationResults();
+                    this.iterateData();
+                    flamlChart.hideLoading()
+                    this.playing = true
+
+                    const parameterNames = {
+                        "RandomForest": ["n_estimators", "max_features", "max_leaf_nodes"],
+                        "ExtraTrees": ["n_estimators", "max_features", "max_leaf_nodes"],
+                        "LogisticRegression": ["C"],
+                        "LGBM": ["n_estimators", "num_leaves", "learning_rate", "min_child_samples"],
+                        "XGBoostSklearn": ["n_estimators", "max_depth", "learning_rate", "min_child_weight", "reg_alpha", "reg_lambda"]
+                    };
+                    parameterTable.init(parameterNames);
+                },
+                error: function (response) {
+                    console.log(response);
+                    {#alert('Error starting Flaml');#}
+                }
+            });
+
+        },
+
+        getRecommendationResults: function () {
+            $.ajax({
+                type: 'POST',
+                url: this.retrieve_url,
+                data: $('#start-form').serialize() + '&task_id=' + this.task_id,
+                success: response => {
+                    {#console.log("EYYY", response);#}
+                    if (response.status === 'running') {
+                        this.flaml_response_data = response.data;
+                        flamlChart.redraw();
+                        setTimeout(() => {
+                            this.getRecommendationResults();  // Pass the task_id again in the recursive call
+                        }, 1000);
+                    } else if (response.status === 'done') {
+                        console.log("DONE");
+                        this.playing = false
+                        // Display message that Flaml is finished
+                        // ...
+                        {#getPrediction()#}
+
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert('Error retrieving Flaml results');
+                }
+            });
+        },
+
+        iterateData: function () {
+            console.log("iterate")
+            if (this.flaml_response_iter < this.flaml_response_data.length && this.playing) {
+                let currentData = this.flaml_response_data[this.flaml_response_iter];
+                console.log(currentData, "CURRENT DATA")
+
+                let score = currentData.score;
+                let roundedScore = Math.round(score * 1000) / 1000;
+                let estimator = currentData.estimator
+                let parameters = currentData.parameters
+                document.getElementById("start-button-right-text").innerHTML = "Iter:" + this.flaml_response_iter + "| Estimator: " + estimator + " | Accuracy: " + roundedScore;
+
+                this.flaml_response_iter = this.flaml_response_iter + 1;
+                this.flaml_series.push({y: score, x: this.flaml_response_iter, name: estimator})
+                flamlChart.addData(score, estimator, this.flaml_response_iter);
+                parameterTable.addData(roundedScore, estimator, parameters);
+                {#addDataToFlamlChart(score, currentData.estimator , 1);#}
+            } else {
+                if (this.playing) {
+                    console.log("Waiting for more data..." + this.flaml_response_iter);
+                }
+            }
+
+            setTimeout(this.iterateData.bind(this), this.intervalTimer);
+        }
+
+    }
+
+    const parameterTable = {
+        tableId: "parameterTable",
+        data: {},
+        dataHistory: [],
+        init: function (parameter_names) {
+            this.data = {};
+            this.dataHistory = [];
+            const table = document.getElementById(this.tableId); // Get the table element by its ID
+            table.innerHTML = ""; // Clear the table
+
+
+            // Create a new row for the header
+            const headerRow = document.createElement("tr");
+
+            // Create and populate cells for the header row
+            const scoreHeaderCell = document.createElement("th");
+            scoreHeaderCell.textContent = "Score";
+            headerRow.appendChild(scoreHeaderCell);
+
+            const estimatorHeaderCell = document.createElement("th");
+            estimatorHeaderCell.textContent = "Estimator";
+            headerRow.appendChild(estimatorHeaderCell);
+
+            const parametersHeaderCell = document.createElement("th");
+            parametersHeaderCell.textContent = "Parameters";
+            headerRow.appendChild(parametersHeaderCell);
+
+            // Append the header row to the table
+            table.appendChild(headerRow);
+
+            // Iterate through the parameter_names and create rows for each estimator
+            for (const [estimator, parameters] of Object.entries(parameter_names)) {
+                const newRow = document.createElement("tr");
+                newRow.setAttribute("data-estimator", estimator); // Set a custom attribute to identify the row
+
+                // Create and populate cells for the estimator row
+                const scoreCell = document.createElement("td");
+                scoreCell.className = "score-cell";
+                scoreCell.textContent = "-";
+                newRow.appendChild(scoreCell);
+
+                const estimatorCell = document.createElement("td");
+                estimatorCell.textContent = estimator;
+                newRow.appendChild(estimatorCell);
+
+                const parametersCell = document.createElement("td");
+                parametersCell.className = "parameters-cell";
+                {#parametersCell.textContent = "-"; // Set "-" for parameters#}
+                parameters.forEach(function (name) {
+                    const parameterElement = document.createElement("p");
+                    parameterElement.textContent = `${name}: -`;
+                    parametersCell.appendChild(parameterElement);
+                });
+                newRow.appendChild(parametersCell);
+
+                // Append the new row to the table
+                table.appendChild(newRow);
+
+                this.data[estimator] = {
+                    score: "-",
+                    parameters: "-"
+                };
+            }
+        },
+
+        addData: function (score, estimator, parameters) {
+            this.dataHistory.push({
+                score: score,
+                estimator: estimator,
+                parameters: parameters
+            });
+            this.showData(score, estimator, parameters);
+        },
+        showData: function (score, estimator, parameters) {
+            if (this.data.hasOwnProperty(estimator)) {
+                // If the estimator already exists, update its content
+                this.data[estimator] = {
+                    score: score,
+                    parameters: parameters
+                };
+
+                const table = document.getElementById(this.tableId); // Get the table element by its ID
+                const row = table.querySelector(`tr[data-estimator="${estimator}"]`); // Find the row with the matching estimator
+
+                // Update the score and parameters cells for the existing row
+                const scoreCell = row.querySelector(".score-cell");
+                scoreCell.textContent = score;
+
+                const parametersCell = row.querySelector(".parameters-cell");
+                parametersCell.innerHTML = ""; // Clear the existing content
+
+                // Iterate through the parameters and create a new <p> element for each parameter
+                for (const [key, value] of Object.entries(parameters)) {
+                    const parameterElement = document.createElement("p");
+                    parameterElement.textContent = `${key}: ${value}`;
+                    parametersCell.appendChild(parameterElement);
+                }
+            } else {
+                // If the estimator doesn't exist, create a new entry
+                this.data[estimator] = {
+                    score: score,
+                    parameters: parameters
+                };
+
+                const table = document.getElementById(this.tableId); // Get the table element by its ID
+
+                // Create a new row for the data
+                const newRow = document.createElement("tr");
+                newRow.setAttribute("data-estimator", estimator); // Set a custom attribute to identify the row
+
+                // Create and populate cells for the score, estimator, and parameters
+                const scoreCell = document.createElement("td");
+                scoreCell.className = "score-cell";
+                scoreCell.textContent = score;
+                newRow.appendChild(scoreCell);
+
+                const estimatorCell = document.createElement("td");
+                estimatorCell.textContent = estimator;
+                newRow.appendChild(estimatorCell);
+
+                const parametersCell = document.createElement("td");
+                parametersCell.className = "parameters-cell";
+
+                // Iterate through the parameters and create a new <p> element for each parameter
+                for (const [key, value] of Object.entries(parameters)) {
+                    const parameterElement = document.createElement("p");
+                    parameterElement.textContent = `${key}: ${value}`;
+                    parametersCell.appendChild(parameterElement);
+                }
+
+                newRow.appendChild(parametersCell);
+
+                // Append the new row to the table
+                table.appendChild(newRow);
+            }
+        },
+        displayHistory: function (i) {
+            this.showData(this.dataHistory[i].score, this.dataHistory[i].estimator, this.dataHistory[i].parameters)
+        }
+    }
+
+    $(document).ready(function () {
+        $('.play-btn').on('click', function (event) {
+            // Prevent form submission if it's a submit button
+            {#event.preventDefault();#}
+            $(this).find('i').toggle();
+            recommendationHandler.playing = !recommendationHandler.playing
+        });
+
+        $('#start-form').on('submit', function (event) {
+            event.preventDefault();
+            if (recommendationHandler.computing) {
+                return;
+            } else {
+                recommendationHandler.computing = true;
+                recommendationHandler.startTuning()
+            }
+        });
+
+        $('#reload').on('click', function (event) {
+            // Prevent form submission if it's a submit button
+            event.preventDefault();
+            if (recommendationHandler.computing) {
+                recommendationHandler.startTuning()
+            }
+
+        });
+    });
+
+</script>

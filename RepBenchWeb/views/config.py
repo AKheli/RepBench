@@ -4,7 +4,8 @@
 DISPLAY_DATASET_TEMPLATE = "displayDataset/displayDataset.html"
 DISPLAY_DATASET_SYNTHETIC_TEMPLATE = "displayDataset/displayDatasetSynthetic.html"
 
-RECOMMENDATION_TEMPLATE = "recommendation/recommendation.html"
+FLAML_RECOMMENDATION_TEMPLATE = "recommendation/recommendation.html"
+RAY_TUNE_RECOMMENDATION_TEMPLATE = "recommendation/raytunes_recommendation.html"
 
 DIMENSIONALITY_REDUCTION_TEMPLATE = "algorithmAnalysis/dimensionality_reduction.html"
 OPTIMIZATION_TEMPLATE = "algorithmAnalysis/optimization.html"

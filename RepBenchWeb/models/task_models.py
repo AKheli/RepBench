@@ -67,12 +67,14 @@ class TaskData(models.Model):
         time_threshold = timezone.now() - timedelta(minutes=30)
         TaskData.objects.filter(created_at__lt=time_threshold).delete()
 
-    def set_autoML(self, automl):
-        print("SET AUTO ML")
-        self.autoML = pickle.dumps(automl, pickle.HIGHEST_PROTOCOL)
+    def set_classifier(self, classifier):
+        print("SET AUTO ML classifier")
+        self.autoML = pickle.dumps(classifier, pickle.HIGHEST_PROTOCOL)
         self.save()
+    def get_classifier(self):
+        return pickle.loads(self.autoML)
 
-    def get_recommendation(self, setname):
-        automl = pickle.loads(self.autoML)
-        return InjectedContainer.objects.get(title=setname).recommendation_context(automl)
-
+    # def get_recommendation(self, setname):
+    #     automl = pickle.loads(self.autoML)
+    #     return InjectedContainer.objects.get(title=setname).recommendation_context(automl)
+    #
