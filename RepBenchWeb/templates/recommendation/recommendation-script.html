@@ -1,11 +1,4 @@
-{#<script>#}
-{#    document.addEventListener('DOMContentLoaded', function () {#}
-{#        document.getElementById('select_option').addEventListener('change', function () {#}
-{#            document.getElementById('flaml_settings_form').style.display = (this.value == 'flaml' ? 'block' : 'none');#}
-{#            document.getElementById('ray_tune_settings_form').style.display = (this.value == 'ray' ? 'block' : 'none');#}
-{#        });#}
-{#    });#}
-{#</script>#}
+
 
 <script>
 
@@ -21,8 +14,11 @@
             this.option = option//flaml or ray
             this.start_url = start_url
             this.retrieve_url = retrieve_url
+            flamlChart.init()
+
         },
         startTuning: function () {
+            flamlChart.init()
             this.playing = false
             this.flaml_response_iter = 0;
             this.flaml_response_data = [];
@@ -35,8 +31,8 @@
             queryString += '&estimator_list=' + estimatorList;
 
             document.getElementById("start-button-right-text").innerHTML = "Starting " + this.option;
-            initFlamlChart([]);
-            flamlChart.showLoading()
+            {#initFlamlChart([]);#}
+            flamlChart.chart.showLoading()
 
             $.ajax({
                 type: 'POST',
@@ -51,7 +47,7 @@
                     document.getElementById("start-button-right-text").innerHTML = "Starting " + this.option + "..."
                     this.getRecommendationResults();
                     this.iterateData();
-                    flamlChart.hideLoading()
+                    flamlChart.chart.hideLoading()
                     this.playing = true
 
                     const parameterNames = {
@@ -65,7 +61,6 @@
                 },
                 error: function (response) {
                     console.log(response);
-                    {#alert('Error starting Flaml');#}
                 }
             });
 
@@ -80,7 +75,7 @@
                     {#console.log("EYYY", response);#}
                     if (response.status === 'running') {
                         this.flaml_response_data = response.data;
-                        flamlChart.redraw();
+                        flamlChart.chart.redraw();
                         setTimeout(() => {
                             this.getRecommendationResults();  // Pass the task_id again in the recursive call
                         }, 1000);
@@ -110,7 +105,11 @@
                 let roundedScore = Math.round(score * 1000) / 1000;
                 let estimator = currentData.estimator
                 let parameters = currentData.parameters
-                document.getElementById("start-button-right-text").innerHTML = "Iter:" + this.flaml_response_iter + "| Estimator: " + estimator + " | Accuracy: " + roundedScore;
+                let runtime = currentData.runtime
+                document.getElementById("start-button-right-text").innerHTML = "Iter:" + this.flaml_response_iter +
+                    "| Estimator: " + estimator +
+                    " | "+ runtime +"s"+
+                    " | Score: " + roundedScore;
 
                 this.flaml_response_iter = this.flaml_response_iter + 1;
                 this.flaml_series.push({y: score, x: this.flaml_response_iter, name: estimator})

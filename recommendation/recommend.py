@@ -119,7 +119,9 @@ def get_recommendation_from_classifier(injected_data_container: InjectedDataCont
     # print("prediction type" , type(prediction))
 
     best_algorithm = decode(prediction)
-    probabilities = {str(decode(i)): p for i, p in enumerate(classifier.predict_proba(fd)[0])}
+    proba = classifier.predict_proba(fd)[0]
+    print(proba)
+    probabilities = {str(decode(i)): p for i, p in enumerate(proba)}
     try:
         used_estimator = classifier.best_estimator
     except:

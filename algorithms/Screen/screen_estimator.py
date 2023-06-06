@@ -20,10 +20,10 @@ class SCREENEstimator(Estimator):
         self.ci = ci
 
     def get_fitted_params(self, **args):
-        return {"t": self.t
-            , "smin": self.smin
-            , "smax": self.smax
-            , "method": self.method
+        return {"t": self.t,
+             "smin": self.smin,
+             "smax": self.smax,
+             "method": self.method
                 }
 
     def suggest_param_range(self, X):

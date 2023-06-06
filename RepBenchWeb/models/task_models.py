@@ -19,6 +19,7 @@ class TaskData(models.Model):
     status = models.CharField(max_length=255, default="running")
     autoML = PickledObjectField(null=True, blank=True)
 
+
     def set_done(self):
         self.status = "done"
         self.save()
@@ -61,9 +62,9 @@ class TaskData(models.Model):
                 data_iteration["parameters"] = get_relevant_parameters(data_iteration.pop("config"))
                 data_iteration["processed"] = True
                 if i >0:
-                    data_iteration["run_time"] = data_iteration["time"] - self.data[i-1]["time"]
+                    data_iteration["runtime"] = round(data_iteration["time"] - self.data[i-1]["time"],3)
                 else:
-                    data_iteration["run_time"] = 0
+                    data_iteration["runtime"] = 0.3
         self.save()
         return self.data
 
