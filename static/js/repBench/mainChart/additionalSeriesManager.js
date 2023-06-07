@@ -110,6 +110,13 @@ class ChartManager {
         mainChart.get(id).remove();
     }
 
+    removeSeriesByName(name) {
+        this.injectedSeries = this.injectedSeries.filter(s => s._chartSeriesData.name !== name)
+        this.repairedSeries = this.repairedSeries.filter(s => s._chartSeriesData.name !== name)
+        this.reducedSeries = this.reducedSeries.filter(s => s._chartSeriesData.name !== name)
+        this.originalSeries = this.originalSeries.filter(s => s._chartSeriesData.name !== name)
+    }
+
     _getChartXAxis() {
         const axis0isDefined = mainChart !== null && mainChart.xAxis !== undefined && mainChart.xAxis[0] !== undefined
         if (axis0isDefined) {
