@@ -1,9 +1,7 @@
-
-
 <script>
 
     const recommendationHandler = {
-        init: function (option,start_url,retrieve_url) {
+        init: function (option, start_url, retrieve_url) {
             this.flaml_response_data = []
             this.flaml_response_iter = 0;
             this.flaml_series = [];
@@ -108,7 +106,7 @@
                 let runtime = currentData.runtime
                 document.getElementById("start-button-right-text").innerHTML = "Iter:" + this.flaml_response_iter +
                     "| Estimator: " + estimator +
-                    " | "+ runtime +"s"+
+                    " | " + runtime + "s" +
                     " | Score: " + roundedScore;
 
                 this.flaml_response_iter = this.flaml_response_iter + 1;
@@ -131,10 +129,15 @@
         tableId: "parameterTable",
         data: {},
         dataHistory: [],
+        parameter_names: null,
+        intervalTimer : 1000,
+
         init: function (parameter_names) {
             this.data = {};
             this.dataHistory = [];
+            this.parameter_names = parameter_names;
             const table = document.getElementById(this.tableId); // Get the table element by its ID
+
             table.innerHTML = ""; // Clear the table
 
 
@@ -265,8 +268,25 @@
         },
         displayHistory: function (i) {
             this.showData(this.dataHistory[i].score, this.dataHistory[i].estimator, this.dataHistory[i].parameters)
+        },
+
+        replayHistory: async function () {
+            const history_ = [...this.dataHistory]
+            console.log(history_)
+            this.init(this.parameter_names)
+            await new Promise(resolve => setTimeout(resolve, this.intervalTimer));
+
+            for (let i = 0; i < history_.length; i++) {
+                const dataPoint = history_[i];
+                this.addData(dataPoint.score, dataPoint.estimator, dataPoint.parameters);
+                console.log(this);
+
+                await new Promise(resolve => setTimeout(resolve, this.intervalTimer));
+            }
         }
+
     }
+
 
     $(document).ready(function () {
         $('.play-btn').on('click', function (event) {

@@ -86,7 +86,7 @@ urlpatterns = [
     #      name="get_recommendation"),
 
     # path('user_recommendation', file_upload_view.upload_files, name="user_recommendation"),
-    # path('upload/', file_upload_view.upload_files, name='upload_files'),
+    path('upload/', file_upload_view.upload_files, name='upload_files'),
 
 
     path('flaml_example', recommendation_example_view.start_flaml, name='start_flaml'),
@@ -102,6 +102,7 @@ urlpatterns = [
 
 
     #delete dataset
+    path('delete/<str:setname>', dataset_views.delete_dataset, name='delete_dataset'),
     path('delete_dataset/<str:setname>', dataset_views.delete_dataset, name='delete_dataset'),
 ]
 

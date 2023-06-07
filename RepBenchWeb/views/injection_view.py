@@ -33,6 +33,7 @@ class InjectionView(RepairView):
         context["store_form"] = store_injection_form
         context["injection_form"] = InjectionForm(list(df.columns))
         context["alg_forms"] = self.ParamForms
+        # context["upload_form"] = self.error_map
 
         return render(request, self.template, context=context)
 

@@ -98,11 +98,10 @@ def display_datasets(request=None,option="Display" , synthetic=False):
 
 
 def delete_dataset(request,setname):
-    response = ""
     try:
-        # dataSet = DataSet.objects.get(title=setname)
-        # dataSet.delete()
-        # response = f"{setname} deleted"
+        dataSet = DataSet.objects.get(title=setname)
+        dataSet.delete()
+        response = f"{setname} deleted"
         response = f"could not delete {setname}"
         raise Exception
     except:
@@ -113,4 +112,4 @@ def delete_dataset(request,setname):
         except:
             response = f"could not delete {setname}"
 
-    return RepBenchJsonRespone({"result":response})
+    return display_datasets(request)
