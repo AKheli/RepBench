@@ -1,13 +1,11 @@
 from django import forms
-from django.forms import NumberInput
-from django.utils.safestring import mark_safe
 from RepBenchWeb.models import DataSet , InjectedContainer
 
 
 
 
 DATASET_CHOICES =  [ (dataset.title,dataset.title)   for dataset in DataSet.objects.all() ]
-INJECTED_DATASET_CHOICES =  [ (dataset.title,dataset.title)   for dataset in InjectedContainer.objects.all() ]
+INJECTED_DATASET_CHOICES = [ (dataset.title,dataset.title)   for dataset in InjectedContainer.objects.all() ]
 
 
 class DataSetsForm(forms.Form):

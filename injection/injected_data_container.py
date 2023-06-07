@@ -91,6 +91,10 @@ class InjectedDataContainer:
     def a_perc(self):
         return np.mean(self.klass.iloc[:, self.injected_columns].values)
 
+    @property
+    def injected_columns_names(self):
+        return self.injected.columns[self.injected_columns]
+
     def add_repair(self, repair_results, repair_type, repair_name=None):
         self.check()
         repair_name = repair_type if repair_name is None else repair_name

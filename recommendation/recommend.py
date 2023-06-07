@@ -13,22 +13,19 @@ from injection.injected_data_container import InjectedDataContainer
 from algorithms.algorithms_config import CDREC, RPCA, IMR, SCREEN
 from recommendation.feature_extraction.feature_extraction import extract_features
 from recommendation.utils.file_parsers import load_estimator
-from injection import get_injected_container_example
 
 alg_names = [CDREC, RPCA, IMR, SCREEN]
-# injected_data_container: InjectedDataContainer = get_injected_container_example()
 autoML_file_name_default = "flaml_classifier_accuracy_time_6_non_normalized"
 
 
 def get_recommendation(injected_data_container: InjectedDataContainer, classifier):
     features = extract_features(injected_data_container.injected, injected_data_container.injected_columns[0])
-    print("FEATURES",features.keys())
+    print("FEATURES", features.keys())
     used_features = classifier.feature_names_in_
     print("Modelfeatures", list(used_features))
 
-    fd = pd.DataFrame.from_dict({f_name: [v] for f_name, v in features.items() if f_name in used_features })
-    print("final features" , fd.columns)
-
+    fd = pd.DataFrame.from_dict({f_name: [v] for f_name, v in features.items() if f_name in used_features})
+    print("final features", fd.columns)
 
     probabilities = classifier.predict_proba(fd).flatten()
     recommended_algorithm = classifier.predict(fd).flatten()
@@ -39,7 +36,7 @@ def get_recommendation(injected_data_container: InjectedDataContainer, classifie
     probabilities = {decode(label): p for label, p in zip(labels, probabilities)}
 
     results = {
-        "best_estimator" : recommended_algorithm,
+        "best_estimator": recommended_algorithm,
         "recommended_algorithm": recommended_algorithm,
         "probabilities": probabilities,
         "used_estimator": str(classifier.__class__.__name__.split("Estimator")[0]),
@@ -72,9 +69,64 @@ def get_all_repairs(injected_data_container: InjectedDataContainer):
     return result
 
 
-def get_recommendation_and_repair(injected_data_container: InjectedDataContainer, classifier):
-    results : dict = get_recommendation_from_classifier(injected_data_container, classifier)
+def get_recommendation_and_repair(injected_data_container: InjectedDataContainer, classifier, features=None):
+    if features is None:
+        results: dict = get_recommendation_from_classifier(injected_data_container, classifier)
+    else:
+        results = get_recommendation_from_classifier_and_features(classifier,
+                                                                  features,
+                                                                  injected_data_container.injected_columns_names)
+
     results.update(get_all_repairs(injected_data_container))
+    return results
+
+
+def get_recommendation_from_classifier_and_features(classifier, features_per_col, injected_columns):
+    assert all([col in features_per_col for col in injected_columns]), \
+        f"Column features columns:{injected_columns} features:{features_per_col.keys()}"
+
+    try:
+        used_features = classifier.feature_names_in_
+    except:
+        used_features = classifier.feature_name_  ##some classifiers have feature_name_ instead of features_names_in_
+
+    from recommendation.encoder import decode
+    try:
+        used_estimator = classifier.best_estimator
+    except:
+        used_estimator = str(classifier.__class__.__name__.split("Estimator")[0])
+
+    probabilities_per_col = []
+    for col in injected_columns:
+        features = features_per_col[col]
+        print("FEATURES", list(features.keys())[0:10])
+        print("used features", list(used_features)[0:10])
+
+        fd = pd.DataFrame.from_dict({f_name: [v] for f_name, v in features.items() if f_name in used_features})
+        print("final features", list(fd.columns)[0:10])
+        print("FEATURES", list(features.values())[0:10])
+
+        prediction = classifier.predict(fd)[0]
+        print(f"AUTOML PREDICTION column: {col}", prediction)
+        print(f"AUTOML PREDICTION column: {col}decoded ", decode(prediction))
+
+        proba = classifier.predict_proba(fd)[0]
+        print(proba)
+        probabilities = {str(decode(i)): p for i, p in enumerate(proba)}
+        probabilities_per_col.append(probabilities)
+
+    ##average probabilities
+    probabilities = {alg_name:
+                         sum([p_c[alg_name] for p_c in probabilities_per_col]) / len(probabilities_per_col)
+                     for alg_name in probabilities_per_col[0].keys()}
+
+    best_algorithm = max(probabilities, key=probabilities.get)
+    results = {
+        "recommended_algorithm": best_algorithm,
+        "probabilities": probabilities,
+        "used_estimator": used_estimator,
+    }
+
     return results
 
 
@@ -91,50 +143,14 @@ def get_recommendation_from_classifier(injected_data_container: InjectedDataCont
     "data_features" : dict "feature_name" -> val
     }
     """
+    features = {col_name: extract_features(injected_data_container.injected,
+                                           injected_data_container.injected_columns[col_index])
+                for col_name, col_index in zip(injected_data_container.injected_columns_names,
+                                               injected_data_container.injected_columns)}
 
-    print("DATACOINTAINER MEAN",injected_data_container.injected.mean())
-    print("DATACOINTAINER STD",injected_data_container.injected.std())
-    features = extract_features(injected_data_container.injected, injected_data_container.injected_columns[0])
-
-    try:
-        used_features = classifier.feature_names_in_
-    except:
-        used_features = classifier.feature_name_ ##some classifiers have feature_name_ instead of features_names_in_
-
-
-    print("FEATURES",list(features.keys())[0:10])
-    print("used features",list(used_features)[0:10])
-    # print("used features",used_features)
-
-    # print("Modelfeatures", list(used_features))
-
-    fd = pd.DataFrame.from_dict({f_name: [v] for f_name, v in features.items() if f_name in used_features})
-    print("final features" , list(fd.columns)[0:10])
-    print("FEATURES",list(features.values())[0:10])
-
-    from recommendation.encoder import decode
-
-    prediction = classifier.predict(fd)[0]
-    # print("AUTOML PREDICTION", prediction)
-    # print("prediction type" , type(prediction))
-
-    best_algorithm = decode(prediction)
-    proba = classifier.predict_proba(fd)[0]
-    print(proba)
-    probabilities = {str(decode(i)): p for i, p in enumerate(proba)}
-    try:
-        used_estimator = classifier.best_estimator
-    except:
-        used_estimator= str(classifier.__class__.__name__.split("Estimator")[0])
-
-    results = {
-        "recommended_algorithm": best_algorithm,
-        "probabilities": probabilities,
-        "used_estimator": used_estimator,
-        # "data_features": features
-    }
-
-    return results
+    return get_recommendation_from_classifier_and_features(classifier,
+                                                           features,
+                                                           injected_data_container.injected_columns_names)
 
 
 def get_recommendation_non_containerized(anomalous_ts, *, column_for_recommendation, label_df=None,
