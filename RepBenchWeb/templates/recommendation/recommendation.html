@@ -238,11 +238,11 @@
                     const best_alg = response.recommended_algorithm
                     Object.entries(repairs).forEach(([repairs_key, repairs_values]) => {
                             Object.entries(repairs_values).forEach(([key, value]) => {
-                                console.log(key, value)
-                                chartManager.removeSeriesByName(value.name)
                                 value.legendIndex = repairs_key === best_alg ? -2 : -1
                                 value.visible = repairs_key === best_alg
                                 value.name = repairs_key === best_alg ? value.name + " (recommendation)" : value.name
+
+                                chartManager.removeSeriesByName(value.name)
                                 chartManager.addSeries(value, true, "repair")
                             });
                         },
