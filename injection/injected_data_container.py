@@ -215,6 +215,7 @@ class InjectedDataContainer:
                     f.write(value.to_string(index=False))  # Write full DataFrame as a string
                 else:
                     w.writerow([key, value])
+            w.writerow('\n')
 
 
 
