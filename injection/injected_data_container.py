@@ -5,6 +5,8 @@ from injection.label_generator import  generate_df_labels
 import hashlib
 import pandas as pd
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 
 class InjectedDataContainer:
     def __init__(self, injected, truth, *, class_df, labels, name , check_rmse=True):
@@ -207,7 +209,12 @@ class InjectedDataContainer:
         import csv
         with open(f"{folder}/{self.name}_repairs.csv", 'w') as f:
             w = csv.writer(f)
-            w.writerows(self.repairs.items())
+            # w.writerows(self.repairs.items())
+            for key, value in self.repairs.items():
+                if isinstance(value, pd.DataFrame):
+                    f.write(value.to_string(index=False))  # Write full DataFrame as a string
+                else:
+                    w.writerow([key, value])
 
 
 
