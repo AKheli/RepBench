@@ -1,11 +1,9 @@
 import itertools
 import sys
 import numpy as np
-from algorithms.estimator import Estimator
+from repair.estimator import Estimator
 from multiprocessing.pool import ThreadPool as Pool
 import time
-
-
 
 
 class EstimatorOptimizer():
@@ -15,9 +13,9 @@ class EstimatorOptimizer():
         self.n_jobs = n_jobs
 
     def estim_change_copy(self, param_dict):
-        estim_copy = type(self.estim)()
-        estim_copy.__dict__.update(self.estim.__dict__)
-        estim_copy.__dict__.update(param_dict)
+        estim_copy = type(self.estim)(**param_dict)
+        # estim_copy.__dict__.update(self.estim.__dict__)
+        # estim_copy.__dict__.update(param_dict)
         return estim_copy
 
 
@@ -39,6 +37,16 @@ class EstimatorOptimizer():
 
 
     def search(self, repair_inputs,  param_grid):
+        """
+
+        Args:
+            repair_inputs: dict with injected , truth  and labels (imr)
+            param_grid: parameter dict { param_name : list , ...}
+
+        Returns:
+
+        """
+
         return self.grid(repair_inputs,param_grid)
 
 
@@ -46,7 +54,7 @@ class EstimatorOptimizer():
         param_combinations = list(dict(zip(param_grid.keys(), x)) for x in itertools.product(*param_grid.values()))
         return param_combinations
 
-    def param_map(self,repair_inputs,param_combinations , run_time = False):
+    def param_map(self,repair_inputs , param_combinations , run_time = False):
         """
         returns [(params , score )  , (params , score ,) .. ]
         """
@@ -57,8 +65,8 @@ class EstimatorOptimizer():
         n = len(param_combinations)
 
         def f(params):
-            self.counter += 1
-            sys.stdout.write(f"\rgrid search {self.counter /n * 100:.1f} %", )
+            # self.counter += 1
+            # sys.stdout.write(f"\rgrid search {self.counter /n * 100:.1f} %", )
             estim = self.estim_change_copy(params)
             score_ = estim.scores(**repair_inputs)[self.error_score]
             return score_
@@ -79,7 +87,6 @@ class EstimatorOptimizer():
 
 
     def grid(self, repair_inputs, param_grid, combination_list = None):
-        print(param_grid)
         if combination_list is not None:
             param_combinations = combination_list
         else:

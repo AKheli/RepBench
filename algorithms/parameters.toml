@@ -1,4 +1,5 @@
-[rpca]
+## config file for the repair algorithm names have to match repair/algorithms_config.py
+[RPCA]
     threshold = 1.2
     classification_truncation = 2
     repair_truncation = 3
@@ -7,7 +8,7 @@
     delta = 1
 
 
-[cdrec]
+[CDREP]
     classification_truncation = 2
     repair_truncation = 3
     threshold = 1.2
@@ -15,34 +16,37 @@
     repair_iter = 10
     delta = 1
 
-[imr]
-     p = 3
-     tau = 0.02
-     n_max_itr= 20000
+[IMR]
+    p = 3
+    tau = 0.02
+    n_max_itr = 20000
 
-[screen]
-     t = 1
-     ci = [0.1,0.9] # use confidence intervall approach when smin and smax are not set
+[SCREEN]
+    t = 3
+    smin = -0.1
+    smax = +0.1
+    #ci = [0.1,0.9] # use confidence intervall approach when smin and smax are not set
 
 
 [screenglobal] # use percentile approach when smin and smax are not set
-     t = 1
-     ci = [0.1,0.9] # use confidence intervall approach when smin and smax are not set
+    t = 1
+    ci = [0.1, 0.9] # use confidence intervall approach when smin and smax are not set
+
+
+["SCREEN2"] # needs quotes because of the *
+    t = 3
+    smin = -0.1
+    smax = +0.1
+    amax = 0.1
+    amin = -0.1
+
+
+[SCR]
+    THETA = 5
+    delta = 1000
 
 
 
-# cd , rpca params :
-# classification_truncation
-# repair_truncation
-# threshold
-# repair_iter
-# n_max_iter
-##
-# imr params;
-# p
-# tau
-# screen params;
-# t
-# smin
-# smax
+[KFilter]
+    transition_cov = 0.5
 

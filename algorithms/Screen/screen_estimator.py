@@ -1,34 +1,36 @@
 import pandas as pd
 
-from algorithms.Screen.globallp import LPconstrainedAE
-from algorithms.Screen.screen import screen
-from algorithms.algorithms_config import SCREEN, SCREEN_GLOBAL
-from algorithms.estimator import Estimator
+from repair.Screen.globallp import LPconstrainedAE
+from repair.Screen.screen import screen
+from repair.algorithms_config import SCREEN
+from repair.estimator import Estimator
 import numpy as np
 
 
 class SCREENEstimator(Estimator):
 
-    def __init__(self, t:int=3, smax: float = 0.1, smin :float =-0.2, method : str ="local", ci=None ,**kwargs):
+    def __init__(self, t:int=5, smax: float = 0.1, smin: float = None, ci=None ,**kwargs):
         """
         param ci need to be a tuple e.g (0.1,0.9)
         """
-        self.smin = smin
+
+        self.smin = smin if smin is not None else -smax
         self.smax = smax
         self.t = t
-        self.method = method
         self.ci = ci
 
+        assert self.smin <= 0
+        assert self.smax >= 0
+
     def get_fitted_params(self, **args):
-        return {"t": self.t
-            , "smin": self.smin
-            , "smax": self.smax
-            , "method": self.method
+        return {"t": self.t,
+             "smin": self.smin,
+             "smax": self.smax,
                 }
 
     def suggest_param_range(self, X):
-        return {"smax": np.linspace(0.01, 2, num=100),
-                "smin": -np.linspace(0.01, 2, num=100)}
+        return {"smax": np.linspace(0, 1, num=20),
+                "smin": -np.linspace(0, 1, num=20)}
 
     def repair(self, injected, truth, columns_to_repair, labels=None):
         truth = None
@@ -46,18 +48,16 @@ class SCREENEstimator(Estimator):
                 smin = perc[0]
                 self.smax = smax
                 self.smin = smin
-            else:
-                smin, smax = self.smin, self.smax
-            if self.method == "local":
-                repair_result = screen(x, self.t, smax, smin)
-            if self.method == "global":
-                repair_result = LPconstrainedAE(x, smax, -smin, w=self.t)
+
+            smin, smax = self.smin, self.smax
+            repair_result = screen(x, self.t, smax, smin)
+
             repair.iloc[:, col] = repair_result
         return repair
 
     @property
     def alg_type(self):
-        return SCREEN_GLOBAL if self.method == "global" else SCREEN
+        return  SCREEN
 
     def __str__(self):
         return f'SCREEN({self.t},{round(self.smax, 1)},{round(self.smin, 1)})'

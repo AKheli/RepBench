@@ -1,9 +1,9 @@
-from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
+from repair.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
 import numpy as np
 from scipy import linalg
 from sklearn.decomposition import TruncatedSVD
 
-from algorithms.algorithms_config import RPCA
+from repair.algorithms_config import RPCA
 
 
 class Robust_PCA_estimator(DimensionalityReductionEstimator):

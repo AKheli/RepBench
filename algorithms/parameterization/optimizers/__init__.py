@@ -1,2 +1,3 @@
-from algorithms.parameterization.optimizers.bayesian_optimization import BayesianOptimizer
-from algorithms.parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
+from repair.parameterization.optimizers.bayesian_optimization import BayesianOptimizer
+from repair.parameterization.optimizers.estimator_optimizer import EstimatorOptimizer
+from repair.parameterization.optimizers.succesivehalving_search import SuccessiveHalvingOptimizer

@@ -1,19 +1,26 @@
 import time
 
-from algorithms.Dimensionality_Reduction.CD.sign_vector_computations import *
-from algorithms.algorithms_config import CDREC
-from algorithms.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
+from repair.Dimensionality_Reduction.CD.sign_vector_computations import *
+from repair.algorithms_config import CDREP
+from repair.Dimensionality_Reduction.dimensionality_reduction_estimator import DimensionalityReductionEstimator
 import numpy as np
 
 
 class CDRecEstimator(DimensionalityReductionEstimator):
+
+    def __init__(self, classification_truncation=2, repair_truncation=None,
+                 delta=1.5, t=1, eps=1e-6, n_max_iter=1, repair_iter=10,
+                 k=None, threshold=None, **kwargs):
+        super().__init__(classification_truncation, repair_truncation, delta, t,
+                         eps, n_max_iter, repair_iter, k, threshold, **kwargs)
+
     def compute_transform(self, centered_weighted_x, truncation, component_method=None):
         L, R, Z = weighted_centroid_decomposition(centered_weighted_x , truncation=truncation, weights=None)
         return np.dot(R,R.T)
 
     @property
     def alg_type(self):
-        return CDREC
+        return CDREP
 
     def __str__(self):
         if self.n_max_iter < 2:

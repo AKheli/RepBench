@@ -5,7 +5,7 @@ from Injection.injected_data_container import InjectedDataContainer
 from RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 import matplotlib
 
-from algorithms import CDRecEstimator
+from repair import CDRecEstimator
 
 matplotlib.use('TKAgg')
 

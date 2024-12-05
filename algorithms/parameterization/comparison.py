@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
-from algorithms.IMR.IMR_estimator import IMR_estimator
-from algorithms.Screen.screen_estimator import SCREENEstimator
-from algorithms.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
-from Injection.Scenarios import Scenario
-from Injection.Scenarios import DataPart
+
+
+from repair.IMR.IMR_estimator import IMR_estimator
+from repair.Screen.screen_estimator import SCREENEstimator
+from repair.Dimensionality_Reduction.RobustPCA.Robust_pca_estimator import Robust_PCA_estimator
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf
 import Injection.Scenarios.ScenarioConfig as sc
@@ -43,10 +43,6 @@ def min_max(vec):
 
 
 
-import tikzplotlib
-
-
-
 for dataset_name in dataset_names:
     for error in error_metrics:
         bars = {}
@@ -63,7 +59,6 @@ for dataset_name in dataset_names:
                 score = repair_r.run_repair(alg_type , **repair_inputs)["scores"][error]
                 bars[a_type][alg_type] = score
         pd.DataFrame(bars).plot(kind='bar')
-        tikzplotlib.save("mytikz.tex")
         plt.title(error)
         pdf.savefig(plt.gcf())
         plt.show()
