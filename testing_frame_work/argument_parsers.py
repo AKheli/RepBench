@@ -1,68 +1,37 @@
-from testing_frame_work.parse_toml import load_toml_file
 import injection.injection_config as ic
-from testing_frame_work.parser_init import init_parser
-import algorithms.algorithms_config as algc
-import injection.injection_config as at
-
-
-repair_estimators = algc.ALGORITHM_TYPES
-estimator_choices = repair_estimators + ["all"]
-
-scenarios = [ic.ANOMALY_SIZE, ic.CTS_NBR , ic.ANOMALY_RATE, ic.TS_LENGTH, ic.TS_NBR , ic.ANOMALY_FACTOR]
-scenario_choices = scenarios + ["all"]
-
-all_anomalies = [at.AMPLITUDE_SHIFT,at.DISTORTION,at.POINT_OUTLIER]
-anomaly_choices =all_anomalies+["all"]
-
-error_scores = ["rmse_full","rmse_partial","mae","mutual_info"]
-
-
-def init_checked_parser(input):
-    args = init_parser(input=input,
-                       estimator_choices=estimator_choices,
-                       scenario_choices=scenario_choices,
-                       anomaly_choices=anomaly_choices)
-
-    return args
+import repair.algorithms_config as algc
+from testing_frame_work.scenarios.scenario_config import SCENARIO_TYPES
+from repair.utils import get_main_alg_name
 
 def parse_scen_names(args):
     scen_params = args.scen
-    scen_names = scenarios if "all" in scen_params else scen_params
+    scen_names = list(SCENARIO_TYPES) if "all" in scen_params else scen_params
     return scen_names
+
 
 def parse_repair_algorithms(args):
     if "all" in args.alg:
         return algc.ALGORITHM_TYPES
-    return args.alg
+    if "main" in args.alg:
+        return algc.MAIN_ALGORITHMS
+    algorithms = []
+    print(args.alg)
+    for alg_name in args.alg:
+        algorithms.append(get_main_alg_name(alg_name.strip()))
 
-def parse_repair_algorithms_x(args):
-    if args.algx is not None:
-        filename = args.algx
-        param_dict = load_toml_file(filename)
-        repair_algos = []
-
-        for alg_type, params in param_dict.items():
-            direct_params = {k: v for k, v in params.items() if not isinstance(v, dict)}
-            if len(direct_params) > 0:
-                repair_algos.append({"type": alg_type , "name" : alg_type  , "params" : direct_params})
-            for name, inner_params in params.items():
-                if isinstance(inner_params, dict):
-                    repair_algos.append({"type" : alg_type , "name" : name , "params" : inner_params})
-
-        return repair_algos
-
+    print("running on algorithms", algorithms)
+    return algorithms
 
 
 
 def parse_anomaly_types(args):
-    anomaly_types_param = args.a
-    anomalies = [at.parse_anomaly_name(anomaly) for anomaly in anomaly_types_param] if "all" not in anomaly_types_param \
-        else all_anomalies
-    return anomalies
+    anomaly_types_argument = args.a
+    all_anomalies = ic.ANOMALY_TYPES
 
+    if "all" in anomaly_types_argument:
+        return all_anomalies
 
-def parse_training_arguments(args):
-    train_method = args.train
-    train_error = args.train_error
-    return train_method, train_error
+    for a_type_arg in anomaly_types_argument:
+        assert a_type_arg in all_anomalies, f"{a_type_arg} not in {all_anomalies}"
 
+    return all_anomalies
